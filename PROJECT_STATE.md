@@ -1,6 +1,6 @@
 # Whole Home Agent — Public Repository State
 
-**Checkpoint:** `PUBLIC-B0-001`
+**Checkpoint:** `PUBLIC-B0-002`
 
 **As of:** `2026-08-25 Asia/Taipei`
 
@@ -46,7 +46,8 @@ This file is the live checkpoint for the clean public repository. It records cur
 - It intentionally excludes prior private Git history, coursework/competition experiments, datasets, raw media, model weights, generated outputs, local databases, environment files, and credentials.
 - Existing tests exercise semantic replay, provenance, idempotency, conflict/unknown handling, malformed input, and boundary restrictions.
 - Local verification on 2026-08-25 used Python 3.12 in the existing isolated workspace environment: `23/23` unit tests passed and `compileall` passed.
-- GitHub CI has not yet run for this public repository; configured jobs are not evidence until the remote workflow reports a result.
+- GitHub verified `kr-yep/whole-home-agent-public` as public with `main` as its default branch. Seed commit `21d057569073e7f2e16631780a8ab1150c2920f9` contains the clean release history.
+- GitHub Actions run [32803963091](https://github.com/kr-yep/whole-home-agent-public/actions/runs/32803963091) completed successfully for the seed commit across configured Python 3.11–3.14 jobs.
 - Passing tests supports only the tested code, fixtures, interpreter, and environment. It does not support CV accuracy, household transfer, real-time performance, privacy compliance, production readiness, or physical truth.
 
 ## Recorded directions
