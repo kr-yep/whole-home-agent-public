@@ -1,0 +1,69 @@
+{
+  "manifest_version": 1,
+  "suite_id": "b0-semantic-conformance",
+  "use_class": "D0_SYNTHETIC",
+  "origin": "project-generated-test-data",
+  "purpose": "Frozen black-box B0 replay conformance fixtures",
+  "fixtures": [
+    {
+      "path": "b0_action_shaped_v1.json",
+      "sha256": "526cb40f514ce4a1d2d4a71f5fb46c96481f9a748bea6b268fa4405693e48f4e",
+      "expected": "FixtureError"
+    },
+    {
+      "path": "b0_containment_cycle_v1.json",
+      "sha256": "40eb41aa98a78e52ebd7d57c2b313998513ad863f62e067fabde35bfd31ffff8",
+      "expected": "CycleError"
+    },
+    {
+      "path": "b0_duplicate_v1.json",
+      "sha256": "16380d6c57aab21760ee69a04a1a7e22c3d85410f5b075a214ccef5f11ce5ff7",
+      "expected": "PASS"
+    },
+    {
+      "path": "b0_duplicate_json_key_v1.json",
+      "sha256": "64775360e4f941d9c5b94d939e4dcffece07b64333e612ab79fd50488dd23037",
+      "expected": "FixtureError:invalid_json"
+    },
+    {
+      "path": "b0_identity_conflict_v1.json",
+      "sha256": "5ab4894d221f3b026de7df2c55b9b2218904067fdeded73050cabe8d6eec1b08",
+      "expected": "ClaimConflictError"
+    },
+    {
+      "path": "b0_key_bag_sofa_v1.json",
+      "sha256": "b8452768e4c22094d460ec2ea8a5d5d7b7b0e82f500f63148e169606a369356d",
+      "expected": "PASS"
+    },
+    {
+      "path": "b0_malformed_v1.json",
+      "sha256": "b7352e77aa53acef7635919c48937583a84a57eeedcb9cd6d0863e3f0775e75a",
+      "expected": "FixtureError:invalid_json"
+    },
+    {
+      "path": "b0_multi_location_conflict_v1.json",
+      "sha256": "dd450558b2180309c4741ee32227e5fa3fcfa07a8591ba33a0a0f875f4c07237",
+      "expected": "PASS:CONFLICT"
+    },
+    {
+      "path": "b0_out_of_order_v1.json",
+      "sha256": "a809fc254ac8cec335250314f977477242b5dd5f1e524ce65d2aaaa8127a9895",
+      "expected": "FixtureError:source_order"
+    },
+    {
+      "path": "b0_take_out_v1.json",
+      "sha256": "1d5ef2b292cf69bada5d34a30d0168abd69fa7e56fb1d97ec49593b6628c740d",
+      "expected": "PASS"
+    },
+    {
+      "path": "b0_unknown_field_v1.json",
+      "sha256": "b43e03741d27d4edc2da390d3e681c788693fbcc7bfc702ca3340c2b6525b4c7",
+      "expected": "FixtureError"
+    },
+    {
+      "path": "b0_unknown_predicate_v1.json",
+      "sha256": "e3a1f9acfa1ff8eeb1f7f5e46ec4949dc6daf99b34c088ca2da2c8956c8c47b6",
+      "expected": "FixtureError"
+    }
+  ]
+}

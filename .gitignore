@@ -1,0 +1,102 @@
+# Python environments and generated package state
+.venv/
+.venv-cvpdl/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# Local configuration, credentials, and secrets
+.env
+.env.*
+!.env.example
+!.env.template
+.secrets/
+secrets/
+credentials/
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Local databases and durable stores (not part of B0)
+*.db
+*.db-*
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*
+
+# Model weights and generated ML artifacts
+weights/
+models/weights/
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.tflite
+*.safetensors
+*.engine
+*.npy
+*.npz
+*.pkl
+*.pickle
+*.joblib
+
+# Raw media, recordings, and evidence payloads
+data/raw/
+media/raw/
+recordings/
+evidence/
+*.jpg
+*.jpeg
+*.png
+*.webp
+*.gif
+*.bmp
+*.tif
+*.tiff
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.webm
+*.wav
+*.mp3
+*.m4a
+
+# Runtime outputs and local diagnostics
+var/
+runtime/
+runs/
+outputs/
+artifacts/
+run-receipts/
+*.log
+.tmp/
+tmp/
+
+# External datasets are local-only until license and redistribution are reviewed.
+datasets/
+data/external/
+
+# Small public/synthetic semantic fixtures are intentionally versioned.
+!tests/fixtures/**/*.json
+!examples/fixtures/**/*.json
+
+# Editor and operating-system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+Desktop.ini

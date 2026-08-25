@@ -1,0 +1,15 @@
+* text=auto
+
+# Keep Git control files stable on Windows too.
+.gitattributes text eol=lf
+.gitignore text eol=lf
+
+# Frozen fixture hashes require identical bytes on every checkout.
+*.json text eol=lf
+
+# Keep project-authored text consistent across Windows and Unix clones.
+*.py text eol=lf
+*.md text eol=lf
+*.toml text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf

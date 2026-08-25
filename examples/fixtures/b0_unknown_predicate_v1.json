@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "fixture_id": "b0-unknown-predicate",
+  "fixture_revision": "1",
+  "use_class": "D0_SYNTHETIC",
+  "timestamp_basis": "synthetic",
+  "claims": [
+    {
+      "claim_id": "claim-key-beside-bag",
+      "source_sequence": 1,
+      "operation": "assert",
+      "subject_id": "key",
+      "predicate": "beside",
+      "object_id": "bag",
+      "epistemic_status": "reported"
+    }
+  ]
+}

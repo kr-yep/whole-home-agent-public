@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "whole-home-agent"
+version = "0.1.0"
+description = "Evidence-bound, offline-first whole-home Agent prototype"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+license = "MIT"
+
+[project.urls]
+Repository = "https://github.com/kr-yep/whole-home-agent-public"
+Issues = "https://github.com/kr-yep/whole-home-agent-public/issues"
+
+[project.scripts]
+whole-home-agent = "whole_home_agent.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

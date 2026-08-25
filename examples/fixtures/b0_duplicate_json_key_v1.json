@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "fixture_id": "b0-duplicate-json-key",
+  "fixture_id": "silently-overwritten-if-parser-is-not-strict",
+  "fixture_revision": "1",
+  "use_class": "D0_SYNTHETIC",
+  "timestamp_basis": "synthetic",
+  "claims": []
+}
