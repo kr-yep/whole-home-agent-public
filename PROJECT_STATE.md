@@ -1,6 +1,6 @@
 # Whole Home Agent — Public Repository State
 
-**Checkpoint:** `PUBLIC-B1-M4-001`
+**Checkpoint:** `PUBLIC-B1-M5-001`
 
 **As of:** `2026-09-01 Asia/Taipei`
 
@@ -12,9 +12,9 @@ This file is the live checkpoint for the clean public repository. It records cur
 
 ## Current direction
 
-- Publish and collaborate on the smallest viable offline B0 semantic replay baseline.
-- Keep B0 limited to synthetic or lawfully reusable public fixtures.
-- Keep B1 as a proposal for prerecorded public/synthetic visual replay behind a narrow adapter.
+- Publish and collaborate on the smallest viable offline B0 semantic replay baseline plus one bounded B1 prerecorded replay.
+- Keep B0/B1 inputs limited to synthetic or lawfully reusable public fixtures.
+- Keep B1 limited to a fixed, hash-pinned, prerecorded project-generated clip behind a narrow adapter.
 - Reuse the implemented B0 `ClaimCandidate` → commit → projection → query path as the only semantic state path for B1.
 - Exclude live/private sensing and all physical or external action from the current scope.
 - Do not assume a graph, Memory Core, multi-agent runtime, or durable database is necessary.
@@ -43,16 +43,17 @@ This file is the live checkpoint for the clean public repository. It records cur
 | B1 generated-video manifest, PTS decoder, and scheduler | `IMPLEMENTED / VERIFIED ON ONE SYNTHETIC REPLAY` | Hash-pinned allowlisted media, exact PTS/time-base decode, and motion-plus-periodic frame selection feed the later bounded perception source |
 | B1 perception/tracking/evaluation baseline | `IMPLEMENTED / VERIFIED ON ONE SYNTHETIC REPLAY` | Canonical detections, test-only annotation ceiling, RGB pixel smoke detector, clip-local IoU tracker, fixed quality/cost evaluator, and hash-pinned RF-DETR translation seam exist; no real indoor model evidence exists |
 | B1 binding/relation/query slice | `IMPLEMENTED / VERIFIED ON ONE SYNTHETIC REPLAY` | One-instance binding, conservative containment/zone assertion and retraction rules, typed abstentions, estimated candidates through the unchanged committer, relation evaluation, and evidence-traceable `key → bag → sofa` query exist; no real indoor transfer evidence exists |
+| B1 CLI and Streamlit presentation | `IMPLEMENTED / VERIFIED ON ONE SYNTHETIC REPLAY` | A closed composition/presentation boundary exposes the fixed clip, scoped answer, evidence, abstentions, metrics, diagnostics, and receipt; it accepts no upload, camera, arbitrary path, free-form query, credential, or action handle |
 | `docs/b0-b1-architecture-plan.md` | `PROPOSED — NOT ADOPTED` | Smallest B0 → B1 boundary, quality scenarios, gates, and deferred complexity |
 | B0 → B1 Archify diagrams | `VERIFIED RENDERING OF A PROPOSED DESIGN` | 9/9 showcase and visual delivery passed; this does not adopt or implement B1 |
 | MIT `LICENSE` | `SELECTED FOR PUBLIC RELEASE` | Applies to original repository code and documentation |
 
 ## Evidence envelope
 
-- The public export contains the B0 package, synthetic fixtures, tests, architecture documents, and proposed governance only.
-- It intentionally excludes prior private Git history, coursework/competition experiments, datasets, raw media, model weights, generated outputs, local databases, environment files, and credentials.
-- Existing tests exercise semantic replay, provenance, idempotency, conflict/unknown handling, malformed input, boundary restrictions, the generic candidate-source seam, and partial-source failure without a queryable session.
-- Local verification on 2026-08-31 used Python 3.12.13 with bytecode writes disabled: `23/23` unit tests passed; this architecture-only change did not modify product source code.
+- The public export contains the B0 package, synthetic semantic fixtures, one project-generated CC0 prerecorded clip with manifests/annotations, B1 adapters, tests, presentation code, architecture documents, and proposed governance.
+- It intentionally excludes prior private Git history, coursework/competition experiments, third-party datasets, household/private media, model weights, run outputs, local databases, environment files, and credentials.
+- Existing tests exercise semantic replay, provenance, idempotency, conflict/unknown handling, malformed input, boundary restrictions, media allowlisting and timing, detector/tracker/evaluator contracts, conservative relation inference, partial-source failure without a queryable session, and the fixed CLI/Streamlit presentation.
+- Local verification on 2026-09-01 used Python 3.12.13 with bytecode writes disabled: `70/70` unit, contract, integration, audit, CLI, and Streamlit smoke tests passed. The frozen B0 semantic hash remained `226d30a5b826720d607d0b9a29bf3dfb9f5429eeedbbd70ffd1ff23c21233c8f`.
 - GitHub verified `kr-yep/whole-home-agent-public` as public with `main` as its default branch. Seed commit `21d057569073e7f2e16631780a8ab1150c2920f9` contains the clean release history.
 - GitHub Actions run [32803963091](https://github.com/kr-yep/whole-home-agent-public/actions/runs/32803963091) completed successfully for the seed commit across configured Python 3.11–3.14 jobs.
 - Archify v2.16.0 produced the proposed system and data-flow diagrams. Both passed 9/9 showcase checks with zero composition errors/warnings, desktop containment at 1440×900 through 2048×1320, and human inspection of light/dark captures. Exact source/artifact hashes and evidence limits are recorded in `docs/b0-b1-architecture-plan.md`.
@@ -66,16 +67,16 @@ This file is the live checkpoint for the clean public repository. It records cur
 | `PUB-DIR-002` | Keep `OPERATE` disabled until roles, consent, risk classification, safety boundaries, enforcement, and separate activation are complete | Active |
 | `PUB-DIR-003` | Start from a minimal B0 baseline; separate data, control, action, authority, and physical outcome | Active |
 | `PUB-DIR-004` | Use MIT for original public repository code/docs; review third-party artifacts separately | Active |
-| `PUB-DIR-005` | Keep B0 as the only claim-commit/query core; make prerecorded perception a replaceable candidate-producing adapter | Candidate-source seam implemented; prerecorded perception remains unimplemented |
+| `PUB-DIR-005` | Keep B0 as the only claim-commit/query core; make prerecorded perception a replaceable candidate-producing adapter | Implemented and locally verified on one project-generated synthetic replay; no real indoor transfer claim |
 
 ## Open gates and blockers
 
 - Named project, policy, engineering, and data roles remain unassigned.
 - The full B0 conformance, recovery, runtime-path, performance, and independent maintainer exercise gates are incomplete.
-- The B1 candidate-source seam, one project-generated video/decoder/scheduler slice, a synthetic-only detector/tracker/evaluator, and conservative binding/relation/query rules are implemented under the explicit bounded implementation direction. The RGB and relation results measure the generated artwork only. The annotation oracle is test-only. RF-DETR has only a hash-pinned adapter translation contract; no real checkpoint was downloaded or benchmarked. No frozen real indoor evaluation set, live source, or operational capability exists.
+- The B1 candidate-source seam, one project-generated video/decoder/scheduler slice, a synthetic-only detector/tracker/evaluator, conservative binding/relation/query rules, and a closed CLI/Streamlit presentation are implemented under the explicit bounded implementation direction. The RGB and relation results measure the generated artwork only. The annotation oracle is test-only. RF-DETR has only a hash-pinned adapter translation contract; no real checkpoint was downloaded or benchmarked. No frozen real indoor evaluation set, live source, or operational capability exists.
 - No household data class, person, room, camera, credential, endpoint, device, or capability is enrolled.
 - Consent, retention, deletion, access, incident, kill-switch, and independent enforcement mechanisms do not exist.
 
 ## Next safe action
 
-Implement M5 only as a local presentation/CLI boundary over the allowlisted prerecorded D0 fixture. It may show the public generated video, estimates, abstentions, accepted claims, run receipt, and scoped answer, but it must not accept arbitrary uploads or paths, expose a camera/live source, imply physical truth, or add any action capability.
+Complete M6 as public-release hardening only: update the diagrams to match implemented code, validate packaging and clean installation, run the repository audit and complete test matrix, and verify public GitHub CI. Do not widen source selection, sensing, data, model, authority, or action scope.

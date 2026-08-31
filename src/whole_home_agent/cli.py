@@ -12,6 +12,7 @@ from .errors import B0Error
 from .fixture import load_fixture
 from .model import AnswerTrace, QueryRequest
 from .orchestrator import run_fixture
+from .public_demo import run_public_demo
 from .relations import locate
 
 
@@ -27,6 +28,24 @@ def _build_parser() -> argparse.ArgumentParser:
         "--as-of", required=True, type=int, dest="as_of", help="source sequence frontier"
     )
     replay.add_argument("--run-id", dest="run_id", help="explicit replay run scope")
+    demo = subparsers.add_parser(
+        "demo-recorded",
+        help="run the fixed, allowlisted, project-generated prerecorded B1 demo",
+    )
+    demo.add_argument(
+        "--entity",
+        choices=("key", "bag", "sofa"),
+        default="key",
+        help="manifest entity to locate (default: key)",
+    )
+    demo.add_argument(
+        "--run-id", dest="run_id", default="public-b1-demo-001"
+    )
+    demo.add_argument(
+        "--compact",
+        action="store_true",
+        help="omit the per-frame presentation timeline from JSON output",
+    )
     return parser
 
 
@@ -63,25 +82,32 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = _build_parser()
     arguments = parser.parse_args(argv)
     try:
-        if arguments.command != "replay":  # pragma: no cover - argparse is closed.
-            parser.error(f"unsupported command: {arguments.command}")
-        fixture = load_fixture(arguments.fixture)
-        session = run_fixture(fixture, replay_run_id=arguments.run_id)
-        answer = locate(
-            session,
-            QueryRequest(
+        if arguments.command == "demo-recorded":
+            payload = run_public_demo(
+                replay_run_id=arguments.run_id,
                 subject_id=arguments.entity,
-                world_scope=session.world_scope,
-                replay_run_id=session.replay_run_id,
-                as_of_source_sequence=arguments.as_of,
-            ),
-        )
-        payload = {
-            "answer": _answer_dict(answer),
-            "canonical_hash": session.canonical_hash,
-            "fixture_id": session.fixture_id,
-            "fixture_revision": session.fixture_revision,
-        }
+                include_frames=not arguments.compact,
+            )
+        elif arguments.command == "replay":
+            fixture = load_fixture(arguments.fixture)
+            session = run_fixture(fixture, replay_run_id=arguments.run_id)
+            answer = locate(
+                session,
+                QueryRequest(
+                    subject_id=arguments.entity,
+                    world_scope=session.world_scope,
+                    replay_run_id=session.replay_run_id,
+                    as_of_source_sequence=arguments.as_of,
+                ),
+            )
+            payload = {
+                "answer": _answer_dict(answer),
+                "canonical_hash": session.canonical_hash,
+                "fixture_id": session.fixture_id,
+                "fixture_revision": session.fixture_revision,
+            }
+        else:  # pragma: no cover - argparse is closed.
+            parser.error(f"unsupported command: {arguments.command}")
         print(json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=2))
         return 0
     except B0Error as error:

@@ -1,122 +1,118 @@
 # Whole Home Agent
 
-> **Current milestone:** `B0 — frozen D0 semantic replay`
+> **Current milestone:** `B1 — offline prerecorded synthetic replay`
 >
 > **Status:** `NOT PRODUCTION` · `OPERATE DISABLED`
->
-> **Allowed data:** local synthetic fixtures or lawfully reusable public fixtures
+> **Allowed data:** the included project-generated D0 clip and frozen semantic fixtures
 
-Whole Home Agent is an offline-first prototype for answering traceable questions about how objects and containers move through a space. A representative story is:
+Whole Home Agent is an evidence-bound prototype for remembering how small objects and containers move through a space. The current public demo analyzes one generated video and answers:
 
 ```text
-key placed in bag -> bag moved to sofa -> query(key)
-                                      -> “the key may be in the bag at the sofa”
+key approaches bag → key disappears with supporting context
+bag moves → bag settles at sofa
+query(key) → “the key may be in the bag at the sofa”
 ```
 
-This repository deliberately starts below the camera layer. The current baseline replays frozen JSON events, validates them deterministically, projects current relations, and returns an answer with its scope, time frontier, and supporting claim chain. It is a maintainable semantic core for later perception experiments—not evidence that a camera understands a real home.
+The answer is an `estimated` result scoped to that replay. It is not a claim about a real home.
 
 ## What works today
 
-- deterministic replay of versioned synthetic fixtures;
-- containment and location propagation such as `key -> bag -> sofa`;
-- explicit `UNKNOWN`, `CONFLICT`, and stale-result behavior;
-- idempotent claim handling and rejection of same-ID/different-content input;
-- query answers scoped to a fixture, run, source sequence, and claim chain;
-- a standard-library Python runtime and CLI;
-- automated tests on Python 3.11–3.14 through GitHub Actions.
+- hash-pinned, project-generated 80-frame MP4 replay with exact annotations;
+- PTS-aware PyAV decoding and optional motion-plus-periodic scheduling;
+- a deterministic RGB smoke detector for the generated artwork;
+- a hash-pinned RF-DETR Nano adapter boundary for a future real model artifact;
+- clip-local IoU tracking and one-instance manifest binding;
+- conservative containment/location rules with visible abstention;
+- the unchanged B0 claim committer, relation projection, and scoped query path;
+- fixed AP, event, answer, latency, FPS, dropped-frame, and VRAM reporting;
+- JSON CLI and a local Streamlit presentation;
+- automated B0 tests on Python 3.11–3.14 plus locked B1/demo jobs.
 
-The current milestone excludes cameras, recorded or live household media, databases, LLM/VLM calls, cloud services, device control, action planners, credentials, and multi-agent runtime behavior.
+On the included synthetic clip, the current RGB baseline measures AP50 `0.9604`, mAP50:95 about `0.5931`, key recall `0.8857`, zero false positives, event F1 `1.0`, and the final expected answer. It also exposes three tracking ID switches, two fragmentations, and one deliberate relation abstention. These numbers apply only to this generated fixture and do not establish indoor accuracy, real-time operation, or 24/7 readiness.
 
-## Architecture boundary
+## Run the demo
 
-```text
-frozen D0 fixture
-  -> ClaimCandidate
-  -> deterministic validation / commit
-  -> session-local AcceptedClaim ledger
-  -> pure relation projection
-  -> scoped AnswerTrace
-```
-
-Data, control, action, authority, and physical outcome are intentionally separate. An accepted claim means only that a source report passed the validator for this replay. It does not establish that a real-world event happened. A future command acknowledgement would likewise not prove a physical result.
-
-See the [B0 → B1 minimal architecture proposal](docs/b0-b1-architecture-plan.md), [interactive system map](docs/b0-b1-system.architecture.html), and [interactive perception data flow](docs/b0-b1-perception.dataflow.html) for the current plan. The HTML files are self-contained and can be downloaded and opened locally. The earlier [minimal viable architecture](docs/minimal-viable-architecture.md), [architecture roadmap](docs/architecture.md), and [ADRs](docs/adr/) remain available for context; none of the proposed B1 material is adopted or implemented merely because it is documented.
-
-## Quick start
-
-Requires Python 3.11 or newer.
+Requires Python 3.11 or newer. The lockfile was generated with `uv 0.11.24`.
 
 ### Windows PowerShell
 
 ```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install -e .
-python -m unittest discover -s tests -v
+python -m pip install uv==0.11.24
+uv sync --frozen --extra demo
+.\.venv\Scripts\whole-home-agent.exe demo-recorded --compact
+.\.venv\Scripts\streamlit.exe run src\whole_home_agent\streamlit_app.py
 ```
 
 ### macOS or Linux
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-python -m pip install -e .
-python -m unittest discover -s tests -v
+python -m pip install uv==0.11.24
+uv sync --frozen --extra demo
+.venv/bin/whole-home-agent demo-recorded --compact
+.venv/bin/streamlit run src/whole_home_agent/streamlit_app.py
 ```
 
-Run the key → bag → sofa example:
+The Streamlit app has no upload, arbitrary path, camera, chat, cloud, or action input. It always runs the included allowlisted D0 clip. See the [90-second and 3-minute demo guide](docs/demo-guide.md).
+
+## Deterministic B0 replay
+
+The original semantic oracle remains independent of video and optional dependencies:
 
 ```bash
-whole-home-agent replay examples/fixtures/b0_key_bag_sofa_v1.json \
-  --entity key \
-  --as-of 2 \
-  --run-id demo-b0-001
+uv sync --frozen
+.venv/bin/whole-home-agent replay examples/fixtures/b0_key_bag_sofa_v1.json \
+  --entity key --as-of 2 --run-id demo-b0-001
+.venv/bin/python -m unittest discover -s tests -v
 ```
 
-The CLI writes structured results to stdout. Invalid input produces a typed error on stderr and exit code `2`; valid `UNKNOWN` or `CONFLICT` domain results use exit code `0`.
+On Windows, use the matching executables under `.venv\Scripts\`.
+
+## Architecture
+
+```text
+allowlisted generated MP4 + manifest/config hashes
+  → PTS frame adapter
+  → detector estimates
+  → clip-local tracker
+  → one-instance binder
+  → conservative temporal rules / abstention
+  → ClaimCandidate (estimated)
+  → deterministic ClaimCommitter
+  → session projection
+  → scoped AnswerTrace
+  → CLI / Streamlit presentation dictionaries
+```
+
+Detector and rule outputs cannot directly mutate state. A complete source failure returns no queryable session. The UI receives presentation values and public media bytes, not a model, ledger, filesystem, credential, or generic tool handle. No graph database, Memory Core, LLM/VLM, multi-agent runtime, durable database, or action executor is required for this slice.
+
+See the [minimal B0 → B1 architecture](docs/b0-b1-architecture-plan.md), [system diagram](docs/b0-b1-system.architecture.html), [perception data flow](docs/b0-b1-perception.dataflow.html), [implementation notes](docs/technology-notes/), and [ADRs](docs/adr/). Proposed governance and ADR status are recorded in [PROJECT_STATE.md](PROJECT_STATE.md); implementation does not adopt those documents or enable operation.
 
 ## Repository map
 
 ```text
-src/whole_home_agent/       B0 domain, application flow, adapters, and CLI
-tests/                      semantic, boundary, hostile, and replay tests
-examples/fixtures/          small synthetic JSON fixtures safe for Git
-docs/                       architecture notes and proposed ADRs
-AGENTS.md                   proposed repository governance
-PROJECT_STATE.md            current status, evidence, and unresolved gates
-ACTION_POLICY.md            proposed policy; all operation remains disabled
+src/whole_home_agent/       B0 core, B1 contracts/adapters, CLI, presentation
+configs/perception/         versioned detector/rule/evaluation controls
+examples/fixtures/          frozen semantic D0 fixtures
+examples/media/generated/   one CC0 project-generated replay + manifest
+tests/                      semantic, hostile, failure, CV, relation, UI tests
+tools/                      fixture generation, evaluation, public audit
+docs/                       architecture, demo, ADR, and technology notes
 ```
 
-## Working with the team
+## Next evidence gate
 
-1. Create a short-lived branch from `main`.
-2. Keep changes inside the current B0 boundary unless an ADR and explicit project decision expand it.
-3. Add or update a frozen fixture and deterministic test for behavior changes.
-4. Run the full test suite before opening a pull request.
-5. Keep datasets, media, model weights, databases, runtime outputs, secrets, and credentials out of Git.
+The included color detector is intentionally over-scoped to generated artwork. The next useful ML step is a separately licensed, frozen indoor prerecorded set split by scene/video, followed by paired Grounding DINO zero-shot and RF-DETR Nano specialist evaluation. Training remains capped at 20 epochs with patience 5; test tuning and automatic submissions remain prohibited. A candidate must improve event/recall by at least 5 percentage points within 2× p95 latency, or stay within 1 point of quality while reducing cost by at least 30%.
 
-More details are in [CONTRIBUTING.md](CONTRIBUTING.md). Repository access or a merged pull request does not authorize real household sensing, data processing, or device operation.
-
-## Roadmap
-
-- Complete the remaining B0 conformance and maintainer-replay gates.
-- Define a narrow B1 adapter contract for prerecorded public or synthetic video.
-- Evaluate small-object methods on a frozen indoor set with paired quality and inference-cost measurements.
-- Consider live sensing only after roles, consent, retention, enforcement, and independent activation are adopted and verified.
-
-Memory graphs, a “Memory Core,” multi-agent orchestration, and device actions are candidates only if evidence shows they are needed. They are not architectural prerequisites.
-
-The current B1 proposal keeps YOLO, tracking, and event extraction inside a replaceable offline adapter. That adapter may emit only the existing canonical `ClaimCandidate`; it cannot commit claims or bypass the B0 semantic core.
-
-## Safety and data policy
+## Safety and data boundary
 
 - `OPERATE` is globally disabled.
-- Do not add real household recordings, identifying media, credentials, or private queries.
-- Do not connect cameras, RTSP feeds, cloud endpoints, or physical devices in the B0 path.
-- Do not claim “real-time,” “24/7,” or “improved” without a reproducible benchmark that directly supports it.
+- Do not add real household recordings, identifying media, private queries, model weights, secrets, or credentials to Git.
+- Do not connect cameras, RTSP feeds, cloud endpoints, accounts, or physical devices.
+- Repository access and passing tests grant no household, consent, policy, or runtime authority.
+- Do not claim “real-time,” “24/7,” “understands the home,” or “improved” beyond a directly supporting benchmark.
 
-Read [AGENTS.md](AGENTS.md), [PROJECT_STATE.md](PROJECT_STATE.md), and [ACTION_POLICY.md](ACTION_POLICY.md) before making changes that affect data, sensing, authority, or action boundaries.
+Read [AGENTS.md](AGENTS.md), [PROJECT_STATE.md](PROJECT_STATE.md), and [ACTION_POLICY.md](ACTION_POLICY.md) before changing data, sensing, authority, or action boundaries. Contributions are described in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
-The repository's original code and documentation are available under the [MIT License](LICENSE). Third-party datasets, models, and dependencies keep their own licenses and must be reviewed before use or redistribution.
+Original repository code and documentation use the [MIT License](LICENSE). The generated replay is marked `CC0-1.0`; optional dependencies and model candidates retain the licenses listed in [third-party notices](docs/third-party-notices.md). No model weights are distributed.

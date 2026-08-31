@@ -30,3 +30,9 @@ The project-generated replay under `examples/media/generated` is separately mark
 - [RF-DETR](https://pypi.org/project/rfdetr/1.9.4/) 1.9.4 — Apache-2.0 for the reviewed Nano through Large core package and weights. This project permits only Nano at its adapter boundary and does not include Plus, XL, 2XL, or model weights.
 
 RF-DETR is resolved only through the `rf-detr` optional extra. No third-party model weights are committed or distributed by this repository.
+
+## Optional demo dependency
+
+- [Streamlit](https://pypi.org/project/streamlit/1.62.0/) 1.62.0 — Apache-2.0; used only by the local presentation app in the `demo` extra.
+
+Transitive demo artifacts and hashes are recorded in `uv.lock`; they are not vendored in this repository.
