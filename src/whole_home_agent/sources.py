@@ -187,7 +187,13 @@ def _validate_evidence(
         or "/" in evidence.evidence_id
         or type(evidence.quality) is not str
         or evidence.quality
-        not in {"unknown", "synthetic_report", "model_report", "manual_annotation"}
+        not in {
+            "unknown",
+            "synthetic_report",
+            "model_report",
+            "perception_report",
+            "manual_annotation",
+        }
         or (
             evidence.confidence is not None
             and (

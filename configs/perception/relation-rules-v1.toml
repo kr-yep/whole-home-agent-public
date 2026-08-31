@@ -1,0 +1,15 @@
+schema_version = 1
+rule_version = "b1-temporal-relations/1"
+subject_entity_id = "key"
+container_entity_id = "bag"
+zone_entity_id = "sofa"
+containment_lookback_frames = 5
+contained_observations_required = 2
+disappearance_confirmation_frames = 3
+take_out_confirmation_frames = 2
+container_motion_max_pixels = 2.0
+zone_enter_overlap_ratio = 0.60
+zone_exit_overlap_ratio = 0.20
+zone_stable_confirmation_frames = 3
+zone_exit_confirmation_frames = 3
+maximum_observation_gap_frames = 2

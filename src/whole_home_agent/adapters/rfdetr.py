@@ -9,9 +9,8 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
 
-from ..adapters.recorded_video import DecodedVideoFrame
 from ..model import ProducerRef
-from ..perception import BoundingBox, Detection
+from ..perception import BoundingBox, Detection, VideoFrame
 
 
 SUPPORTED_PACKAGE_VERSION = "1.9.4"
@@ -104,7 +103,7 @@ class RFDetrDetector:
     def device(self) -> str:
         return self._config.device
 
-    def detect(self, frame: DecodedVideoFrame) -> tuple[Detection, ...]:
+    def detect(self, frame: VideoFrame) -> tuple[Detection, ...]:
         try:
             import numpy as np
             from PIL import Image

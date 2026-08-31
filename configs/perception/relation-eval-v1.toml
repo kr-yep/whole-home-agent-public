@@ -1,0 +1,5 @@
+schema_version = 1
+evaluator_version = "b1-relation-evaluator/1"
+maximum_confirmation_lag_frames = 5
+query_subject_id = "key"
+expected_location_id = "sofa"

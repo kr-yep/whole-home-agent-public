@@ -1,6 +1,6 @@
 # Whole Home Agent — Public Repository State
 
-**Checkpoint:** `PUBLIC-B1-M3-001`
+**Checkpoint:** `PUBLIC-B1-M4-001`
 
 **As of:** `2026-09-01 Asia/Taipei`
 
@@ -39,9 +39,10 @@ This file is the live checkpoint for the clean public repository. It records cur
 | `ACTION_POLICY.md` | `PROPOSED — NOT ADOPTED` | All sensing, private-data, egress, device, and physical operation disabled |
 | ADR 0001–0004 | `PROPOSED` | Design candidates, not automatically adopted requirements |
 | B0 implementation and fixtures | `IMPLEMENTED / VERIFIED IN DECLARED TEST ENVELOPE` | A bounded semantic replay slice exists; its frozen golden semantic hash is unchanged |
-| B1 candidate-source seam and run receipt | `IMPLEMENTED / VERIFIED WITH SYNTHETIC CONTRACT TESTS` | Generic finite source contract, provenance types, fail-closed run outcome, and B0 compatibility exist; no video/CV exists yet |
-| B1 generated-video manifest, PTS decoder, and scheduler | `IMPLEMENTED / VERIFIED ON ONE SYNTHETIC REPLAY` | Hash-pinned allowlisted media, exact PTS/time-base decode, and motion-plus-periodic frame selection exist; event inference does not yet exist |
-| B1 perception/tracking/evaluation baseline | `IMPLEMENTED / VERIFIED ON ONE SYNTHETIC REPLAY` | Canonical detections, test-only annotation ceiling, RGB pixel smoke detector, clip-local IoU tracker, fixed quality/cost evaluator, and hash-pinned RF-DETR translation seam exist; no real indoor model evidence or relation inference exists yet |
+| B1 candidate-source seam and run receipt | `IMPLEMENTED / VERIFIED WITH SYNTHETIC CONTRACT TESTS` | Generic finite source contract, provenance types, fail-closed run outcome, and B0 compatibility remain the sole semantic admission path used by the later prerecorded adapter |
+| B1 generated-video manifest, PTS decoder, and scheduler | `IMPLEMENTED / VERIFIED ON ONE SYNTHETIC REPLAY` | Hash-pinned allowlisted media, exact PTS/time-base decode, and motion-plus-periodic frame selection feed the later bounded perception source |
+| B1 perception/tracking/evaluation baseline | `IMPLEMENTED / VERIFIED ON ONE SYNTHETIC REPLAY` | Canonical detections, test-only annotation ceiling, RGB pixel smoke detector, clip-local IoU tracker, fixed quality/cost evaluator, and hash-pinned RF-DETR translation seam exist; no real indoor model evidence exists |
+| B1 binding/relation/query slice | `IMPLEMENTED / VERIFIED ON ONE SYNTHETIC REPLAY` | One-instance binding, conservative containment/zone assertion and retraction rules, typed abstentions, estimated candidates through the unchanged committer, relation evaluation, and evidence-traceable `key → bag → sofa` query exist; no real indoor transfer evidence exists |
 | `docs/b0-b1-architecture-plan.md` | `PROPOSED — NOT ADOPTED` | Smallest B0 → B1 boundary, quality scenarios, gates, and deferred complexity |
 | B0 → B1 Archify diagrams | `VERIFIED RENDERING OF A PROPOSED DESIGN` | 9/9 showcase and visual delivery passed; this does not adopt or implement B1 |
 | MIT `LICENSE` | `SELECTED FOR PUBLIC RELEASE` | Applies to original repository code and documentation |
@@ -71,10 +72,10 @@ This file is the live checkpoint for the clean public repository. It records cur
 
 - Named project, policy, engineering, and data roles remain unassigned.
 - The full B0 conformance, recovery, runtime-path, performance, and independent maintainer exercise gates are incomplete.
-- The B1 candidate-source seam, one project-generated video/decoder/scheduler slice, and a synthetic-only detector/tracker/evaluator are implemented under the explicit bounded implementation direction. The RGB smoke baseline measures the generated artwork only. The annotation oracle is test-only. RF-DETR has only a hash-pinned adapter translation contract; no real checkpoint was downloaded or benchmarked. No relation extractor, frozen real indoor evaluation set, live source, or operational capability exists.
+- The B1 candidate-source seam, one project-generated video/decoder/scheduler slice, a synthetic-only detector/tracker/evaluator, and conservative binding/relation/query rules are implemented under the explicit bounded implementation direction. The RGB and relation results measure the generated artwork only. The annotation oracle is test-only. RF-DETR has only a hash-pinned adapter translation contract; no real checkpoint was downloaded or benchmarked. No frozen real indoor evaluation set, live source, or operational capability exists.
 - No household data class, person, room, camera, credential, endpoint, device, or capability is enrolled.
 - Consent, retention, deletion, access, incident, kill-switch, and independent enforcement mechanisms do not exist.
 
 ## Next safe action
 
-Implement M4 only as conservative offline entity binding and temporal relation inference over the allowlisted D0 replay. Inferred candidates must remain `estimated`, preserve evidence positions and producer configuration, abstain on ambiguity, and pass through the existing `ClaimCommitter`. Do not connect a live camera, accept arbitrary media paths, process household data, add credentials, or implement device action under this checkpoint.
+Implement M5 only as a local presentation/CLI boundary over the allowlisted prerecorded D0 fixture. It may show the public generated video, estimates, abstentions, accepted claims, run receipt, and scoped answer, but it must not accept arbitrary uploads or paths, expose a camera/live source, imply physical truth, or add any action capability.

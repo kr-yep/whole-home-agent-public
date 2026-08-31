@@ -2,17 +2,13 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-
 from ..errors import ErrorCode, SourceError
 from ..model import SourcePosition, TimestampBasis
+from ..perception import VideoFrame
 from ..video_manifest import VideoSourceManifest
 
-
-@dataclass(frozen=True, slots=True)
-class DecodedVideoFrame:
-    position: SourcePosition
-    rgb: object
+# Compatibility name retained for the existing public recorded-video contract.
+DecodedVideoFrame = VideoFrame
 
 
 def iter_decoded_frames(manifest: VideoSourceManifest):
@@ -58,7 +54,7 @@ def iter_decoded_frames(manifest: VideoSourceManifest):
                     error_code=ErrorCode.INVALID_SOURCE,
                 )
             decoded_count += 1
-            yield DecodedVideoFrame(
+            yield VideoFrame(
                 position=SourcePosition(
                     source_sequence=index,
                     source_offset=index,

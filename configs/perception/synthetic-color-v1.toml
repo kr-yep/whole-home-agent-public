@@ -26,7 +26,7 @@ padding_bottom = 4
 [[targets]]
 label = "sofa"
 rgb = [95, 111, 132]
-tolerance = 20
+tolerance = 10
 minimum_pixels = 1000
 padding_left = 5
 padding_top = 5

@@ -6,9 +6,8 @@ import hashlib
 import json
 from dataclasses import dataclass
 
-from ..adapters.recorded_video import DecodedVideoFrame
 from ..model import ProducerRef
-from ..perception import BoundingBox, Detection
+from ..perception import BoundingBox, Detection, VideoFrame
 from ..video_manifest import VideoSourceManifest
 
 
@@ -81,7 +80,7 @@ class AnnotationOracleDetector:
     def device(self) -> str:
         return "annotation-oracle"
 
-    def detect(self, frame: DecodedVideoFrame) -> tuple[Detection, ...]:
+    def detect(self, frame: VideoFrame) -> tuple[Detection, ...]:
         frame_index = frame.position.frame_index
         if frame_index is None or frame_index not in self._frames:
             raise ValueError("frame is outside the oracle annotation scope")

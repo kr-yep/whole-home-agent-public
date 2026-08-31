@@ -244,6 +244,11 @@ def locate(session: ReplaySession, request: QueryRequest) -> AnswerTrace:
             tuple(step.source_claim_id for step in value),
         ),
     )
+    estimated = any(
+        step.predicate is Predicate.INSIDE
+        or step.epistemic_status.value == "estimated"
+        for step in path
+    )
     return _trace(
         session,
         request,
@@ -252,14 +257,10 @@ def locate(session: ReplaySession, request: QueryRequest) -> AnswerTrace:
         location_id=location_id,
         path=path,
         candidates=(location_id,),
-        epistemic_status=(
-            "estimated"
-            if any(
-                step.predicate is Predicate.INSIDE
-                or step.epistemic_status.value == "estimated"
-                for step in path
-            )
-            else "reported"
+        epistemic_status="estimated" if estimated else "reported",
+        reason=(
+            "location resolved from active estimated relations"
+            if estimated
+            else "location resolved from active reported relations"
         ),
-        reason="location resolved from active reported relations",
     )

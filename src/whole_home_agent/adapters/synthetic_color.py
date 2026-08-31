@@ -8,9 +8,8 @@ import tomllib
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
-from ..adapters.recorded_video import DecodedVideoFrame
 from ..model import ProducerRef
-from ..perception import BoundingBox, Detection
+from ..perception import BoundingBox, Detection, VideoFrame
 
 
 @dataclass(frozen=True, slots=True)
@@ -162,7 +161,7 @@ class SyntheticColorDetector:
     def device(self) -> str:
         return "cpu"
 
-    def detect(self, frame: DecodedVideoFrame) -> tuple[Detection, ...]:
+    def detect(self, frame: VideoFrame) -> tuple[Detection, ...]:
         try:
             import numpy as np
         except ImportError as error:  # pragma: no cover - covered by optional CI job.

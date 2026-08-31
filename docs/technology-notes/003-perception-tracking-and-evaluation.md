@@ -23,7 +23,7 @@ The runner scores every declared annotation frame, including frames skipped by t
 - Cost reports selected/decoded/dropped frames, detector p50/p95 wall latency, detector and pipeline FPS, real-time factor, device, and peak VRAM when the adapter can measure it.
 - The receipt also records source/annotation/artifact/config/lock hashes, code revision and dirty flag supplied by the runner, dependency versions, measurement method, and model runtime metadata.
 
-On the Windows/Python 3.12 development machine, the full-frame synthetic color baseline repeatedly produced AP50 `0.9604`, mAP50:95 `0.5203`, key recall `0.8857`, overall recall `0.9795`, and zero false positives. Detector p95 was roughly 10–12 ms and the pipeline real-time factor roughly 0.14–0.16. These numbers describe one 80-frame generated clip and cannot support an indoor-transfer or 24/7 claim.
+On the Windows/Python 3.12 development machine, the full-frame synthetic color baseline produced AP50 `0.9604`, mAP50:95 approximately `0.5931`, key recall `0.8857`, overall recall `0.9795`, and zero false positives after the transparent demo-only calibration recorded in note 004. Detector p95 was roughly 10–12 ms and the pipeline real-time factor roughly 0.14–0.16. These numbers describe one 80-frame generated clip and cannot support an indoor-transfer or 24/7 claim.
 
 The oracle ceiling is AP50/mAP50:95/key recall `1.0` with zero ID switches and fragmentations. The pixel baseline still shows three ID switches and two fragmentations under the fixed matching definition, so tracking is not yet a passed product capability.
 

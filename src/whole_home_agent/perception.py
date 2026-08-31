@@ -6,8 +6,15 @@ import math
 from dataclasses import dataclass
 from typing import Any, Protocol
 
-from .adapters.recorded_video import DecodedVideoFrame
 from .model import ProducerRef, SourcePosition
+
+
+@dataclass(frozen=True, slots=True)
+class VideoFrame:
+    """One decoded original-coordinate frame with an explicit media position."""
+
+    position: SourcePosition
+    rgb: object
 
 
 @dataclass(frozen=True, slots=True)
@@ -83,7 +90,7 @@ class Detector(Protocol):
     @property
     def device(self) -> str: ...
 
-    def detect(self, frame: DecodedVideoFrame) -> tuple[Detection, ...]: ...
+    def detect(self, frame: VideoFrame) -> tuple[Detection, ...]: ...
 
     def peak_vram_bytes(self) -> int | None: ...
 
