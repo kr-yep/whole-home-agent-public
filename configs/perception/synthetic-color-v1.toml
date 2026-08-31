@@ -1,0 +1,34 @@
+schema_version = 1
+scope = "D0_SYNTHETIC_ONLY"
+width = 640
+height = 360
+
+[[targets]]
+label = "bag"
+rgb = [45, 112, 170]
+tolerance = 34
+minimum_pixels = 300
+padding_left = 5
+padding_top = 5
+padding_right = 5
+padding_bottom = 5
+
+[[targets]]
+label = "key"
+rgb = [231, 176, 24]
+tolerance = 48
+minimum_pixels = 12
+padding_left = 10
+padding_top = 5
+padding_right = 1
+padding_bottom = 4
+
+[[targets]]
+label = "sofa"
+rgb = [95, 111, 132]
+tolerance = 20
+minimum_pixels = 1000
+padding_left = 5
+padding_top = 5
+padding_right = 5
+padding_bottom = 5

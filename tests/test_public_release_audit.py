@@ -95,6 +95,20 @@ class PublicReleaseAuditTests(unittest.TestCase):
         self.assertNotIn(personal_id, serialized)
         self.assertNotIn(mobile, serialized)
 
+    def test_lockfile_digests_do_not_trigger_structured_pii_false_positive(self):
+        lock_line = (
+            'url = "https://files.pythonhosted.org/packages/c8/e3/'
+            'd119f86a01f9331e8186175f24873b1d74a7ee9e2e4b4d68f9947dae5afd/'
+            'package.whl", hash = "sha256:'
+            '09ce8f56e81f19b9c378ae7bb109f83f6659fd8bc3cd14241a48e4af46e9ed49"\n'
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.write(root, "uv.lock", lock_line)
+            receipt = self.audit_root(root)
+
+        self.assertEqual(receipt["status"], "PASS")
+
     def test_media_outside_allowlist_or_without_manifest_fails(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

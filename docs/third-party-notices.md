@@ -24,3 +24,9 @@ These packages are installed only through the `video` optional extra and are not
 - [Pillow](https://python-pillow.github.io/) — HPND.
 
 The project-generated replay under `examples/media/generated` is separately marked `CC0-1.0` in its manifest and directory README.
+
+## Optional model-candidate dependency
+
+- [RF-DETR](https://pypi.org/project/rfdetr/1.9.4/) 1.9.4 — Apache-2.0 for the reviewed Nano through Large core package and weights. This project permits only Nano at its adapter boundary and does not include Plus, XL, 2XL, or model weights.
+
+RF-DETR is resolved only through the `rf-detr` optional extra. No third-party model weights are committed or distributed by this repository.

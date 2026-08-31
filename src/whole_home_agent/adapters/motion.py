@@ -55,6 +55,15 @@ class MotionPeriodicScheduler:
         self._previous_sample = None
         self._last_selected_index: int | None = None
 
+    def resolved_config(self) -> dict[str, object]:
+        return {
+            "anchor_interval_frames": self._config.anchor_interval_frames,
+            "min_gap_frames": self._config.min_gap_frames,
+            "motion_threshold": self._config.motion_threshold,
+            "sample_stride": self._config.sample_stride,
+            "scheduler": "motion-periodic/1",
+        }
+
     def evaluate(self, frame: DecodedVideoFrame) -> FrameSelection:
         try:
             import numpy as np

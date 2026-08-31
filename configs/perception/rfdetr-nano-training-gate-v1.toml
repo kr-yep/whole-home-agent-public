@@ -1,0 +1,17 @@
+schema_version = 1
+status = "CANDIDATE_NOT_RUN"
+package = "rfdetr"
+package_version = "1.9.4"
+model_variant = "nano"
+license_scope = "Apache-2.0-core-only"
+selection_split = "validation"
+test_tuning_allowed = false
+max_epochs = 20
+early_stopping_patience = 5
+early_stopping_min_delta = 0.001
+
+[adoption_gate]
+minimum_event_or_recall_gain_percentage_points = 5.0
+maximum_p95_latency_multiplier = 2.0
+maximum_quality_gap_percentage_points_for_efficiency_path = 1.0
+minimum_cost_reduction_percent_for_efficiency_path = 30.0

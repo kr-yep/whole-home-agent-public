@@ -150,6 +150,10 @@ ASSIGNED_SECRET_PATTERN = re.compile(
 )
 TAIWAN_ID_PATTERN = re.compile(r"(?<![A-Z0-9])[A-Z][12][0-9]{8}(?![A-Z0-9])", re.I)
 TAIWAN_MOBILE_PATTERN = re.compile(r"(?<![0-9])09[0-9]{2}[- ]?[0-9]{3}[- ]?[0-9]{3}(?![0-9])")
+HEX_DIGEST_PATTERN = re.compile(r"(?i)(?:sha256:)?\b[0-9a-f]{32,}\b")
+PYPI_HASH_PATH_PATTERN = re.compile(
+    r"(?i)https://files\.pythonhosted\.org/packages/[0-9a-f]{2}/[0-9a-f]{2}/[0-9a-f]+/"
+)
 PLACEHOLDER_VALUES = {
     "changeme",
     "dummy",
@@ -368,7 +372,12 @@ def _content_rule_ids(text: str) -> set[str]:
     violations: set[str] = set()
     if EMAIL_PATTERN.search(text):
         violations.add("email_or_pii")
-    if TAIWAN_ID_PATTERN.search(text) or TAIWAN_MOBILE_PATTERN.search(text):
+    # Lockfiles contain high-entropy digests and content-addressed URL segments
+    # that can coincidentally resemble a national ID or mobile number. Remove
+    # only those well-delimited machine identifiers before structured PII checks;
+    # email and credential scans still run against the original text.
+    pii_text = HEX_DIGEST_PATTERN.sub("", PYPI_HASH_PATH_PATTERN.sub("", text))
+    if TAIWAN_ID_PATTERN.search(pii_text) or TAIWAN_MOBILE_PATTERN.search(pii_text):
         violations.add("email_or_pii")
     if WINDOWS_HOME_PATTERN.search(text) or POSIX_HOME_PATTERN.search(text):
         violations.add("local_absolute_path")

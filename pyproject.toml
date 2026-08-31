@@ -17,6 +17,9 @@ video = [
   "numpy>=2.0,<3",
   "Pillow>=11,<13",
 ]
+rf-detr = [
+  "rfdetr==1.9.4",
+]
 
 [project.urls]
 Repository = "https://github.com/kr-yep/whole-home-agent-public"

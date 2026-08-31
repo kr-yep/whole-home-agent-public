@@ -68,8 +68,8 @@ jobs:
       - name: Synchronize locked video contract dependencies
         run: uv sync --frozen --extra video
 
-      - name: Run recorded-video contract tests
-        run: .venv/bin/python -m unittest discover -s tests -p "test_b1_video.py" -v
+      - name: Run prerecorded perception contract tests
+        run: .venv/bin/python -m unittest discover -s tests -p "test_b1_*.py" -v
 
       - name: Audit public release contents
         run: .venv/bin/python tools/audit_public_release.py
