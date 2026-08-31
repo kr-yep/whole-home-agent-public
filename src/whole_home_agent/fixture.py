@@ -182,6 +182,20 @@ def _parse_claim(value: Any, source_offset: int) -> ClaimCandidate:
     operation = _parse_operation(
         record["operation"], predicate=predicate, context=context
     )
+    epistemic_status = _require_enum(
+        record["epistemic_status"],
+        EpistemicStatus,
+        field=f"{context}.epistemic_status",
+    )
+    if epistemic_status is not EpistemicStatus.REPORTED:
+        raise FixtureError(
+            "B0 fixture schema v1 only accepts reported claims",
+            error_code=ErrorCode.INVALID_FIELD_VALUE,
+            details={
+                "field": f"{context}.epistemic_status",
+                "allowed": [EpistemicStatus.REPORTED.value],
+            },
+        )
     return ClaimCandidate(
         claim_id=_require_identifier(record["claim_id"], field=f"{context}.claim_id"),
         source_sequence=source_sequence,
@@ -193,11 +207,7 @@ def _parse_claim(value: Any, source_offset: int) -> ClaimCandidate:
         object_id=_require_identifier(
             record["object_id"], field=f"{context}.object_id"
         ),
-        epistemic_status=_require_enum(
-            record["epistemic_status"],
-            EpistemicStatus,
-            field=f"{context}.epistemic_status",
-        ),
+        epistemic_status=epistemic_status,
         source_offset=source_offset,
     )
 

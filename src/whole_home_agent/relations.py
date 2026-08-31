@@ -42,6 +42,7 @@ def reduce_relations(
                 source_claim_id=claim.claim_id,
                 source_sequence=claim.source_sequence,
                 source_offset=claim.source_offset,
+                epistemic_status=claim.epistemic_status,
             )
         else:
             active.pop(key, None)
@@ -84,6 +85,7 @@ def _resolve_location(projection: ProjectionState, subject_id: str) -> _Resoluti
             source_claim_id=relation.source_claim_id,
             source_sequence=relation.source_sequence,
             source_offset=relation.source_offset,
+            epistemic_status=relation.epistemic_status,
         )
 
     def walk(
@@ -252,7 +254,11 @@ def locate(session: ReplaySession, request: QueryRequest) -> AnswerTrace:
         candidates=(location_id,),
         epistemic_status=(
             "estimated"
-            if any(step.predicate is Predicate.INSIDE for step in path)
+            if any(
+                step.predicate is Predicate.INSIDE
+                or step.epistemic_status.value == "estimated"
+                for step in path
+            )
             else "reported"
         ),
         reason="location resolved from active reported relations",

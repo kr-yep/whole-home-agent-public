@@ -24,14 +24,28 @@ class Predicate(str, Enum):
 
 class EpistemicStatus(str, Enum):
     REPORTED = "reported"
+    ESTIMATED = "estimated"
 
 
 class UseClass(str, Enum):
     D0_SYNTHETIC = "D0_SYNTHETIC"
+    D0_PUBLIC = "D0_PUBLIC"
 
 
 class TimestampBasis(str, Enum):
     SYNTHETIC = "synthetic"
+    MEDIA_PTS = "media_pts"
+
+
+class SourceKind(str, Enum):
+    SEMANTIC_FIXTURE = "semantic_fixture"
+    RECORDED_VIDEO = "recorded_video"
+
+
+class RunStatus(str, Enum):
+    COMPLETE = "COMPLETE"
+    INCOMPLETE = "INCOMPLETE"
+    FAILED = "FAILED"
 
 
 class QueryStatus(str, Enum):
@@ -41,6 +55,84 @@ class QueryStatus(str, Enum):
     SCOPE_REQUIRED = "SCOPE_REQUIRED"
     OUT_OF_SCOPE = "OUT_OF_SCOPE"
     FRONTIER_MISMATCH = "FRONTIER_MISMATCH"
+
+
+@dataclass(frozen=True, slots=True)
+class SourceDescriptor:
+    """Immutable identity and use envelope for one replayable source."""
+
+    source_id: str
+    source_revision: str
+    source_kind: SourceKind
+    use_class: UseClass
+    timestamp_basis: TimestampBasis
+    content_hash: str
+    license_manifest_id: str
+    world_scope: str
+
+
+@dataclass(frozen=True, slots=True)
+class SourcePosition:
+    """Position in a source without relying on filesystem timestamps."""
+
+    source_sequence: int
+    source_offset: int
+    timestamp_basis: TimestampBasis
+    frame_index: int | None = None
+    pts: int | None = None
+    time_base_numerator: int | None = None
+    time_base_denominator: int | None = None
+
+    def identity_payload(self) -> tuple[Any, ...]:
+        return (
+            self.source_sequence,
+            self.source_offset,
+            self.timestamp_basis.value,
+            self.frame_index,
+            self.pts,
+            self.time_base_numerator,
+            self.time_base_denominator,
+        )
+
+
+@dataclass(frozen=True, slots=True)
+class ProducerRef:
+    """Pinned producer identity for a model, rule, or fixture translator."""
+
+    component: str
+    version: str
+    artifact_hash: str
+    config_hash: str
+
+    def identity_payload(self) -> tuple[str, ...]:
+        return (
+            self.component,
+            self.version,
+            self.artifact_hash,
+            self.config_hash,
+        )
+
+
+@dataclass(frozen=True, slots=True)
+class EvidenceRef:
+    """Minimum evidence pointer; raw media is deliberately excluded."""
+
+    evidence_id: str
+    source_id: str
+    start: SourcePosition
+    end: SourcePosition
+    confidence: float | None = None
+    quality: str = "unknown"
+
+    def identity_payload(self) -> tuple[Any, ...]:
+        return (
+            self.evidence_id,
+            self.source_id,
+            self.start.identity_payload(),
+            self.end.identity_payload(),
+            self.confidence,
+            self.quality,
+        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -55,6 +147,9 @@ class ClaimCandidate:
     object_id: str
     epistemic_status: EpistemicStatus
     source_offset: int
+    source_position: SourcePosition | None = None
+    producer_ref: ProducerRef | None = None
+    evidence_refs: tuple[EvidenceRef, ...] = ()
 
     def identity_payload(self) -> tuple[Any, ...]:
         """Canonical identity payload; delivery offset is deliberately excluded."""
@@ -99,6 +194,9 @@ class ClaimCommit:
     predicate: Predicate
     object_id: str
     epistemic_status: EpistemicStatus
+    source_position: SourcePosition | None = None
+    producer_ref: ProducerRef | None = None
+    evidence_refs: tuple[EvidenceRef, ...] = ()
 
     def identity_payload(self) -> tuple[Any, ...]:
         return (
@@ -153,6 +251,7 @@ class ProjectionRelation:
     source_claim_id: str
     source_sequence: int
     source_offset: int
+    epistemic_status: EpistemicStatus = EpistemicStatus.REPORTED
 
     def semantic_dict(self) -> dict[str, Any]:
         return {
@@ -179,6 +278,7 @@ class RelationStep:
     source_claim_id: str
     source_sequence: int
     source_offset: int
+    epistemic_status: EpistemicStatus = EpistemicStatus.REPORTED
 
 
 @dataclass(frozen=True, slots=True)
@@ -227,6 +327,7 @@ class ReplaySession:
     projection: ProjectionState
     semantic_output: str
     canonical_hash: str
+    source_descriptor: SourceDescriptor | None = None
 
     @property
     def accepted_claims(self) -> tuple[ClaimCommit, ...]:
@@ -246,3 +347,92 @@ class ReplaySession:
         from .relations import locate
 
         return locate(self, request)
+
+    @property
+    def source_id(self) -> str:
+        return (
+            self.source_descriptor.source_id
+            if self.source_descriptor is not None
+            else self.fixture_id
+        )
+
+    @property
+    def source_revision(self) -> str:
+        return (
+            self.source_descriptor.source_revision
+            if self.source_descriptor is not None
+            else self.fixture_revision
+        )
+
+
+@dataclass(frozen=True, slots=True)
+class StageTiming:
+    stage: str
+    elapsed_ms: float
+
+
+@dataclass(frozen=True, slots=True)
+class RunReceipt:
+    """Non-authoritative execution evidence for one bounded replay attempt."""
+
+    replay_run_id: str
+    status: RunStatus
+    source_id: str
+    source_revision: str
+    source_content_hash: str
+    candidate_count: int
+    accepted_claim_count: int
+    rejected_claim_count: int
+    duplicate_claim_count: int
+    validator_version: str
+    projector_version: str
+    producer_refs: tuple[ProducerRef, ...]
+    stage_timings: tuple[StageTiming, ...]
+    projection_frontier: int | None = None
+    semantic_output_hash: str | None = None
+    failure_code: str | None = None
+    failure_message: str | None = None
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "accepted_claim_count": self.accepted_claim_count,
+            "candidate_count": self.candidate_count,
+            "duplicate_claim_count": self.duplicate_claim_count,
+            "failure_code": self.failure_code,
+            "failure_message": self.failure_message,
+            "producer_refs": [
+                {
+                    "artifact_hash": item.artifact_hash,
+                    "component": item.component,
+                    "config_hash": item.config_hash,
+                    "version": item.version,
+                }
+                for item in self.producer_refs
+            ],
+            "projector_version": self.projector_version,
+            "projection_frontier": self.projection_frontier,
+            "rejected_claim_count": self.rejected_claim_count,
+            "replay_run_id": self.replay_run_id,
+            "source_content_hash": self.source_content_hash,
+            "source_id": self.source_id,
+            "source_revision": self.source_revision,
+            "stage_timings_ms": {
+                item.stage: item.elapsed_ms for item in self.stage_timings
+            },
+            "status": self.status.value,
+            "semantic_output_hash": self.semantic_output_hash,
+            "validator_version": self.validator_version,
+        }
+
+
+@dataclass(frozen=True, slots=True)
+class ReplayRunResult:
+    """A completed session or a typed failed attempt, never partial state."""
+
+    status: RunStatus
+    receipt: RunReceipt
+    session: ReplaySession | None
+
+    @property
+    def complete(self) -> bool:
+        return self.status is RunStatus.COMPLETE and self.session is not None

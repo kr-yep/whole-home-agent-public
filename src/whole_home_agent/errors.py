@@ -19,6 +19,8 @@ class ErrorCode(str, Enum):
     SOURCE_ORDER = "source_order"
     CLAIM_IDENTITY_CONFLICT = "claim_identity_conflict"
     CONTAINMENT_CYCLE = "containment_cycle"
+    INVALID_SOURCE = "invalid_source"
+    SOURCE_FAILURE = "source_failure"
 
 
 class B0Error(Exception):
@@ -65,3 +67,9 @@ class CycleError(B0Error):
     """A committed containment relation would create a cycle."""
 
     default_error_code = ErrorCode.CONTAINMENT_CYCLE
+
+
+class SourceError(B0Error):
+    """A bounded candidate source failed or violated its declared contract."""
+
+    default_error_code = ErrorCode.SOURCE_FAILURE

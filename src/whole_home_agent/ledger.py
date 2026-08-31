@@ -80,6 +80,9 @@ class ClaimCommitter:
             predicate=candidate.predicate,
             object_id=candidate.object_id,
             epistemic_status=candidate.epistemic_status,
+            source_position=candidate.source_position,
+            producer_ref=candidate.producer_ref,
+            evidence_refs=candidate.evidence_refs,
         )
         self._accepted.append(commit)
         self._by_identity[commit.claim_id] = commit
@@ -120,7 +123,13 @@ class ClaimCommitter:
 
 
 def build_ledger(fixture: ReplayFixture) -> SessionLedger:
+    return build_ledger_from_candidates(fixture.claims)
+
+
+def build_ledger_from_candidates(
+    candidates: tuple[ClaimCandidate, ...] | list[ClaimCandidate],
+) -> SessionLedger:
     committer = ClaimCommitter()
-    for candidate in fixture.claims:
+    for candidate in candidates:
         committer.submit(candidate)
     return committer.snapshot()
