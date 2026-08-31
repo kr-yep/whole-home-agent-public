@@ -60,7 +60,8 @@ This file is the live checkpoint for the clean public repository. It records cur
 - `uv build` produced a source archive and universal wheel. A new Python 3.12 environment installed `whole_home_agent-0.1.0-py3-none-any.whl[demo]`, then ran `demo-recorded` outside the checkout with a `COMPLETE` receipt, two accepted estimated claims, and `FOUND sofa` under `source:b1-key-bag-sofa@2`.
 - GitHub verified `kr-yep/whole-home-agent-public` as public with `main` as its default branch. Seed commit `21d057569073e7f2e16631780a8ab1150c2920f9` contains the clean release history.
 - GitHub Actions run [32803963091](https://github.com/kr-yep/whole-home-agent-public/actions/runs/32803963091) completed successfully for the seed commit across configured Python 3.11–3.14 jobs.
-- M2 through the first M6 push had green B0 jobs but failed the Linux video/demo jobs because Windows-generated annotation bytes used CRLF before Git normalized them to LF, invalidating the manifest hash in CI. Run [33447377312](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33447377312) exposed the same failure after the M6 push. The generator now emits canonical LF, and a regression test checks both generated text artifacts before public CI is re-verified.
+- M2 through the first M6 push had green B0 jobs but failed the Linux video/demo jobs because Windows-generated annotation bytes used CRLF before Git normalized them to LF, invalidating the manifest hash in CI. Run [33447377312](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33447377312) exposed the same failure after the M6 push. The generator now emits canonical LF, and a regression test checks both generated text artifacts.
+- GitHub Actions run [33447921546](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33447921546) completed successfully for canonical-LF commit `4117e933b4b6076a5cda9130f61ea09ec998934b`: Python 3.11–3.14 B0 jobs, the prerecorded-video contract job, and the closed-demo job all passed.
 - Archify v2.16.0 produced the proposed system and data-flow diagrams. Both passed 9/9 showcase checks with zero composition errors/warnings, desktop containment at 1440×900 through 2048×1320, and human inspection of light/dark captures. Exact source/artifact hashes and evidence limits are recorded in `docs/b0-b1-architecture-plan.md`.
 - Passing tests supports only the tested code, fixtures, interpreter, and environment. It does not support CV accuracy, household transfer, real-time performance, privacy compliance, production readiness, or physical truth.
 
@@ -73,7 +74,7 @@ This file is the live checkpoint for the clean public repository. It records cur
 | `PUB-DIR-003` | Start from a minimal B0 baseline; separate data, control, action, authority, and physical outcome | Active |
 | `PUB-DIR-004` | Use MIT for original public repository code/docs; review third-party artifacts separately | Active |
 | `PUB-DIR-005` | Keep B0 as the only claim-commit/query core; make prerecorded perception a replaceable candidate-producing adapter | Implemented and locally verified on one project-generated synthetic replay; no real indoor transfer claim |
-| `PUB-DIR-006` | Deliver a reproducible public demo, installable package, implemented-code diagrams, and release audit without widening sensing or action scope | Implemented and locally verified; public CI re-verification pending the canonical-LF fix |
+| `PUB-DIR-006` | Deliver a reproducible public demo, installable package, implemented-code diagrams, and release audit without widening sensing or action scope | Implemented, locally verified, and verified by public CI within the recorded envelope |
 
 ## Open gates and blockers
 
