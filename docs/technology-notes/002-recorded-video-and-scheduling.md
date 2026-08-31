@@ -22,7 +22,7 @@ The closed video manifest binds:
 
 Only manifests immediately below `examples/media/generated` are accepted. URLs, absolute paths, parent traversal, unknown fields, unresolved licenses, hash mismatches, and non-D0 source envelopes fail before decoding.
 
-The revision-2 MP4 is 18,695 bytes and has SHA-256 `b9cc79476d77f8d45acd1803c924de73914ffc4790f4da271f77cc8d4742eb43`. It uses H.264 with `yuv420p` rather than revision 1's MPEG-4 Part 2 encoding because the latter failed playback in the tested Chromium browser. Two consecutive generator runs produced the same revision-2 hash on the tested Windows/Python/PyAV environment. Revision 1 remains recoverable in Git history; its bytes and earlier measurements were not relabeled as revision 2. This is integrity and playback evidence for the named bytes, not proof that the depicted event is real.
+The revision-2 MP4 is 18,695 bytes and has SHA-256 `b9cc79476d77f8d45acd1803c924de73914ffc4790f4da271f77cc8d4742eb43`. It uses H.264 with `yuv420p` rather than revision 1's MPEG-4 Part 2 encoding because the latter failed playback in the tested Chromium browser. Two consecutive generator runs produced the same revision-2 hash on the tested Windows/Python/PyAV environment. The generator writes annotation and manifest text with canonical LF bytes so Git checkout normalization cannot invalidate their hashes; a regression test enforces this cross-platform invariant. Revision 1 remains recoverable in Git history; its bytes and earlier measurements were not relabeled as revision 2. This is integrity and playback evidence for the named bytes, not proof that the depicted event is real.
 
 ## PyAV and PTS principle
 

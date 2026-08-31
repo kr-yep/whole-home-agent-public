@@ -6,6 +6,7 @@ This checklist applies to the bounded offline B0/B1 demo. Passing it does not en
 
 - [ ] `PROJECT_STATE.md` still records `OPERATE DISABLED` and the intended source revision.
 - [ ] The frozen B0 semantic fixture hash is unchanged: `226d30a5b826720d607d0b9a29bf3dfb9f5429eeedbbd70ffd1ff23c21233c8f`.
+- [ ] Generated annotation/manifest files contain canonical LF bytes and their staged Git blobs match the hashes named by the manifest.
 - [ ] `uv lock --check` succeeds and no dependency uses an unpinned mutable model alias.
 - [ ] The complete local suite passes with bytecode writes disabled.
 - [ ] The public-release audit reports zero findings before commit and against the staged index.

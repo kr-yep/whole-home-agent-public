@@ -105,6 +105,15 @@ class RecordedVideoContractTests(unittest.TestCase):
         self.assertEqual(manifest.events[0]["frame_index"], 35)
         self.assertEqual(manifest.events[1]["frame_index"], 65)
 
+    def test_generated_text_artifacts_use_canonical_lf_bytes(self):
+        for path in (
+            MEDIA_ROOT / "key_bag_sofa_v2.annotations.json",
+            MANIFEST_PATH,
+        ):
+            data = path.read_bytes()
+            self.assertNotIn(b"\r\n", data)
+            self.assertTrue(data.endswith(b"\n"))
+
 
 if __name__ == "__main__":
     unittest.main()

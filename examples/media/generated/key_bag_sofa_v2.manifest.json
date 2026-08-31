@@ -1,7 +1,7 @@
 {
   "annotations": {
     "path": "key_bag_sofa_v2.annotations.json",
-    "sha256": "6d67ed1fc8a9ec34fc9d21fd6c1b7d71824b726831bcfd5e0013b95df807b11f"
+    "sha256": "d96035eda0bb89e4fda3fceda56ab8e7cf39ec4625eb005629028879c0d2218a"
   },
   "entities": [
     {
@@ -48,7 +48,7 @@
   "path": "key_bag_sofa_v2.mp4",
   "provenance": {
     "generator": "tools/generate_synthetic_replay.py",
-    "generator_sha256": "5521012963d3082dc883ef70c4b19c5f26db6cae61df3c3b9b2ef49d866190ee",
+    "generator_sha256": "f99e2141bc34beba3b48b845c1ed0964ea7dfbf11b3e8d54a8f318f8db41d8e4",
     "kind": "project_generated_synthetic"
   },
   "schema_version": 1,

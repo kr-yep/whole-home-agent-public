@@ -113,6 +113,7 @@ def generate(output_dir: Path) -> None:
     annotation_path.write_text(
         json.dumps(annotation_document, ensure_ascii=False, sort_keys=True, indent=2) + "\n",
         encoding="utf-8",
+        newline="\n",
     )
     script_path = Path(__file__).resolve()
     manifest = {
@@ -166,6 +167,7 @@ def generate(output_dir: Path) -> None:
     manifest_path.write_text(
         json.dumps(manifest, ensure_ascii=False, sort_keys=True, indent=2) + "\n",
         encoding="utf-8",
+        newline="\n",
     )
 
 
