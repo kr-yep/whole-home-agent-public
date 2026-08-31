@@ -75,6 +75,13 @@ evidence/
 *.mp3
 *.m4a
 
+# Tiny project-generated D0 replay media may be versioned only with a validated
+# manifest under this exact public allowlist. The release auditor enforces it.
+!examples/media/generated/*.mp4
+!examples/media/generated/*.mkv
+!examples/media/generated/*.manifest.json
+!examples/media/generated/*.annotations.json
+
 # Runtime outputs and local diagnostics
 var/
 runtime/

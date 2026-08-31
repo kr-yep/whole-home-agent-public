@@ -1,0 +1,63 @@
+{
+  "annotations": {
+    "path": "key_bag_sofa_v1.annotations.json",
+    "sha256": "6d67ed1fc8a9ec34fc9d21fd6c1b7d71824b726831bcfd5e0013b95df807b11f"
+  },
+  "entities": [
+    {
+      "entity_id": "key",
+      "instance_count": 1,
+      "label": "key"
+    },
+    {
+      "entity_id": "bag",
+      "instance_count": 1,
+      "label": "bag"
+    },
+    {
+      "entity_id": "sofa",
+      "instance_count": 1,
+      "label": "sofa"
+    }
+  ],
+  "events": [
+    {
+      "event_id": "key-inside-bag",
+      "frame_index": 35,
+      "object_id": "bag",
+      "operation": "assert",
+      "predicate": "inside",
+      "subject_id": "key"
+    },
+    {
+      "event_id": "bag-at-sofa",
+      "frame_index": 65,
+      "object_id": "sofa",
+      "operation": "assert",
+      "predicate": "at_zone",
+      "subject_id": "bag"
+    }
+  ],
+  "fps": {
+    "denominator": 1,
+    "numerator": 10
+  },
+  "frame_count": 80,
+  "height": 360,
+  "license": "CC0-1.0",
+  "path": "key_bag_sofa_v1.mp4",
+  "provenance": {
+    "generator": "tools/generate_synthetic_replay.py",
+    "generator_sha256": "72b5f80c6066608571130ec501ed96513045c600db50032c429a065fc195227d",
+    "kind": "project_generated_synthetic"
+  },
+  "schema_version": 1,
+  "sha256": "f636b3e1e3b606f7661aadfdfbd29d14b967c2e70c0555b7f98c77281d36078c",
+  "source_id": "b1-key-bag-sofa",
+  "source_kind": "recorded_video",
+  "source_revision": "1",
+  "split": "demo",
+  "timestamp_basis": "media_pts",
+  "use_class": "D0_SYNTHETIC",
+  "width": 640
+}
