@@ -1,0 +1,189 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "全屋 Agent：B0 已實作基線與 B1 離線感知邊界",
+    "subtitle": "單程序模組化單體；資料、控制、權威、查詢與實體結果明確分離",
+    "output": "docs/b0-b1-system.architecture.html",
+    "animation": "none",
+    "visual_preset": "blueprint",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/kr-yep/whole-home-agent-public",
+      "revision": "72d13dc5a0f6dd4564f26af4058f9f4fa8048151"
+    },
+    "viewBox": [1380, 720],
+    "views": [
+      {
+        "id": "main-path",
+        "label": "主資料路徑",
+        "focus": ["recorded_source", "perception_adapter", "claim_commit", "session_ledger", "relation_projection", "state_query", "agent_ui"],
+        "note": "B1 只提出候選；所有狀態改變都必須通過既有 B0 的確定性提交邊界。"
+      },
+      {
+        "id": "authority-boundary",
+        "label": "權威與信任邊界",
+        "focus": ["governance_config", "claim_commit", "session_ledger", "state_query"],
+        "note": "模型輸出是資料，不是權威；AcceptedClaim 也只代表通過規則，不代表物理真相。"
+      },
+      {
+        "id": "disabled-actions",
+        "label": "行動面停用",
+        "focus": ["agent_ui", "disabled_action", "physical_outcome"],
+        "note": "B0/B1 沒有 action executor；外部或實體結果不在目前能力圖內。"
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "recorded_source",
+      "type": "external",
+      "label": "合法可用的預錄 D0",
+      "sublabel": "B1 輸入；非即時攝影機",
+      "tag": "PROPOSED",
+      "pos": [40, 250],
+      "size": [170, 70]
+    },
+    {
+      "id": "perception_adapter",
+      "type": "backend",
+      "label": "Perception Adapter",
+      "sublabel": "motion + YOLO + tracker + events",
+      "tag": "B1 PROPOSED",
+      "pos": [270, 250],
+      "size": [190, 70]
+    },
+    {
+      "id": "claim_commit",
+      "type": "security",
+      "label": "Claim Commit Boundary",
+      "sublabel": "validate · reject · idempotency",
+      "tag": "B0 IMPLEMENTED",
+      "sources": [
+        { "path": "src/whole_home_agent/ledger.py", "label": "ClaimCommitter" }
+      ],
+      "pos": [530, 250],
+      "size": [200, 70]
+    },
+    {
+      "id": "session_ledger",
+      "type": "database",
+      "label": "Session Claim Ledger",
+      "sublabel": "記錄 accepted claims；非世界真相",
+      "tag": "volatile / replay",
+      "sources": [
+        { "path": "src/whole_home_agent/model.py", "label": "SessionLedger" }
+      ],
+      "pos": [800, 250],
+      "size": [190, 70]
+    },
+    {
+      "id": "relation_projection",
+      "type": "backend",
+      "label": "Relation Projection",
+      "sublabel": "可重建的 inside / at_zone 狀態",
+      "tag": "B0 IMPLEMENTED",
+      "sources": [
+        { "path": "src/whole_home_agent/relations.py", "label": "pure projector" }
+      ],
+      "pos": [1060, 250],
+      "size": [190, 70]
+    },
+    {
+      "id": "state_query",
+      "type": "security",
+      "label": "Scoped StateQuery",
+      "sublabel": "fixture · run · as-of · trace",
+      "tag": "唯一讀取邊界",
+      "sources": [
+        { "path": "src/whole_home_agent/relations.py", "label": "resolve_location" }
+      ],
+      "pos": [1060, 430],
+      "size": [190, 70]
+    },
+    {
+      "id": "agent_ui",
+      "type": "frontend",
+      "label": "Agent / UI",
+      "sublabel": "只接收 AnswerTrace",
+      "tag": "NO GENERIC TOOLS",
+      "pos": [800, 430],
+      "size": [190, 70]
+    },
+    {
+      "id": "governance_config",
+      "type": "security",
+      "label": "Governance + Config",
+      "sublabel": "manifest · hashes · zones · policy",
+      "tag": "CONTROL PLANE",
+      "pos": [400, 70],
+      "size": [210, 72]
+    },
+    {
+      "id": "disabled_action",
+      "type": "security",
+      "label": "Action Plane",
+      "sublabel": "executor 不存在；OPERATE disabled",
+      "tag": "DENY",
+      "pos": [800, 570],
+      "size": [190, 72]
+    },
+    {
+      "id": "physical_outcome",
+      "type": "external",
+      "label": "外部／實體結果",
+      "sublabel": "目前不可達、不可宣稱",
+      "tag": "OUT OF SCOPE",
+      "pos": [1060, 570],
+      "size": [190, 72]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "B1 離線感知提案：不可信輸入與模型報告",
+      "wraps": ["recorded_source", "perception_adapter"],
+      "pad": 18
+    },
+    {
+      "kind": "security-group",
+      "label": "B0 確定性核心：唯一狀態提交與查詢邊界",
+      "wraps": ["claim_commit", "session_ledger", "relation_projection", "state_query"],
+      "pad": 22
+    },
+    {
+      "kind": "security-group",
+      "label": "停用的行動面",
+      "wraps": ["disabled_action", "physical_outcome"],
+      "pad": 18
+    }
+  ],
+  "connections": [
+    { "from": "recorded_source", "to": "perception_adapter", "label": "transient frames", "variant": "dashed", "labelAt": [240, 334] },
+    { "from": "perception_adapter", "to": "claim_commit", "label": "ClaimCandidate", "variant": "emphasis", "labelAt": [495, 334] },
+    { "from": "claim_commit", "to": "session_ledger", "label": "AcceptedClaim", "variant": "security", "labelAt": [765, 334] },
+    { "from": "session_ledger", "to": "relation_projection", "label": "accepted sequence", "variant": "emphasis", "labelAt": [1025, 334] },
+    { "from": "relation_projection", "to": "state_query", "label": "derived estimate", "variant": "dashed", "labelAt": [1155, 370] },
+    { "from": "state_query", "to": "agent_ui", "label": "scoped AnswerTrace", "variant": "security", "labelAt": [1025, 514] },
+    {
+      "from": "governance_config",
+      "to": "perception_adapter",
+      "label": "validated config",
+      "variant": "security",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "via": [[505, 180], [365, 180]],
+      "labelAt": [425, 168]
+    },
+    {
+      "from": "governance_config",
+      "to": "claim_commit",
+      "label": "rules + versions",
+      "variant": "security",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "via": [[505, 210], [630, 210]],
+      "labelAt": [570, 198]
+    }
+  ]
+}

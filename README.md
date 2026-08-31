@@ -40,7 +40,7 @@ frozen D0 fixture
 
 Data, control, action, authority, and physical outcome are intentionally separate. An accepted claim means only that a source report passed the validator for this replay. It does not establish that a real-world event happened. A future command acknowledgement would likewise not prove a physical result.
 
-See [minimal viable architecture](docs/minimal-viable-architecture.md), [architecture roadmap](docs/architecture.md), and the [ADRs](docs/adr/) for the boundaries and open decisions.
+See the [B0 → B1 minimal architecture proposal](docs/b0-b1-architecture-plan.md), [interactive system map](docs/b0-b1-system.architecture.html), and [interactive perception data flow](docs/b0-b1-perception.dataflow.html) for the current plan. The HTML files are self-contained and can be downloaded and opened locally. The earlier [minimal viable architecture](docs/minimal-viable-architecture.md), [architecture roadmap](docs/architecture.md), and [ADRs](docs/adr/) remain available for context; none of the proposed B1 material is adopted or implemented merely because it is documented.
 
 ## Quick start
 
@@ -105,6 +105,8 @@ More details are in [CONTRIBUTING.md](CONTRIBUTING.md). Repository access or a m
 - Consider live sensing only after roles, consent, retention, enforcement, and independent activation are adopted and verified.
 
 Memory graphs, a “Memory Core,” multi-agent orchestration, and device actions are candidates only if evidence shows they are needed. They are not architectural prerequisites.
+
+The current B1 proposal keeps YOLO, tracking, and event extraction inside a replaceable offline adapter. That adapter may emit only the existing canonical `ClaimCandidate`; it cannot commit claims or bypass the B0 semantic core.
 
 ## Safety and data policy
 

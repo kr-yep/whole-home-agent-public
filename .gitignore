@@ -83,6 +83,7 @@ outputs/
 artifacts/
 run-receipts/
 *.log
+*.visual-check.*
 .tmp/
 tmp/
 
