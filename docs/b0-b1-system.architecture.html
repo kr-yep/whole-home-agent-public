@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark" data-preset="blueprint">
+<html lang="en" data-theme="dark" data-preset="classic">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="generator" content="archify 2.16.0">
-  <title>全屋 Agent：B0 已實作基線與 B1 離線感知邊界 Diagram</title>
+  <title>Whole Home Agent — Implemented Offline B0→B1 Architecture Diagram</title>
   <script>
     // Resolve the theme before first paint so light-preference users don't
     // see a dark flash. The toolbar script below re-applies with UI state.
@@ -4955,13 +4955,12 @@
            data-preset-badge-blueprint="BLUEPRINT / REV 01"
            data-preset-badge-editorial="EDITORIAL / FIELD NOTE">
         <div class="pulse-dot"></div>
-        <h1>全屋 Agent：B0 已實作基線與 B1 離線感知邊界</h1>
+        <h1>Whole Home Agent — Implemented Offline B0→B1 Architecture</h1>
       </div>
-      <p class="subtitle">單程序模組化單體；資料、控制、權威、查詢與實體結果明確分離</p>
     </div>
 
-    <script id="archify-guided-views-data" type="application/json">[{"id":"main-path","label":"主資料路徑","focus":["recorded_source","perception_adapter","claim_commit","session_ledger","relation_projection","state_query","agent_ui"],"note":"B1 只提出候選；所有狀態改變都必須通過既有 B0 的確定性提交邊界。"},{"id":"authority-boundary","label":"權威與信任邊界","focus":["governance_config","claim_commit","session_ledger","state_query"],"note":"模型輸出是資料，不是權威；AcceptedClaim 也只代表通過規則，不代表物理真相。"},{"id":"disabled-actions","label":"行動面停用","focus":["agent_ui","disabled_action","physical_outcome"],"note":"B0/B1 沒有 action executor；外部或實體結果不在目前能力圖內。"}]</script>
-    <script id="archify-source-evidence-data" type="application/json">{"schemaVersion":1,"verified":true,"repository":{"url":"https://github.com/kr-yep/whole-home-agent-public","revision":"72d13dc5a0f6dd4564f26af4058f9f4fa8048151","shortRevision":"72d13dc"},"referenceCount":4,"nodes":{"claim_commit":[{"path":"src/whole_home_agent/ledger.py","label":"ClaimCommitter","href":"https://github.com/kr-yep/whole-home-agent-public/blob/72d13dc5a0f6dd4564f26af4058f9f4fa8048151/src/whole_home_agent/ledger.py"}],"session_ledger":[{"path":"src/whole_home_agent/model.py","label":"SessionLedger","href":"https://github.com/kr-yep/whole-home-agent-public/blob/72d13dc5a0f6dd4564f26af4058f9f4fa8048151/src/whole_home_agent/model.py"}],"relation_projection":[{"path":"src/whole_home_agent/relations.py","label":"pure projector","href":"https://github.com/kr-yep/whole-home-agent-public/blob/72d13dc5a0f6dd4564f26af4058f9f4fa8048151/src/whole_home_agent/relations.py"}],"state_query":[{"path":"src/whole_home_agent/relations.py","label":"resolve_location","href":"https://github.com/kr-yep/whole-home-agent-public/blob/72d13dc5a0f6dd4564f26af4058f9f4fa8048151/src/whole_home_agent/relations.py"}]}}</script>
+    <script id="archify-guided-views-data" type="application/json">[{"id":"offline-replay","label":"Offline replay path","focus":["d0_bundle","recorded_source","perception","relation_pipeline","claim_committer","session_state","state_query","presentation"],"note":"Follow the only implemented B1 path from a fixed generated clip to a scoped, traceable answer."},{"id":"semantic-core","label":"B0 semantic core","focus":["claim_committer","session_state","state_query"],"note":"Every accepted mutation still crosses the deterministic B0 commit boundary."},{"id":"authority-boundary","label":"Authority and outcome","focus":["policy_control","operate_denial","physical_home"],"note":"Repository policy denies live/private sensing and exposes no action or physical-effect path."}]</script>
+    <script id="archify-source-evidence-data" type="application/json">{"schemaVersion":1,"verified":true,"repository":{"url":"https://github.com/kr-yep/whole-home-agent-public","revision":"5b9a72663dbcc7a8c519d928e6581ecbbbf1f53f","shortRevision":"5b9a726"},"referenceCount":17,"nodes":{"d0_bundle":[{"path":"examples/media/generated/key_bag_sofa_v1.manifest.json","href":"https://github.com/kr-yep/whole-home-agent-public/blob/5b9a72663dbcc7a8c519d928e6581ecbbbf1f53f/examples/media/generated/key_bag_sofa_v1.manifest.json"}],"recorded_source":[{"path":"src/whole_home_agent/adapters/recorded_video.py","href":"https://github.com/kr-yep/whole-home-agent-public/blob/5b9a72663dbcc7a8c519d928e6581ecbbbf1f53f/src/whole_home_agent/adapters/recorded_video.py"},{"path":"src/whole_home_agent/adapters/motion.py","href":"https://github.com/kr-yep/whole-home-agent-public/blob/5b9a72663dbcc7a8c519d928e6581ecbbbf1f53f/src/whole_home_agent/adapters/motion.py"}],"perception":[{"path":"src/whole_home_agent/adapters/synthetic_color.py","href":"https://github.com/kr-yep/whole-home-agent-public/blob/5b9a72663dbcc7a8c519d928e6581ecbbbf1f53f/src/whole_home_agent/adapters/synthetic_color.py"},{"path":"src/whole_home_agent/adapters/rfdetr.py","href":"https://github.com/kr-yep/whole-home-agent-public/blob/5b9a72663dbcc7a8c519d928e6581ecbbbf1f53f/src/whole_home_agent/adapters/rfdetr.py"}],"relation_pipeline":[{"path":"src/whole_home_agent/adapters/tracking.py","href":"https://github.com/kr-yep/whole-home-agent-public/blob/5b9a72663dbcc7a8c519d928e6581ecbbbf1f53f/src/whole_home_agent/adapters/tracking.py"},{"path":"src/whole_home_agent/relation_inference.py","href":"https://github.com/kr-yep/whole-home-agent-public/blob/5b9a72663dbcc7a8c519d928e6581ecbbbf1f53f/src/whole_home_agent/relation_inference.py"},{"path":"src/whole_home_agent/adapters/recorded_perception_source.py","href":"https://github.com/kr-yep/whole-home-agent-public/blob/5b9a72663dbcc7a8c519d928e6581ecbbbf1f53f/src/whole_home_agent/adapters/recorded_perception_source.py"}],"claim_committer":[{"path":"src/whole_home_agent/ledger.py","href":"https://github.com/kr-yep/whole-home-agent-public/blob/5b9a72663dbcc7a8c519d928e6581ecbbbf1f53f/src/whole_home_agent/ledger.py"}],"session_state":[{"path":"src/whole_home_agent/ledger.py","href":"https://github.com/kr-yep/whole-home-agent-public/blob/5b9a72663dbcc7a8c519d928e6581ecbbbf1f53f/src/whole_home_agent/ledger.py"},{"path":"src/whole_home_agent/relations.py","href":"https://github.com/kr-yep/whole-home-agent-public/blob/5b9a72663dbcc7a8c519d928e6581ecbbbf1f53f/src/whole_home_agent/relations.py"}],"state_query":[{"path":"src/whole_home_agent/relations.py","href":"https://github.com/kr-yep/whole-home-agent-public/blob/5b9a72663dbcc7a8c519d928e6581ecbbbf1f53f/src/whole_home_agent/relations.py"},{"path":"src/whole_home_agent/orchestrator.py","href":"https://github.com/kr-yep/whole-home-agent-public/blob/5b9a72663dbcc7a8c519d928e6581ecbbbf1f53f/src/whole_home_agent/orchestrator.py"}],"presentation":[{"path":"src/whole_home_agent/public_demo.py","href":"https://github.com/kr-yep/whole-home-agent-public/blob/5b9a72663dbcc7a8c519d928e6581ecbbbf1f53f/src/whole_home_agent/public_demo.py"},{"path":"src/whole_home_agent/streamlit_app.py","href":"https://github.com/kr-yep/whole-home-agent-public/blob/5b9a72663dbcc7a8c519d928e6581ecbbbf1f53f/src/whole_home_agent/streamlit_app.py"}],"policy_control":[{"path":"AGENTS.md","href":"https://github.com/kr-yep/whole-home-agent-public/blob/5b9a72663dbcc7a8c519d928e6581ecbbbf1f53f/AGENTS.md"},{"path":"ACTION_POLICY.md","href":"https://github.com/kr-yep/whole-home-agent-public/blob/5b9a72663dbcc7a8c519d928e6581ecbbbf1f53f/ACTION_POLICY.md"}]}}</script>
     <script id="archify-i18n-data" type="application/json">{"locale":"en","messages":{"viewer.kind.frontend":"Frontend","viewer.kind.backend":"Backend","viewer.kind.database":"Database","viewer.kind.cloud":"Cloud","viewer.kind.security":"Security","viewer.kind.messagebus":"Message bus","viewer.kind.external":"External","viewer.kind.neutral":"Neutral","viewer.kind.node":"Node","viewer.kind.start":"Start","viewer.kind.active":"Active","viewer.kind.waiting":"Waiting","viewer.kind.decision":"Decision","viewer.kind.success":"Success","viewer.kind.failure":"Failure","viewer.toolbar.actions":"Diagram actions","viewer.theme.toggle.title":"Toggle theme (T)","viewer.theme.toggle":"Toggle color theme","viewer.theme.dark":"Dark","viewer.theme.light":"Light","viewer.preset.choose.title":"Choose visual style (S cycles)","viewer.preset.choose":"Choose visual style","viewer.preset.style":"Style","viewer.preset.menu":"Visual style","viewer.preset.identity":"Visual identity","viewer.preset.cycles":"S cycles","viewer.preset.classic":"Classic","viewer.preset.classic.short":"Classic","viewer.preset.classic.hint":"Stable technical default","viewer.preset.flow":"Signal Flow","viewer.preset.flow.short":"Flow","viewer.preset.flow.hint":"Motion-forward presentation","viewer.preset.blueprint":"Blueprint","viewer.preset.blueprint.hint":"Engineering review","viewer.preset.editorial":"Editorial","viewer.preset.editorial.hint":"Publication and launch notes","viewer.preset.badge.signalFlow":"SIGNAL FLOW","viewer.preset.badge.blueprint":"BLUEPRINT / REV 01","viewer.preset.badge.editorial":"EDITORIAL / FIELD NOTE","viewer.preset.badge.editorialPlate":"ARCHIFY / PLATE 04","viewer.preset.current":"Visual style: {style}. Choose visual style","viewer.motion.live":"Live","viewer.motion.still":"Still","viewer.motion.pause":"Pause motion","viewer.motion.resume":"Resume motion","viewer.motion.reduced":"Motion paused by reduced-motion preference","viewer.motion.hidden":"Motion paused while this page is hidden","viewer.motion.yielding":"Pause motion; currently yielding to {owner}","viewer.motion.yielding.title":"Live preview enabled · yielding to {owner}","viewer.owner.story":"the guided story","viewer.owner.chapter":"the active chapter","viewer.owner.chapterPreview":"the chapter delta preview","viewer.owner.handoff":"the chapter handoff","viewer.owner.route":"Route Probe","viewer.owner.lens":"Semantic Lens","viewer.owner.relationship":"Relationship Preview","viewer.owner.intent":"Intent Trace","viewer.owner.focus":"semantic focus","viewer.owner.legend":"legend preview","viewer.owner.reader":"reader interaction","viewer.present.enter":"Enter presentation stage","viewer.present.enter.title":"Presentation stage (F)","viewer.present.exit":"Exit presentation stage","viewer.present.exit.title":"Exit presentation stage (F or Escape)","viewer.present.present":"Present","viewer.present.exit.label":"Exit","viewer.export.button":"Export","viewer.export.button.title":"Export diagram (E)","viewer.export.diagram":"Export diagram","viewer.export.menu":"Export","viewer.export.subtitle":"Portable, clean outputs","viewer.export.share":"Share","viewer.export.shareCard":"Share Card","viewer.export.routeShareCard":"Route Share Card","viewer.export.reachShareCard":"Reach Share Card","viewer.export.copyShareCard":"Copy Share Card","viewer.export.copyDiagram":"Copy diagram","viewer.export.clipboardPng":"PNG to clipboard","viewer.export.raster":"Raster images","viewer.export.image":"Image","viewer.export.lossless":"Lossless image","viewer.export.compact":"Compact image","viewer.export.modern":"Modern image","viewer.export.vectorMotion":"Vector and motion","viewer.export.vectorMotion.heading":"Vector \u0026 motion","viewer.export.editable":"Editable vector","viewer.export.motion6s":"6s motion","viewer.export.unsupported":"Not supported by this browser","viewer.export.clipboardUnsupported":"Clipboard image write not supported by this browser","viewer.export.clipboardUnsupported.period":"Clipboard image write not supported by this browser.","viewer.export.clipboardUnsupported.short":"Clipboard image write not supported in this browser.","viewer.export.motionUnavailable":"Motion capture unavailable in this browser","viewer.export.webmUnavailable":"WebM unavailable in this browser","viewer.export.failed":"Export failed: {message}","viewer.export.unknownVariant":"Unknown Share Card variant: {variant}","viewer.export.routeRequired":"Trace a route before exporting a Route Share Card","viewer.export.reachRequired":"Trace authored reach before exporting a Reach Share Card","viewer.export.unknown":"unknown","viewer.export.routeFailed":"Route Share Card export failed: {message}","viewer.export.reachFailed":"Reach Share Card export failed: {message}","viewer.export.copyFailed":"Copy failed: {message}","viewer.export.copiedPng":"Copied PNG to clipboard","viewer.export.copiedShare":"Copied Share Card","viewer.export.downloadedShare":"Downloaded Share Card","viewer.export.downloadedRoute":"Downloaded Route Share Card","viewer.export.downloadedReach":"Downloaded Reach Share Card","viewer.export.downloadedWebm":"Downloaded WebM","viewer.export.recording":"Recording 6 seconds of motion…","viewer.export.card.routeSummary.one":"Route: {source} → {target} · {count} directed hop","viewer.export.card.routeSummary.other":"Route: {source} → {target} · {count} directed hops","viewer.export.card.reachSummary":"Authored {direction} from {origin} · {nodes} · {links} · max {hops}","viewer.export.card.node.one":"{count} node","viewer.export.card.node.other":"{count} nodes","viewer.export.card.link.one":"{count} link","viewer.export.card.link.other":"{count} links","viewer.export.card.hop.one":"{count} hop","viewer.export.card.hop.other":"{count} hops","viewer.export.card.routeBadge":"ARCHIFY · ROUTE · {hops}","viewer.export.card.reachBadge":"ARCHIFY · {direction} REACH","viewer.export.card.defaultBadge":"ARCHIFY · {preset} · {theme}","viewer.export.direction.upstream":"Upstream","viewer.export.direction.downstream":"Downstream","viewer.export.error.canvasUnavailable":"Canvas unavailable for {label}","viewer.export.error.contextUnavailable":"2D canvas context unavailable for {label}","viewer.export.error.toBlobUnavailable":"canvas.toBlob unavailable for {label}","viewer.export.error.toBlobNull":"canvas.toBlob returned no data for {label}","viewer.export.error.variantsCombined":"Share Card variants cannot be combined","viewer.export.error.viewerState":"Share Card export could not remove temporary viewer state","viewer.export.error.routeState":"Route Card export could not preserve the resolved route safely","viewer.export.error.reachState":"Reach Card export could not preserve authored reach safely","viewer.export.error.webmRequirements":"WebM motion export requires a trace animation and browser MediaRecorder support","viewer.export.error.mediaRecorder":"MediaRecorder failed","viewer.export.error.emptyWebm":"MediaRecorder produced an empty WebM","viewer.export.error.webmBackground":"SVG background could not be loaded for WebM export","viewer.guided.region":"Guided diagram views","viewer.guided.previous":"Previous guided view","viewer.guided.previous.title":"Previous guided view ([)","viewer.guided.next":"Next guided view","viewer.guided.next.title":"Next guided view (])","viewer.guided.views":"Guided views","viewer.guided.explore":"Explore this system","viewer.guided.intro":"Step through curated paths without changing the source diagram.","viewer.guided.trail":"Story trail","viewer.guided.beat":"Beat","viewer.guided.nextBeat":"Next","viewer.guided.play":"Play guided story","viewer.guided.play.title":"Play guided story (P)","viewer.guided.pause":"Pause guided story","viewer.guided.pause.title":"Pause guided story (P)","viewer.guided.replay":"Replay guided story","viewer.guided.replay.title":"Replay guided story (P)","viewer.guided.playStory":"Play story","viewer.guided.pauseStory":"Pause","viewer.guided.replayStory":"Replay story","viewer.guided.motionUnavailable":"Story playback unavailable while motion is Still","viewer.guided.enableMotion":"Switch motion to Live to play the guided story","viewer.guided.selectBeatLink":"Select a Story Beat to copy its exact link","viewer.guided.copyMoment":"Copy moment","viewer.guided.momentCopied":"Moment link copied","viewer.guided.momentCopyFailed":"Could not copy story moment link","viewer.guided.copied":"Copied","viewer.guided.copyFailed":"Copy failed","viewer.guided.showAll":"Show all","viewer.guided.showAll.aria":"Show entire diagram","viewer.guided.chapters":"Story chapters","viewer.guided.storyTrail":"Story trail for {label}: {count} beats","viewer.guided.chapter.open":"Open chapter {index} of {total}: {label}, {count} stops","viewer.guided.chapter.current":"Current chapter {index} of {total}: {label}, {count} stops","viewer.guided.chapter.selectedNodes":"{count} selected nodes","viewer.guided.chapter.stops":"{count} stops","viewer.guided.chapter.stop.one":"{count} stop","viewer.guided.chapter.stop.other":"{count} stops","viewer.guided.chapter.current.title":"{label} — current chapter, {count} stops","viewer.guided.chapter.delta.expanded":"{stay} stay, {enter} enter, {leave} leave","viewer.guided.chapter.delta.aria":"Open chapter {index} of {total}: {label}. Chapter focus delta: {delta}","viewer.guided.chapter.delta.title":"{label} — {delta} chapter focus","viewer.guided.handoff":"{from} → {to} · via {label}","viewer.guided.share.chapter":"Chapter {index} / {total}","viewer.guided.share.initial":"Chapter 01 / 01","viewer.guided.share.default":"Guided chapter","viewer.guided.state.ready":"Ready","viewer.guided.state.playing":"Playing","viewer.guided.state.settled":"Settled","viewer.guided.state.paused":"Paused","viewer.guided.state.pinned":"Pinned","viewer.guided.state.still":"Still","viewer.guided.share.step":"Step {index} / {total} · {label}","viewer.guided.share.staticMoment":"{step} · Static moment","viewer.guided.share.complete":"{count} steps complete · {note}","viewer.guided.share.settled":"Path settled for reading.","viewer.guided.share.staticPath":"{count} steps · Static path","viewer.guided.share.ready":"{count} steps · Ready","viewer.guided.share.aria":"{state} chapter {index} of {total}: {label}. {beat}. {route}","viewer.guided.beat.start":"Beat {index} / {total} · {label} · starting point","viewer.guided.beat.forward":"Beat {index} / {total} · {from} → {to}","viewer.guided.beat.reverse":"Beat {index} / {total} · {from} → {to} · reverse authored link","viewer.guided.beat.multiple":"Beat {index} / {total} · {from} ⇄ {to} · {count} authored links","viewer.guided.beat.group":"Beat {index} / {total} · {from} · {to} · grouped · no direct link","viewer.guided.beat.aria.prefix":"Story beat {index} of {total}: {label}. ","viewer.guided.beat.aria.start":"Starting point.","viewer.guided.beat.aria.forward":"From {from} through one authored forward relationship.","viewer.guided.beat.aria.reverse":"From {from}; the authored relationship points from {to} to {from}.","viewer.guided.beat.aria.multiple":"From {from} through {count} authored relationships; shown without arbitrary motion.","viewer.guided.beat.aria.group":"Grouped from {from} with no direct authored relationship.","viewer.guided.caption.start":"Starting point","viewer.guided.caption.grouped":"Grouped transition · no direct authored link","viewer.guided.caption.more":" +{count} more","viewer.guided.caption.reverse":"Reverse authored relationship","viewer.guided.caption.relationships":"{count} authored relationships","viewer.guided.caption.relationship":"Authored relationship","viewer.guided.caption.direction":"authored direction: {from} → {to}","viewer.guided.caption.starting":"Authored starting point","viewer.guided.beatLink":"Copy link to current story moment: Beat {index} of {total}: {label}","viewer.guided.noStory":"This diagram has no authored guided story.","viewer.guide.eyebrow":"Diagram guide","viewer.guide.close":"Close diagram guide","viewer.guide.inspecting":"Inspecting compiled semantics","viewer.guide.actions":"Diagram exploration actions","viewer.guide.find":"Find any node","viewer.guide.find.hint":"Search labels, responsibilities, kinds, and stable IDs.","viewer.guide.route":"Trace a route","viewer.guide.route.aria":"Trace a directed route","viewer.guide.route.hint":"Ask how two semantic nodes connect in authored direction.","viewer.guide.map":"See the whole system","viewer.guide.map.hint":"Open Semantic Radar with a live viewport and stable nodes.","viewer.guide.lens":"Compare semantic kinds","viewer.guide.lens.hint":"Count roles, reveal their traffic, and compare direct authored links.","viewer.guide.story":"Play the guided story","viewer.guide.story.hint":"Walk the authored chapters and real relationships.","viewer.guide.present":"Enter Presentation Stage","viewer.guide.present.hint":"Give the live diagram the viewport without changing export.","viewer.guide.shortcuts":"Additional keyboard shortcuts","viewer.guide.shortcut.export":"Export","viewer.guide.shortcut.theme":"Theme","viewer.guide.shortcut.style":"Style","viewer.guide.shortcut.reset":"Reset","viewer.guide.shortcut.zoomIn":"Zoom in","viewer.guide.shortcut.zoomOut":"Zoom out","viewer.guide.shortcut.close":"Close","viewer.guide.facts":"{nodes} · {relationships} · {views}","viewer.guide.fact.node.one":"{count} semantic node","viewer.guide.fact.node.other":"{count} semantic nodes","viewer.guide.fact.relationship.one":"{count} relationship","viewer.guide.fact.relationship.other":"{count} relationships","viewer.guide.fact.view.one":"{count} guided view","viewer.guide.fact.view.other":"{count} guided views","viewer.guide.story.available.one":"Walk {count} authored chapter and its real relationships.","viewer.guide.story.available.other":"Walk {count} authored chapters and their real relationships.","viewer.guide.story.unavailable":"No authored guided story in this diagram.","viewer.guide.open":"Open diagram guide","viewer.guide.noStory":"This diagram has no authored guided story.","viewer.finder.title":"Find a node","viewer.finder.close":"Close node finder","viewer.finder.placeholder":"Search labels or IDs","viewer.finder.search":"Search diagram nodes","viewer.finder.results":"Diagram nodes","viewer.finder.empty":"No matching nodes","viewer.finder.result.focus":"Focus {label}","viewer.finder.result.routeStart":"Choose {label} as route start","viewer.finder.result.routeTarget":"Choose {label} as route destination, {links}","viewer.finder.status.empty":"No matching nodes","viewer.finder.status.count.one":"{count} matching node","viewer.finder.status.count.other":"{count} matching nodes","viewer.finder.noun.nodes":"nodes","viewer.finder.link.one":"{count} link","viewer.finder.link.other":"{count} links","viewer.finder.result.focus.one":"Focus {label}, {count} related connection","viewer.finder.result.focus.other":"Focus {label}, {count} related connections","viewer.finder.status.filtered":"{visible} of {available} {noun}","viewer.finder.status.all":"{available} {noun}","viewer.passport.eyebrow":"Semantic passport","viewer.passport.metadata":"Node metadata","viewer.passport.evidence":"Verified source evidence","viewer.passport.verified":"Verified source","viewer.passport.reach":"Authored reach","viewer.passport.reach.trace":"Trace authored reachability","viewer.passport.upstream":"Upstream","viewer.passport.downstream":"Downstream","viewer.passport.upstream.trace":"Trace upstream authored reachability","viewer.passport.downstream.trace":"Trace downstream authored reachability","viewer.passport.close":"Close semantic passport","viewer.passport.copy":"Copy link","viewer.passport.copy.focus":"Copy link to focused node","viewer.passport.relations":"Relations","viewer.passport.relations.show":"Show connected relationships","viewer.passport.relations.hide":"Hide connected relationships","viewer.passport.relations.list":"Connected relationships","viewer.passport.copyRelation":"Copy relation","viewer.passport.copyNode":"Copy node","viewer.passport.copyPinned":"Copy link to pinned relationship","viewer.passport.copySource":"Copy link to source node","viewer.passport.copy.focused.success":"Focused node link copied","viewer.passport.copy.pinned.success":"Pinned relationship link copied","viewer.passport.copy.focused.failed":"Could not copy focused node link","viewer.passport.copy.pinned.failed":"Could not copy pinned relationship link","viewer.passport.relationship.none":"No connected relationships","viewer.passport.relationship.count.one":"{count} relation","viewer.passport.relationship.count.other":"{count} relations","viewer.passport.relationship.show.one":"Show {count} connected relationship","viewer.passport.relationship.show.other":"Show {count} connected relationships","viewer.passport.relationship.summary":"{out} outgoing · {in} incoming{loops}","viewer.passport.relationship.loops":" · {count} loop","viewer.passport.relationship.explorer":"Direct relationship explorer","viewer.passport.relationship.help":"Use arrow keys to explore relationships. Press Enter or Space to pin details; Escape clears.","viewer.passport.relationship.loopsBack":"loops back","viewer.passport.relationship.connectsTo":"connects to","viewer.passport.relationship.connectsFrom":"connects from","viewer.passport.relationship.pinned":"Pinned relationship · {from} → {to} · {label}","viewer.passport.relationship.inspect":"Inspect relationship {index} of {total}: {from} to {to}, {label}. Press Enter for details.","viewer.passport.relationship.group.out":"Outgoing","viewer.passport.relationship.group.in":"Incoming","viewer.passport.relationship.group.loop":"Self loops","viewer.passport.relationship.row":"{group}: {relationship}, {neighbor}","viewer.passport.relationship.direction.out":"OUT →","viewer.passport.relationship.direction.in":"← IN","viewer.passport.relationship.direction.loop":"LOOP","viewer.passport.sourceCount.one":"{count} verified source reference","viewer.passport.sourceCount.other":"{count} verified source references","viewer.passport.sourceMarker":"SRC","viewer.passport.beacon.one":"{count} verified source; focus this node to inspect","viewer.passport.beacon.other":"{count} verified sources; focus this node to inspect","viewer.passport.repository.open":"Open verified repository revision {revision}","viewer.passport.source.open":"Open verified source {path} at revision {revision}","viewer.passport.source.openLink":"Open ↗","viewer.passport.reach.upstream.one":"Trace {count} upstream authored node","viewer.passport.reach.upstream.other":"Trace {count} upstream authored nodes","viewer.passport.reach.downstream.one":"Trace {count} downstream authored node","viewer.passport.reach.downstream.other":"Trace {count} downstream authored nodes","viewer.passport.reach.noUpstream":"No upstream authored nodes","viewer.passport.reach.noDownstream":"No downstream authored nodes","viewer.passport.reach.status":"{direction} · {nodes} nodes · {links} links · max {hops} hops","viewer.route.eyebrow":"Route probe","viewer.route.start":"Choose a start node","viewer.route.start.find":"Find start","viewer.route.start.find.aria":"Find a route start","viewer.route.copy":"Copy link","viewer.route.copy.aria":"Copy link to traced route","viewer.route.clear":"Clear","viewer.route.clear.aria":"Clear route probe","viewer.route.traced":"Traced route","viewer.route.pickTwo":"Pick two semantic nodes on the diagram","viewer.route.pickOne":"Pick a semantic node on the diagram","viewer.route.controls":"Route journey controls","viewer.route.previous":"Previous route position","viewer.route.play":"Play route journey","viewer.route.pause":"Pause route journey","viewer.route.replay":"Replay route journey","viewer.route.next":"Next route position","viewer.route.journey":"Journey","viewer.route.pause.label":"Pause","viewer.route.replay.label":"Replay","viewer.route.overview":"Overview","viewer.route.overview.aria":"Show complete route overview","viewer.route.instructions":"Choose the source, then the destination. Direction matters.","viewer.route.destination":"Choose a destination from {label}","viewer.route.destination.find":"Find target","viewer.route.destination.find.aria":"Find a reachable route destination","viewer.route.differentDestination":"Choose a different destination","viewer.route.distinct":"A route needs two distinct semantic nodes.","viewer.route.unreachable":"No directed route to {label}","viewer.route.unreachable.detail":"{target} is not reachable from {source}. Pick a highlighted destination.","viewer.route.start.instructions":"Select the source. The next step will reveal only directed destinations.","viewer.route.copy.success":"Traced route link copied","viewer.route.copy.failed":"Could not copy traced route link","viewer.route.position":"Route position {index} of {total}: {label}","viewer.route.step":"Step {index} of {total} · {phase} · {label}","viewer.route.motionRequired":"Automatic journey requires Live motion","viewer.route.trigger.clear":"Clear traced route","viewer.route.overview.status":"{nodes} · {hops} · shortest authored route","viewer.route.overview.node.one":"{count} node","viewer.route.overview.node.other":"{count} nodes","viewer.route.overview.hop.one":"{count} directed hop","viewer.route.overview.hop.other":"{count} directed hops","viewer.route.phase.playing":"Playing","viewer.route.phase.complete":"Complete","viewer.route.phase.inspecting":"Inspecting","viewer.route.destination.count.one":"{count} directed destination available. Pick a highlighted node.","viewer.route.destination.count.other":"{count} directed destinations available. Pick a highlighted node.","viewer.route.noOutgoing":"No outgoing route starts here. Clear and choose another source.","viewer.route.result.title":"{source} to {target}","viewer.route.finder.source.title":"Choose route start","viewer.route.finder.source.placeholder":"Search route sources","viewer.route.finder.source.empty":"No matching route sources","viewer.route.finder.source.results":"Nodes that can start a route","viewer.route.finder.source.noun":"route sources","viewer.route.finder.source.badge":"start","viewer.route.finder.target.title":"Destination from {label}","viewer.route.finder.target.placeholder":"Search reachable destinations","viewer.route.finder.target.empty":"No matching reachable destinations","viewer.route.finder.target.results":"Reachable route destinations","viewer.route.finder.target.noun":"reachable destinations","viewer.route.hop.one":"{count} hop","viewer.route.hop.other":"{count} hops","viewer.lens.eyebrow":"Semantic lens","viewer.lens.title":"Compare system roles","viewer.lens.close":"Close semantic lens","viewer.lens.instruction":"Choose up to two semantic kinds. One reveals its real traffic; two compare only direct authored relationships.","viewer.lens.kinds":"Semantic kinds","viewer.lens.choose":"Choose a kind to inspect its nodes and touching relationships.","viewer.lens.copy":"Copy link to semantic lens","viewer.lens.clear":"Clear semantic lens","viewer.lens.open":"Open semantic lens","viewer.lens.openActive":"Open active semantic lens","viewer.lens.legend":"Semantic legend","viewer.lens.legend.inspect.one":"Inspect {label}, {count} node","viewer.lens.legend.inspect.other":"Inspect {label}, {count} nodes","viewer.lens.kind.count.one":"{label}, {count} node","viewer.lens.kind.count.other":"{label}, {count} nodes","viewer.lens.compare.one":"{first} → {second}: {forward} · {second} → {first}: {reverse} · {count} direct relationship","viewer.lens.compare.other":"{first} → {second}: {forward} · {second} → {first}: {reverse} · {count} direct relationships","viewer.lens.single":"{nodes} · {relationships} · connected peers remain visible","viewer.lens.node.one":"{count} {label} node","viewer.lens.node.other":"{count} {label} nodes","viewer.lens.relationship.one":"{count} touching relationship","viewer.lens.relationship.other":"{count} touching relationships","viewer.radar.title":"Semantic radar","viewer.radar.building":"Building overview","viewer.radar.openFull":"Open full semantic radar","viewer.radar.open":"Open radar","viewer.radar.close":"Close semantic radar","viewer.radar.surface":"Diagram overview. Click a node to focus it, or use arrow keys to pan.","viewer.radar.click":"Click node","viewer.radar.drag":"Drag to pan","viewer.radar.space":"Semantic radar needs more MAP space.","viewer.radar.nodes":"Semantic diagram radar nodes","viewer.radar.focus":"Focus {label} from Semantic Radar","viewer.radar.status":"{count} nodes · {viewport}","viewer.radar.fullMap":"{count} nodes · full map","viewer.radar.compacted":"Radar compacted to avoid covering the Semantic Passport or MAP controls.","viewer.radar.cancelWaiting":"Cancel semantic radar waiting for more MAP space","viewer.radar.needsSpace":"Semantic radar needs more visible MAP space","viewer.radar.viewport.full":"full map","viewer.radar.viewport.width":"{percent}% width","viewer.radar.viewport.scale":"{percent}% viewport","viewer.nav.controls":"Diagram view controls","viewer.nav.route":"Trace a directed route","viewer.nav.route.title":"Trace route (R)","viewer.nav.route.short":"PATH","viewer.nav.radar":"Open semantic radar","viewer.nav.radar.title":"Semantic radar (M)","viewer.nav.radar.short":"MAP","viewer.nav.lens":"Open semantic lens","viewer.nav.lens.title":"Semantic lens (L)","viewer.nav.lens.short":"LENS","viewer.nav.find":"Find a node","viewer.nav.find.title":"Find a node (/)","viewer.nav.guide":"Open diagram guide","viewer.nav.guide.title":"Diagram guide (?)","viewer.nav.zoomOut":"Zoom out","viewer.nav.zoomOut.title":"Zoom out (-)","viewer.nav.reset":"Reset diagram view","viewer.nav.reset.title":"Reset view (0)","viewer.nav.read":"READ","viewer.nav.zoomIn":"Zoom in","viewer.nav.zoomIn.title":"Zoom in (+)","viewer.nav.camera":"{hint}. Reset diagram view","viewer.nav.camera.title":"{semantic}{hint} · reset view (0)","viewer.nav.camera.semantic":"Semantic camera active · ","viewer.nav.level.map":"MAP","viewer.nav.level.read":"READ","viewer.nav.level.full":"FULL","viewer.nav.level.auto":"AUTO","viewer.nav.detail.map":"Zoom in to reveal relationship labels and node context","viewer.nav.detail.read":"Zoom in again to reveal tags and annotations","viewer.nav.detail.full":"Full diagram detail","viewer.intent.summary":"{label}. {out} outgoing, {in} incoming{loops}. {total} connections. Press Enter for details.","viewer.intent.loops":", {count} self loop","viewer.common.copied":"Copied","viewer.common.copyFailed":"Copy failed","viewer.common.copyLink":"Copy link","viewer.common.clear":"Clear","viewer.common.close":"Close"}}</script>
     <div class="guided-views no-print" id="guided-views" hidden aria-label="Guided diagram views">
       <button id="guided-view-prev" type="button" aria-label="Previous guided view" title="Previous guided view ([)">&#8592;</button>
@@ -5005,9 +5004,9 @@
     <!-- Main Diagram -->
     <div class="diagram-container" data-detail-level="read"
          data-preset-badge-editorial-plate="ARCHIFY / PLATE 04">
-      <svg viewBox="0 0 1380 720" role="img" lang="en" aria-labelledby="archify-diagram-title archify-diagram-description" data-preset="blueprint" data-quality-profile="showcase">
-        <title id="archify-diagram-title">全屋 Agent：B0 已實作基線與 B1 離線感知邊界</title>
-        <desc id="archify-diagram-description">單程序模組化單體；資料、控制、權威、查詢與實體結果明確分離</desc>
+      <svg viewBox="0 0 1700 1040" role="img" lang="en" aria-labelledby="archify-diagram-title archify-diagram-description" data-preset="classic" data-quality-profile="showcase">
+        <title id="archify-diagram-title">Whole Home Agent — Implemented Offline B0→B1 Architecture</title>
+        <desc id="archify-diagram-description">An architecture diagram generated by Archify.</desc>
         <!-- Definitions -->
         <defs>
           <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
@@ -5031,225 +5030,228 @@
         <rect width="100%" height="100%" fill="url(#grid)" />
 
         <!-- Boundaries (behind everything) -->
-        <rect data-graph-role="structural-frame" data-composition-frame-kind="region" data-composition-frame-id="0" data-composition-frame-label="B1 離線感知提案：不可信輸入與模型報告" x="22" y="226" width="456" height="114" rx="12" class="c-region" stroke-width="1"/>
+        <rect data-graph-role="structural-frame" data-composition-frame-kind="region" data-composition-frame-id="0" data-composition-frame-label="Implemented local modular monolith" x="290" y="270" width="1380" height="622" rx="12" class="c-region" stroke-width="1"/>
 
-        <rect data-graph-role="structural-frame" data-composition-frame-kind="security-group" data-composition-frame-id="1" data-composition-frame-label="B0 確定性核心：唯一狀態提交與查詢邊界" x="508" y="226" width="764" height="294" rx="8" class="c-security-group" stroke-width="1"/>
-
-        <rect data-graph-role="structural-frame" data-composition-frame-kind="security-group" data-composition-frame-id="2" data-composition-frame-label="停用的行動面" x="782" y="546" width="486" height="116" rx="8" class="c-security-group" stroke-width="1"/>
+        <rect data-graph-role="structural-frame" data-composition-frame-kind="security-group" data-composition-frame-id="1" data-composition-frame-label="Authority / control — proposed, not runtime permission" x="574" y="44" width="712" height="128" rx="8" class="c-security-group" stroke-width="1"/>
 
         <!-- Connection paths (before components for correct z-order) -->
-        <path data-edge-from="recorded_source" data-edge-to="perception_adapter" data-edge-label="transient frames" data-edge-key="0" data-composition-points="210,285;270,285" d="M 210 285 L 270 285" class="a-dashed" stroke-width="1.5" marker-end="url(#arrowhead-dashed)"/>
-        <path data-edge-from="perception_adapter" data-edge-to="claim_commit" data-edge-label="ClaimCandidate" data-edge-key="1" data-composition-points="460,285;530,285" d="M 460 285 L 530 285" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
-        <path data-edge-from="claim_commit" data-edge-to="session_ledger" data-edge-label="AcceptedClaim" data-edge-key="2" data-composition-points="730,285;800,285" d="M 730 285 L 800 285" class="a-security" stroke-width="1.5" marker-end="url(#arrowhead-security)"/>
-        <path data-edge-from="session_ledger" data-edge-to="relation_projection" data-edge-label="accepted sequence" data-edge-key="3" data-composition-points="990,285;1060,285" d="M 990 285 L 1060 285" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
-        <path data-edge-from="relation_projection" data-edge-to="state_query" data-edge-label="derived estimate" data-edge-key="4" data-composition-points="1155,320;1155,430" d="M 1155 320 L 1155 430" class="a-dashed" stroke-width="1.5" marker-end="url(#arrowhead-dashed)"/>
-        <path data-edge-from="state_query" data-edge-to="agent_ui" data-edge-label="scoped AnswerTrace" data-edge-key="5" data-composition-points="1060,465;990,465" d="M 1060 465 L 990 465" class="a-security" stroke-width="1.5" marker-end="url(#arrowhead-security)"/>
-        <path data-edge-from="governance_config" data-edge-to="perception_adapter" data-edge-label="validated config" data-edge-key="6" data-composition-points="505,142;505,180;365,180;365,250" d="M 505 142 L 505 172 Q 505 180 497 180 L 373 180 Q 365 180 365 188 L 365 250" class="a-security" stroke-width="1.5" marker-end="url(#arrowhead-security)"/>
-        <path data-edge-from="governance_config" data-edge-to="claim_commit" data-edge-label="rules + versions" data-edge-key="7" data-composition-points="505,142;505,210;630,210;630,250" d="M 505 142 L 505 202 Q 505 210 513 210 L 622 210 Q 630 210 630 218 L 630 250" class="a-security" stroke-width="1.5" marker-end="url(#arrowhead-security)"/>
+        <path data-edge-from="d0_bundle" data-edge-to="recorded_source" data-edge-label="verified bytes + metadata" data-edge-key="0" data-edge-id="bundle_to_source" data-composition-points="250,341;320,341" d="M 250 341 L 320 341" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+        <path data-edge-from="recorded_source" data-edge-to="perception" data-edge-label="selected frames + evidence refs" data-edge-key="1" data-edge-id="source_to_perception" data-composition-points="530,341;600,341" d="M 530 341 L 600 341" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+        <path data-edge-from="perception" data-edge-to="relation_pipeline" data-edge-label="canonical detections" data-edge-key="2" data-edge-id="perception_to_relations" data-composition-points="810,341;880,341" d="M 810 341 L 880 341" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+        <path data-edge-from="relation_pipeline" data-edge-to="claim_committer" data-edge-label="estimated ClaimCandidate" data-edge-key="3" data-edge-id="relations_to_commit" data-composition-points="995,382;995,560" d="M 995 382 L 995 560" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+        <path data-edge-from="claim_committer" data-edge-to="session_state" data-edge-label="AcceptedClaim only" data-edge-key="4" data-edge-id="commit_to_state" data-composition-points="1110,601;1140,601" d="M 1110 601 L 1140 601" class="a-security" stroke-width="1.5" marker-end="url(#arrowhead-security)"/>
+        <path data-edge-from="session_state" data-edge-to="state_query" data-edge-label="rebuildable relation view" data-edge-key="5" data-edge-id="state_to_query" data-composition-points="1370,601;1410,601" d="M 1370 601 L 1410 601" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+        <path data-edge-from="state_query" data-edge-to="presentation" data-edge-label="scoped answer + evidence chain" data-edge-key="6" data-edge-id="query_to_presentation" data-composition-points="1515,642;1515,790" d="M 1515 642 L 1515 790" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+        <path data-edge-from="policy_control" data-edge-to="recorded_source" data-edge-label="fixed D0 allowlist only" data-edge-key="7" data-edge-id="policy_to_source" data-composition-points="600,111;565,111;565,341;530,341" d="M 600 111 L 573 111 Q 565 111 565 119 L 565 333 Q 565 341 557 341 L 530 341" class="a-security" stroke-width="1.5" marker-end="url(#arrowhead-security)"/>
+        <path data-edge-from="policy_control" data-edge-to="operate_denial" data-edge-label="denies OPERATE" data-edge-key="8" data-edge-id="policy_to_denial" data-composition-points="840,111;1020,111" d="M 840 111 L 1020 111" class="a-security" stroke-width="1.5" marker-end="url(#arrowhead-security)"/>
+        <path data-edge-from="operate_denial" data-edge-to="physical_home" data-edge-label="NO EXECUTION PATH" data-edge-key="9" data-edge-id="denial_to_outcome" data-composition-points="1260,111;1400,111" d="M 1260 111 L 1400 111" class="a-dashed" stroke-width="1.5" marker-end="url(#arrowhead-dashed)"/>
 
         <!-- Components -->
-        <g id="node-recorded_source" data-node-id="recorded_source" data-node-label="合法可用的預錄 D0" tabindex="0" role="button" aria-label="Focus 合法可用的預錄 D0, B1 輸入；非即時攝影機, B1 離線感知提案：不可信輸入與模型報告" aria-pressed="false" data-node-kind="external" data-node-sublabel="B1 輸入；非即時攝影機" data-node-tag="PROPOSED" data-node-context="B1 離線感知提案：不可信輸入與模型報告">
-          <title>合法可用的預錄 D0 · B1 輸入；非即時攝影機 · B1 離線感知提案：不可信輸入與模型報告 · PROPOSED</title>
-          <rect x="40" y="250" width="170" height="70" rx="6" class="c-mask"/>
-          <rect x="40" y="250" width="170" height="70" rx="6" class="c-external" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="external" class="semantic-sigil s-external" transform="translate(46 256) scale(0.6875)">
+        <g id="node-d0_bundle" data-node-id="d0_bundle" data-node-label="Fixed D0 Bundle" tabindex="0" role="button" aria-label="Focus Fixed D0 Bundle, Architecture component" aria-pressed="false" data-node-kind="external" data-node-tag="hash-pinned" data-node-context="Architecture component">
+          <title>Fixed D0 Bundle · Architecture component · hash-pinned</title>
+          <rect x="60" y="300" width="190" height="82" rx="6" class="c-mask"/>
+          <rect x="60" y="300" width="190" height="82" rx="6" class="c-external" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="external" class="semantic-sigil s-external" transform="translate(66 306) scale(0.6875)">
             <rect x="2.5" y="5" width="8.5" height="8" rx="1.5"/>
             <path d="M8 2.5h5.5V8M13.5 2.5 7.5 8.5"/>
           </g>
-          <text data-node-label="" data-detail-anchor="" x="125" y="283" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">合法可用的預錄 D0</text>
-        <text data-detail="context" x="125" y="299" class="t-muted" font-size="9" text-anchor="middle">B1 輸入；非即時攝影機</text>
-        <text data-detail="fine" x="125" y="312" class="t-external" font-size="7" text-anchor="middle">PROPOSED</text>
+          <text data-node-label="" x="155" y="345" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Fixed D0 Bundle</text>
+        <text data-detail="fine" x="155" y="374" class="t-external" font-size="7" text-anchor="middle">hash-pinned</text>
         </g>
 
-        <g id="node-perception_adapter" data-node-id="perception_adapter" data-node-label="Perception Adapter" tabindex="0" role="button" aria-label="Focus Perception Adapter, motion + YOLO + tracker + events, B1 離線感知提案：不可信輸入與模型報告" aria-pressed="false" data-node-kind="backend" data-node-sublabel="motion + YOLO + tracker + events" data-node-tag="B1 PROPOSED" data-node-context="B1 離線感知提案：不可信輸入與模型報告">
-          <title>Perception Adapter · motion + YOLO + tracker + events · B1 離線感知提案：不可信輸入與模型報告 · B1 PROPOSED</title>
-          <rect x="270" y="250" width="190" height="70" rx="6" class="c-mask"/>
-          <rect x="270" y="250" width="190" height="70" rx="6" class="c-backend" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(276 256) scale(0.6875)">
+        <g id="node-recorded_source" data-node-id="recorded_source" data-node-label="Recorded Source" tabindex="0" role="button" aria-label="Focus Recorded Source, Implemented local modular monolith" aria-pressed="false" data-node-kind="backend" data-node-tag="finite / local" data-node-context="Implemented local modular monolith">
+          <title>Recorded Source · Implemented local modular monolith · finite / local</title>
+          <rect x="320" y="300" width="210" height="82" rx="6" class="c-mask"/>
+          <rect x="320" y="300" width="210" height="82" rx="6" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(326 306) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-node-label="" data-detail-anchor="" x="365" y="283" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Perception Adapter</text>
-        <text data-detail="context" x="365" y="299" class="t-muted" font-size="9" text-anchor="middle">motion + YOLO + tracker + events</text>
-        <text data-detail="fine" x="365" y="312" class="t-backend" font-size="7" text-anchor="middle">B1 PROPOSED</text>
+          <text data-node-label="" x="425" y="345" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Recorded Source</text>
+        <text data-detail="fine" x="425" y="374" class="t-backend" font-size="7" text-anchor="middle">finite / local</text>
         </g>
 
-        <g id="node-claim_commit" data-node-id="claim_commit" data-node-label="Claim Commit Boundary" tabindex="0" role="button" aria-label="Focus Claim Commit Boundary, validate · reject · idempotency, B0 確定性核心：唯一狀態提交與查詢邊界" aria-pressed="false" data-node-kind="security" data-node-sublabel="validate · reject · idempotency" data-node-tag="B0 IMPLEMENTED" data-node-context="B0 確定性核心：唯一狀態提交與查詢邊界">
-          <title>Claim Commit Boundary · validate · reject · idempotency · B0 確定性核心：唯一狀態提交與查詢邊界 · B0 IMPLEMENTED</title>
-          <rect x="530" y="250" width="200" height="70" rx="6" class="c-mask"/>
-          <rect x="530" y="250" width="200" height="70" rx="6" class="c-security" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="security" class="semantic-sigil s-security" transform="translate(536 256) scale(0.6875)">
+        <g id="node-perception" data-node-id="perception" data-node-label="Perception Adapter" tabindex="0" role="button" aria-label="Focus Perception Adapter, Implemented local modular monolith" aria-pressed="false" data-node-kind="backend" data-node-tag="replaceable" data-node-context="Implemented local modular monolith">
+          <title>Perception Adapter · Implemented local modular monolith · replaceable</title>
+          <rect x="600" y="300" width="210" height="82" rx="6" class="c-mask"/>
+          <rect x="600" y="300" width="210" height="82" rx="6" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(606 306) scale(0.6875)">
+            <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
+          </g>
+          <text data-node-label="" x="705" y="345" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Perception Adapter</text>
+        <text data-detail="fine" x="705" y="374" class="t-backend" font-size="7" text-anchor="middle">replaceable</text>
+        </g>
+
+        <g id="node-relation_pipeline" data-node-id="relation_pipeline" data-node-label="Evidence + Relations" tabindex="0" role="button" aria-label="Focus Evidence + Relations, Implemented local modular monolith" aria-pressed="false" data-node-kind="backend" data-node-tag="may abstain" data-node-context="Implemented local modular monolith">
+          <title>Evidence + Relations · Implemented local modular monolith · may abstain</title>
+          <rect x="880" y="300" width="230" height="82" rx="6" class="c-mask"/>
+          <rect x="880" y="300" width="230" height="82" rx="6" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(886 306) scale(0.6875)">
+            <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
+          </g>
+          <text data-node-label="" x="995" y="345" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Evidence + Relations</text>
+        <text data-detail="fine" x="995" y="374" class="t-backend" font-size="7" text-anchor="middle">may abstain</text>
+        </g>
+
+        <g id="node-claim_committer" data-node-id="claim_committer" data-node-label="Claim Committer" tabindex="0" role="button" aria-label="Focus Claim Committer, Implemented local modular monolith" aria-pressed="false" data-node-kind="security" data-node-tag="sole mutation gate" data-node-context="Implemented local modular monolith">
+          <title>Claim Committer · Implemented local modular monolith · sole mutation gate</title>
+          <rect x="880" y="560" width="230" height="82" rx="6" class="c-mask"/>
+          <rect x="880" y="560" width="230" height="82" rx="6" class="c-security" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="security" class="semantic-sigil s-security" transform="translate(886 566) scale(0.6875)">
             <path d="M8 2.2 13 4v3.5c0 3.1-1.8 5.4-5 6.5-3.2-1.1-5-3.4-5-6.5V4Z"/>
             <path d="m5.8 8 1.5 1.5 3-3"/>
           </g>
-          <text data-node-label="" data-detail-anchor="" x="630" y="283" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Claim Commit Boundary</text>
-        <text data-detail="context" x="630" y="299" class="t-muted" font-size="9" text-anchor="middle">validate · reject · idempotency</text>
-        <text data-detail="fine" x="630" y="312" class="t-security" font-size="7" text-anchor="middle">B0 IMPLEMENTED</text>
+          <text data-node-label="" x="995" y="605" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Claim Committer</text>
+        <text data-detail="fine" x="995" y="634" class="t-security" font-size="7" text-anchor="middle">sole mutation gate</text>
         </g>
 
-        <g id="node-session_ledger" data-node-id="session_ledger" data-node-label="Session Claim Ledger" tabindex="0" role="button" aria-label="Focus Session Claim Ledger, 記錄 accepted claims；非世界真相, B0 確定性核心：唯一狀態提交與查詢邊界" aria-pressed="false" data-node-kind="database" data-node-sublabel="記錄 accepted claims；非世界真相" data-node-tag="volatile / replay" data-node-context="B0 確定性核心：唯一狀態提交與查詢邊界">
-          <title>Session Claim Ledger · 記錄 accepted claims；非世界真相 · B0 確定性核心：唯一狀態提交與查詢邊界 · volatile / replay</title>
-          <rect x="800" y="250" width="190" height="70" rx="6" class="c-mask"/>
-          <rect x="800" y="250" width="190" height="70" rx="6" class="c-database" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(806 256) scale(0.6875)">
+        <g id="node-session_state" data-node-id="session_state" data-node-label="Session State" tabindex="0" role="button" aria-label="Focus Session State, Implemented local modular monolith" aria-pressed="false" data-node-kind="database" data-node-tag="memory only" data-node-context="Implemented local modular monolith">
+          <title>Session State · Implemented local modular monolith · memory only</title>
+          <rect x="1140" y="560" width="230" height="82" rx="6" class="c-mask"/>
+          <rect x="1140" y="560" width="230" height="82" rx="6" class="c-database" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(1146 566) scale(0.6875)">
             <ellipse cx="8" cy="4" rx="5" ry="2"/>
             <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
           </g>
-          <text data-node-label="" data-detail-anchor="" x="895" y="283" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Session Claim Ledger</text>
-        <text data-detail="context" x="895" y="299" class="t-muted" font-size="9" text-anchor="middle">記錄 accepted claims；非世界真相</text>
-        <text data-detail="fine" x="895" y="312" class="t-database" font-size="7" text-anchor="middle">volatile / replay</text>
+          <text data-node-label="" x="1255" y="605" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Session State</text>
+        <text data-detail="fine" x="1255" y="634" class="t-database" font-size="7" text-anchor="middle">memory only</text>
         </g>
 
-        <g id="node-relation_projection" data-node-id="relation_projection" data-node-label="Relation Projection" tabindex="0" role="button" aria-label="Focus Relation Projection, 可重建的 inside / at_zone 狀態, B0 確定性核心：唯一狀態提交與查詢邊界" aria-pressed="false" data-node-kind="backend" data-node-sublabel="可重建的 inside / at_zone 狀態" data-node-tag="B0 IMPLEMENTED" data-node-context="B0 確定性核心：唯一狀態提交與查詢邊界">
-          <title>Relation Projection · 可重建的 inside / at_zone 狀態 · B0 確定性核心：唯一狀態提交與查詢邊界 · B0 IMPLEMENTED</title>
-          <rect x="1060" y="250" width="190" height="70" rx="6" class="c-mask"/>
-          <rect x="1060" y="250" width="190" height="70" rx="6" class="c-backend" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(1066 256) scale(0.6875)">
+        <g id="node-state_query" data-node-id="state_query" data-node-label="StateQuery" tabindex="0" role="button" aria-label="Focus StateQuery, Implemented local modular monolith" aria-pressed="false" data-node-kind="backend" data-node-tag="evidence trace" data-node-context="Implemented local modular monolith">
+          <title>StateQuery · Implemented local modular monolith · evidence trace</title>
+          <rect x="1410" y="560" width="210" height="82" rx="6" class="c-mask"/>
+          <rect x="1410" y="560" width="210" height="82" rx="6" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(1416 566) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-node-label="" data-detail-anchor="" x="1155" y="283" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Relation Projection</text>
-        <text data-detail="context" x="1155" y="299" class="t-muted" font-size="9" text-anchor="middle">可重建的 inside / at_zone 狀態</text>
-        <text data-detail="fine" x="1155" y="312" class="t-backend" font-size="7" text-anchor="middle">B0 IMPLEMENTED</text>
+          <text data-node-label="" x="1515" y="605" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">StateQuery</text>
+        <text data-detail="fine" x="1515" y="634" class="t-backend" font-size="7" text-anchor="middle">evidence trace</text>
         </g>
 
-        <g id="node-state_query" data-node-id="state_query" data-node-label="Scoped StateQuery" tabindex="0" role="button" aria-label="Focus Scoped StateQuery, fixture · run · as-of · trace, B0 確定性核心：唯一狀態提交與查詢邊界" aria-pressed="false" data-node-kind="security" data-node-sublabel="fixture · run · as-of · trace" data-node-tag="唯一讀取邊界" data-node-context="B0 確定性核心：唯一狀態提交與查詢邊界">
-          <title>Scoped StateQuery · fixture · run · as-of · trace · B0 確定性核心：唯一狀態提交與查詢邊界 · 唯一讀取邊界</title>
-          <rect x="1060" y="430" width="190" height="70" rx="6" class="c-mask"/>
-          <rect x="1060" y="430" width="190" height="70" rx="6" class="c-security" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="security" class="semantic-sigil s-security" transform="translate(1066 436) scale(0.6875)">
-            <path d="M8 2.2 13 4v3.5c0 3.1-1.8 5.4-5 6.5-3.2-1.1-5-3.4-5-6.5V4Z"/>
-            <path d="m5.8 8 1.5 1.5 3-3"/>
-          </g>
-          <text data-node-label="" data-detail-anchor="" x="1155" y="463" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Scoped StateQuery</text>
-        <text data-detail="context" x="1155" y="479" class="t-muted" font-size="9" text-anchor="middle">fixture · run · as-of · trace</text>
-        <text data-detail="fine" x="1155" y="492" class="t-security" font-size="7" text-anchor="middle">唯一讀取邊界</text>
-        </g>
-
-        <g id="node-agent_ui" data-node-id="agent_ui" data-node-label="Agent / UI" tabindex="0" role="button" aria-label="Focus Agent / UI, 只接收 AnswerTrace, Architecture component" aria-pressed="false" data-node-kind="frontend" data-node-sublabel="只接收 AnswerTrace" data-node-tag="NO GENERIC TOOLS" data-node-context="Architecture component">
-          <title>Agent / UI · 只接收 AnswerTrace · Architecture component · NO GENERIC TOOLS</title>
-          <rect x="800" y="430" width="190" height="70" rx="6" class="c-mask"/>
-          <rect x="800" y="430" width="190" height="70" rx="6" class="c-frontend" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="frontend" class="semantic-sigil s-frontend" transform="translate(806 436) scale(0.6875)">
+        <g id="node-presentation" data-node-id="presentation" data-node-label="Closed Presentation" tabindex="0" role="button" aria-label="Focus Closed Presentation, Implemented local modular monolith" aria-pressed="false" data-node-kind="frontend" data-node-tag="no upload / camera" data-node-context="Implemented local modular monolith">
+          <title>Closed Presentation · Implemented local modular monolith · no upload / camera</title>
+          <rect x="1390" y="790" width="250" height="82" rx="6" class="c-mask"/>
+          <rect x="1390" y="790" width="250" height="82" rx="6" class="c-frontend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="frontend" class="semantic-sigil s-frontend" transform="translate(1396 796) scale(0.6875)">
             <rect x="2" y="3" width="12" height="10" rx="2"/>
             <path d="M2 6.5h12"/>
             <circle cx="4.1" cy="4.8" r=".7" class="sigil-fill"/>
             <circle cx="6.3" cy="4.8" r=".7" class="sigil-fill"/>
           </g>
-          <text data-node-label="" data-detail-anchor="" x="895" y="463" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Agent / UI</text>
-        <text data-detail="context" x="895" y="479" class="t-muted" font-size="9" text-anchor="middle">只接收 AnswerTrace</text>
-        <text data-detail="fine" x="895" y="492" class="t-frontend" font-size="7" text-anchor="middle">NO GENERIC TOOLS</text>
+          <text data-node-label="" x="1515" y="835" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Closed Presentation</text>
+        <text data-detail="fine" x="1515" y="864" class="t-frontend" font-size="7" text-anchor="middle">no upload / camera</text>
         </g>
 
-        <g id="node-governance_config" data-node-id="governance_config" data-node-label="Governance + Config" tabindex="0" role="button" aria-label="Focus Governance + Config, manifest · hashes · zones · policy, Architecture component" aria-pressed="false" data-node-kind="security" data-node-sublabel="manifest · hashes · zones · policy" data-node-tag="CONTROL PLANE" data-node-context="Architecture component">
-          <title>Governance + Config · manifest · hashes · zones · policy · Architecture component · CONTROL PLANE</title>
-          <rect x="400" y="70" width="210" height="72" rx="6" class="c-mask"/>
-          <rect x="400" y="70" width="210" height="72" rx="6" class="c-security" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="security" class="semantic-sigil s-security" transform="translate(406 76) scale(0.6875)">
+        <g id="node-policy_control" data-node-id="policy_control" data-node-label="Proposed Policy Control" tabindex="0" role="button" aria-label="Focus Proposed Policy Control, Authority / control — proposed, not runtime permission" aria-pressed="false" data-node-kind="security" data-node-tag="OPERATE disabled" data-node-context="Authority / control — proposed, not runtime permission">
+          <title>Proposed Policy Control · Authority / control — proposed, not runtime permission · OPERATE disabled</title>
+          <rect x="600" y="70" width="240" height="82" rx="6" class="c-mask"/>
+          <rect x="600" y="70" width="240" height="82" rx="6" class="c-security" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="security" class="semantic-sigil s-security" transform="translate(606 76) scale(0.6875)">
             <path d="M8 2.2 13 4v3.5c0 3.1-1.8 5.4-5 6.5-3.2-1.1-5-3.4-5-6.5V4Z"/>
             <path d="m5.8 8 1.5 1.5 3-3"/>
           </g>
-          <text data-node-label="" data-detail-anchor="" x="505" y="104" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Governance + Config</text>
-        <text data-detail="context" x="505" y="120" class="t-muted" font-size="9" text-anchor="middle">manifest · hashes · zones · policy</text>
-        <text data-detail="fine" x="505" y="134" class="t-security" font-size="7" text-anchor="middle">CONTROL PLANE</text>
+          <text data-node-label="" x="720" y="115" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Proposed Policy Control</text>
+        <text data-detail="fine" x="720" y="144" class="t-security" font-size="7" text-anchor="middle">OPERATE disabled</text>
         </g>
 
-        <g id="node-disabled_action" data-node-id="disabled_action" data-node-label="Action Plane" tabindex="0" role="button" aria-label="Focus Action Plane, executor 不存在；OPERATE disabled, 停用的行動面" aria-pressed="false" data-node-kind="security" data-node-sublabel="executor 不存在；OPERATE disabled" data-node-tag="DENY" data-node-context="停用的行動面">
-          <title>Action Plane · executor 不存在；OPERATE disabled · 停用的行動面 · DENY</title>
-          <rect x="800" y="570" width="190" height="72" rx="6" class="c-mask"/>
-          <rect x="800" y="570" width="190" height="72" rx="6" class="c-security" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="security" class="semantic-sigil s-security" transform="translate(806 576) scale(0.6875)">
+        <g id="node-operate_denial" data-node-id="operate_denial" data-node-label="Operational Denial" tabindex="0" role="button" aria-label="Focus Operational Denial, Authority / control — proposed, not runtime permission" aria-pressed="false" data-node-kind="security" data-node-tag="fail closed" data-node-context="Authority / control — proposed, not runtime permission">
+          <title>Operational Denial · Authority / control — proposed, not runtime permission · fail closed</title>
+          <rect x="1020" y="70" width="240" height="82" rx="6" class="c-mask"/>
+          <rect x="1020" y="70" width="240" height="82" rx="6" class="c-security" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="security" class="semantic-sigil s-security" transform="translate(1026 76) scale(0.6875)">
             <path d="M8 2.2 13 4v3.5c0 3.1-1.8 5.4-5 6.5-3.2-1.1-5-3.4-5-6.5V4Z"/>
             <path d="m5.8 8 1.5 1.5 3-3"/>
           </g>
-          <text data-node-label="" data-detail-anchor="" x="895" y="604" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Action Plane</text>
-        <text data-detail="context" x="895" y="620" class="t-muted" font-size="9" text-anchor="middle">executor 不存在；OPERATE disabled</text>
-        <text data-detail="fine" x="895" y="634" class="t-security" font-size="7" text-anchor="middle">DENY</text>
+          <text data-node-label="" x="1140" y="115" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Operational Denial</text>
+        <text data-detail="fine" x="1140" y="144" class="t-security" font-size="7" text-anchor="middle">fail closed</text>
         </g>
 
-        <g id="node-physical_outcome" data-node-id="physical_outcome" data-node-label="外部／實體結果" tabindex="0" role="button" aria-label="Focus 外部／實體結果, 目前不可達、不可宣稱, 停用的行動面" aria-pressed="false" data-node-kind="external" data-node-sublabel="目前不可達、不可宣稱" data-node-tag="OUT OF SCOPE" data-node-context="停用的行動面">
-          <title>外部／實體結果 · 目前不可達、不可宣稱 · 停用的行動面 · OUT OF SCOPE</title>
-          <rect x="1060" y="570" width="190" height="72" rx="6" class="c-mask"/>
-          <rect x="1060" y="570" width="190" height="72" rx="6" class="c-external" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="external" class="semantic-sigil s-external" transform="translate(1066 576) scale(0.6875)">
+        <g id="node-physical_home" data-node-id="physical_home" data-node-label="Physical Home Outcome" tabindex="0" role="button" aria-label="Focus Physical Home Outcome, Architecture component" aria-pressed="false" data-node-kind="external" data-node-tag="outside authority" data-node-context="Architecture component">
+          <title>Physical Home Outcome · Architecture component · outside authority</title>
+          <rect x="1400" y="70" width="260" height="82" rx="6" class="c-mask"/>
+          <rect x="1400" y="70" width="260" height="82" rx="6" class="c-external" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="external" class="semantic-sigil s-external" transform="translate(1406 76) scale(0.6875)">
             <rect x="2.5" y="5" width="8.5" height="8" rx="1.5"/>
             <path d="M8 2.5h5.5V8M13.5 2.5 7.5 8.5"/>
           </g>
-          <text data-node-label="" data-detail-anchor="" x="1155" y="604" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">外部／實體結果</text>
-        <text data-detail="context" x="1155" y="620" class="t-muted" font-size="9" text-anchor="middle">目前不可達、不可宣稱</text>
-        <text data-detail="fine" x="1155" y="634" class="t-external" font-size="7" text-anchor="middle">OUT OF SCOPE</text>
+          <text data-node-label="" x="1530" y="115" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Physical Home Outcome</text>
+        <text data-detail="fine" x="1530" y="144" class="t-external" font-size="7" text-anchor="middle">outside authority</text>
         </g>
 
         <!-- Connection labels -->
-        <g data-detail="context" data-edge-from="recorded_source" data-edge-to="perception_adapter" data-edge-label="transient frames" data-edge-key="0">
-          <rect x="196.6" y="324" width="86.8" height="14" rx="3" class="c-mask"/>
-          <text x="240" y="334" class="t-messagebus" font-size="8" text-anchor="middle">transient frames</text>
+        <g data-detail="context" data-edge-from="d0_bundle" data-edge-to="recorded_source" data-edge-label="verified bytes + metadata" data-edge-key="0" data-edge-id="bundle_to_source">
+          <rect x="220" y="386" width="130" height="14" rx="3" class="c-mask"/>
+          <text x="285" y="396" class="t-backend" font-size="8" text-anchor="middle">verified bytes + metadata</text>
         </g>
-        <g data-detail="context" data-edge-from="perception_adapter" data-edge-to="claim_commit" data-edge-label="ClaimCandidate" data-edge-key="1">
-          <rect x="456.4" y="324" width="77.2" height="14" rx="3" class="c-mask"/>
-          <text x="495" y="334" class="t-backend" font-size="8" text-anchor="middle">ClaimCandidate</text>
+        <g data-detail="context" data-edge-from="recorded_source" data-edge-to="perception" data-edge-label="selected frames + evidence refs" data-edge-key="1" data-edge-id="source_to_perception">
+          <rect x="485.6" y="386" width="158.79999999999998" height="14" rx="3" class="c-mask"/>
+          <text x="565" y="396" class="t-backend" font-size="8" text-anchor="middle">selected frames + evidence refs</text>
         </g>
-        <g data-detail="context" data-edge-from="claim_commit" data-edge-to="session_ledger" data-edge-label="AcceptedClaim" data-edge-key="2">
-          <rect x="728.8" y="324" width="72.4" height="14" rx="3" class="c-mask"/>
-          <text x="765" y="334" class="t-security" font-size="8" text-anchor="middle">AcceptedClaim</text>
+        <g data-detail="context" data-edge-from="perception" data-edge-to="relation_pipeline" data-edge-label="canonical detections" data-edge-key="2" data-edge-id="perception_to_relations">
+          <rect x="792" y="386" width="106" height="14" rx="3" class="c-mask"/>
+          <text x="845" y="396" class="t-backend" font-size="8" text-anchor="middle">canonical detections</text>
         </g>
-        <g data-detail="context" data-edge-from="session_ledger" data-edge-to="relation_projection" data-edge-label="accepted sequence" data-edge-key="3">
-          <rect x="979.2" y="324" width="91.6" height="14" rx="3" class="c-mask"/>
-          <text x="1025" y="334" class="t-backend" font-size="8" text-anchor="middle">accepted sequence</text>
+        <g data-detail="context" data-edge-from="relation_pipeline" data-edge-to="claim_committer" data-edge-label="estimated ClaimCandidate" data-edge-key="3" data-edge-id="relations_to_commit">
+          <rect x="932.4" y="420" width="125.19999999999999" height="14" rx="3" class="c-mask"/>
+          <text x="995" y="430" class="t-backend" font-size="8" text-anchor="middle">estimated ClaimCandidate</text>
         </g>
-        <g data-detail="context" data-edge-from="relation_projection" data-edge-to="state_query" data-edge-label="derived estimate" data-edge-key="4">
-          <rect x="1111.6" y="360" width="86.8" height="14" rx="3" class="c-mask"/>
-          <text x="1155" y="370" class="t-messagebus" font-size="8" text-anchor="middle">derived estimate</text>
+        <g data-detail="context" data-edge-from="claim_committer" data-edge-to="session_state" data-edge-label="AcceptedClaim only" data-edge-key="4" data-edge-id="commit_to_state">
+          <rect x="1096.8" y="646" width="96.39999999999999" height="14" rx="3" class="c-mask"/>
+          <text x="1145" y="656" class="t-security" font-size="8" text-anchor="middle">AcceptedClaim only</text>
         </g>
-        <g data-detail="context" data-edge-from="state_query" data-edge-to="agent_ui" data-edge-label="scoped AnswerTrace" data-edge-key="5">
-          <rect x="976.8" y="504" width="96.39999999999999" height="14" rx="3" class="c-mask"/>
-          <text x="1025" y="514" class="t-security" font-size="8" text-anchor="middle">scoped AnswerTrace</text>
+        <g data-detail="context" data-edge-from="session_state" data-edge-to="state_query" data-edge-label="rebuildable relation view" data-edge-key="5" data-edge-id="state_to_query">
+          <rect x="1325" y="646" width="130" height="14" rx="3" class="c-mask"/>
+          <text x="1390" y="656" class="t-backend" font-size="8" text-anchor="middle">rebuildable relation view</text>
         </g>
-        <g data-detail="context" data-edge-from="governance_config" data-edge-to="perception_adapter" data-edge-label="validated config" data-edge-key="6">
-          <rect x="381.6" y="158" width="86.8" height="14" rx="3" class="c-mask"/>
-          <text x="425" y="168" class="t-security" font-size="8" text-anchor="middle">validated config</text>
+        <g data-detail="context" data-edge-from="state_query" data-edge-to="presentation" data-edge-label="scoped answer + evidence chain" data-edge-key="6" data-edge-id="query_to_presentation">
+          <rect x="1283" y="706" width="154" height="14" rx="3" class="c-mask"/>
+          <text x="1360" y="716" class="t-backend" font-size="8" text-anchor="middle">scoped answer + evidence chain</text>
         </g>
-        <g data-detail="context" data-edge-from="governance_config" data-edge-to="claim_commit" data-edge-label="rules + versions" data-edge-key="7">
-          <rect x="526.6" y="188" width="86.8" height="14" rx="3" class="c-mask"/>
-          <text x="570" y="198" class="t-security" font-size="8" text-anchor="middle">rules + versions</text>
+        <g data-detail="context" data-edge-from="policy_control" data-edge-to="recorded_source" data-edge-label="fixed D0 allowlist only" data-edge-key="7" data-edge-id="policy_to_source">
+          <rect x="504.8" y="206" width="120.39999999999999" height="14" rx="3" class="c-mask"/>
+          <text x="565" y="216" class="t-security" font-size="8" text-anchor="middle">fixed D0 allowlist only</text>
+        </g>
+        <g data-detail="context" data-edge-from="policy_control" data-edge-to="operate_denial" data-edge-label="denies OPERATE" data-edge-key="8" data-edge-id="policy_to_denial">
+          <rect x="891.4" y="91" width="77.2" height="14" rx="3" class="c-mask"/>
+          <text x="930" y="101" class="t-security" font-size="8" text-anchor="middle">denies OPERATE</text>
+        </g>
+        <g data-detail="context" data-edge-from="operate_denial" data-edge-to="physical_home" data-edge-label="NO EXECUTION PATH" data-edge-key="9" data-edge-id="denial_to_outcome">
+          <rect x="1284.2" y="91" width="91.6" height="14" rx="3" class="c-mask"/>
+          <text x="1330" y="101" class="t-messagebus" font-size="8" text-anchor="middle">NO EXECUTION PATH</text>
         </g>
 
         <!-- Boundary labels (foreground masks keep routes out of titles) -->
-        <g data-graph-role="structural-frame-label" data-composition-frame-id="0" data-composition-frame-kind="region" data-composition-frame-label="B1 離線感知提案：不可信輸入與模型報告">
-          <rect data-graph-role="structural-frame-label-mask" x="26" y="230" width="209.79999999999998" height="16" rx="3" class="c-mask"/>
-          <text data-boundary-label="" x="30" y="243" class="t-cloud" font-size="9" font-weight="600">B1 離線感知提案：不可信輸入與模型報告</text>
+        <g data-graph-role="structural-frame-label" data-composition-frame-id="0" data-composition-frame-kind="region" data-composition-frame-label="Implemented local modular monolith">
+          <rect data-graph-role="structural-frame-label-mask" x="294" y="278" width="233.74195588387093" height="18" rx="3" class="c-mask"/>
+          <text data-boundary-label="" x="298" y="292.9677429354839" class="t-cloud" font-size="10.96774293548387" font-weight="600">Implemented local modular monolith</text>
         </g>
 
-        <g data-graph-role="structural-frame-label" data-composition-frame-id="1" data-composition-frame-kind="security-group" data-composition-frame-label="B0 確定性核心：唯一狀態提交與查詢邊界">
-          <rect data-graph-role="structural-frame-label-mask" x="512" y="230" width="209.79999999999998" height="16" rx="3" class="c-mask"/>
-          <text data-boundary-label="" x="516" y="243" class="t-security" font-size="9" font-weight="600">B0 確定性核心：唯一狀態提交與查詢邊界</text>
-        </g>
-
-        <g data-graph-role="structural-frame-label" data-composition-frame-id="2" data-composition-frame-kind="security-group" data-composition-frame-label="停用的行動面">
-          <rect data-graph-role="structural-frame-label-mask" x="786" y="550" width="74.8" height="16" rx="3" class="c-mask"/>
-          <text data-boundary-label="" x="790" y="563" class="t-security" font-size="9" font-weight="600">停用的行動面</text>
+        <g data-graph-role="structural-frame-label" data-composition-frame-id="1" data-composition-frame-kind="security-group" data-composition-frame-label="Authority / control — proposed, not runtime permission">
+          <rect data-graph-role="structural-frame-label-mask" x="578" y="48" width="365.35487110967733" height="18" rx="3" class="c-mask"/>
+          <text data-boundary-label="" x="582" y="62.96774293548387" class="t-security" font-size="10.96774293548387" font-weight="600">Authority / control — proposed, not runtime permission</text>
         </g>
 
         <!-- Legend -->
         <g data-legend="" data-legend-bridge="">
-          <text x="40" y="684" class="t-primary" font-size="12" font-weight="650">Legend</text>
-          <g data-legend-semantic-kind="frontend" data-legend-kind="frontend" data-legend-label="Frontend" data-legend-x="40" data-legend-baseline="704" data-legend-width="83">
-            <rect x="40" y="695" width="16" height="10" rx="2.5" class="c-frontend" stroke-width="1"/>
-            <text x="62" y="704" class="t-muted" font-size="10" font-weight="500">Frontend</text>
+          <text x="40" y="1004" class="t-primary" font-size="12" font-weight="650">Legend</text>
+          <g data-legend-semantic-kind="frontend" data-legend-kind="frontend" data-legend-label="Frontend" data-legend-x="40" data-legend-baseline="1024" data-legend-width="83">
+            <rect x="40" y="1015" width="16" height="10" rx="2.5" class="c-frontend" stroke-width="1"/>
+            <text x="62" y="1024" class="t-muted" font-size="10" font-weight="500">Frontend</text>
           </g>
-          <g data-legend-semantic-kind="backend" data-legend-kind="backend" data-legend-label="Backend" data-legend-x="145" data-legend-baseline="704" data-legend-width="78">
-            <rect x="145" y="695" width="16" height="10" rx="2.5" class="c-backend" stroke-width="1"/>
-            <text x="167" y="704" class="t-muted" font-size="10" font-weight="500">Backend</text>
+          <g data-legend-semantic-kind="backend" data-legend-kind="backend" data-legend-label="Backend" data-legend-x="145" data-legend-baseline="1024" data-legend-width="78">
+            <rect x="145" y="1015" width="16" height="10" rx="2.5" class="c-backend" stroke-width="1"/>
+            <text x="167" y="1024" class="t-muted" font-size="10" font-weight="500">Backend</text>
           </g>
-          <g data-legend-semantic-kind="database" data-legend-kind="database" data-legend-label="Database" data-legend-x="245" data-legend-baseline="704" data-legend-width="83">
-            <rect x="245" y="695" width="16" height="10" rx="2.5" class="c-database" stroke-width="1"/>
-            <text x="267" y="704" class="t-muted" font-size="10" font-weight="500">Database</text>
+          <g data-legend-semantic-kind="database" data-legend-kind="database" data-legend-label="Database" data-legend-x="245" data-legend-baseline="1024" data-legend-width="83">
+            <rect x="245" y="1015" width="16" height="10" rx="2.5" class="c-database" stroke-width="1"/>
+            <text x="267" y="1024" class="t-muted" font-size="10" font-weight="500">Database</text>
           </g>
-          <g data-legend-semantic-kind="security" data-legend-kind="security" data-legend-label="Security" data-legend-x="350" data-legend-baseline="704" data-legend-width="83">
-            <rect x="350" y="695" width="16" height="10" rx="2.5" class="c-security" stroke-width="1"/>
-            <text x="372" y="704" class="t-muted" font-size="10" font-weight="500">Security</text>
+          <g data-legend-semantic-kind="security" data-legend-kind="security" data-legend-label="Security" data-legend-x="350" data-legend-baseline="1024" data-legend-width="83">
+            <rect x="350" y="1015" width="16" height="10" rx="2.5" class="c-security" stroke-width="1"/>
+            <text x="372" y="1024" class="t-muted" font-size="10" font-weight="500">Security</text>
           </g>
-          <g data-legend-semantic-kind="external" data-legend-kind="external" data-legend-label="External" data-legend-x="455" data-legend-baseline="704" data-legend-width="83">
-            <rect x="455" y="695" width="16" height="10" rx="2.5" class="c-external" stroke-width="1"/>
-            <text x="477" y="704" class="t-muted" font-size="10" font-weight="500">External</text>
+          <g data-legend-semantic-kind="external" data-legend-kind="external" data-legend-label="External" data-legend-x="455" data-legend-baseline="1024" data-legend-width="83">
+            <rect x="455" y="1015" width="16" height="10" rx="2.5" class="c-external" stroke-width="1"/>
+            <text x="477" y="1024" class="t-muted" font-size="10" font-weight="500">External</text>
           </g>
         </g>
       </svg>

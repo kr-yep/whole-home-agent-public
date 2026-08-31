@@ -39,3 +39,18 @@ package-dir = {"" = "src"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.data-files]
+"wha/examples/media/generated" = [
+  "examples/media/generated/key_bag_sofa_v2.annotations.json",
+  "examples/media/generated/key_bag_sofa_v2.manifest.json",
+  "examples/media/generated/key_bag_sofa_v2.mp4",
+]
+"wha/configs/perception" = [
+  "configs/perception/relation-eval-v1.toml",
+  "configs/perception/relation-rules-v1.toml",
+  "configs/perception/synthetic-color-v1.toml",
+]
+"wha/tools" = [
+  "tools/generate_synthetic_replay.py",
+]

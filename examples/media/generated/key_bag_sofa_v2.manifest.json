@@ -1,6 +1,6 @@
 {
   "annotations": {
-    "path": "key_bag_sofa_v1.annotations.json",
+    "path": "key_bag_sofa_v2.annotations.json",
     "sha256": "6d67ed1fc8a9ec34fc9d21fd6c1b7d71824b726831bcfd5e0013b95df807b11f"
   },
   "entities": [
@@ -45,17 +45,17 @@
   "frame_count": 80,
   "height": 360,
   "license": "CC0-1.0",
-  "path": "key_bag_sofa_v1.mp4",
+  "path": "key_bag_sofa_v2.mp4",
   "provenance": {
     "generator": "tools/generate_synthetic_replay.py",
-    "generator_sha256": "72b5f80c6066608571130ec501ed96513045c600db50032c429a065fc195227d",
+    "generator_sha256": "5521012963d3082dc883ef70c4b19c5f26db6cae61df3c3b9b2ef49d866190ee",
     "kind": "project_generated_synthetic"
   },
   "schema_version": 1,
-  "sha256": "f636b3e1e3b606f7661aadfdfbd29d14b967c2e70c0555b7f98c77281d36078c",
+  "sha256": "b9cc79476d77f8d45acd1803c924de73914ffc4790f4da271f77cc8d4742eb43",
   "source_id": "b1-key-bag-sofa",
   "source_kind": "recorded_video",
-  "source_revision": "1",
+  "source_revision": "2",
   "split": "demo",
   "timestamp_basis": "media_pts",
   "use_class": "D0_SYNTHETIC",

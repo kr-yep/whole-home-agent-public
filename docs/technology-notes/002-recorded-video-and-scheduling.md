@@ -2,7 +2,7 @@
 
 **Decision status:** `IMPLEMENTED AND VERIFIED ON ONE PROJECT-GENERATED D0 REPLAY`
 
-**Scope:** one 640×360, 10 FPS, 80-frame synthetic key/bag/sofa clip
+**Scope:** one 640×360, 10 FPS, 80-frame synthetic key/bag/sofa clip, source revision 2
 
 **Does not establish:** object-detection quality, event inference, indoor generality, real-time camera operation, or 24/7 resource use
 
@@ -22,7 +22,7 @@ The closed video manifest binds:
 
 Only manifests immediately below `examples/media/generated` are accepted. URLs, absolute paths, parent traversal, unknown fields, unresolved licenses, hash mismatches, and non-D0 source envelopes fail before decoding.
 
-The generated MP4 is 63,283 bytes and has SHA-256 `f636b3e1e3b606f7661aadfdfbd29d14b967c2e70c0555b7f98c77281d36078c`. Two consecutive generator runs produced the same hash on the tested Windows/Python/PyAV environment. This is integrity evidence for those bytes, not proof that the depicted event is real.
+The revision-2 MP4 is 18,695 bytes and has SHA-256 `b9cc79476d77f8d45acd1803c924de73914ffc4790f4da271f77cc8d4742eb43`. It uses H.264 with `yuv420p` rather than revision 1's MPEG-4 Part 2 encoding because the latter failed playback in the tested Chromium browser. Two consecutive generator runs produced the same revision-2 hash on the tested Windows/Python/PyAV environment. Revision 1 remains recoverable in Git history; its bytes and earlier measurements were not relabeled as revision 2. This is integrity and playback evidence for the named bytes, not proof that the depicted event is real.
 
 ## PyAV and PTS principle
 
@@ -52,7 +52,7 @@ A frame is selected when:
 
 Periodic anchors are essential because an object that moved and then became stationary still needs occasional re-detection. All thresholds live in immutable validated configuration rather than scattered constants.
 
-With the tested fixture configuration (`threshold=0.005`, `min_gap=2`, `anchor=10`, `stride=8`), 13 of 80 frames were selected: 1 first frame, 6 motion selections, and 6 periodic anchors. This result is fixture-specific and does not yet demonstrate detector latency savings.
+With the tested revision-2 fixture configuration (`threshold=0.003`, `min_gap=2`, `anchor=10`, `stride=8`), 14 of 80 frames were selected: 1 first frame, 8 motion selections, and 5 periodic anchors. The threshold changed because decoded pixel differences changed with the versioned encoding; it is exercised as a scheduling-contract fixture, not an indoor operating threshold. This result is fixture-specific and does not yet demonstrate detector latency savings.
 
 ## Why these components were selected
 
@@ -76,7 +76,7 @@ Alternatives deferred:
 - The full local suite passes with the locked video environment.
 - Public-release audit accepts only the generated media plus its valid manifest.
 
-Synthetic shapes and one clip do not support claims of indoor accuracy or external validity. Detector, tracker, relation, answer, latency, and VRAM gates remain unmeasured.
+Synthetic shapes and one clip do not support claims of indoor accuracy or external validity. Detector, tracker, relation, answer, latency, and VRAM measurements for this same generated fixture are recorded separately; none passes the frozen indoor evidence gate.
 
 ## Resource and license impact
 

@@ -22,13 +22,13 @@ The answer is an `estimated` result scoped to that replay. It is not a claim abo
 - a deterministic RGB smoke detector for the generated artwork;
 - a hash-pinned RF-DETR Nano adapter boundary for a future real model artifact;
 - clip-local IoU tracking and one-instance manifest binding;
-- conservative containment/location rules with visible abstention;
+- conservative containment/location rules with explicit abstention behavior;
 - the unchanged B0 claim committer, relation projection, and scoped query path;
 - fixed AP, event, answer, latency, FPS, dropped-frame, and VRAM reporting;
 - JSON CLI and a local Streamlit presentation;
 - automated B0 tests on Python 3.11–3.14 plus locked B1/demo jobs.
 
-On the included synthetic clip, the current RGB baseline measures AP50 `0.9604`, mAP50:95 about `0.5931`, key recall `0.8857`, zero false positives, event F1 `1.0`, and the final expected answer. It also exposes three tracking ID switches, two fragmentations, and one deliberate relation abstention. These numbers apply only to this generated fixture and do not establish indoor accuracy, real-time operation, or 24/7 readiness.
+On the included browser-compatible H.264 synthetic clip, the current RGB baseline measures AP50 `1.0`, mAP50:95 about `0.7293`, key recall `1.0`, zero false positives, event F1 `1.0`, and the final expected answer. The clip-local tracker records zero ID switches and zero fragmentations on this one easy fixture. These numbers apply only to this generated artwork and do not establish indoor accuracy, real-time operation, or 24/7 readiness.
 
 ## Run the demo
 
@@ -85,7 +85,7 @@ allowlisted generated MP4 + manifest/config hashes
 
 Detector and rule outputs cannot directly mutate state. A complete source failure returns no queryable session. The UI receives presentation values and public media bytes, not a model, ledger, filesystem, credential, or generic tool handle. No graph database, Memory Core, LLM/VLM, multi-agent runtime, durable database, or action executor is required for this slice.
 
-See the [minimal B0 → B1 architecture](docs/b0-b1-architecture-plan.md), [system diagram](docs/b0-b1-system.architecture.html), [perception data flow](docs/b0-b1-perception.dataflow.html), [implementation notes](docs/technology-notes/), and [ADRs](docs/adr/). Proposed governance and ADR status are recorded in [PROJECT_STATE.md](PROJECT_STATE.md); implementation does not adopt those documents or enable operation.
+See the [minimal B0 → B1 architecture](docs/b0-b1-architecture-plan.md), [system diagram](docs/b0-b1-system.architecture.html), [perception data flow](docs/b0-b1-perception.dataflow.html), [implementation notes](docs/technology-notes/), [release checklist](docs/release-checklist.md), and [ADRs](docs/adr/). Proposed governance and ADR status are recorded in [PROJECT_STATE.md](PROJECT_STATE.md); implementation does not adopt those documents or enable operation.
 
 ## Repository map
 

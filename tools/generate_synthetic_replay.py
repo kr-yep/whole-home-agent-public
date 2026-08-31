@@ -70,17 +70,28 @@ def generate(output_dir: Path) -> None:
     import av
 
     output_dir.mkdir(parents=True, exist_ok=True)
-    media_path = output_dir / "key_bag_sofa_v1.mp4"
-    annotation_path = output_dir / "key_bag_sofa_v1.annotations.json"
-    manifest_path = output_dir / "key_bag_sofa_v1.manifest.json"
+    media_path = output_dir / "key_bag_sofa_v2.mp4"
+    annotation_path = output_dir / "key_bag_sofa_v2.annotations.json"
+    manifest_path = output_dir / "key_bag_sofa_v2.manifest.json"
 
     annotations: list[dict[str, object]] = []
-    with av.open(str(media_path), mode="w", format="mp4") as container:
-        stream = container.add_stream("mpeg4", rate=FPS)
+    with av.open(
+        str(media_path),
+        mode="w",
+        format="mp4",
+        options={"movflags": "+faststart"},
+    ) as container:
+        # H.264 + yuv420p is intentionally used for broad browser playback.
+        # One encoder thread and fixed options keep the public fixture stable.
+        stream = container.add_stream("libx264", rate=FPS)
         stream.width = WIDTH
         stream.height = HEIGHT
         stream.pix_fmt = "yuv420p"
-        stream.options = {"threads": "1"}
+        stream.options = {
+            "crf": "18",
+            "preset": "medium",
+            "threads": "1",
+        }
         for index in range(FRAME_COUNT):
             image, state = _draw_frame(index)
             frame = av.VideoFrame.from_image(image)
@@ -107,7 +118,7 @@ def generate(output_dir: Path) -> None:
     manifest = {
         "schema_version": 1,
         "source_id": "b1-key-bag-sofa",
-        "source_revision": "1",
+        "source_revision": "2",
         "source_kind": "recorded_video",
         "timestamp_basis": "media_pts",
         "use_class": "D0_SYNTHETIC",

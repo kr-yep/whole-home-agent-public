@@ -26,7 +26,7 @@ from whole_home_agent.video_manifest import load_video_manifest
 
 
 DEFAULT_MANIFEST = (
-    ROOT / "examples" / "media" / "generated" / "key_bag_sofa_v1.manifest.json"
+    ROOT / "examples" / "media" / "generated" / "key_bag_sofa_v2.manifest.json"
 )
 DEFAULT_COLOR_CONFIG = ROOT / "configs" / "perception" / "synthetic-color-v1.toml"
 

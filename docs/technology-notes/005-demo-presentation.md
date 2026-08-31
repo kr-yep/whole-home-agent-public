@@ -2,7 +2,7 @@
 
 **Status:** implemented for the single allowlisted generated replay
 
-`public_demo.py` is the closed composition and presentation boundary for M5. It selects fixed repository manifests/configurations, constructs concrete offline adapters, runs perception and relation evaluation, queries the completed session, and returns JSON-safe presentation values. The CLI and Streamlit app do not receive the model, tracker, binder, candidate source, ledger, filesystem, credentials, or a generic tool handle.
+`public_demo.py` is the closed composition and presentation boundary for the public B1 demo. It selects fixed repository manifests/configurations, constructs concrete offline adapters, runs perception and relation evaluation, queries the completed session, and returns JSON-safe presentation values. The CLI and Streamlit app do not receive the model, tracker, binder, candidate source, ledger, filesystem, credentials, or a generic tool handle.
 
 The only separate media method returns bytes from the same hash-validated public manifest. It does not accept a path or URL. The Streamlit source contains no upload, camera, free-form query/chat, network model, device, or action widget.
 
@@ -20,7 +20,7 @@ The UI shows:
 - an estimated, replay-scoped answer and two-step relation path;
 - accepted claim rows with confirmation frames, confidence floor, and evidence span;
 - fixed-fixture detection/event quality and measured p95 latency;
-- visible abstention and notable timeline frames;
+- explicit abstention status and notable timeline frames;
 - raw answer and execution receipt expanders;
 - explicit limits against present-world, indoor, live, and action claims.
 

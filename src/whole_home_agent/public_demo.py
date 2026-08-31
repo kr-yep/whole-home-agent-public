@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -29,7 +30,7 @@ PUBLIC_MANIFEST = (
     / "examples"
     / "media"
     / "generated"
-    / "key_bag_sofa_v1.manifest.json"
+    / "key_bag_sofa_v2.manifest.json"
 )
 COLOR_CONFIG = (
     REPOSITORY_ROOT / "configs" / "perception" / "synthetic-color-v1.toml"
@@ -40,6 +41,27 @@ RELATION_CONFIG = (
 RELATION_EVAL_CONFIG = (
     REPOSITORY_ROOT / "configs" / "perception" / "relation-eval-v1.toml"
 )
+
+
+def _resolve_demo_root() -> Path:
+    """Resolve the clone root or the wheel's read-only shared-data root."""
+
+    if PUBLIC_MANIFEST.is_file():
+        return REPOSITORY_ROOT
+    installed_root = Path(sys.prefix) / "wha"
+    installed_manifest = installed_root / PUBLIC_MANIFEST.relative_to(
+        REPOSITORY_ROOT
+    )
+    if installed_manifest.is_file():
+        return installed_root
+    raise SourceError(
+        "the fixed public demo bundle is not installed",
+        error_code=ErrorCode.INVALID_SOURCE,
+    )
+
+
+def _at_demo_root(path: Path, demo_root: Path) -> Path:
+    return demo_root / path.relative_to(REPOSITORY_ROOT)
 
 
 def _position_dict(position) -> dict[str, object]:
@@ -137,7 +159,10 @@ def _claim_dict(claim) -> dict[str, object]:
 def load_public_demo_media() -> bytes:
     """Return only the hash-validated project-generated public demo media."""
 
-    manifest = load_video_manifest(PUBLIC_MANIFEST, repository_root=REPOSITORY_ROOT)
+    demo_root = _resolve_demo_root()
+    manifest = load_video_manifest(
+        _at_demo_root(PUBLIC_MANIFEST, demo_root), repository_root=demo_root
+    )
     return manifest.media_path.read_bytes()
 
 
@@ -149,7 +174,10 @@ def run_public_demo(
 ) -> dict[str, Any]:
     """Run the one allowlisted offline demo and return presentation-safe values."""
 
-    manifest = load_video_manifest(PUBLIC_MANIFEST, repository_root=REPOSITORY_ROOT)
+    demo_root = _resolve_demo_root()
+    manifest = load_video_manifest(
+        _at_demo_root(PUBLIC_MANIFEST, demo_root), repository_root=demo_root
+    )
     allowed_entities = {record["entity_id"] for record in manifest.entities}
     if subject_id not in allowed_entities:
         raise SourceError(
@@ -157,21 +185,21 @@ def run_public_demo(
             error_code=ErrorCode.INVALID_SOURCE,
         )
     width, height, targets = load_synthetic_color_config(
-        COLOR_CONFIG, repository_root=REPOSITORY_ROOT
+        _at_demo_root(COLOR_CONFIG, demo_root), repository_root=demo_root
     )
     detector = SyntheticColorDetector(width=width, height=height, targets=targets)
     perception_report = evaluate_perception(
         manifest,
         detector,
         tracker=IoUTracker(),
-        repository_root=REPOSITORY_ROOT,
+        repository_root=demo_root,
     )
     source = RecordedPerceptionCandidateSource(
         manifest,
         detector,
         IoUTracker(),
         load_relation_rule_config(
-            RELATION_CONFIG, repository_root=REPOSITORY_ROOT
+            _at_demo_root(RELATION_CONFIG, demo_root), repository_root=demo_root
         ),
     )
     result = run_source(source, replay_run_id=replay_run_id)
@@ -196,7 +224,8 @@ def run_public_demo(
         source.diagnostics.abstentions,
         source.diagnostics.completed,
         load_relation_evaluation_config(
-            RELATION_EVAL_CONFIG, repository_root=REPOSITORY_ROOT
+            _at_demo_root(RELATION_EVAL_CONFIG, demo_root),
+            repository_root=demo_root,
         ),
     )
     frames = [

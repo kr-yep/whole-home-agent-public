@@ -2,152 +2,233 @@
   "schema_version": 1,
   "diagram_type": "dataflow",
   "meta": {
-    "title": "全屋 Agent：B1 預錄影片到可追溯回答的資料流",
-    "subtitle": "感知只提出候選；B0 決定是否接受、如何投影，以及何時 abstain",
+    "title": "Whole Home Agent — Evidence-Bound Prerecorded Replay Flow",
     "output": "docs/b0-b1-perception.dataflow.html",
     "animation": "none",
-    "visual_preset": "signal-flow",
     "quality_profile": "showcase",
-    "viewBox": [1080, 600],
+    "viewBox": [
+      1100,
+      700
+    ],
     "views": [
       {
-        "id": "perception-path",
-        "label": "感知候選路徑",
-        "focus": ["recorded_video", "frame_gate", "detector", "event_extractor", "claim_candidate"],
-        "note": "原始影格保持 transient；detector/tracker/event extractor 都不能寫入狀態。"
+        "id": "answer-path",
+        "label": "Answer path",
+        "focus": [
+          "d0_bundle",
+          "validated_replay",
+          "perception_relations",
+          "semantic_core",
+          "scoped_demo"
+        ],
+        "note": "Trace the fixed replay into a fixture/run/as-of-scoped answer."
       },
       {
-        "id": "commit-path",
-        "label": "提交與投影",
-        "focus": ["claim_candidate", "claim_commit", "session_ledger", "relation_projection"],
-        "note": "唯一 mutation 經過 deterministic commit；重複、衝突、cycle 與次序在此處處理。"
+        "id": "evidence-status",
+        "label": "Evidence and failure",
+        "focus": [
+          "validated_replay",
+          "perception_relations",
+          "semantic_core",
+          "run_receipt"
+        ],
+        "note": "Raw frames remain transient; failures and abstentions become diagnostics, not partial truth."
       },
       {
-        "id": "answer-semantics",
-        "label": "回答語意",
-        "focus": ["relation_projection", "scoped_answer"],
-        "note": "key → bag → sofa 是 derived estimate；不能虛構觀察到 key 自己移動。"
+        "id": "control-lane",
+        "label": "Control lane",
+        "focus": [
+          "policy_control",
+          "validated_replay",
+          "semantic_core"
+        ],
+        "note": "Proposed policy restricts inputs; deterministic code alone admits semantic claims."
       }
     ]
   },
   "stages": [
-    { "label": "離線輸入" },
-    { "label": "B1 感知提案" },
-    { "label": "B0 admission" },
-    { "label": "B0 狀態" },
-    { "label": "查詢輸出" }
+    {
+      "label": "Source / Authority"
+    },
+    {
+      "label": "Validate / Select"
+    },
+    {
+      "label": "Perceive / Infer"
+    },
+    {
+      "label": "Commit / Project"
+    },
+    {
+      "label": "Query / Present"
+    }
   ],
   "nodes": [
     {
-      "id": "recorded_video",
+      "id": "d0_bundle",
       "type": "external",
-      "label": "預錄 D0 影片",
-      "sublabel": "allowlisted local D0",
-      "tag": "UNTRUSTED DATA",
+      "label": "Fixed D0 Bundle",
       "stage": 0,
       "row": 0,
-      "width": 144
+      "width": 150,
+      "tag": "hash-pinned"
     },
     {
-      "id": "validated_config",
+      "id": "policy_control",
       "type": "security",
-      "label": "Validated Config",
-      "sublabel": "hash · thresholds · zones",
-      "tag": "CONTROL",
+      "label": "Proposed Policy",
       "stage": 0,
-      "row": 2,
-      "width": 144
+      "row": 3,
+      "width": 150,
+      "tag": "OPERATE disabled"
     },
     {
-      "id": "frame_gate",
-      "type": "backend",
-      "label": "Frame + Motion Gate",
-      "sublabel": "decode；影格不持久化",
-      "tag": "B1 PROPOSED",
-      "stage": 1,
-      "row": 0,
-      "width": 160
-    },
-    {
-      "id": "detector",
-      "type": "backend",
-      "label": "YOLO Detector",
-      "sublabel": "boxes = model reports",
-      "tag": "REPLACEABLE",
-      "stage": 1,
-      "row": 1,
-      "width": 160
-    },
-    {
-      "id": "event_extractor",
-      "type": "backend",
-      "label": "Tracker + Event Extractor",
-      "sublabel": "move / contain hypotheses",
-      "tag": "NO COMMIT",
-      "stage": 1,
-      "row": 2,
-      "width": 192
-    },
-    {
-      "id": "claim_candidate",
-      "type": "messagebus",
-      "label": "ClaimCandidate",
-      "sublabel": "provenance + epistemic status",
-      "tag": "CANONICAL CONTRACT",
-      "stage": 2,
-      "row": 0,
-      "width": 184
-    },
-    {
-      "id": "claim_commit",
+      "id": "validated_replay",
       "type": "security",
-      "label": "Deterministic Commit",
-      "sublabel": "accept · reject · conflict",
-      "tag": "ONLY MUTATION",
-      "stage": 2,
-      "row": 2,
-      "width": 184
+      "label": "Validated Replay",
+      "stage": 1,
+      "row": 0,
+      "width": 160,
+      "tag": "fail closed"
     },
     {
-      "id": "session_ledger",
-      "type": "database",
-      "label": "Session Ledger",
-      "sublabel": "accepted claims；replayable",
-      "tag": "NOT WORLD TRUTH",
+      "id": "perception_relations",
+      "type": "backend",
+      "label": "Perception + Relations",
+      "stage": 2,
+      "row": 0,
+      "width": 170,
+      "tag": "may abstain"
+    },
+    {
+      "id": "semantic_core",
+      "type": "security",
+      "label": "B0 Semantic Core",
       "stage": 3,
       "row": 0,
-      "width": 164
+      "width": 165,
+      "tag": "memory only"
     },
     {
-      "id": "relation_projection",
-      "type": "backend",
-      "label": "Relation Projection",
-      "sublabel": "inside + at_zone + validity",
-      "tag": "REBUILDABLE",
-      "stage": 3,
-      "row": 2,
-      "width": 164
-    },
-    {
-      "id": "scoped_answer",
+      "id": "scoped_demo",
       "type": "frontend",
-      "label": "Scoped AnswerTrace",
-      "sublabel": "status + evidence trace",
-      "tag": "READ BOUNDARY",
+      "label": "Scoped Query + Demo",
       "stage": 4,
-      "row": 1,
-      "width": 192
+      "row": 0,
+      "width": 165,
+      "tag": "no upload"
+    },
+    {
+      "id": "run_receipt",
+      "type": "backend",
+      "label": "Run Receipt",
+      "stage": 4,
+      "row": 3,
+      "width": 155,
+      "tag": "diagnostic"
     }
   ],
   "flows": [
-    { "from": "recorded_video", "to": "frame_gate", "label": "transient frames", "classification": "raw media", "variant": "dashed", "route": "straight", "labelAt": [212, 200] },
-    { "from": "frame_gate", "to": "detector", "label": "selected frames", "classification": "pixels", "variant": "default", "route": "straight", "labelAt": [315, 200] },
-    { "from": "detector", "to": "event_extractor", "label": "boxes + confidence", "classification": "model report", "variant": "dashed", "route": "straight", "labelAt": [315, 314] },
-    { "from": "event_extractor", "to": "claim_candidate", "label": "event hypothesis", "classification": "untrusted claim", "variant": "emphasis", "labelAt": [425, 314] },
-    { "from": "claim_candidate", "to": "claim_commit", "label": "typed candidate", "classification": "provenanced", "variant": "security", "route": "straight", "labelAt": [530, 271] },
-    { "from": "claim_commit", "to": "session_ledger", "label": "AcceptedClaim", "classification": "validated report", "variant": "security" },
-    { "from": "session_ledger", "to": "relation_projection", "label": "accepted sequence", "classification": "session scoped", "variant": "emphasis", "route": "straight", "labelAt": [745, 271] },
-    { "from": "relation_projection", "to": "scoped_answer", "label": "traceable estimate", "classification": "derived answer", "variant": "emphasis" },
-    { "from": "validated_config", "to": "detector", "label": "resolved model config", "classification": "versioned control", "variant": "security", "route": "vertical-channel", "channelX": 205, "labelAt": [205, 325] }
+    {
+      "id": "bundle_to_replay",
+      "from": "d0_bundle",
+      "to": "validated_replay",
+      "label": "MP4 + metadata",
+      "classification": "D0 synthetic",
+      "variant": "emphasis",
+      "labelAt": [
+        205,
+        200
+      ]
+    },
+    {
+      "id": "replay_to_perception",
+      "from": "validated_replay",
+      "to": "perception_relations",
+      "label": "selected RGB frames",
+      "classification": "transient",
+      "variant": "emphasis",
+      "labelAt": [
+        420,
+        200
+      ]
+    },
+    {
+      "id": "perception_to_core",
+      "from": "perception_relations",
+      "to": "semantic_core",
+      "label": "estimated candidates",
+      "classification": "provenance-bound",
+      "variant": "emphasis",
+      "labelAt": [
+        639,
+        200
+      ]
+    },
+    {
+      "id": "core_to_demo",
+      "from": "semantic_core",
+      "to": "scoped_demo",
+      "label": "answer + evidence chain",
+      "classification": "read-only",
+      "variant": "emphasis",
+      "labelAt": [
+        853,
+        200
+      ]
+    },
+    {
+      "id": "policy_to_replay",
+      "from": "policy_control",
+      "to": "validated_replay",
+      "label": "fixed D0 allowlist",
+      "classification": "control / authority",
+      "variant": "security",
+      "route": "bottom-channel",
+      "toSide": "bottom"
+    },
+    {
+      "id": "replay_failure",
+      "from": "validated_replay",
+      "to": "run_receipt",
+      "label": "failure → no session",
+      "classification": "fail closed",
+      "variant": "security",
+      "route": "bottom-channel",
+      "fromSide": "bottom",
+      "labelAt": [
+        440,
+        470
+      ]
+    },
+    {
+      "id": "perception_diagnostics",
+      "from": "perception_relations",
+      "to": "run_receipt",
+      "label": "abstentions + lag",
+      "classification": "diagnostic",
+      "variant": "dashed",
+      "route": "bottom-channel",
+      "fromSide": "bottom",
+      "labelAt": [
+        740,
+        420
+      ]
+    },
+    {
+      "id": "demo_receipt",
+      "from": "scoped_demo",
+      "to": "run_receipt",
+      "label": "counts + timings",
+      "classification": "run receipt",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "route": "straight",
+      "labelAt": [
+        1030,
+        340
+      ]
+    }
   ]
 }

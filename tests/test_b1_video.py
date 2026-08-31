@@ -20,7 +20,7 @@ from whole_home_agent.video_manifest import load_video_manifest
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 MEDIA_ROOT = REPO_ROOT / "examples" / "media" / "generated"
-MANIFEST_PATH = MEDIA_ROOT / "key_bag_sofa_v1.manifest.json"
+MANIFEST_PATH = MEDIA_ROOT / "key_bag_sofa_v2.manifest.json"
 
 
 @unittest.skipUnless(
@@ -33,7 +33,7 @@ class RecordedVideoContractTests(unittest.TestCase):
         manifest = load_video_manifest(MANIFEST_PATH, repository_root=REPO_ROOT)
 
         self.assertEqual(manifest.descriptor.source_id, "b1-key-bag-sofa")
-        self.assertEqual(manifest.descriptor.world_scope, "source:b1-key-bag-sofa@1")
+        self.assertEqual(manifest.descriptor.world_scope, "source:b1-key-bag-sofa@2")
         self.assertEqual(manifest.license_id, "CC0-1.0")
         self.assertEqual(manifest.frame_count, 80)
         self.assertEqual((manifest.width, manifest.height), (640, 360))
@@ -75,7 +75,7 @@ class RecordedVideoContractTests(unittest.TestCase):
         manifest = load_video_manifest(MANIFEST_PATH, repository_root=REPO_ROOT)
         scheduler = MotionPeriodicScheduler(
             MotionScheduleConfig(
-                motion_threshold=0.005,
+                motion_threshold=0.003,
                 min_gap_frames=2,
                 anchor_interval_frames=10,
                 sample_stride=8,

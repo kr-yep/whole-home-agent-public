@@ -38,16 +38,16 @@ Box overlap alone is insufficient. The bag must overlap the sofa by the configur
 
 Frame order must increase. A gap larger than the configured window resets all in-progress confirmation streaks and records `observation_gap_exceeded`. Active accepted relations are not silently rewritten by a missing frame; only a separately confirmed retraction can end them.
 
-The current color detector briefly misses the moving key before it reaches the bag. The rule records `disappearance_without_containment_context` at frame 28 and emits no claim there. This is the intended abstention behavior.
+The browser-compatible source revision preserves the rendered key until the supported containment transition, so this easy replay needs no abstention. Abstention is instead verified with hostile unit cases: unsupported disappearance, ambiguous same-label instances, observation gaps, and missing evidence emit typed diagnostics or fail closed rather than creating a claim. This avoids treating an encoder artifact as a product feature.
 
 ## End-to-end result
 
-On `key_bag_sofa_v1.mp4`, the RGB pipeline emits exactly:
+On `key_bag_sofa_v2.mp4`, the RGB pipeline emits exactly:
 
 - frame 37: estimated `assert inside(key, bag)`, two frames after the annotated transition;
 - frame 68: estimated `assert at_zone(bag, sofa)`, three frames after the annotated transition.
 
-The frozen relation evaluator allows only non-negative confirmation lag up to five frames. On this single generated clip, event precision/recall/F1 and final `key → bag → sofa` answer accuracy are all `1.0`, with confirmation lags `(2, 3)` and one recorded abstention. These are fixture results, not evidence of indoor generalization.
+The frozen relation evaluator allows only non-negative confirmation lag up to five frames. On this single generated clip, event precision/recall/F1 and final `key → bag → sofa` answer accuracy are all `1.0`, with confirmation lags `(2, 3)` and no required abstention. These are fixture results, not evidence of indoor generalization.
 
 The query returns `FOUND sofa`, epistemic status `estimated`, the two claim IDs, their source sequences, and a relation path. Each accepted claim retains its media PTS range, confidence, perception-evidence quality, relation rule artifact/config hash, and source hash. The answer says it was resolved from estimated relations rather than reported facts.
 
@@ -57,7 +57,7 @@ An injected detector failure after the first inferred candidate returns an `INCO
 
 ## Calibration disclosure
 
-While connecting M4, the synthetic sofa color tolerance was reduced from 20 to 10 because compressed pixels from another region widened the sofa box and caused a false early relation. This was a transparent adjustment on the manifest's `demo` split, not a frozen test result. With the revised demo-only config, AP50 remains `0.9604`, key recall `0.8857`, zero false positives, and mAP50:95 is approximately `0.5931` on the same clip. No real-home claim is attached to that tuning.
+While connecting M4, the synthetic sofa color tolerance was reduced from 20 to 10 because revision-1 compressed pixels from another region widened the sofa box and caused a false early relation. This was a transparent adjustment on the manifest's `demo` split, not a frozen indoor test result. M6 then versioned the source to browser-compatible H.264 revision 2 instead of silently replacing revision 1. With the same demo-only detector config, revision 2 measures AP50/key recall `1.0`, zero false positives, and mAP50:95 approximately `0.7293`. No real-home claim is attached to either calibration or source change.
 
 ## Evidence boundary
 

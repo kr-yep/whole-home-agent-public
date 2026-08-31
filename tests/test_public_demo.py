@@ -7,9 +7,12 @@ import hashlib
 import importlib.util
 import io
 import json
+import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
+from whole_home_agent import public_demo
 from whole_home_agent.cli import main as cli_main
 from whole_home_agent.errors import SourceError
 from whole_home_agent.public_demo import (
@@ -25,6 +28,34 @@ HAS_VIDEO = importlib.util.find_spec("av") is not None and importlib.util.find_s
     "numpy"
 ) is not None
 HAS_STREAMLIT = importlib.util.find_spec("streamlit") is not None
+
+
+class DemoBundleResolutionTests(unittest.TestCase):
+    def test_wheel_shared_data_root_is_resolved_without_repo_bundle(self):
+        relative_manifest = Path(
+            "examples/media/generated/key_bag_sofa_v2.manifest.json"
+        )
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            temporary_root = Path(temporary_directory)
+            missing_repository_root = temporary_root / "missing-clone"
+            installed_root = temporary_root / "venv" / "wha"
+            installed_manifest = installed_root / relative_manifest
+            installed_manifest.parent.mkdir(parents=True)
+            installed_manifest.write_text("{}", encoding="utf-8")
+            with (
+                mock.patch.object(
+                    public_demo, "REPOSITORY_ROOT", missing_repository_root
+                ),
+                mock.patch.object(
+                    public_demo,
+                    "PUBLIC_MANIFEST",
+                    missing_repository_root / relative_manifest,
+                ),
+                mock.patch.object(
+                    public_demo.sys, "prefix", str(temporary_root / "venv")
+                ),
+            ):
+                self.assertEqual(public_demo._resolve_demo_root(), installed_root)
 
 
 @unittest.skipUnless(HAS_VIDEO, "video optional dependencies are not installed")

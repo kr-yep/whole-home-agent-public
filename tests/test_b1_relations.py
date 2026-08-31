@@ -42,7 +42,7 @@ from whole_home_agent.video_manifest import load_video_manifest
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST_PATH = (
-    ROOT / "examples" / "media" / "generated" / "key_bag_sofa_v1.manifest.json"
+    ROOT / "examples" / "media" / "generated" / "key_bag_sofa_v2.manifest.json"
 )
 COLOR_CONFIG = ROOT / "configs" / "perception" / "synthetic-color-v1.toml"
 RULE_CONFIG = ROOT / "configs" / "perception" / "relation-rules-v1.toml"
@@ -251,10 +251,10 @@ class RecordedPerceptionIntegrationTests(unittest.TestCase):
         self.assertTrue(source.diagnostics.completed)
         self.assertEqual(source.diagnostics.decoded_frames, 80)
         self.assertEqual(source.diagnostics.emitted_candidate_count, 2)
-        self.assertIn(
-            "disappearance_without_containment_context",
-            {item.reason for item in source.diagnostics.abstentions},
-        )
+        # Browser-compatible H.264 preserves the rendered key throughout this
+        # replay. Abstention behavior is covered by the hostile unit cases
+        # above rather than relying on an encoder-induced detector miss.
+        self.assertEqual(source.diagnostics.abstentions, ())
         evaluation = evaluate_relations(
             self.manifest,
             result,

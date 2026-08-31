@@ -26,7 +26,7 @@ from whole_home_agent.video_manifest import load_video_manifest
 
 
 ROOT = Path(__file__).resolve().parents[1]
-MANIFEST = ROOT / "examples" / "media" / "generated" / "key_bag_sofa_v1.manifest.json"
+MANIFEST = ROOT / "examples" / "media" / "generated" / "key_bag_sofa_v2.manifest.json"
 COLOR_CONFIG = ROOT / "configs" / "perception" / "synthetic-color-v1.toml"
 HAS_VIDEO = importlib.util.find_spec("av") is not None and importlib.util.find_spec(
     "numpy"

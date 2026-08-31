@@ -85,12 +85,15 @@ def main() -> None:
     metric_columns[4].metric("Detector p95", f"{cost['detector_latency_p95_ms']:.1f} ms")
     st.warning(result["perception_evaluation"]["evidence_limit"])
 
-    st.subheader("5 · Abstention is visible")
+    st.subheader("5 · Abstention behavior")
     abstentions = result["source_diagnostics"]["abstentions"]
     if abstentions:
         st.dataframe(abstentions, width="stretch", hide_index=True)
     else:
-        st.write("No abstentions in this replay.")
+        st.write(
+            "No abstention was needed in this replay. Ambiguous, unsupported, "
+            "and interrupted cases are covered by fail-closed tests."
+        )
 
     notable_frames = [
         {

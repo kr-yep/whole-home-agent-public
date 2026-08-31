@@ -1,12 +1,13 @@
-# B0 → B1 最小架構提案
+# B0 → B1 最小架構提案與實作對照
 
-- **Status:** `PROPOSED — NOT ADOPTED`
+- **Architecture decision status:** `PROPOSED — NOT ADOPTED`
+- **Bounded code status:** `IMPLEMENTED / VERIFIED ON ONE PROJECT-GENERATED SYNTHETIC REPLAY`
 - **Scope:** 預錄、合法可用的 D0 影片；不含即時攝影機、家庭私有資料或行動能力
 - **Runtime:** 單程序模組化單體；同步、循序、local-only
 - **Operation:** `OPERATE DISABLED`
-- **As of:** `2026-08-31 Asia/Taipei`
+- **As of:** `2026-09-01 Asia/Taipei`
 
-這份文件回答目前最重要的架構問題：我們已經有什麼、下一層 YOLO／追蹤應該接在哪裡、哪些元件能改狀態，以及哪些複雜度現在不應加入。它是設計提案，不會自行採用，也不授權攝影機、家庭資料、帳號、裝置或實體行動。
+這份文件起初回答最重要的架構問題：下一層影片感知應該接在哪裡、哪些元件能改狀態，以及哪些複雜度不應加入。使用者之後明確授權了一個 bounded implementation slice，因此本文也記錄目前程式與原提案的對照。實作不會自行採用 proposed governance，也不授權攝影機、家庭資料、帳號、裝置或實體行動。
 
 ## 可視化產物
 
@@ -15,19 +16,19 @@
 - [architecture JSON source](b0-b1-system.architecture.json)
 - [data-flow JSON source](b0-b1-perception.dataflow.json)
 
-HTML 可下載後直接用瀏覽器開啟，包含 guided views、搜尋、明暗主題與匯出功能。固定 viewer 介面目前沒有 `zh-TW` locale，因此作者內容保留繁體中文，viewer 固定文字使用英文。
+HTML 可下載後直接用瀏覽器開啟，包含 guided views、搜尋、明暗主題與匯出功能。固定 viewer 介面目前沒有 `zh-TW` locale，因此圖內架構文字與 viewer 固定文字使用英文；本說明文件保留繁體中文。
 
 ## 結論
 
-目前不需要重寫 B0，也不需要先建立 Memory Core、graph、vector store、multi-agent、queue 或 durable database。B1 應該是一個可替換的離線感知 adapter：它將預錄影片轉成既有的 `ClaimCandidate`，然後交給已實作的 B0 `ClaimCommitter`。只有 B0 commit boundary 可以建立 `AcceptedClaim`；YOLO、tracker、event extractor、LLM/VLM 與 UI 都不能直接寫入狀態。
+目前不需要重寫 B0，也不需要先建立 Memory Core、graph、vector store、multi-agent、queue 或 durable database。B1 已以可替換的離線感知 adapter 實作：它把一段固定、hash-pinned、專案生成的預錄影片轉成既有 `ClaimCandidate`，再交給 B0 `ClaimCommitter`。只有 B0 commit boundary 可以建立 `AcceptedClaim`；detector、tracker、relation inference、LLM/VLM 與 UI 都不能直接寫入狀態。
 
 主路徑是：
 
 ```text
-lawfully usable prerecorded D0
-  -> adapter-internal frame / motion gate
-  -> YOLO detector report
-  -> tracker + event hypothesis
+project-generated prerecorded D0 + manifest
+  -> PTS decoder + motion/periodic scheduler
+  -> canonical detector report
+  -> clip-local tracker + binding + temporal rules
   -> canonical ClaimCandidate
   -> existing deterministic ClaimCommitter
   -> session-local AcceptedClaim ledger
@@ -46,15 +47,15 @@ lawfully usable prerecorded D0
 | Session claim ledger | `B0 IMPLEMENTED` | 記錄單次 replay 中通過規則的 claims | 宣稱 world truth、跨 run 持久化 |
 | Relation projection | `B0 IMPLEMENTED` | 純函式重建 `inside`／`at_zone` 與有效性 | 成為權威資料源、last-write-wins 隱藏衝突 |
 | Scoped StateQuery | `B0 IMPLEMENTED` | 依 fixture、run、as-of 回傳 status 與 trace | 暴露 ledger、filesystem、model、credential 或 generic tool |
-| Recorded perception adapter | `B1 PROPOSED` | 將合法預錄 D0 轉成 canonical candidates | live camera、RTSP、cloud、claim commit、raw-frame persistence |
-| Agent／UI | `FUTURE CONSUMER` | 呈現 `AnswerTrace`，必要時追問使用者 | 寫 claims、授權 operation、取得 privileged handle |
+| Recorded perception adapter | `B1 IMPLEMENTED / SYNTHETIC-ONLY VERIFIED` | 將固定 project-generated D0 轉成 canonical candidates | live camera、RTSP、cloud、claim commit、raw-frame persistence |
+| CLI／Streamlit presentation | `B1 IMPLEMENTED / CLOSED DEMO` | 呈現固定 replay 的 `AnswerTrace`、證據、abstention、metrics 與 receipt | 任意 upload/path、camera、chat、寫 claims、授權 operation、privileged handle |
 | Action plane | `ABSENT / DISABLED` | 無 | 所有外部、帳號、裝置與實體作用 |
 
 `IMPLEMENTED` 只表示程式中存在；B0 測試證據也只涵蓋指定 fixture 與語意，不證明 CV、真實家庭、效能或物理事件。
 
 ## 最小合約
 
-B1 對 application 暴露一個重要、會變動的邊界即可：一個循序提供 canonical `ClaimCandidate` 的 source port。具體名稱與簽章要在 B1-0 實作時由測試凍結，但語意需滿足：
+B1 對 application 暴露一個重要、會變動的邊界：循序提供 canonical `ClaimCandidate` 的 `ClaimCandidateSource` port。`RecordedPerceptionSource` 與 contract tests 已凍結下列語意：
 
 - composition root 選擇 fixture source 或 recorded-perception source；
 - source 只產生 `ClaimCandidate`，application 不接收 OpenCV frame、tensor、YOLO result 或 tracker object；
@@ -133,24 +134,22 @@ NTU aerial small-object 作業可以做方法預篩，但不能直接支持「�
 | VLM／LLM in perception | 不加入 | detector/tracker baseline 在 frozen indoor gate 被證偽，且 privacy/cost/latency gate 可接受 |
 | Live camera／RTSP | 禁止 | `ACTION_POLICY.md` 採用、角色/consent/retention/enforcement 完成，且另有 activation decision |
 
-## 建議實作順序
+## 實作進度
 
-這次只完成文件與圖，不修改核心程式。若下一步獲得明確的 bounded implementation 授權，建議順序是：
-
-1. **B1-0 — contract seam:** 定義最窄的 candidate-source port、fake adapter 與 contract tests；仍只用 synthetic fixtures，B0 23 項測試不得回歸。
-2. **B1-1 — recorded source:** 加入 allowlisted、local-only、lawfully reusable 的 prerecorded reader；frame types 留在 adapter，raw frames 不持久化。
-3. **B1-2 — baseline perception:** 固定一個 YOLO artifact 與一個 tracker baseline，先做 move event；container event 只有在 frozen labels 支持時加入。
-4. **B1-3 — evaluation:** 建立 indoor manifest/split、品質與成本 runner；在數據前不選 graph、VLM 或多攝影機。
+1. **B1-0 — contract seam：完成。** 最窄 candidate-source port、fake source、typed run receipt 與 partial-failure tests 已存在；B0 golden hash 未改變。
+2. **B1-1 — recorded source：完成於一段 synthetic D0。** Allowlisted local reader、manifest/hash/license validation、PTS decode 與 motion-plus-periodic schedule 已存在；raw frames 不持久化。
+3. **B1-2 — baseline perception：完成 synthetic smoke baseline。** RGB detector、clip-local IoU tracker、binding 與 conservative relation rules 已接通；RF-DETR Nano 只有 hash-pinned SDK translation seam，沒有下載或 benchmark 真實 checkpoint。
+4. **B1-3 — evaluation and presentation：完成固定 synthetic envelope。** AP/recall/tracking/event/answer/latency/FPS/dropped-frame/VRAM evaluation 與 closed CLI/Streamlit demo 已存在。Frozen real indoor replay set 仍未建立，因此沒有 real-home transfer claim。
 
 任何步驟若需要 live/private sensing、cloud egress、credential、account/device mutation 或 physical action，必須停止並走 `ACTION_POLICY.md` 的角色、同意、風險與 activation gate。
 
 ## 架構交付證據
 
-兩張圖由 Archify `v2.16.0` 產生；工具本身沒有作為 runtime dependency 加入專案。系統圖的 source evidence 固定到 public baseline revision `72d13dc5a0f6dd4564f26af4058f9f4fa8048151`。
+兩張圖由 Archify `v2.16.0` 產生；工具本身沒有作為 runtime dependency 加入專案。系統圖的 17 個 source references 固定到 public implementation revision `5b9a72663dbcc7a8c519d928e6581ecbbbf1f53f`。
 
 | Diagram | Specification SHA-256 | HTML SHA-256 | Automated gate | Perceptual review |
 |---|---|---|---|---|
-| Architecture | `a86e9f6815270d0f4638538fabc1759050fccc27bc2a4e2faf4798c59d4ae50f` | `25ac43fcad6ef007399f5f3378245a34c419cfea7a8237d1f25a87a5ef5e2e9d` | 9/9 showcase, 0 errors, 0 warnings; containment passed | passed, light/dark at 1440×900 and 2048×1320 |
-| Data flow | `94eee692392d0093810fd39a2c841949548f7f835ff3c289ecf9fa919f4a637e` | `a09f7c096c9472d31921daa1ee6f15b738a9e1f8976ea01248eb82f271304b9b` | 9/9 showcase, 0 errors, 0 warnings; containment passed | passed, light/dark at 1440×900 and 2048×1320 |
+| Architecture | `a806baedc33416742410c7e4557645551f8999cfca3ef9ae8d5fd3cfe8b21e72` | `114cfbac646ae5a4a3c8e7fcad6abefd2b297f709e072289b82b7bbb7ba1bb22` | 9/9 showcase, 0 errors, 0 warnings; four desktop containment/readability checks passed | inspected light/dark at 1440×900 and 2048×1320 |
+| Data flow | `d16185db78379b27e5dafac6b07994796caa457df4c087b9e9eccacdba57c16f` | `202763ffff53bb95ec2c6ab6b83056027f6bdaa0cf120d255023617fbec02a92` | 9/9 showcase, 0 errors, 0 warnings; four desktop containment/readability checks passed | inspected light/dark at 1440×900 and 2048×1320 |
 
-這些證據只驗證 spec bytes、rendered artifact 與指定視覺交付 envelope；它們不採用架構，也不證明 B1 已實作或系統能理解真實家庭。
+這些 source references 固定在 M5 implementation revision；M6 只把公開素材版本化為瀏覽器相容的 H.264 revision 2，並補上 wheel 安裝與發布驗證，沒有改變圖中責任／信任邊界。圖表證據只驗證 spec bytes、歷史 source references、rendered artifact 與指定視覺交付 envelope；它們不採用 proposed governance，也不證明真實室內準確率、runtime authority 或系統能理解真實家庭。
