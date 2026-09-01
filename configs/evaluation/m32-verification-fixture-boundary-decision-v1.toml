@@ -1,0 +1,115 @@
+schema_version = 1
+status = "FROZEN_BEFORE_REPOSITORY_EVIDENCE_SCORING"
+gate_id = "m32-verification-fixture-boundary-decision-v1"
+intended_use = "REPOSITORY_ONLY_VERIFICATION_FIXTURE_CLASSIFICATION"
+candidate_count = 3
+fatal_gate_count = 8
+selection_rule = "SELECT_AT_MOST_ONE_CANDIDATE_THAT_PASSES_EVERY_FATAL_GATE"
+tie_break_order = ["least_runtime_authority", "strongest_reproducibility", "smallest_policy_surface"]
+m31_result = "configs/evaluation/m31-answer-trace-subject-implementation-result-v1.toml"
+m31_result_sha256 = "ac39e5255a72f2fced17ef61db00b77d05d076644ad9075f8465141ce5395b2d"
+
+[[evidence_file]]
+path = ".github/workflows/ci.yml"
+sha256 = "af5290695b64ad343f2f43e9fa2eb10a1a4daa86d42700ec76b263f48fce0733"
+role = "CURRENT_COMPLETE_REGRESSION_COMMANDS_AND_PERMISSION_ENVELOPE"
+
+[[evidence_file]]
+path = "tests/test_public_demo.py"
+sha256 = "395a60171b45bd6639afa730159dcbef7abdd7352839bfc2c19b2ca46c056e24"
+role = "COMMITTED_FIXTURE_READ_AND_CLOSED_DEMO_REGRESSION"
+
+[[evidence_file]]
+path = "examples/media/generated/key_bag_sofa_v2.manifest.json"
+sha256 = "2e83bbcecbe239b8bb91e503ba753b3de4684297015e703763b1882cd9d4db49"
+role = "PROJECT_OWNERSHIP_LICENSE_USE_CLASS_AND_CONTENT_HASH_METADATA"
+
+[[evidence_file]]
+path = "tools/audit_public_release.py"
+sha256 = "ca190f75ca7687ca7331cce404e5b81d5e32a95dde2871f79e088562418bc670"
+role = "RELEASE_AUDIT_GENERATED_MEDIA_ALLOWLIST_AND_HASH_RULE"
+
+[[candidate]]
+id = "A_EXPLICIT_VERIFICATION_PROFILES"
+proposal = "STATIC_CONTRACT_IS_TEXT_ONLY_COMPLETE_REGRESSION_MAY_READ_ONLY_EXACT_REPOSITORY_COMMITTED_HASH_PINNED_PROJECT_OWNED_D0_SYNTHETIC_FIXTURES_AND_AD_HOC_ACCEPTANCE_OR_EXPERIMENT_REQUIRES_A_SEPARATE_GATE"
+
+[[candidate]]
+id = "B_ZERO_MEDIA_FOR_EVERY_VERIFICATION"
+proposal = "EVERY_STATIC_COMPLETE_REGRESSION_RELEASE_AUDIT_AND_CI_VERIFICATION_MUST_READ_ZERO_MEDIA_BYTES"
+
+[[candidate]]
+id = "C_ALL_D0_MEDIA_ALLOWED_FOR_VERIFICATION"
+proposal = "ANY_D0_OR_PUBLIC_MEDIA_MAY_BE_READ_BY_STATIC_REGRESSION_ACCEPTANCE_OR_EXPERIMENT_WORK_WITHOUT_AN_EXACT_FIXTURE_ALLOWLIST"
+
+[[fatal_gate]]
+id = "G1_PROFILE_EXCLUSIVITY"
+requirement = "STATIC_CONTRACT_COMPLETE_REGRESSION_AND_AD_HOC_ACCEPTANCE_OR_EXPERIMENT_ARE_MUTUALLY_EXCLUSIVE_NAMED_PROFILES"
+
+[[fatal_gate]]
+id = "G2_EXACT_FIXTURE_IDENTITY"
+requirement = "ANY_COMPLETE_REGRESSION_MEDIA_READ_REQUIRES_A_REPOSITORY_COMMITTED_MANIFEST_WITH_EXACT_PATH_CONTENT_HASH_PROVENANCE_LICENSE_AND_USE_CLASS"
+
+[[fatal_gate]]
+id = "G3_PURPOSE_LIMITATION"
+requirement = "COMPLETE_REGRESSION_EXECUTION_IS_ONLY_COMPATIBILITY_AND_CONFORMANCE_EVIDENCE_NOT_A_NEW_ACCEPTANCE_ATTEMPT_MODEL_EXPERIMENT_OR_PRODUCT_GAIN_CLAIM"
+
+[[fatal_gate]]
+id = "G4_MINIMUM_DATA_AUTHORITY"
+requirement = "THIS_DECISION_ALLOWS_NO_THIRD_PARTY_PRIVATE_LIVE_OR_EXTERNALLY_FETCHED_MEDIA_AND_NO_NEW_FIXTURE"
+
+[[fatal_gate]]
+id = "G5_MODEL_NETWORK_AND_ACTION_CLOSED"
+requirement = "EVERY_PROFILE_FORBIDS_MODEL_LOAD_NETWORK_SOURCE_CREDENTIAL_DEVICE_CLOUD_ACTION_AND_OPERATE_ENABLEMENT"
+
+[[fatal_gate]]
+id = "G6_REPRODUCIBLE_RECEIPT"
+requirement = "COMPLETE_REGRESSION_RECORDS_WORKFLOW_OR_COMMAND_REVISION_FIXTURE_MANIFEST_HASH_RESULT_AND_LIMITS"
+
+[[fatal_gate]]
+id = "G7_HISTORICAL_INTEGRITY"
+requirement = "M31_REMAINS_A_NORMAL_STOP_AND_IS_NOT_RETROACTIVELY_REINTERPRETED_AS_PASS"
+
+[[fatal_gate]]
+id = "G8_FAIL_CLOSED_EXTENSION"
+requirement = "A_NEW_MEDIA_PATH_USE_CLASS_ACCEPTANCE_CHECKER_OR_EXPERIMENT_REQUIRES_A_SEPARATELY_FROZEN_GATE"
+
+[required_profile.static_contract]
+media_bytes_allowed = false
+model_load_allowed = false
+application_or_demo_execution_allowed = false
+allowed_inputs = "TEXT_SOURCE_CONFIG_MANIFEST_AND_RECORDED_METADATA_ONLY"
+
+[required_profile.complete_regression]
+media_bytes_allowed = "CONDITIONAL_EXACT_D0_SYNTHETIC_ALLOWLIST_ONLY"
+new_fixture_or_external_path_allowed = false
+model_load_allowed = false
+acceptance_retry_or_experiment_allowed = false
+evidence_meaning = "REGRESSION_COMPATIBILITY_AND_CONFORMANCE_ONLY"
+
+[required_profile.ad_hoc_acceptance_or_experiment]
+authorized_by_this_decision = false
+separately_frozen_gate_required = true
+m29_checker_or_retry_allowed = false
+
+[decision]
+single_pass = "SELECT_ONE_FUTURE_VERIFICATION_PROFILE_POLICY"
+zero_pass = "STOP_M32_NO_COHERENT_VERIFICATION_BOUNDARY"
+multiple_pass = "STOP_M32_AMBIGUOUS_VERIFICATION_BOUNDARY"
+m31_status_rewrite_allowed = false
+next_work_must_be_separately_frozen = true
+
+[scoring_phase_boundaries]
+test_demo_checker_or_audit_execution_allowed = false
+media_or_model_read_allowed = false
+code_schema_or_presentation_change_allowed = false
+new_dependency_or_storage_allowed = false
+prediction_training_or_tuning_allowed = false
+m29_checker_or_retry_allowed = false
+live_private_cloud_inference_or_action_allowed = false
+operate_enabled = false
+
+[post_selection_verification]
+complete_regression_or_release_audit_allowed_only_if_candidate_a_selected = true
+ci_must_use_committed_workflow = true
+ci_result_does_not_authorize_operation_or_product_claim = true
+
