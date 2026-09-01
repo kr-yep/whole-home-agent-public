@@ -107,6 +107,35 @@ def _canonical_bytes(document: object) -> bytes:
     ).encode("utf-8")
 
 
+def _read_scene_documents(
+    archive: zipfile.ZipFile,
+    scene_ids: list[int],
+    access: dict[str, object],
+) -> dict[int, tuple[object, object, object]]:
+    documents_by_scene: dict[int, tuple[object, object, object]] = {}
+    member_names = access.get("scene_members")
+    if not isinstance(member_names, list) or set(member_names) != {
+        "scene_camera.json",
+        "scene_gt.json",
+        "scene_gt_info.json",
+    }:
+        raise DiagnosticSourceError("scene member allowlist differs from M22")
+    template = str(access["scene_member_template"])
+    for scene_id in scene_ids:
+        named: dict[str, object] = {}
+        for name in member_names:
+            if not isinstance(name, str):
+                raise DiagnosticSourceError("scene member allowlist is invalid")
+            member_name = template.format(scene_id=scene_id, name=name)
+            named[name] = _read_json_member(archive, member_name)
+        documents_by_scene[scene_id] = (
+            named["scene_gt.json"],
+            named["scene_gt_info.json"],
+            named["scene_camera.json"],
+        )
+    return documents_by_scene
+
+
 def diagnose() -> dict[str, object]:
     contract = _load_contract()
     archive_root = _repository_path(str(contract["source_archive_root"]))
@@ -146,17 +175,12 @@ def diagnose() -> dict[str, object]:
     ):
         raise DiagnosticSourceError("target scope differs from the frozen M22 envelope")
 
-    scene_documents: dict[int, tuple[object, object, object]] = {}
     with zipfile.ZipFile(archive_paths["ycbv_test_bop19.zip"]) as test_archive:
-        for scene_id in scene_ids:
-            documents: list[object] = []
-            for name in contract["input_access"]["scene_members"]:
-                member_name = str(contract["input_access"]["scene_member_template"]).format(
-                    scene_id=scene_id,
-                    name=name,
-                )
-                documents.append(_read_json_member(test_archive, member_name))
-            scene_documents[scene_id] = tuple(documents)  # type: ignore[assignment]
+        scene_documents = _read_scene_documents(
+            test_archive,
+            scene_ids,
+            contract["input_access"],
+        )
 
     frames = parse_ycbv_bop19_frames(targets, scene_documents)
     first = diagnose_ycbv_m21_predicates(frames)

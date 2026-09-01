@@ -210,6 +210,30 @@ class M22SyntheticDiagnosticTests(unittest.TestCase):
         self.assertNotIn("extractall", source)
         self.assertNotIn("rgb/", source)
 
+    def test_contract_member_order_is_mapped_to_parser_semantics_by_name(self):
+        with tempfile.TemporaryDirectory() as directory:
+            archive_path = Path(directory) / "scene.zip"
+            scene = FIXTURE / "test" / "000048"
+            with zipfile.ZipFile(archive_path, "w") as output:
+                for name in ("scene_camera.json", "scene_gt.json", "scene_gt_info.json"):
+                    output.write(scene / name, f"test/000048/{name}")
+            access = {
+                "scene_member_template": "test/{scene_id:06d}/{name}",
+                "scene_members": [
+                    "scene_camera.json",
+                    "scene_gt.json",
+                    "scene_gt_info.json",
+                ],
+            }
+            with zipfile.ZipFile(archive_path) as archive:
+                documents = TOOL._read_scene_documents(archive, [48], access)
+            targets = json.loads(
+                (FIXTURE / "test_targets_bop19.json").read_text(encoding="utf-8")
+            )
+            frames = parse_ycbv_bop19_frames(targets, documents)
+        self.assertEqual(len(frames), 3)
+        self.assertEqual(diagnose_ycbv_m21_predicates(frames).decision, CONFORMANCE_CONFLICT)
+
 
 if __name__ == "__main__":
     unittest.main()
