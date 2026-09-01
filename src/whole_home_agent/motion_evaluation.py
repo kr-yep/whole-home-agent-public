@@ -29,6 +29,7 @@ class MotionEvaluationSource(Protocol):
     fps_denominator: int
     mask_change_frames: frozenset[int]
     coverage_window_frames: int
+    ground_truth: dict[int, tuple[object, ...]]
 
     @property
     def frame_count(self) -> int: ...
@@ -55,6 +56,17 @@ class MaskChangeCoverage:
     same_or_following_covered_count: int
     same_or_following_recall: float
     coverage_window_frames: int
+
+
+@dataclass(frozen=True, slots=True)
+class TargetDetectionCoverage:
+    event_count: int
+    exact_covered_count: int
+    exact_recall: float
+    same_or_following_covered_count: int
+    same_or_following_recall: float
+    coverage_window_frames: int
+    match_iou_threshold: float
 
 
 @dataclass(frozen=True, slots=True)
@@ -87,6 +99,7 @@ class MotionScreenReport:
     scheduler: dict[str, object] | None
     selection_reasons: dict[str, int]
     coverage: MaskChangeCoverage
+    target_detection_coverage: TargetDetectionCoverage | None
     cost: MotionScreenCost
     detections_total: int
     detected_label_counts: dict[str, int]
@@ -205,6 +218,7 @@ def evaluate_motion_screen(
     detector_latencies_ms: list[float] = []
     detector_seconds = 0.0
     detection_count = 0
+    target_matched_frames: set[int] = set()
     decoded_count = 0
     warmed = 0
     pipeline_start = time.perf_counter()
@@ -245,6 +259,15 @@ def evaluate_motion_screen(
             raise ValueError("detector violated the canonical output contract")
         detection_count += len(detections)
         labels.update(item.label for item in detections)
+        targets = source.ground_truth.get(frame_index, ())
+        if any(
+            getattr(target, "label", None) == detection.label
+            and getattr(target, "bbox", None) is not None
+            and target.bbox.iou(detection.bbox) >= 0.5
+            for target in targets
+            for detection in detections
+        ):
+            target_matched_frames.add(frame_index)
     pipeline_seconds = time.perf_counter() - pipeline_start
     if decoded_count != source.frame_count or not selected:
         raise ValueError("motion evaluation did not cover the declared frame sequence")
@@ -263,6 +286,20 @@ def evaluate_motion_screen(
     )
     event_count = len(events)
     selected_count = len(selected)
+    has_target_ground_truth = any(source.ground_truth.values())
+    target_exact_covered = sum(
+        frame_index in target_matched_frames for frame_index in events
+    )
+    target_window_covered = sum(
+        any(
+            candidate in target_matched_frames
+            for candidate in range(
+                frame_index,
+                min(source.frame_count, frame_index + source.coverage_window_frames + 1),
+            )
+        )
+        for frame_index in events
+    )
     duration_seconds = (
         source.frame_count * source.fps_denominator / source.fps_numerator
     )
@@ -290,6 +327,23 @@ def evaluate_motion_screen(
             same_or_following_covered_count=window_covered,
             same_or_following_recall=window_covered / event_count if event_count else 1.0,
             coverage_window_frames=source.coverage_window_frames,
+        ),
+        target_detection_coverage=(
+            TargetDetectionCoverage(
+                event_count=event_count,
+                exact_covered_count=target_exact_covered,
+                exact_recall=(
+                    target_exact_covered / event_count if event_count else 1.0
+                ),
+                same_or_following_covered_count=target_window_covered,
+                same_or_following_recall=(
+                    target_window_covered / event_count if event_count else 1.0
+                ),
+                coverage_window_frames=source.coverage_window_frames,
+                match_iou_threshold=0.5,
+            )
+            if has_target_ground_truth
+            else None
         ),
         cost=MotionScreenCost(
             decoded_frames=decoded_count,
@@ -325,7 +379,9 @@ def evaluate_motion_screen(
         ),
         evidence_limit=(
             "Mask-change coverage measures scheduler selection, not successful target "
-            "detection or semantic movement understanding. Results apply only to these "
+            "detection or semantic movement understanding. Target-detection coverage, "
+            "when present, only tests the explicit mask-to-label mapping and IoU match. "
+            "Results apply only to these "
             "hash-pinned 5 fps egocentric VOST sequences, this model/configuration, "
             "interpreter, and machine; they do not establish fixed-camera, household, "
             "live-stream, 24/7, privacy, or operational readiness."

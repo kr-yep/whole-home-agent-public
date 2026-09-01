@@ -3,9 +3,7 @@
 from __future__ import annotations
 
 import argparse
-import gc
 import json
-import subprocess
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
@@ -30,6 +28,7 @@ from whole_home_agent.motion_evaluation import (
     evaluate_motion_screen,
     evaluate_scheduler_selection,
 )
+from evaluation_cli_support import git_state, release_detector_runtime
 
 
 DATA_CONFIG = ROOT / "configs" / "evaluation" / "vost-motion-screen-v1.toml"
@@ -45,43 +44,9 @@ def _parser() -> argparse.ArgumentParser:
     return parser
 
 
-def _git_state() -> tuple[str, bool]:
-    safe = f"safe.directory={ROOT.as_posix()}"
-    revision = subprocess.run(
-        ["git", "-c", safe, "rev-parse", "HEAD"],
-        cwd=ROOT,
-        check=True,
-        capture_output=True,
-        text=True,
-        timeout=5,
-    ).stdout.strip()
-    dirty = bool(
-        subprocess.run(
-            ["git", "-c", safe, "status", "--porcelain"],
-            cwd=ROOT,
-            check=True,
-            capture_output=True,
-            text=True,
-            timeout=5,
-        ).stdout.strip()
-    )
-    return revision, dirty
-
-
-def _release_detector_runtime() -> None:
-    gc.collect()
-    try:
-        import torch
-
-        if torch.cuda.is_available():
-            torch.cuda.empty_cache()
-    except ImportError:
-        pass
-
-
 def main(argv: list[str] | None = None) -> int:
     args = _parser().parse_args(argv)
-    revision, dirty = _git_state()
+    revision, dirty = git_state(ROOT)
     dataset = load_vost_motion_screen_manifest(DATA_CONFIG, repository_root=ROOT)
     sources = {
         spec.split: load_vost_motion_sequence(dataset, spec.sequence_id)
@@ -153,7 +118,7 @@ def main(argv: list[str] | None = None) -> int:
             )
             reports.append(report)
             del detector
-            _release_detector_runtime()
+            release_detector_runtime()
 
     validation_scheduled = next(
         item

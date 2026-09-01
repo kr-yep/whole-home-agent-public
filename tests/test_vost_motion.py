@@ -108,7 +108,7 @@ class VostFetchParserTests(unittest.TestCase):
 
 @unittest.skipUnless(VIDEO_AVAILABLE, "VOST tests require the video extra")
 class VostMotionTests(unittest.TestCase):
-    def _fixture(self, root: Path) -> Path:
+    def _fixture(self, root: Path, *, target_label: str | None = None) -> Path:
         config_dir = root / "configs" / "evaluation"
         local_root = root / "datasets" / "vost-test"
         config_dir.mkdir(parents=True)
@@ -240,6 +240,7 @@ frame_count = 2
 frame_width = 8
 frame_height = 8
 source_frame_step = 6
+{f'label_review_source_offsets = [0, 6]' if target_label is not None else ''}
 subset_file_count = 4
 subset_bytes = {sum(row['bytes'] for row in sequence_rows)}
 sequence_files_manifest_sha256 = "{_canonical(sequence_rows)}"
@@ -271,6 +272,7 @@ sample_fps_numerator = 5
 sample_fps_denominator = 1
 target_mask_id = 1
 void_mask_id = 255
+{f'target_label = "{target_label}"' if target_label is not None else ''}
 mask_change_iou_threshold = 0.5
 coverage_window_frames = 1
 development_candidate_motion_thresholds = [0.0, 0.03]
@@ -291,6 +293,15 @@ minimum_validation_mask_change_coverage = 0.95
 minimum_validation_avoided_detector_fraction = 0.30
 maximum_detector_p95_ms = 100.0
 maximum_peak_vram_bytes = 1024
+
+{'''[target_tracking_gate]
+minimum_full_frame_recall50 = 0.60
+minimum_matched_observation_fraction = 0.60
+maximum_id_switches = 1
+maximum_fragmentations = 2
+minimum_scheduled_target_event_coverage = 0.60
+minimum_scheduled_target_event_retention = 0.90
+''' if target_label is not None else ''}
 
 {''.join(sequence_blocks)}'''
         config_path = config_dir / "vost-test.toml"
@@ -339,6 +350,27 @@ maximum_peak_vram_bytes = 1024
         self.assertEqual(report.coverage.same_or_following_recall, 1.0)
         self.assertEqual(report.detections_total, 0)
         self.assertEqual(decide_motion_gate(manifest.gate, report).decision, "REJECT_CANDIDATE")
+
+    def test_explicit_target_label_builds_boxes_without_promoting_detection(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            config = self._fixture(root, target_label="bottle")
+            manifest = load_vost_motion_screen_manifest(config, repository_root=root)
+            source = load_vost_motion_sequence(manifest, "1_open_bag")
+            report = evaluate_motion_screen(
+                source,
+                _EmptyDetector(),
+                scheduler=None,
+                warmup_frames=0,
+                repository_root=root,
+                code_revision="d" * 40,
+                dirty_worktree=False,
+            )
+        target = source.ground_truth[0][0]
+        self.assertEqual(target.label, "bottle")
+        self.assertEqual(target.bbox.as_xyxy(), (0.0, 2.0, 2.0, 4.0))
+        self.assertIsNotNone(report.target_detection_coverage)
+        self.assertEqual(report.target_detection_coverage.same_or_following_recall, 0.0)
 
     def test_tampered_frame_fails_before_replay(self):
         with tempfile.TemporaryDirectory() as directory:

@@ -18,7 +18,7 @@ from ..model import (
     TimestampBasis,
     UseClass,
 )
-from ..perception import VideoFrame
+from ..perception import BoundingBox, GroundTruthObject, VideoFrame
 from .motion import MotionScheduleConfig
 
 
@@ -40,6 +40,16 @@ class MotionGateCriteria:
 
 
 @dataclass(frozen=True, slots=True)
+class TargetTrackingCriteria:
+    minimum_full_frame_recall50: float
+    minimum_matched_observation_fraction: float
+    maximum_id_switches: int
+    maximum_fragmentations: int
+    minimum_scheduled_target_event_coverage: float
+    minimum_scheduled_target_event_retention: float
+
+
+@dataclass(frozen=True, slots=True)
 class VostSequenceSpec:
     sequence_id: str
     source_partition: str
@@ -53,6 +63,7 @@ class VostSequenceSpec:
     sequence_files_manifest_sha256: str
     frame_files_manifest_sha256: str
     annotation_files_manifest_sha256: str
+    label_review_source_offsets: tuple[int, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -98,6 +109,8 @@ class VostMotionScreenManifest:
     upstream_artifacts: tuple[VostUpstreamArtifactSpec, ...]
     scheduler: MotionScheduleConfig
     gate: MotionGateCriteria
+    target_label: str | None
+    target_tracking_gate: TargetTrackingCriteria | None
     sequences: tuple[VostSequenceSpec, ...]
     config_hash: str
 
@@ -113,6 +126,7 @@ class _VostFrameRecord:
     image_path: Path
     mask_path: Path
     position: SourcePosition
+    targets: tuple[GroundTruthObject, ...]
 
 
 @dataclass(frozen=True, slots=True)
@@ -129,6 +143,15 @@ class VostMotionSequence:
     mask_change_ious: tuple[float, ...]
     mask_change_iou_threshold: float
     coverage_window_frames: int
+    target_label: str | None
+
+    @property
+    def ground_truth(self) -> dict[int, tuple[GroundTruthObject, ...]]:
+        return {
+            record.position.frame_index: record.targets
+            for record in self.records
+            if record.position.frame_index is not None
+        }
 
     @property
     def frame_count(self) -> int:
@@ -137,7 +160,12 @@ class VostMotionSequence:
     @property
     def source_diagnostics(self) -> dict[str, object]:
         return {
-            "annotation_scope": "single VOST transformed-object mask; 255 is void",
+            "annotation_scope": (
+                "single VOST transformed-object mask mapped to the explicit target label; "
+                "255 is void"
+                if self.target_label is not None
+                else "single VOST transformed-object mask; 255 is void"
+            ),
             "camera_motion_limit": (
                 "egocentric camera-motion stress case, not fixed-camera transfer evidence"
             ),
@@ -146,6 +174,7 @@ class VostMotionSequence:
             "mask_change_event_count": len(self.mask_change_frames),
             "mask_change_iou_threshold": self.mask_change_iou_threshold,
             "source_timing": "ordinal replay at documented 5 fps; no capture timestamp",
+            "target_label": self.target_label,
         }
 
     def iter_frames(self) -> Iterator[VideoFrame]:
@@ -219,7 +248,7 @@ def load_vost_motion_screen_manifest(
         raise ValueError("VOST config must be inside the repository") from error
     raw_bytes = config_path.read_bytes()
     document = tomllib.loads(raw_bytes.decode("utf-8"))
-    expected = {
+    required = {
         "schema_version",
         "dataset_id",
         "dataset_version",
@@ -256,8 +285,24 @@ def load_vost_motion_screen_manifest(
         "gate",
         "sequence",
     }
-    if set(document) != expected or document.get("schema_version") != 1:
+    optional = {"target_label", "target_tracking_gate"}
+    if (
+        not required <= set(document)
+        or not set(document) <= required | optional
+        or document.get("schema_version") != 1
+    ):
         raise ValueError("VOST manifest top-level schema is invalid")
+    has_target_label = "target_label" in document
+    has_target_gate = "target_tracking_gate" in document
+    if has_target_label != has_target_gate:
+        raise ValueError("VOST target label and tracking gate must be declared together")
+    target_label = document.get("target_label")
+    if target_label is not None and (
+        not isinstance(target_label, str)
+        or not target_label
+        or target_label != target_label.strip()
+    ):
+        raise ValueError("VOST target label must be a non-empty trimmed string")
     if (
         document.get("license_id") != "CC-BY-NC-SA-4.0"
         or document.get("intended_use")
@@ -409,6 +454,49 @@ def load_vost_motion_screen_manifest(
         ),
     )
 
+    target_tracking_gate = None
+    if has_target_gate:
+        target_gate_document = document["target_tracking_gate"]
+        target_gate_keys = {
+            "minimum_full_frame_recall50",
+            "minimum_matched_observation_fraction",
+            "maximum_id_switches",
+            "maximum_fragmentations",
+            "minimum_scheduled_target_event_coverage",
+            "minimum_scheduled_target_event_retention",
+        }
+        if not isinstance(target_gate_document, dict) or set(target_gate_document) != target_gate_keys:
+            raise ValueError("VOST target-tracking gate schema is invalid")
+        maximum_id_switches = target_gate_document["maximum_id_switches"]
+        maximum_fragmentations = target_gate_document["maximum_fragmentations"]
+        if (
+            type(maximum_id_switches) is not int
+            or maximum_id_switches < 0
+            or type(maximum_fragmentations) is not int
+            or maximum_fragmentations < 0
+        ):
+            raise ValueError("VOST target-tracking count gates are invalid")
+        target_tracking_gate = TargetTrackingCriteria(
+            minimum_full_frame_recall50=_unit_float(
+                target_gate_document["minimum_full_frame_recall50"],
+                field="minimum_full_frame_recall50",
+            ),
+            minimum_matched_observation_fraction=_unit_float(
+                target_gate_document["minimum_matched_observation_fraction"],
+                field="minimum_matched_observation_fraction",
+            ),
+            maximum_id_switches=maximum_id_switches,
+            maximum_fragmentations=maximum_fragmentations,
+            minimum_scheduled_target_event_coverage=_unit_float(
+                target_gate_document["minimum_scheduled_target_event_coverage"],
+                field="minimum_scheduled_target_event_coverage",
+            ),
+            minimum_scheduled_target_event_retention=_unit_float(
+                target_gate_document["minimum_scheduled_target_event_retention"],
+                field="minimum_scheduled_target_event_retention",
+            ),
+        )
+
     sequence_documents = document["sequence"]
     if not isinstance(sequence_documents, list) or len(sequence_documents) != 2:
         raise ValueError("VOST screen requires development and validation sequences")
@@ -430,7 +518,12 @@ def load_vost_motion_screen_manifest(
     seen_ids: set[str] = set()
     seen_splits: set[str] = set()
     for item in sequence_documents:
-        if not isinstance(item, dict) or set(item) != sequence_keys:
+        expected_sequence_keys = (
+            sequence_keys | {"label_review_source_offsets"}
+            if target_label is not None
+            else sequence_keys
+        )
+        if not isinstance(item, dict) or set(item) != expected_sequence_keys:
             raise ValueError("VOST sequence schema is invalid")
         sequence_id = item["sequence_id"]
         split = item["split"]
@@ -454,17 +547,33 @@ def load_vost_motion_screen_manifest(
         )
         if any(not isinstance(value, str) or not _HASH_RE.fullmatch(value) for value in hashes):
             raise ValueError("VOST sequence SHA-256 is invalid")
+        frame_count = _positive_int(item["frame_count"], field="frame_count")
+        source_frame_step = _positive_int(
+            item["source_frame_step"], field="source_frame_step"
+        )
+        review_offsets = item.get("label_review_source_offsets", [])
+        if target_label is not None and (
+            not isinstance(review_offsets, list)
+            or not 2 <= len(review_offsets) <= 3
+            or any(type(value) is not int for value in review_offsets)
+            or review_offsets != sorted(set(review_offsets))
+            or any(
+                value < 0
+                or value > (frame_count - 1) * source_frame_step
+                or value % source_frame_step != 0
+                for value in review_offsets
+            )
+        ):
+            raise ValueError("VOST label-review offsets are invalid")
         sequences.append(
             VostSequenceSpec(
                 sequence_id=sequence_id,
                 source_partition=source_partition,
                 split=split,
-                frame_count=_positive_int(item["frame_count"], field="frame_count"),
+                frame_count=frame_count,
                 frame_width=_positive_int(item["frame_width"], field="frame_width"),
                 frame_height=_positive_int(item["frame_height"], field="frame_height"),
-                source_frame_step=_positive_int(
-                    item["source_frame_step"], field="source_frame_step"
-                ),
+                source_frame_step=source_frame_step,
                 subset_file_count=_positive_int(
                     item["subset_file_count"], field="subset_file_count"
                 ),
@@ -476,6 +585,7 @@ def load_vost_motion_screen_manifest(
                 annotation_files_manifest_sha256=item[
                     "annotation_files_manifest_sha256"
                 ],
+                label_review_source_offsets=tuple(review_offsets),
             )
         )
     if seen_splits != _SPLITS:
@@ -523,6 +633,8 @@ def load_vost_motion_screen_manifest(
         upstream_artifacts=tuple(upstream_artifacts),
         scheduler=scheduler,
         gate=gate,
+        target_label=target_label,
+        target_tracking_gate=target_tracking_gate,
         sequences=tuple(sequences),
         config_hash=hashlib.sha256(raw_bytes).hexdigest(),
     )
@@ -684,6 +796,22 @@ def load_vost_motion_sequence(
         if not values <= {0, manifest.target_mask_id, manifest.void_mask_id}:
             raise ValueError("VOST mask contains an undeclared object ID")
         target = mask == manifest.target_mask_id
+        if target.any() and manifest.target_label is not None:
+            y_coordinates, x_coordinates = np.nonzero(target)
+            targets = (
+                GroundTruthObject(
+                    entity_id=f"{sequence_id}:target-mask-{manifest.target_mask_id}",
+                    label=manifest.target_label,
+                    bbox=BoundingBox(
+                        x_min=float(x_coordinates.min()),
+                        y_min=float(y_coordinates.min()),
+                        x_max=float(x_coordinates.max() + 1),
+                        y_max=float(y_coordinates.max() + 1),
+                    ),
+                ),
+            )
+        else:
+            targets = ()
         if previous_target is not None:
             intersection = int(np.logical_and(previous_target, target).sum())
             union = int(np.logical_or(previous_target, target).sum())
@@ -705,6 +833,7 @@ def load_vost_motion_sequence(
                     time_base_numerator=manifest.sample_fps_denominator,
                     time_base_denominator=manifest.sample_fps_numerator,
                 ),
+                targets=targets,
             )
         )
     if set(row_by_member) != {
@@ -738,4 +867,5 @@ def load_vost_motion_sequence(
         mask_change_ious=tuple(change_ious),
         mask_change_iou_threshold=manifest.mask_change_iou_threshold,
         coverage_window_frames=manifest.coverage_window_frames,
+        target_label=manifest.target_label,
     )

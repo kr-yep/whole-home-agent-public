@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import subprocess
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
@@ -28,6 +27,7 @@ from whole_home_agent.adapters.visor import (
     load_visor_screen_manifest,
 )
 from whole_home_agent.evaluation import evaluate_frame_set
+from evaluation_cli_support import git_state
 
 
 VISOR_CONFIG = ROOT / "configs" / "evaluation" / "visor-screen-v1.toml"
@@ -43,36 +43,13 @@ def _parser() -> argparse.ArgumentParser:
     return parser
 
 
-def _git_state() -> tuple[str, bool]:
-    safe = f"safe.directory={ROOT.as_posix()}"
-    revision = subprocess.run(
-        ["git", "-c", safe, "rev-parse", "HEAD"],
-        cwd=ROOT,
-        check=True,
-        capture_output=True,
-        text=True,
-        timeout=5,
-    ).stdout.strip()
-    dirty = bool(
-        subprocess.run(
-            ["git", "-c", safe, "status", "--porcelain"],
-            cwd=ROOT,
-            check=True,
-            capture_output=True,
-            text=True,
-            timeout=5,
-        ).stdout.strip()
-    )
-    return revision, dirty
-
-
 def _small_recall(report: dict[str, object]) -> float | None:
     return report["quality"]["size_recall50"]["small_0.1_to_1pct"]
 
 
 def main(argv: list[str] | None = None) -> int:
     args = _parser().parse_args(argv)
-    revision, dirty = _git_state()
+    revision, dirty = git_state(ROOT)
     dataset = load_visor_screen_manifest(VISOR_CONFIG, repository_root=ROOT)
     gate = load_sliced_validation_gate(SLICE_CONFIG)
     model_configs = load_torchvision_coco_configs(

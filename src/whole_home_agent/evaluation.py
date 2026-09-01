@@ -728,14 +728,12 @@ def evaluate_frame_set(
             dirty_worktree=dirty_worktree,
         ),
         evidence_limit=(
-            "Metrics apply only to this hash-pinned public VISOR sparse-frame source, "
-            "the explicit VISOR-to-COCO label mapping, adapter, configuration, "
-            "interpreter, and machine. Sparse frames have source indexes but no "
-            "declared capture timing. VISOR marks active objects rather than every "
-            "scene object, so false-positive and AP values do not measure exhaustive "
-            "generic object detection. These results do not establish streaming, "
-            "relation inference, transfer beyond the selected kitchens, physical "
-            "truth, or household readiness."
+            "Metrics apply only to this hash-pinned public frame set, its explicit "
+            "label mapping, adapter, configuration, interpreter, and machine. "
+            "Source-specific annotation and timing limits are recorded in control "
+            "diagnostics. These results do not establish streaming, relation "
+            "inference, transfer beyond the selected sources, physical truth, or "
+            "household readiness."
         ),
     )
 

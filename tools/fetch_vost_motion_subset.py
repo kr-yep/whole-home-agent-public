@@ -47,6 +47,12 @@ def _parser() -> argparse.ArgumentParser:
         help="Required acknowledgement of the configured non-commercial use envelope.",
     )
     parser.add_argument("--workers", type=int, default=8)
+    parser.add_argument(
+        "--config",
+        type=Path,
+        default=CONFIG,
+        help="Repository-local frozen VOST screen config (defaults to motion screen v1).",
+    )
     return parser
 
 
@@ -355,7 +361,7 @@ def main(argv: list[str] | None = None) -> int:
     args = _parser().parse_args(argv)
     if not 1 <= args.workers <= 16:
         _parser().error("--workers must be between 1 and 16")
-    manifest = load_vost_motion_screen_manifest(CONFIG, repository_root=ROOT)
+    manifest = load_vost_motion_screen_manifest(args.config, repository_root=ROOT)
     result = _fetch_subset(manifest, args.workers)
     print(json.dumps(result, ensure_ascii=False, sort_keys=True, indent=2))
     return 0
