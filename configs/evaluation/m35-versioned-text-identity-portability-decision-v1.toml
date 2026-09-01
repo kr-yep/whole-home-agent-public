@@ -1,0 +1,94 @@
+schema_version = 1
+status = "FROZEN_BEFORE_REPOSITORY_EVIDENCE_SCORING"
+gate_id = "m35-versioned-text-identity-portability-decision-v1"
+intended_use = "REPOSITORY_ONLY_VERSIONED_TEXT_IDENTITY_SELECTION"
+candidate_count = 3
+fatal_gate_count = 8
+selection_rule = "SELECT_AT_MOST_ONE_CANDIDATE_THAT_PASSES_EVERY_FATAL_GATE"
+tie_break_order = ["strongest_version_authority", "least_hidden_normalization", "smallest_coherent_diff"]
+m34_result = "configs/evaluation/m34-teammate-drill-infrastructure-retry-result-v1.toml"
+m34_result_sha256 = "a24773f01f1d3e8b8ec97f0fd2ec6c0ed81b73c17c4390cc4ecdd2d3f4e063ac"
+
+[[evidence_file]]
+path = "tools/check_teammate_drill.py"
+sha256 = "cd285badb9e4ccd6b5ab8e94a657cdfa814294ceffc9d72468875ea977118c5f"
+role = "CURRENT_RAW_WORKTREE_HASH_AND_CLEAN_GIT_REQUIREMENT"
+
+[[evidence_file]]
+path = ".gitattributes"
+sha256 = "6f2574090431ba5803fc10a9c68345bd5d2bba17c100018b68b02f817eb185ce"
+role = "CURRENT_EOL_POLICY_WITHOUT_EXPLICIT_UV_LOCK_RULE"
+
+[[candidate]]
+id = "A_GIT_BLOB_SHA256_PLUS_CLEAN_WORKTREE"
+proposal = "HASH_GIT_SHOW_HEAD_UV_LOCK_BYTES_REQUIRE_EXACT_EXPECTED_REVISION_AND_REQUIRE_GIT_STATUS_CLEAN_WITH_NO_NON_GIT_FALLBACK"
+
+[[candidate]]
+id = "B_CANONICAL_LF_WORKTREE_SHA256"
+proposal = "READ_WORKTREE_UV_LOCK_NORMALIZE_CRLF_AND_CR_TO_LF_THEN_HASH_THE_DERIVED_BYTES"
+
+[[candidate]]
+id = "C_RAW_WORKTREE_SHA256"
+proposal = "KEEP_HASHING_CHECKED_OUT_UV_LOCK_BYTES_WITHOUT_NORMALIZATION"
+
+[[fatal_gate]]
+id = "G1_CHECKOUT_STABILITY"
+requirement = "IDENTITY_IS_UNCHANGED_BY_CORE_AUTOCRLF_OR_PLATFORM_CHECKOUT_EOL_REPRESENTATION"
+
+[[fatal_gate]]
+id = "G2_VERSION_AUTHORITY"
+requirement = "IDENTITY_BINDS_THE_EXACT_COMMITTED_BYTES_AT_THE_EXACT_CHECKED_REVISION_NOT_A_DERIVED_OR_UNVERSIONED_REPRESENTATION"
+
+[[fatal_gate]]
+id = "G3_TAMPER_DETECTION"
+requirement = "CONTENT_CHANGE_IS_REJECTED_AND_THE_WORKTREE_MUST_REMAIN_GIT_CLEAN"
+
+[[fatal_gate]]
+id = "G4_EXPLICIT_ENVIRONMENT_LIMIT"
+requirement = "THE_DRILL_EXPLICITLY_REQUIRES_GIT_AND_FAILS_WITHOUT_IT_INSTEAD_OF_SILENTLY_SWITCHING_IDENTITY_MEANING"
+
+[[fatal_gate]]
+id = "G5_NO_LOCK_OR_PRODUCT_CHANGE"
+requirement = "SELECTION_CHANGES_NEITHER_LOCK_CONTENT_RESOLUTION_FIXTURE_CHECKER_OUTPUT_NOR_PRODUCT_SEMANTICS"
+
+[[fatal_gate]]
+id = "G6_BOUNDED_IMPLEMENTATION"
+requirement = "FUTURE_HARDENING_REUSES_EXISTING_GIT_AND_STANDARD_LIBRARY_WITH_FOCUSED_TESTS_AND_NO_NEW_DEPENDENCY_OR_INTERFACE"
+
+[[fatal_gate]]
+id = "G7_EPISTEMIC_CLARITY"
+requirement = "RECEIPT_DISTINGUISHES_COMMITTED_VERSION_IDENTITY_FROM_WORKTREE_CHECKOUT_REPRESENTATION"
+
+[[fatal_gate]]
+id = "G8_HISTORICAL_INTEGRITY"
+requirement = "M34_REMAINS_STOP_NO_ACCEPTANCE_OR_DEMO_RERUN_IS_AUTHORIZED_AND_OBSERVED_RESULTS_ARE_NOT_REWRITTEN"
+
+[observed_byte_basis]
+git_blob_sha256 = "f2d3639c4b34b9c8a05381baec95cd178d39e056d81bbb7bc028eaeba1c94c3e"
+git_blob_bytes = 571954
+git_blob_crlf_count = 0
+windows_worktree_sha256 = "2cd58c6d22bc8d9d6bbad631432e354f8dffdfc13cea4370340c770271479a10"
+windows_worktree_bytes = 574709
+windows_worktree_crlf_count = 2755
+line_count = 2755
+core_autocrlf = true
+gitattributes_has_uv_lock_rule = false
+uv_sync_frozen_succeeded = true
+
+[decision]
+single_pass = "SELECT_ONE_M36_NON_ACCEPTANCE_PORTABILITY_HARDENING"
+zero_pass = "STOP_M35_NO_ELIGIBLE_TEXT_IDENTITY"
+multiple_pass = "STOP_M35_AMBIGUOUS_TEXT_IDENTITY"
+m34_status_rewrite_or_retry_allowed = false
+selected_work_must_be_separately_frozen = true
+
+[boundaries]
+clone_install_demo_checker_or_acceptance_execution_allowed = false
+checker_or_gitattributes_change_allowed = false
+production_code_schema_semantics_or_presentation_change_allowed = false
+threshold_fixture_lock_or_dependency_change_allowed = false
+external_private_or_live_media_allowed = false
+model_load_prediction_training_or_tuning_allowed = false
+m29_or_m34_retry_allowed = false
+private_registry_credential_cloud_or_action_allowed = false
+operate_enabled = false
