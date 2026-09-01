@@ -26,6 +26,30 @@ class M18VectorD1ContractTests(unittest.TestCase):
         self.assertEqual(split["splits"], ["development", "validation", "test"])
         self.assertTrue(split["assign_before_render"])
         self.assertFalse(split["protected_factor_cross_split_allowed"])
+        groups = self.document["scene_groups"]
+        self.assertEqual(list(groups), split["splits"])
+        for field in split["protected_factors"]:
+            values = [groups[name][field] for name in split["splits"]]
+            self.assertEqual(len(values), len(set(values)))
+
+    def test_six_frame_semantic_plan_is_exact(self):
+        plan = self.document["frame_plan"]
+        self.assertEqual(
+            plan["roles"],
+            [
+                "visible_source",
+                "truncated_near_container",
+                "occluded_inside_container",
+                "visible_destination",
+                "scored_negative",
+                "unknown",
+            ],
+        )
+        self.assertEqual(len(plan["evaluation_states"]), 6)
+        self.assertEqual(len(plan["visibility_states"]), 6)
+        self.assertEqual(len(plan["relation_states"]), 6)
+        self.assertEqual(self.document["vector_geometry"]["key_width"], 28)
+        self.assertEqual(self.document["vector_geometry"]["key_height"], 12)
 
     def test_complete_d1_case_coverage_is_frozen(self):
         coverage = self.document["coverage"]
@@ -64,4 +88,3 @@ class M18VectorD1ContractTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

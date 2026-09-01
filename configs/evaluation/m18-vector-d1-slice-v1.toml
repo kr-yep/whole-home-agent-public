@@ -9,6 +9,76 @@ output_directory = "examples/media/generated/d1_vector_v1"
 manifest_path = "examples/media/generated/d1_vector_v1/manifest.json"
 oracle_fixture_path = "examples/fixtures/evaluation/d1_vector_slice_v1.json"
 
+[frame_plan]
+roles = [
+  "visible_source",
+  "truncated_near_container",
+  "occluded_inside_container",
+  "visible_destination",
+  "scored_negative",
+  "unknown",
+]
+evaluation_states = ["SCORED", "SCORED", "SCORED", "SCORED", "SCORED", "UNKNOWN"]
+visibility_states = ["VISIBLE", "TRUNCATED", "OCCLUDED", "VISIBLE", "ABSENT", "UNKNOWN"]
+relation_states = ["NONE", "NONE", "INSIDE_BAG", "AT_SOFA", "NONE", "UNKNOWN"]
+
+[vector_geometry]
+key_width = 28
+key_height = 12
+truncated_visible_width = 14
+bag_width = 92
+bag_height = 72
+sofa_width = 210
+sofa_height = 125
+
+[scene_groups.development]
+source_sequence = 0
+seed = 18001
+participant_id = "synthetic-none-development"
+session_id = "synthetic-session-development"
+asset_identity = "vector-assets-development-v1"
+background_identity = "vector-background-development-v1"
+layout_seed_family = "vector-layout-development-v1"
+scene_or_room_identity = "synthetic-room-development-v1"
+camera_time_group = "synthetic-camera-time-development-v1"
+synchronized_view_group = "synthetic-sync-development-v1"
+background_rgb = [224, 216, 197]
+floor_rgb = [145, 117, 88]
+bag_rgb = [45, 112, 170]
+sofa_rgb = [95, 111, 132]
+
+[scene_groups.validation]
+source_sequence = 1
+seed = 18002
+participant_id = "synthetic-none-validation"
+session_id = "synthetic-session-validation"
+asset_identity = "vector-assets-validation-v1"
+background_identity = "vector-background-validation-v1"
+layout_seed_family = "vector-layout-validation-v1"
+scene_or_room_identity = "synthetic-room-validation-v1"
+camera_time_group = "synthetic-camera-time-validation-v1"
+synchronized_view_group = "synthetic-sync-validation-v1"
+background_rgb = [206, 221, 210]
+floor_rgb = [126, 104, 79]
+bag_rgb = [133, 72, 145]
+sofa_rgb = [77, 119, 102]
+
+[scene_groups.test]
+source_sequence = 2
+seed = 18003
+participant_id = "synthetic-none-test"
+session_id = "synthetic-session-test"
+asset_identity = "vector-assets-test-v1"
+background_identity = "vector-background-test-v1"
+layout_seed_family = "vector-layout-test-v1"
+scene_or_room_identity = "synthetic-room-test-v1"
+camera_time_group = "synthetic-camera-time-test-v1"
+synchronized_view_group = "synthetic-sync-test-v1"
+background_rgb = [217, 209, 226]
+floor_rgb = [118, 95, 76]
+bag_rgb = [172, 83, 58]
+sofa_rgb = [80, 99, 142]
+
 [shape]
 width = 640
 height = 360
@@ -111,4 +181,3 @@ claim_candidate_allowed = false
 accepted_claim_allowed = false
 live_private_cloud_or_action_allowed = false
 operate_enabled = false
-
