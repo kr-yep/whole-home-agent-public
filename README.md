@@ -21,6 +21,7 @@ The answer is an `estimated` result scoped to that replay. It is not a claim abo
 - PTS-aware PyAV decoding and optional motion-plus-periodic scheduling;
 - a deterministic RGB smoke detector for the generated artwork;
 - a hash-pinned RF-DETR Nano/Small offline adapter with sparse COCO-ID validation;
+- a Safetensors-only D-FINE Small qualification adapter with dense COCO-ID validation;
 - clip-local IoU tracking and one-instance manifest binding;
 - conservative containment/location rules with explicit abstention behavior;
 - the unchanged B0 claim committer, relation projection, and scoped query path;
@@ -67,6 +68,13 @@ allocated VRAM, but still missed the frozen `0.60` recall gate (`25/51 = 0.4902`
 was stopped without a retry or reserved validation. These are finite egocentric VOST
 results, not a general small-object, indoor, fixed-camera, or real-time claim. See the
 [M12 evidence report](docs/evaluation/vost-m12-rfdetr-small-v1.md).
+
+A subsequent D-FINE Small engineering preflight used only one generated in-memory RGB
+input. Its 51-call p95 was `58.81 ms`, peak allocated VRAM was about `99.7 MiB`, and the
+canonical output was deterministic, but the checkpoint is a community conversion with
+no verified parity to the author artifact. It therefore passed engineering compatibility
+and was stopped before VOST rather than treated as accuracy evidence. See the
+[M13 evidence report](docs/evaluation/m13-dfine-small-synthetic-v1.md).
 
 ## Run the demo
 
@@ -141,16 +149,19 @@ docs/                       architecture, demo, ADR, and technology notes
 ## Next evidence gate
 
 The first public detector, consecutive motion, target-tracking, failure-localization,
-and RF-DETR replacement screens are frozen. M12 improved the finite development count
-but failed the unchanged recall gate and recovered none of M11's 11 prior localization-
-miss frames. The next step is a synthetic-only D-FINE Small artifact, safe-loader, and
-adapter compatibility gate; it must not read VOST images or masks or assume another
-development run is warranted. Tracker replacement remains a separate later co-gate.
+RF-DETR replacement, and D-FINE synthetic engineering screens are frozen. M12 improved
+the finite development count but failed the unchanged recall gate; M13 established only
+that one community-converted D-FINE Small artifact can run safely and inside the cost
+bounds. The next step is a no-media scientific-priority gate: either identify one
+candidate with materially stronger relevant small-object evidence, or stop off-the-shelf
+model swapping and define a separate target-domain data/training gate. Tracker
+replacement remains a separate later co-gate.
 The reserved VOST validation source and VISOR `P14_05` must remain untouched. Do not add
 a movement-candidate layer merely because scheduling is inexpensive. Training remains
 capped at 20 epochs with patience 5, and test tuning and automatic submissions remain
 prohibited. See the [M11 diagnostic](docs/evaluation/vost-m11-failure-localization-v1.md)
-and [M12 detector screen](docs/evaluation/vost-m12-rfdetr-small-v1.md).
+and [M12 detector screen](docs/evaluation/vost-m12-rfdetr-small-v1.md), plus the
+[M13 engineering screen](docs/evaluation/m13-dfine-small-synthetic-v1.md).
 
 ## Safety and data boundary
 

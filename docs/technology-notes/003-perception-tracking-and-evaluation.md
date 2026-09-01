@@ -42,6 +42,15 @@ The optional `rfdetr==1.9.4` dependency is resolved in `uv.lock`, although the M
 
 The M12 screen selected Small rather than Nano because its 512-pixel input and published small-object/AP75 results were a stronger pre-result rationale for M11's failure mix. On the frozen VOST development sequence, the complete Small adapter path matched 25/51 frames, passed the p95 and VRAM gates, but failed the required 0.60 recall and recovered none of the 11 prior localization-miss frames. It is rejected without retry or reserved validation; this does not establish that RF-DETR generally fails. Official sources: [RF-DETR repository](https://github.com/roboflow/rf-detr), [1.9.4 registry](https://github.com/roboflow/rf-detr/blob/1.9.4/src/rfdetr/assets/model_weights.py), and [PyPI 1.9.4 provenance](https://pypi.org/project/rfdetr/1.9.4/).
 
+M13 adds a narrower D-FINE Small qualification seam without promoting it to a product
+dependency. It accepts one hash-pinned local Safetensors snapshot, forbids remote code
+and network retrieval, validates the full dense COCO map (`39 -> bottle`, `44 ->
+spoon`), and translates only canonical detections. Fake-output tests require no Torch or
+Transformers; the normal constructor is the only model-loading path. One generated-input
+GPU attempt passed the absolute cost and deterministic-output checks, but the artifact
+is a community conversion with no verified author-checkpoint parity. No VOST accuracy
+run follows from this engineering result. See the [M13 evidence report](../evaluation/m13-dfine-small-synthetic-v1.md).
+
 The rejected inference screen is frozen in `configs/evaluation/vost-m12-rfdetr-small-v1.toml`; the older training proposal remains separately versioned in `configs/perception/rfdetr-nano-training-gate-v1.toml`. Any future specialist training experiment remains capped at 20 epochs with early-stopping patience 5, must use video/scene-separated training and validation data, must not tune on test, and must beat the same fixed quality/cost gate. No RF-DETR training has been run here.
 
 ## Deferred alternatives

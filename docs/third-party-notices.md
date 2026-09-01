@@ -31,6 +31,15 @@ The project-generated replay under `examples/media/generated` is separately mark
 
 RF-DETR is resolved only through the `rf-detr` optional extra. No third-party model weights are committed or distributed by this repository.
 
+- [Transformers](https://github.com/huggingface/transformers/tree/v5.16.1) 5.16.1 —
+  Apache-2.0. The M13 synthetic engineering screen used its D-FINE implementation with
+  a hash-pinned local
+  [`ustc-community/dfine-small-coco`](https://huggingface.co/ustc-community/dfine-small-coco/tree/f79e65b5fbb33ceb9d3ebba042955d7410c608f8)
+  Safetensors conversion whose model card declares Apache-2.0. The conversion is not a
+  D-FINE-author release and no parity with the author checkpoint was verified. The
+  weights remain ignored, are not redistributed, and the project makes no commercial-
+  clearance claim from model-card metadata alone.
+
 ## Optional public indoor evaluation data
 
 - [EPIC-KITCHENS VISOR](https://epic-kitchens.github.io/VISOR/site) — CC BY-NC 4.0,
