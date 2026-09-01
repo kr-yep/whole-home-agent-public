@@ -1,7 +1,7 @@
 schema_version = 1
 status = "FROZEN_BEFORE_SOURCE_ARCHIVE_ANNOTATION_OR_MEDIA_REREAD"
 gate_id = "m26-ycbv-dual-area-replacement-d1-v1"
-intended_use = "TEST_ONLY_MINIMAL_SMALL_BBOX_DETECTOR_ORACLE"
+intended_use = "TEST_ONLY_MINIMAL_DETECTOR_TRANSFER_ORACLE"
 dataset_id = "BOP_YCBV_TEST_BOP19"
 license_id = "MIT"
 source_revision = "5c2c4aa229800355648cd268040aa814f8dc94f0"
