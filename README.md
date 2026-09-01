@@ -33,7 +33,9 @@ consent, and any operational activation. Live/private sensing and actions remain
 exact revision and clean-worktree checks for `uv.lock`. Raw checkout hash is diagnostic,
 so Git-filtered LF/CRLF representations no longer create false identity failures. All
 382 regression tests and the 295-file public audit pass. M34 remains a normal STOP; an
-actual independent teammate or other-platform handoff is still missing.
+actual independent teammate or other-platform handoff is still missing. All six jobs in
+[public CI run 33527744800](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33527744800)
+passed.
 
 ## What works today
 

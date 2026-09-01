@@ -51,7 +51,8 @@ full_tests_passed = 382
 full_regression_profile = "M32_COMPLETE_REGRESSION"
 full_regression_is_m34_retry = false
 public_audit_status = "PASS_295_FILES_590_SNAPSHOTS_ZERO_VIOLATIONS"
-public_ci_status = "PENDING"
+public_ci_status = "PASS_RUN_33527744800_ALL_6_JOBS"
+public_ci_run_id = 33527744800
 operate_enabled = false
 
 [boundaries]

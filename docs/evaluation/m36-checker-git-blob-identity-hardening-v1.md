@@ -24,7 +24,8 @@ Python 3.12.13 passed `12/12` focused tests and the complete M32 regression prof
 `382/382`. The latter includes the existing pinned project-owned synthetic regression;
 it is not a new M34 acceptance attempt. The public audit passed 295 files / 590
 index-and-worktree snapshots with zero violations and `operate_enabled: false`. CI is
-pending.
+verified by [public run 33527744800](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33527744800),
+where all six jobs completed successfully.
 
 ## Limits and compatibility
 

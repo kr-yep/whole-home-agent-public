@@ -52,4 +52,6 @@ wrong identity, and non-Git failure. All 382 complete-regression tests and the 2
 public audit pass.
 
 The agent-run Windows path remains mechanically usable; independent teammate/platform
-evidence is still missing. M34 remains STOP and was not rerun.
+evidence is still missing. M34 remains STOP and was not rerun. All six jobs in
+[public CI run 33527744800](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33527744800)
+passed.
