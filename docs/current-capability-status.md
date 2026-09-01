@@ -1,6 +1,6 @@
 # Current capability status
 
-**Checkpoint:** M37 teammate handoff runbook · **Runtime:** `OPERATE DISABLED` · **Production ready:** no
+**Checkpoint:** M38 market synthesis + text-context preview · **Runtime:** `OPERATE DISABLED` · **Production ready:** no
 
 This page is updated with every milestone push so a teammate can see what is usable and
 what is still missing without reconstructing the full experiment history.
@@ -23,6 +23,9 @@ what is still missing without reconstructing the full experiment history.
 - Follow one exact Windows PowerShell or macOS/Linux teammate procedure for clone,
   locked install, offline receipt, 90-second presentation or CLI fallback, and guarded
   cleanup.
+- Inspect the exact `whole-home-agent.location-context.v1` text packet that a future
+  language presenter could receive. It is generated locally from the public answer and
+  excludes media, evidence/run history, raw queries, credentials, and action handles.
 
 ## Still missing before a credible hackathon handoff
 
@@ -34,6 +37,8 @@ what is still missing without reconstructing the full experiment history.
   work; the current VOST target path was rejected on development.
 - A product-level recorded indoor relation replay beyond project-generated artwork.
 - Clear packaging/recovery evidence on each teammate platform.
+- An adopted language-provider and data-egress policy, provider implementation,
+  credential boundary, failure contract, and deterministic fallback verification.
 
 ## Deliberately not available
 
@@ -47,18 +52,17 @@ what is still missing without reconstructing the full experiment history.
 These remain blocked by proposed governance, unassigned roles, absent consent and data
 policy, and `OPERATE DISABLED`.
 
-## Latest push: M37 teammate handoff runbook
+## Latest push: M38 market synthesis + text-context preview
 
-Added the exact [teammate handoff runbook](teammate-handoff-runbook.md), including the
-pinned revision/toolchain, both shell families, complete receipt interpretation,
-failure-class actions, Git/uv/Windows ACL troubleshooting, guarded cleanup, presentation
-fallback, and a sanitized result template. All 393 regression tests and the 300-file
-public audit pass. The first public CI run passed both specialized jobs but failed the
-four Python jobs because a new static test required history absent from the default
-depth-1 checkout. The test-only fix now validates the same lock identity at `HEAD`;
-all six jobs in
-[follow-up CI run 33530452074](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33530452074)
-pass.
+Added the representative [market synthesis](market-synthesis.md) and
+[ADR 0020](adr/0020-preview-minimized-text-before-language-provider.md). The project
+adopts staged compute, deterministic claim admission, traceable event relations,
+provider replaceability, and question-first presentation. It defers identity, audio,
+proactivity, multi-sensor fusion, and device control, and rejects raw-media cloud egress
+and robotic embodiment for the hackathon slice.
 
-No clone, install, demo, or checker acceptance was run in M37. A real teammate receipt
-and independent platform evidence are still missing; `OPERATE` remains disabled.
+The Streamlit demo now shows an exact provider-neutral text packet produced by a pure
+allowlist projection. It makes no network call and adds no dependency, prompt input,
+credential, memory reader, or action interface. A real provider is still missing and
+unauthorized. All 399 local regression tests and the 304-file / 608-snapshot public
+audit pass with zero violations; `OPERATE` remains disabled.

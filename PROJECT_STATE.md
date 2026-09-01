@@ -1,6 +1,6 @@
 # Whole Home Agent — Public Repository State
 
-**Checkpoint:** `PUBLIC-B1-M37-001`
+**Checkpoint:** `PUBLIC-B1-M38-001`
 
 **As of:** `2026-09-02 Asia/Taipei`
 
@@ -19,6 +19,12 @@ This file is the live checkpoint for the clean public repository. It records cur
 - Reuse the implemented B0 `ClaimCandidate` → commit → projection → query path as the only semantic state path for B1.
 - Exclude live/private sensing and all physical or external action from the current scope.
 - Do not assume a graph, Memory Core, multi-agent runtime, or durable database is necessary.
+- Use the representative market synthesis to keep staged compute, deterministic claim
+  admission, traceable relations, and a question-first UX while deferring identity,
+  audio, proactivity, sensor fusion, device control, and embodiment.
+- Expose only a pure local preview of the minimized text context that a future language
+  presenter could receive. Do not add a provider, network client, credential, or egress
+  toggle in M38.
 
 ## Authority and roles
 
@@ -74,6 +80,7 @@ This file is the live checkpoint for the clean public repository. It records cur
 | M35 versioned-text identity decision | `IMPLEMENTED / GIT BLOB SELECTED` | Repository-only scoring selects exact HEAD blob SHA-256 plus exact revision and clean worktree. Raw checkout hash is diagnostic; canonical-LF fallback is rejected; M34 remains STOP |
 | M36 checker Git-blob identity hardening | `IMPLEMENTED / FOCUSED, REGRESSION, AUDIT, AND PUBLIC CI PASS` | Teammate checker now uses committed Git-blob identity and separate worktree diagnostics. LF/CRLF, tamper, wrong-hash, and non-Git tests pass; all 382 regression tests, the 295-file public audit, and six public CI jobs pass; no acceptance rerun occurred |
 | M37 teammate handoff runbook | `IMPLEMENTED / LOCAL, AUDIT, AND PUBLIC CI PASS` | Exact Windows and macOS/Linux procedures, receipt interpretation, bounded troubleshooting, guarded cleanup, presentation fallback, and result template exist. All 393 local tests, the 300-file public audit, and six follow-up public CI jobs pass. First CI's depth-1 test-only failure is retained; no real teammate receipt or acceptance rerun exists |
+| M38 market synthesis and text-context preview | `IMPLEMENTED / LOCAL OFFLINE VERIFICATION` | Representative primary sources are reduced to an explicit adopt/defer/reject product cut. A pure allowlist projection exposes only answer and relation facts in the closed Streamlit demo. It has no provider, network, credential, prompt input, memory reader, or action handle; cloud egress remains prohibited |
 | B1 binding/relation/query slice | `IMPLEMENTED / VERIFIED ON ONE SYNTHETIC REPLAY` | One-instance binding, conservative containment/zone assertion and retraction rules, typed abstentions, estimated candidates through the unchanged committer, relation evaluation, and evidence-traceable `key → bag → sofa` query exist; no real indoor transfer evidence exists |
 | B1 CLI and Streamlit presentation | `IMPLEMENTED / VERIFIED ON ONE SYNTHETIC REPLAY` | A closed composition/presentation boundary exposes the fixed clip, scoped answer, evidence, abstentions, metrics, diagnostics, and receipt; it accepts no upload, camera, arbitrary path, free-form query, credential, or action handle |
 | Python package distribution | `IMPLEMENTED / VERIFIED BY LOCAL CLEAN INSTALL` | The wheel contains only the fixed D0 replay, its configs, and generator provenance; a fresh Python 3.12 environment ran the CLI from outside the checkout |
@@ -117,6 +124,12 @@ This file is the live checkpoint for the clean public repository. It records cur
 - M35 froze three candidates and eight fatal gates at `cf90586078012930c5683f3ec1b6f4adb8d62aa0`, then used repository text and M34 byte evidence only. Exact `HEAD:uv.lock` Git-blob SHA-256 plus exact revision and clean worktree passes 8/8. Canonical-LF worktree hashing fails version-authority and explicit-environment gates; raw working-tree hashing fails checkout-stability, version-authority, and epistemic-clarity gates. The selection permits only separately frozen M36 checker/test hardening, with no `.gitattributes`, lock, fixture, product, demo, acceptance, or M34 status change. Python 3.12.13 passed `7/7` focused tests, the staged public audit scanned 291 files / 582 snapshots with zero violations and `operate_enabled: false`, and result CI run `33526177365` succeeded.
 - M36 froze its checker-only contract at `2cb2e9ae339ce6368a554bbc4e72e15969f385de`, implemented Git-blob identity at `82378fe40a635c019a66ae481ab26848b35035fc`, and preserved prior checker hashes as historical literals at `d7cab829cf67dd57eeec6b395183f7294648e11b`. Exact `HEAD:uv.lock` blob identity, exact revision, and clean worktree remain fatal checks; raw checkout hash and representation match are explicit diagnostics. Temporary Git repositories establish LF/CRLF equivalence at the blob boundary, dirty tamper, wrong-hash rejection, and non-Git failure. Python 3.12.13 passed `12/12` focused tests and `382/382` complete-regression tests; the public audit scanned 295 files / 590 snapshots with zero violations and `operate_enabled: false`; all six jobs in public CI run `33527744800` succeeded. No clone/install/demo/checker acceptance or M34 retry occurred.
 - M37 froze its document-only contract at `3310e3ab05a51acab6a791a9a718f7bdc507eca2`, normalized it at `9c5caddcec8310ddb485f9edcfa87f7e8387131c`, and added the runbook at `aaa48549eea700a4fdf215b76fec8342e55043af`. The handoff pins M36 revision `f16a0a4f99ac97dce16430b70568a3f47613cc0d`, Python 3.12, uv 0.11.24, exact checker/lock identities, both shell procedures, explicit receipt meanings, failure actions, guarded cleanup, 90-second presentation, CLI fallback, and sanitized reporting. Python 3.12.13 passed `11/11` focused and `393/393` complete-regression tests; the public audit scanned 300 files / 600 snapshots with zero violations and `operate_enabled: false`. Public CI run `33529559775` passed both specialized jobs but failed Python 3.11–3.14 because the new test requested a historical commit unavailable in the default depth-1 checkout. Test-only revision `554757de905bae1a492a47f87b13e1827ae1e2d6` checks the same retained lock identity at `HEAD`; local `393/393` passes and follow-up public CI run `33530452074` succeeded across all six jobs. No clone/install/demo/checker acceptance occurred, and no teammate/platform success is claimed.
+- M38 adds a representative market synthesis, ADR 0020, one pure allowlist projection,
+  and one Streamlit preview over the unchanged fixed synthetic replay. Python 3.12.13
+  passed `399/399` complete-regression tests. The public audit scanned 304 files / 608
+  index-and-worktree snapshots with zero violations and `operate_enabled: false`.
+  This is local implementation evidence only: no provider, request, credential, model,
+  household data, egress, claim-semantic change, action, or operational activation exists.
 - GitHub Actions run [33486414127](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33486414127) passed every job except Python 3.11 because one test fixture used Python 3.12's generalized nested f-string grammar. The fixture now builds its TOML blocks before interpolation; local `ast` parsing under the 3.11 grammar and the focused tests passed. Follow-up run [33486674987](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33486674987) completed successfully across Python 3.11–3.14, the prerecorded-video contract, and the closed public demo.
 - An isolated offline M9 package build produced the source archive and universal wheel and included the new Python adapter/evaluator modules without including VOST/VISOR data, model weights, local receipts, or evaluation configs/tools in the installed runtime data bundle.
 - Source revision 2 is an 80-frame H.264/yuv420p generated replay with SHA-256 `b9cc79476d77f8d45acd1803c924de73914ffc4790f4da271f77cc8d4742eb43`. It was versioned because revision 1's encoding failed Chromium playback. Two consecutive local generations matched; browser QA then showed duration 8 seconds, ready state 4, scoped revision-2 content, and zero console errors.
@@ -181,6 +194,7 @@ This file is the live checkpoint for the clean public repository. It records cur
 | `PUB-DIR-035` | Do not use raw checkout bytes as cross-platform identity for versioned text until a repository-only portability decision selects a stable meaning | Implemented in M35; Git blob identity is selected for one separately frozen checker-only M36 hardening |
 | `PUB-DIR-036` | Harden the teammate checker to use committed Git-blob identity while preserving exact revision, clean worktree, and non-Git failure | Implemented in M36 with focused temporary-repository tests and full regression; M34 remains STOP |
 | `PUB-DIR-037` | Give a real teammate exact cross-platform commands, receipt semantics, troubleshooting, guarded cleanup, presentation fallback, and a sanitized report without manufacturing external evidence | Implemented as the M37 document gate; no real teammate receipt exists |
+| `PUB-DIR-038` | Consolidate representative whole-home products and research into a smallest useful demo, implement one independently verifiable task, and prepare the next without widening runtime authority | Implemented as M38: market adopt/defer/reject decisions, ADR 0020, and a local minimized text-context preview. M39 is prepared as a separate provider/egress decision; no provider code or egress was added |
 | `PUB-DIR-031` | Every milestone push must visibly state what is usable now, what is still missing, and what changed in that push | Active; README handoff block and `docs/current-capability-status.md` are the public handoff surface |
 
 ## Open gates and blockers
@@ -190,11 +204,16 @@ This file is the live checkpoint for the clean public repository. It records cur
 - The B1 candidate-source seam, generated video/decoder/scheduler slice, conservative binding/relation/query rules, and closed CLI/Streamlit presentation remain unchanged. VISOR and VOST are separate evaluation adapters, not claim-producing sources. VISOR is sparse egocentric kitchen data with active-object rather than exhaustive-scene labels; VOST is consecutive egocentric transformation data whose selected mask is not a COCO class contract. Neither supplies the key→bag→sofa relation, fixed-camera transfer, live-source evidence, or operational capability. The RF-DETR Small development result is rejected; the D-FINE Small result is synthetic engineering evidence only; M14 stops D-FINE Medium and RT-DETRv2 Small from extending the model tournament. M15 selects none of HOMAGE, CAD-120, or Watch-n-Patch. M16 adds only an evaluation oracle. M17 selects only a vector generation strategy, M18 proves its bounded substrate mechanics, M19 selects only one real transfer-oracle acquisition route, M23 permits only a tiny cross-scene test oracle, M24 materializes a metric-misaligned pair, M25 selects an exact metric-aligned replacement, M26 materializes it as one M16 small-bbox smoke target, M27 keeps that smoke separate from the selected synthetic product demo and deferred scientific lane, M28 hardens presentation while preserving its trace mismatch, M29 exposes an answer-subject gap, M30 selects its canonical boundary, and M31 implements it while preserving a verification-boundary stop. No detector or dataset adapter is promoted into the semantic path.
 - No household data class, person, room, camera, credential, endpoint, device, or capability is enrolled.
 - Consent, retention, deletion, access, incident, kill-switch, and independent enforcement mechanisms do not exist.
+- The M38 text packet is verified only on the fixed synthetic replay. No language
+  provider, egress classification, credential owner, retention/telemetry contract,
+  network allowlist, or provider-failure behavior is adopted or implemented.
 
 ## Next safe action
 
-Pause after M37 per the user's current direction. Do not auto-start another Goal. Await
-explicit user direction before either accepting a real teammate receipt or evaluating a
-Miloco-informed object-memory positioning/integration contract. Do not claim teammate,
-cross-platform, live, real-home, or operational success without the corresponding
-evidence and authority.
+Prepare M39 as a repository decision before any language-provider implementation:
+compare local generation with an explicit opt-in cloud presenter; classify the exact
+text fields, retention, and telemetry; define credential ownership, network allowlisting,
+timeouts, failure behavior, and deterministic fallback; obtain the required data/egress
+authority before a real request. Do not interpret an API key or configuration flag as
+authorization. Do not claim teammate, cross-platform, live, real-home, language-model,
+or operational success without corresponding evidence and authority.

@@ -1,6 +1,6 @@
 # Whole Home Agent
 
-> **Current milestone:** `B1 — offline replay + bounded public perception gates`
+> **Current milestone:** `B1 — offline replay + minimized text-context preview`
 >
 > **Status:** `NOT PRODUCTION` · `OPERATE DISABLED`
 > **Allowed data:** included generated fixtures plus separately downloaded, licensed D0 public data
@@ -23,22 +23,24 @@ Updated with every milestone push. See the detailed
 **Usable now:** clean local Python install; deterministic B0 semantic replay; one closed,
 project-owned prerecorded synthetic key→bag→sofa demo through JSON CLI or Streamlit;
 traceable scoped answers with explicit top-level query `subject_id`; automated public CI;
-an exact cross-platform [teammate handoff runbook](docs/teammate-handoff-runbook.md).
+an exact cross-platform [teammate handoff runbook](docs/teammate-handoff-runbook.md);
+a Streamlit preview of the exact minimized text context an optional language presenter
+could receive, with no provider or network request.
 
 **Still missing:** an actual teammate clean-install/demo receipt; convincing protected-group real
 indoor small-object gain; robust tracking under occlusion/camera motion; live camera and
 multi-camera support; durable household memory/retention; assigned policy/data roles,
-consent, and any operational activation. Live/private sensing and actions remain blocked.
+consent, a language-provider/egress decision, and any operational activation.
+Live/private sensing, cloud calls, and actions remain blocked.
 
-**Latest milestone (M37):** the runbook pins revision `f16a0a4…`, Python 3.12, uv
-0.11.24, locked install, offline checker, receipt meanings, failure handling, guarded
-cleanup, 90-second presentation, CLI fallback, and a sanitized teammate result template
-for Windows PowerShell and macOS/Linux shells. All 393 regression tests and the 300-file
-public audit pass. The first CI run exposed a depth-1-checkout-only M37 test assumption;
-the smallest test-only fix is committed and all six jobs in
-[follow-up CI run 33530452074](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33530452074)
-pass. No teammate drill was run, so independent teammate/platform success is still
-missing.
+**Latest milestone (M38):** a representative [market synthesis](docs/market-synthesis.md)
+records what to adopt, defer, and reject from Miloco, Home Assistant, Google Home,
+Alexa+, embodied-home products, and video-memory research. The closed Streamlit demo
+now displays `whole-home-agent.location-context.v1`, a pure local allowlist containing
+only answer and relation facts. It sends nothing, accepts no credential or prompt, and
+does not change claim semantics. All 399 local regression tests and the 304-file /
+608-snapshot public audit pass. A real language provider remains a separately governed
+future decision.
 
 ## What works today
 
@@ -59,6 +61,8 @@ missing.
 - an explicit VOST bottle mask-to-box target/tracking gate that stops before movement
   candidates when the observation path is too weak;
 - JSON CLI and a local Streamlit presentation;
+- an exact, provider-neutral minimized text-context preview derived from the public
+  answer presentation with no I/O;
 - automated B0 tests on Python 3.11–3.14 plus locked B1/demo jobs.
 
 On the included browser-compatible H.264 synthetic clip, the current RGB baseline measures AP50 `1.0`, mAP50:95 about `0.7293`, key recall `1.0`, zero false positives, event F1 `1.0`, and the final expected answer. The clip-local tracker records zero ID switches and zero fragmentations on this one easy fixture. These numbers apply only to this generated artwork and do not establish indoor accuracy, real-time operation, or 24/7 readiness.
@@ -246,7 +250,9 @@ uv sync --frozen --extra demo
 .venv/bin/streamlit run src/whole_home_agent/streamlit_app.py
 ```
 
-The Streamlit app has no upload, arbitrary path, camera, chat, cloud, or action input. It always runs the included allowlisted D0 clip. See the [90-second and 3-minute demo guide](docs/demo-guide.md).
+The Streamlit app has no upload, arbitrary path, camera, chat, cloud, credential, or
+action input. It always runs the included allowlisted D0 clip. Its text-context section
+is a local preview, not an API call. See the [90-second and 3-minute demo guide](docs/demo-guide.md).
 
 ## Deterministic B0 replay
 
@@ -275,11 +281,13 @@ allowlisted generated MP4 + manifest/config hashes
   → session projection
   → scoped AnswerTrace
   → CLI / Streamlit presentation dictionaries
+  → Streamlit-only minimized text-context preview (no provider)
 ```
 
 Detector and rule outputs cannot directly mutate state. A complete source failure returns no queryable session. The UI receives presentation values and public media bytes, not a model, ledger, filesystem, credential, or generic tool handle. No graph database, Memory Core, LLM/VLM, multi-agent runtime, durable database, or action executor is required for this slice.
 
-See the [minimal B0 → B1 architecture](docs/b0-b1-architecture-plan.md), [system diagram](docs/b0-b1-system.architecture.html), [perception data flow](docs/b0-b1-perception.dataflow.html), [implementation notes](docs/technology-notes/), [release checklist](docs/release-checklist.md), and [ADRs](docs/adr/). Proposed governance and ADR status are recorded in [PROJECT_STATE.md](PROJECT_STATE.md); implementation does not adopt those documents or enable operation.
+See the [market synthesis](docs/market-synthesis.md),
+[minimal B0 → B1 architecture](docs/b0-b1-architecture-plan.md), [system diagram](docs/b0-b1-system.architecture.html), [perception data flow](docs/b0-b1-perception.dataflow.html), [implementation notes](docs/technology-notes/), [release checklist](docs/release-checklist.md), and [ADRs](docs/adr/). Proposed governance and ADR status are recorded in [PROJECT_STATE.md](PROJECT_STATE.md); implementation does not adopt those documents or enable operation.
 
 ## Repository map
 
@@ -350,6 +358,10 @@ The [M36 result](docs/evaluation/m36-checker-git-blob-identity-hardening-v1.md) 
 that checker-only hardening without rerunning acceptance.
 The [M37 result](docs/evaluation/m37-teammate-handoff-runbook-v1.md) packages the exact
 real-teammate procedure without claiming that a teammate has executed it.
+The [M38 market synthesis](docs/market-synthesis.md) records the representative
+adopt/defer/reject cut and the exact minimized text context now visible in the demo;
+[ADR 0020](docs/adr/0020-preview-minimized-text-before-language-provider.md) keeps any
+real language provider and egress outside this implementation.
 
 ## Safety and data boundary
 

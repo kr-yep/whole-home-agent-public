@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import streamlit as st
 
+from whole_home_agent.llm_context import build_llm_text_context
 from whole_home_agent.public_demo import load_public_demo_media, run_public_demo
 
 
@@ -72,6 +73,14 @@ def main() -> None:
         width="stretch",
         hide_index=True,
     )
+
+    st.subheader("4 · What a text-only LLM could see")
+    st.caption(
+        "Local preview only — no provider is called. This whitelist excludes video, "
+        "frames, evidence references, claim IDs, replay history, query text, "
+        "credentials, and action handles."
+    )
+    st.json(build_llm_text_context(result["answer"]))
 
     with st.expander("Optional synthetic fixture metrics — not indoor evidence"):
         quality = result["perception_evaluation"]["quality"]
