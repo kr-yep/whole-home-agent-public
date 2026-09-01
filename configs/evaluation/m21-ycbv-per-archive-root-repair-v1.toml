@@ -1,0 +1,159 @@
+schema_version = 1
+status = "FROZEN_BEFORE_ARCHIVE_REUSE_EXTRACTION_OR_REAL_ANNOTATION_READ"
+gate_id = "m21-ycbv-per-archive-root-repair-v1"
+intended_use = "D0_PUBLIC_REAL_DETECTOR_TRANSFER_ORACLE"
+dataset_id = "BOP_YCBV_TEST_BOP19"
+license_id = "MIT"
+source_repository = "bop-benchmark/ycbv"
+source_revision = "5c2c4aa229800355648cd268040aa814f8dc94f0"
+source_host = "huggingface.co"
+source_archive_root = "data/external/ycbv-bop19-m20/archives"
+local_root = "data/external/ycbv-bop19-m21"
+local_receipt = "data/external/ycbv-bop19-m21/m21-local-receipt.json"
+local_slice = "data/external/ycbv-bop19-m21/m21-d1-slice.json"
+archive_count = 2
+expected_compressed_bytes = 660214506
+supersedes_only = "M20_SINGLE_SOURCE_ROOT_ASSUMPTION"
+allowed_repair_count = 1
+further_contract_repair_allowed = false
+
+[[archive]]
+name = "ycbv_base.zip"
+url = "https://huggingface.co/datasets/bop-benchmark/ycbv/resolve/5c2c4aa229800355648cd268040aa814f8dc94f0/ycbv_base.zip"
+bytes = 15805
+sha256 = "98440f8bd403100b21cf11a6729fabe8b3d5ce714472edc57a18b7f1fcd4bb18"
+kind = "BOP_BASE_METADATA"
+source_root = "ycbv"
+destination_root = "ycbv"
+
+[[archive]]
+name = "ycbv_test_bop19.zip"
+url = "https://huggingface.co/datasets/bop-benchmark/ycbv/resolve/5c2c4aa229800355648cd268040aa814f8dc94f0/ycbv_test_bop19.zip"
+bytes = 660198701
+sha256 = "c0c11251849877e7b2f373f6c7acf54739dc69d0fb2649c20050ca977bf5513d"
+kind = "BOP19_RGBD_AND_PUBLIC_GROUND_TRUTH"
+source_root = "test"
+destination_root = "ycbv/test"
+
+[rights]
+dataset_license_source = "https://github.com/yuxng/YCB_Video_toolbox/blob/master/LICENSE"
+dataset_license_statement_source = "https://github.com/yuxng/YCB_Video_toolbox"
+institutional_distribution_source = "https://bop.felk.cvut.cz/datasets/"
+license_text_must_be_captured_in_local_receipt = true
+redistribution_of_source_archives_in_git_allowed = false
+
+[cost]
+maximum_compressed_bytes = 1073741824
+maximum_total_uncompressed_bytes = 5368709120
+maximum_single_member_bytes = 1073741824
+maximum_member_count = 25000
+maximum_compression_ratio = 200.0
+first_slice_max_working_hours = 8
+download_retry_count = 0
+
+[archive_safety]
+full_header_preflight_before_any_extraction = true
+mapped_destination_namespace_preflight_before_any_extraction = true
+absolute_paths_allowed = false
+windows_drive_paths_allowed = false
+parent_traversal_allowed = false
+symbolic_links_allowed = false
+duplicate_normalized_paths_allowed = false
+casefolded_destination_duplicates_allowed = false
+cross_archive_destination_collisions_allowed = false
+encrypted_members_allowed = false
+unsupported_compression_allowed = false
+unexpected_source_roots_allowed = false
+extract_before_all_headers_pass = false
+overwrite_existing_different_bytes_allowed = false
+partial_download_reuse_allowed = false
+
+[selective_extraction]
+base_members = ["ycbv/test_targets_bop19.json"]
+scene_members = ["scene_camera.json", "scene_gt.json", "scene_gt_info.json"]
+selected_rgb_template = "ycbv/test/{scene_id:06d}/rgb/{image_id:06d}.png"
+extract_all_rgb_allowed = false
+extract_depth_allowed = false
+extract_masks_allowed = false
+maximum_selected_rgb_frames = 18
+
+[required_source_contract]
+frame_width = 640
+frame_height = 480
+rgb_required = true
+public_ground_truth_required = true
+scene_camera_required = true
+scene_gt_required = true
+scene_gt_info_required = true
+test_targets_bop19_required = true
+object_id_required = true
+bbox_obj_or_bbox_visib_required = true
+pixel_counts_and_visibility_required = true
+complete_modeled_object_scope_required = true
+
+[translator]
+implementation_path = "src/whole_home_agent/adapters/bop_d1.py"
+synthetic_fixture_path = "tests/fixtures/bop/ycbv_m20_minimal"
+synthetic_contract_must_pass_before_real_annotation_read = true
+project_split = "test"
+source_sequence_mapping = "BOP_SCENE_ID"
+source_image_identity_preserved = true
+d1_frame_index_mapping = "CONTIGUOUS_SOURCE_ORDER_WITH_ORIGINAL_IMAGE_ID_IN_PROVENANCE"
+instance_identity_mapping = "BOP_OBJECT_ID_WITHIN_SCENE"
+class_name_source = "FROZEN_YCB_VIDEO_AUTHOR_CLASS_MAP"
+relation_or_transition_count = 0
+visibility_unknown_below_fraction = 0.10
+unmodeled_objects_are_negative = false
+incomplete_frames_are_scored = false
+translation_runs_required = 2
+byte_identical_outputs_required = true
+
+[slice_selection]
+uses_annotations_only = true
+model_results_allowed = false
+object_order = "ASCENDING_BOP_OBJECT_ID"
+scene_order = "ASCENDING_BOP_SCENE_ID"
+frame_order = "ASCENDING_BOP_IMAGE_ID"
+target_area_fraction_basis = "PX_COUNT_VISIB_DIV_307200"
+target_area_fraction_range = [0.001, 0.01]
+requires_visible_positive = true
+requires_complete_selected_class_absent_frame = true
+minimum_selected_frame_count = 2
+maximum_selected_frame_count = 18
+smallest_source_ordered_proving_set = true
+fallback_candidate_or_rule_allowed = false
+
+[gate]
+pass_decision = "PASS_TO_PAIRED_NO_TRAINING_TRANSFER_EXPERIMENT_DESIGN"
+normal_stop_decision = "STOP_YCBV_REAL_TRANSFER_ORACLE_AFTER_SINGLE_ROOT_REPAIR"
+stop_on_missing_local_archive = true
+stop_on_source_revision_drift = true
+stop_on_license_drift = true
+stop_on_size_or_hash_mismatch = true
+stop_on_archive_safety_failure = true
+stop_on_destination_mapping_failure = true
+stop_on_missing_public_ground_truth = true
+stop_on_incomplete_negative_semantics = true
+stop_on_no_small_target = true
+stop_on_translator_nonconformance = true
+stop_on_nondeterministic_output = true
+stop_on_time_limit = true
+
+[boundaries]
+archive_download_allowed = false
+other_archive_or_dataset_download_allowed = false
+account_login_or_application_allowed = false
+source_bytes_in_git_allowed = false
+real_annotations_in_git_allowed = false
+local_vost_or_visor_read_allowed = false
+reserved_source_allowed = false
+model_detector_or_tracker_load_allowed = false
+prediction_allowed = false
+training_allowed = false
+test_tuning_allowed = false
+movement_candidate_allowed = false
+claim_candidate_allowed = false
+accepted_claim_allowed = false
+relation_or_transition_emission_allowed = false
+live_private_cloud_inference_or_action_allowed = false
+operate_enabled = false
