@@ -1,0 +1,78 @@
+schema_version = 1
+status = "FROZEN_BEFORE_RUNBOOK_IMPLEMENTATION"
+gate_id = "m37-teammate-handoff-runbook-v1"
+decision_scope = "DOCUMENT_ONLY_TEAMMATE_HANDOFF_RUNBOOK"
+source_repository = "https://github.com/kr-yep/whole-home-agent-public.git"
+handoff_revision = "f16a0a4f99ac97dce16430b70568a3f47613cc0d"
+checker_path = "tools/check_teammate_drill.py"
+checker_sha256 = "4c2f3a5252bfa6711bffb20e1e3d708efa43e0f27ef6a9ac246202669f328d1e"
+uv_lock_git_blob_sha256 = "f2d3639c4b34b9c8a05381baec95cd178d39e056d81bbb7bc028eaeba1c94c3e"
+python_version = "3.12"
+uv_version = "0.11.24"
+operate_enabled = false
+
+[required_platforms]
+windows_powershell = true
+macos_linux_posix_shell = true
+
+[required_workflow]
+exact_revision_not_mutable_main = true
+clean_disposable_clone = true
+locked_demo_extra_install = true
+clone_install_elapsed_ms_recorded = true
+offline_checker_is_only_acceptance_command = true
+checker_exit_code_recorded = true
+safe_cleanup_required = true
+
+[required_receipt]
+identity_fields = [
+  "uv_lock_git_blob_sha256",
+  "uv_lock_worktree_sha256",
+  "uv_lock_worktree_representation_matches_git_blob",
+]
+status_fields = ["status", "failure_classes", "revision", "worktree_clean"]
+environment_fields = ["python", "platform", "resolved_versions"]
+cost_fields = ["clone_elapsed_ms", "install_elapsed_ms", "demo_elapsed_ms", "total_elapsed_ms"]
+semantic_fields = ["manifest_sha256", "source_content_sha256", "semantic_sha256", "output_summary"]
+boundary_fields = ["network_attempt_count", "cleanup_required", "evidence_limit"]
+
+[required_interpretation]
+pass_requires_status_pass_and_empty_failures = true
+representation_match_false_can_be_diagnostic = true
+checker_exit_2_means_bounded_stop = true
+unexpected_exit_means_infrastructure_or_crash = true
+no_threshold_or_semantic_change_on_stop = true
+
+[required_sections]
+prerequisites = true
+windows_commands = true
+macos_linux_commands = true
+expected_receipt = true
+failure_classes = true
+git_uv_acl_troubleshooting = true
+safe_cleanup = true
+ninety_second_demo_and_cli_fallback = true
+teammate_result_template = true
+claim_limits = true
+
+[verification_profile]
+focused_static_contract_allowed = true
+complete_regression_allowed = true
+public_release_audit_allowed = true
+clone_install_demo_or_checker_acceptance_allowed = false
+
+[boundaries]
+independent_teammate_success_claimed = false
+cross_platform_success_claimed = false
+clone_install_demo_or_checker_acceptance_executed = false
+external_private_or_live_media_used = false
+model_loaded_trained_or_tuned = false
+product_code_schema_semantics_or_presentation_changed = false
+private_registry_credential_cloud_or_action_connected = false
+operate_enabled = false
+
+[next_gate]
+proposal = "M38_REAL_TEAMMATE_RECEIPT_INTAKE_DECISION"
+requires_real_teammate_receipt = true
+agent_generated_receipt_is_ineligible = true
+
