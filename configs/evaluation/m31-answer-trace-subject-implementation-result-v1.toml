@@ -1,0 +1,88 @@
+schema_version = 1
+status = "RECORDED_IMPLEMENTATION_PASS_WITH_CONTRACT_NORMAL_STOP"
+gate_id = "m31-answer-trace-subject-implementation-v1"
+decision = "STOP_M31_ANSWER_SUBJECT_IMPLEMENTATION"
+contract_revision = "12df5289f1b8c1ddd76d59f6afe4d85da59f41c7"
+implementation_revision = "5c08ea65154cc607c510c5eb65b16657632fd769"
+historical_evidence_test_revision = "aa4c924215159e03c5d0a130cb5528f049757c0a"
+implementation_checks_passed = true
+contract_no_media_assertion_passed = false
+failure_codes = ["VERIFICATION_MEDIA_BOUNDARY_CONTRADICTION"]
+
+[implementation]
+answer_trace_required_subject_id = true
+sole_constructor_copies_query_request_subject_id = true
+b0_cli_serializes_subject_id = true
+b1_public_demo_serializes_subject_id = true
+production_files_changed = ["src/whole_home_agent/model.py", "src/whole_home_agent/relations.py", "src/whole_home_agent/cli.py", "src/whole_home_agent/public_demo.py"]
+dependency_or_storage_added = false
+
+[status_coverage]
+FOUND = true
+UNKNOWN = true
+CONFLICT = true
+SCOPE_REQUIRED = true
+OUT_OF_SCOPE = true
+FRONTIER_MISMATCH = true
+non_found_empty_path_retains_subject = true
+
+[invariants]
+prechange_b0_golden_semantic_sha256 = "226d30a5b826720d607d0b9a29bf3dfb9f5429eeedbbd70ffd1ff23c21233c8f"
+postchange_b0_golden_semantic_sha256 = "226d30a5b826720d607d0b9a29bf3dfb9f5429eeedbbd70ffd1ff23c21233c8f"
+accepted_claim_ids_unchanged = true
+projection_frontier_unchanged = true
+existing_b0_answer_fields_removed_or_renamed = false
+existing_b1_answer_fields_removed_or_renamed = false
+query_resolution_or_epistemic_semantics_changed = false
+
+[verification_boundary]
+contract_required_no_media_model_demo_or_checker_execution = true
+full_suite_required = true
+full_suite_contains_committed_d0_synthetic_prerecorded_regressions = true
+focused_public_demo_regression_executed = true
+full_suite_public_demo_regression_executed = true
+committed_d0_synthetic_media_read = true
+third_party_or_private_media_read = false
+model_loaded = false
+m29_checker_executed = false
+post_observation_contract_reinterpretation_allowed = false
+
+[compatibility]
+serialized_output_change = "ADDITIVE_SUBJECT_ID_FIELD"
+manual_or_positional_answer_trace_constructor_may_require_update = true
+strict_external_consumer_tolerance_unknown = true
+legacy_empty_subject_supported = false
+
+[claim_limits]
+stop_establishes_implementation_failure = false
+stop_establishes_no_media_contract_violation = true
+implementation_establishes_product_or_cv_gain = false
+implementation_establishes_real_home_transfer = false
+m29_result_retried_or_rewritten = false
+
+[next_gate]
+proposal = "M32_VERIFICATION_MEDIA_BOUNDARY_CLARIFICATION"
+allowed_work = "REPOSITORY_ONLY_DECISION_DISTINGUISHING_MANDATORY_HASH_PINNED_D0_SYNTHETIC_REGRESSION_FIXTURE_READS_FROM_AD_HOC_DEMO_ACCEPTANCE_OR_EXTERNAL_MEDIA_EXPERIMENTS"
+code_schema_or_presentation_change_allowed = false
+media_model_demo_or_checker_execution_allowed = false
+m29_retry_allowed = false
+
+[verification]
+python = "3.12.13"
+focused_m31_tests_passed = 14
+full_tests_passed = 338
+public_audit_scanned_files = 272
+public_audit_scanned_snapshots = 544
+public_audit_violations = 0
+operate_enabled = false
+
+[boundaries]
+third_party_or_private_media_read = false
+model_loaded = false
+new_dependency_or_storage_added = false
+prediction_training_or_tuning_run = false
+claim_relation_query_resolution_or_epistemic_changed = false
+presentation_layout_or_text_changed = false
+m29_checker_or_retry_run = false
+live_private_cloud_inference_or_action_connected = false
+operate_enabled = false

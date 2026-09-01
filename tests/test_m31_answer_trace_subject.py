@@ -16,6 +16,7 @@ from whole_home_agent.public_demo import _answer_dict as b1_answer_dict
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / "configs" / "evaluation" / "m31-answer-trace-subject-implementation-v1.toml"
+RESULT = ROOT / "configs" / "evaluation" / "m31-answer-trace-subject-implementation-result-v1.toml"
 
 
 class M31ContractTests(unittest.TestCase):
@@ -143,6 +144,50 @@ class M31ImplementationTests(unittest.TestCase):
             ("claim-key-inside-bag", "claim-bag-at-sofa"),
         )
         self.assertEqual(self.session.projection.frontier, 2)
+
+
+class M31ResultTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.contract = tomllib.loads(CONTRACT.read_text(encoding="utf-8"))
+        cls.result = tomllib.loads(RESULT.read_text(encoding="utf-8"))
+
+    def test_implementation_pass_is_distinct_from_contract_stop(self):
+        self.assertTrue(self.result["implementation_checks_passed"])
+        self.assertFalse(self.result["contract_no_media_assertion_passed"])
+        self.assertEqual(self.result["decision"], self.contract["decision"]["normal_stop"])
+        self.assertEqual(self.result["failure_codes"], ["VERIFICATION_MEDIA_BOUNDARY_CONTRADICTION"])
+
+    def test_all_statuses_and_session_invariants_pass(self):
+        self.assertTrue(all(self.result["status_coverage"].values()))
+        invariants = self.result["invariants"]
+        self.assertEqual(invariants["prechange_b0_golden_semantic_sha256"], invariants["postchange_b0_golden_semantic_sha256"])
+        self.assertTrue(invariants["accepted_claim_ids_unchanged"])
+        self.assertTrue(invariants["projection_frontier_unchanged"])
+        self.assertFalse(invariants["query_resolution_or_epistemic_semantics_changed"])
+
+    def test_boundary_violation_is_exact_and_not_private_or_model_use(self):
+        boundary = self.result["verification_boundary"]
+        self.assertTrue(boundary["committed_d0_synthetic_media_read"])
+        self.assertTrue(boundary["full_suite_contains_committed_d0_synthetic_prerecorded_regressions"])
+        self.assertFalse(boundary["third_party_or_private_media_read"])
+        self.assertFalse(boundary["model_loaded"])
+        self.assertFalse(boundary["m29_checker_executed"])
+        self.assertFalse(boundary["post_observation_contract_reinterpretation_allowed"])
+
+    def test_stop_does_not_rewrite_implementation_as_failure(self):
+        limits = self.result["claim_limits"]
+        self.assertFalse(limits["stop_establishes_implementation_failure"])
+        self.assertTrue(limits["stop_establishes_no_media_contract_violation"])
+        self.assertFalse(limits["implementation_establishes_product_or_cv_gain"])
+        self.assertFalse(limits["m29_result_retried_or_rewritten"])
+
+    def test_next_gate_is_no_media_repository_decision_only(self):
+        next_gate = self.result["next_gate"]
+        self.assertEqual(next_gate["proposal"], "M32_VERIFICATION_MEDIA_BOUNDARY_CLARIFICATION")
+        self.assertFalse(next_gate["code_schema_or_presentation_change_allowed"])
+        self.assertFalse(next_gate["media_model_demo_or_checker_execution_allowed"])
+        self.assertTrue(all(value is False for value in self.result["boundaries"].values()))
 
 
 if __name__ == "__main__":

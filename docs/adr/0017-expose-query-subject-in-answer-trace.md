@@ -28,3 +28,11 @@ The response becomes self-describing and B0/B1 stay aligned. The JSON change is
 additive, while direct or positional construction may require updates. Session claim,
 projection, and canonical semantic hashes must remain unchanged. This ADR grants no
 M29 retry, sensing, model, data, action, or `OPERATE` authority.
+
+## M31 implementation evidence
+
+The four-file additive implementation and all six status/invariance checks pass.
+However, M31 normally stops because its complete-suite requirement conflicts with its
+literal no-media clause: the suite itself runs the committed D0 synthetic prerecorded
+fixture. M32 must clarify that verification boundary without changing this code or
+silently promoting M31 to PASS.

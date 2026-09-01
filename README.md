@@ -15,6 +15,25 @@ query(key) → “the key may be in the bag at the sofa”
 
 The answer is an `estimated` result scoped to that replay. It is not a claim about a real home.
 
+## Current handoff status
+
+Updated with every milestone push. See the detailed
+[capability status](docs/current-capability-status.md).
+
+**Usable now:** clean local Python install; deterministic B0 semantic replay; one closed,
+project-owned prerecorded synthetic key→bag→sofa demo through JSON CLI or Streamlit;
+traceable scoped answers with explicit top-level query `subject_id`; automated public CI.
+
+**Still missing:** a teammate clean-install/demo drill; convincing protected-group real
+indoor small-object gain; robust tracking under occlusion/camera motion; live camera and
+multi-camera support; durable household memory/retention; assigned policy/data roles,
+consent, and any operational activation. Live/private sensing and actions remain blocked.
+
+**Latest milestone (M31):** the additive `AnswerTrace.subject_id` implementation passes
+all semantic tests, but M31 is recorded as a normal contract STOP because its required
+full suite reads the pinned synthetic clip while the same contract forbade every media
+read. M32 must clarify that verification classification without changing code.
+
 ## What works today
 
 - hash-pinned, project-generated 80-frame MP4 replay with exact annotations;
@@ -192,6 +211,13 @@ field would drift from B0, while current path/UI context fails for empty-path no
 answers. M31 may implement only that additive field across both serializers. See the
 [M30 evidence report](docs/evaluation/m30-answer-subject-identity-decision-v1.md).
 
+M31 implements that additive field across canonical `AnswerTrace` and both serializers;
+all six query statuses retain subject identity and the B0 semantic hash is unchanged.
+The implementation checks pass, but the Goal normally stops because its full-suite
+requirement contradicted its literal no-media clause—the suite itself reads the pinned
+synthetic demo fixture. See the
+[M31 evidence report](docs/evaluation/m31-answer-trace-subject-implementation-v1.md).
+
 ## Run the demo
 
 Requires Python 3.11 or newer. The lockfile was generated with `uv 0.11.24`.
@@ -267,13 +293,13 @@ docs/                       architecture, demo, ADR, and technology notes
 The first public detector, consecutive motion, target-tracking, failure-localization,
 RF-DETR replacement, D-FINE synthetic engineering, M14 scientific-priority, M15
 target-substrate, M16 label-oracle, M17 generation-strategy, M18 vector-substrate, and
-M19 real-oracle through M30 answer-identity-decision gates are frozen. M27 selects the existing
+M19 real-oracle through M31 answer-identity-implementation gates are frozen. M27 selects the existing
 synthetic end-to-end replay as the primary demo, keeps M26 as optional smoke, and defers
 scientific gain to a separately contracted protected-group development/untouched-test
-lane. M30 selects a required canonical `AnswerTrace.subject_id` as the sole coherent
-answer-schema fix. M31 may implement only that additive query-scope field, both existing
-serializers, all status coverage, and unchanged session semantic hashes. It cannot rerun
-M29, read media, load another model, tune, or train.
+lane. M31's additive implementation passes all semantic checks but records a normal
+contract stop: mandatory full regression reads the pinned D0 synthetic clip, conflicting
+with its no-media assertion. M32 may clarify only that verification classification using
+repository evidence; it cannot change code, rerun M29, load a model, tune, or train.
 Tracker replacement remains a separate later co-gate.
 The reserved VOST validation source and VISOR `P14_05` must remain untouched. Do not add
 a movement-candidate layer merely because scheduling is inexpensive. Training remains
@@ -301,6 +327,8 @@ The [M29 result](docs/evaluation/m29-primary-demo-acceptance-retry-v1.md) record
 single retry, corrected time semantics, and remaining answer-subject mismatch.
 The [M30 result](docs/evaluation/m30-answer-subject-identity-decision-v1.md) selects the
 canonical boundary for one separately frozen implementation.
+The [M31 result](docs/evaluation/m31-answer-trace-subject-implementation-v1.md) records
+the correct additive implementation and the distinct verification-boundary STOP.
 
 ## Safety and data boundary
 
