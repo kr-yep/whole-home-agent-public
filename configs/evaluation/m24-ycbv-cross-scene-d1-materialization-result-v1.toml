@@ -118,6 +118,16 @@ source_or_media_download_allowed = false
 rgb_read_allowed = false
 model_prediction_training_or_test_tuning_allowed = false
 
+[verification]
+clean_result_revision = "149aa34aa921b9396032164d5db38a16defa6cfa"
+python = "3.12.13"
+focused_tests_passed = 15
+full_tests_passed = 243
+public_audit_scanned_files = 237
+public_audit_scanned_snapshots = 474
+public_audit_violations = 0
+operate_enabled = false
+
 [boundaries]
 archive_or_dataset_downloaded = false
 source_bytes_in_git = false

@@ -51,6 +51,13 @@ an absent physical instance, and no reference transition or relation is emitted.
 The canonical relative-file manifest SHA-256 is
 `02bcc544798e495f3fb5b3f6e743b860a689b4cfe66d447f3a09eb176bb5f096`.
 
+On clean result revision `149aa34aa921b9396032164d5db38a16defa6cfa`, Python
+3.12.13 passed all `243/243` tests. The M24 module contributed 15 passing contract,
+selection, cross-scene identity, deterministic writer, explicit-use-class, result,
+metric-gap, boundary, and next-authority tests. The public release audit scanned 237
+tracked files and 474 index/worktree snapshots with zero violations and
+`operate_enabled: false`.
+
 ## M16 evidence and the discovered mismatch
 
 The explicit test-only loader accepted the generated fixture while the default loader
