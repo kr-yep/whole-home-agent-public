@@ -50,3 +50,12 @@ strongly labeling perfect synthetic fixture metrics. One contract mismatch remai
 manifest event frames are not inference evidence-window starts. M29 must freeze that
 meaning correction before one retry; M28 does not change the accepted claim semantics
 or invalidate the M27 primary-demo selection.
+
+## M29 retry evidence
+
+The one committed retry validates the corrected event-label/evidence-window/
+confirmation-frame meanings and every non-answer assertion. It normally stops because
+the public answer object does not expose the queried `subject_id`, even though the
+relation path retains `key`. No second M29 retry is allowed. A separate repository-only
+decision must determine whether this is an answer-schema requirement before any code
+change; the stop does not invalidate the selected demo or establish a CV failure.

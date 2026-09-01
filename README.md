@@ -179,6 +179,13 @@ evidence-window starts; two separate presentation gaps were hardened by collapsi
 strongly labeling perfect synthetic fixture metrics. See the
 [M28 evidence report](docs/evaluation/m28-primary-demo-acceptance-v1.md).
 
+M29 corrected that timing meaning before one committed retry. Both interfaces again
+agreed offline, and the event-label/evidence-window/confirmation triples now pass. The
+retry normally stopped only because the public answer object does not expose its queried
+`subject_id`, although `key` remains traceable in the relation path. No second M29 retry
+is allowed. See the
+[M29 evidence report](docs/evaluation/m29-primary-demo-acceptance-retry-v1.md).
+
 ## Run the demo
 
 Requires Python 3.11 or newer. The lockfile was generated with `uv 0.11.24`.
@@ -254,14 +261,13 @@ docs/                       architecture, demo, ADR, and technology notes
 The first public detector, consecutive motion, target-tracking, failure-localization,
 RF-DETR replacement, D-FINE synthetic engineering, M14 scientific-priority, M15
 target-substrate, M16 label-oracle, M17 generation-strategy, M18 vector-substrate, and
-M19 real-oracle through M28 demo-acceptance gates are frozen. M27 selects the existing
+M19 real-oracle through M29 demo-acceptance-retry gates are frozen. M27 selects the existing
 synthetic end-to-end replay as the primary demo, keeps M26 as optional smoke, and defers
 scientific gain to a separately contracted protected-group development/untouched-test
-lane. M28 normally stopped after one acceptance attempt: both interfaces agreed, but
-the contract confused source event labels with inference evidence windows. M29 may
-freeze only that distinction and run exactly one committed acceptance retry. It cannot
-change presentation or relation semantics, read third-party/private media, load another
-model, tune, or train.
+lane. M29's sole retry validates the corrected timing distinction and normally stops
+only on the absent top-level query-subject identity. M30 may make a repository-only,
+no-media decision about that answer-schema requirement; it has no code-change or retry
+authority. It cannot read third-party/private media, load another model, tune, or train.
 Tracker replacement remains a separate later co-gate.
 The reserved VOST validation source and VISOR `P14_05` must remain untouched. Do not add
 a movement-candidate layer merely because scheduling is inexpensive. Training remains
@@ -285,6 +291,8 @@ and [M12 detector screen](docs/evaluation/vost-m12-rfdetr-small-v1.md), plus the
 [M27 result](docs/evaluation/m27-demo-evaluation-contract-v1.md).
 The [M28 result](docs/evaluation/m28-primary-demo-acceptance-v1.md) records the
 normal stop, exact trace mismatch, and bounded presentation hardening.
+The [M29 result](docs/evaluation/m29-primary-demo-acceptance-retry-v1.md) records the
+single retry, corrected time semantics, and remaining answer-subject mismatch.
 
 ## Safety and data boundary
 

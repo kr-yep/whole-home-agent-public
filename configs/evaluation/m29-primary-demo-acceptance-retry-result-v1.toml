@@ -1,0 +1,110 @@
+schema_version = 1
+status = "RECORDED_NORMAL_STOP_NO_SECOND_RETRY"
+gate_id = "m29-primary-demo-acceptance-retry-v1"
+decision = "STOP_M29_PRIMARY_DEMO_ACCEPTANCE_RETRY"
+contract_revision = "08ef074c310a971c14bb82947037a8a4f130fc5f"
+checker_revision = "714a0fdcc6f8ba3db6ce00bd471754da4dd6d760"
+acceptance_revision = "714a0fdcc6f8ba3db6ce00bd471754da4dd6d760"
+acceptance_worktree_clean = true
+acceptance_checker_committed_at_run = true
+acceptance_attempt_count = 1
+acceptance_internal_run_count = 2
+checker_process_succeeded = false
+network_attempt_count = 0
+semantic_outputs_equal = true
+semantic_sha256 = "18233bb9d86cc6ff3cdd3a8b7179ac8019e6dd90de790b4e215f49fcfa11936e"
+failure_count = 1
+failure_codes = ["SCOPED_ANSWER"]
+source_or_media_class = "COMMITTED_D0_SYNTHETIC"
+third_party_or_private_media_read = false
+
+[source]
+source_id = "b1-key-bag-sofa"
+source_revision = "2"
+content_hash = "b9cc79476d77f8d45acd1803c924de73914ffc4790f4da271f77cc8d4742eb43"
+frame_count = 80
+license = "CC0-1.0"
+
+[answer]
+status = "FOUND"
+expected_subject_id = "key"
+subject_id_present = false
+location_id = "sofa"
+epistemic_status = "estimated"
+as_of_source_sequence = 68
+relation_path_length = 2
+source_claim_count = 2
+world_scope = "source:b1-key-bag-sofa@2"
+relation_path_contains_subject_key = true
+
+[[trace]]
+operation = "assert"
+predicate = "inside"
+subject_id = "key"
+object_id = "bag"
+source_event_label_frame = 35
+evidence_start_frame = 33
+evidence_end_frame = 37
+confirmation_frame = 37
+
+[[trace]]
+operation = "assert"
+predicate = "at_zone"
+subject_id = "bag"
+object_id = "sofa"
+source_event_label_frame = 65
+evidence_start_frame = 66
+evidence_end_frame = 68
+confirmation_frame = 68
+
+[passed_checks]
+frozen_basis_hashes = true
+source_event_labels = true
+source_identity = true
+governance_boundary = true
+exact_evidence_trace = true
+evidence_limits = true
+easy_replay_diagnostics = true
+run_receipt = true
+presentation = true
+judge_card = true
+semantic_determinism = true
+network_denial = true
+
+[claim_limits]
+stop_establishes_demo_runtime_failure = false
+stop_establishes_detector_or_relation_failure = false
+stop_establishes_public_answer_subject_identity_contract_mismatch = true
+time_semantics_correction_passed = true
+m27_primary_demo_selection_invalidated = false
+m28_presentation_hardening_invalidated = false
+
+[next_gate]
+proposal = "M30_PUBLIC_ANSWER_SUBJECT_IDENTITY_DECISION"
+allowed_work = "REPOSITORY_ONLY_NO_MEDIA_DECISION_ON_WHETHER_AND_WHERE_TO_EXPOSE_QUERY_SUBJECT_IDENTITY_WITH_SCHEMA_COMPATIBILITY_AND_TRACEABILITY_EVIDENCE"
+media_or_model_read_allowed = false
+schema_or_presentation_change_allowed = false
+m29_acceptance_retry_allowed = false
+third_party_private_training_tuning_live_cloud_action_allowed = false
+
+[verification]
+python = "3.12.13"
+focused_tests_passed = 15
+full_tests_passed = 314
+public_audit_scanned_files = 262
+public_audit_scanned_snapshots = 524
+public_audit_violations = 0
+operate_enabled = false
+
+[boundaries]
+third_party_or_private_media_read = false
+new_model_detector_or_tracker_loaded = false
+prediction_experiment_run = false
+training_run = false
+test_tuning = false
+presentation_changed_after_attempt = false
+new_candidate_or_claim_semantics_added = false
+relation_or_transition_semantics_changed = false
+second_acceptance_retry_run = false
+live_private_cloud_inference_or_action_connected = false
+operate_enabled = false

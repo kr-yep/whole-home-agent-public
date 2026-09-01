@@ -22,6 +22,7 @@ from tools.check_primary_demo import (
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / "configs" / "evaluation" / "m29-primary-demo-acceptance-retry-v1.toml"
+RESULT = ROOT / "configs" / "evaluation" / "m29-primary-demo-acceptance-retry-result-v1.toml"
 
 
 class M29ContractTests(unittest.TestCase):
@@ -172,6 +173,63 @@ class M29CommittedCheckerTests(unittest.TestCase):
         failures: list[str] = []
         _assert_result(result, self.document, failures)
         self.assertEqual(failures, [])
+
+
+class M29ResultTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.contract = tomllib.loads(CONTRACT.read_text(encoding="utf-8"))
+        cls.result = tomllib.loads(RESULT.read_text(encoding="utf-8"))
+
+    def test_one_committed_attempt_stops_on_exactly_scoped_answer(self):
+        self.assertEqual(self.result["acceptance_attempt_count"], 1)
+        self.assertEqual(self.result["acceptance_internal_run_count"], 2)
+        self.assertTrue(self.result["acceptance_worktree_clean"])
+        self.assertTrue(self.result["acceptance_checker_committed_at_run"])
+        self.assertEqual(self.result["decision"], self.contract["decision"]["normal_stop"])
+        self.assertEqual(self.result["failure_codes"], ["SCOPED_ANSWER"])
+
+    def test_timing_semantics_and_all_other_checks_pass(self):
+        self.assertEqual(
+            [
+                (
+                    item["source_event_label_frame"],
+                    item["evidence_start_frame"],
+                    item["evidence_end_frame"],
+                    item["confirmation_frame"],
+                )
+                for item in self.result["trace"]
+            ],
+            [(35, 33, 37, 37), (65, 66, 68, 68)],
+        )
+        self.assertTrue(all(self.result["passed_checks"].values()))
+        self.assertEqual(self.result["network_attempt_count"], 0)
+        self.assertTrue(self.result["semantic_outputs_equal"])
+
+    def test_answer_gap_is_missing_top_level_subject_not_missing_trace(self):
+        answer = self.result["answer"]
+        self.assertEqual(answer["expected_subject_id"], "key")
+        self.assertFalse(answer["subject_id_present"])
+        self.assertTrue(answer["relation_path_contains_subject_key"])
+        self.assertEqual(
+            (answer["status"], answer["location_id"], answer["epistemic_status"]),
+            ("FOUND", "sofa", "estimated"),
+        )
+
+    def test_stop_is_bounded_and_no_second_retry_is_allowed(self):
+        limits = self.result["claim_limits"]
+        self.assertFalse(limits["stop_establishes_demo_runtime_failure"])
+        self.assertFalse(limits["stop_establishes_detector_or_relation_failure"])
+        self.assertTrue(limits["stop_establishes_public_answer_subject_identity_contract_mismatch"])
+        self.assertTrue(limits["time_semantics_correction_passed"])
+        self.assertFalse(self.result["next_gate"]["m29_acceptance_retry_allowed"])
+        self.assertTrue(all(value is False for value in self.result["boundaries"].values()))
+
+    def test_next_gate_is_repository_only_decision_without_change_authority(self):
+        next_gate = self.result["next_gate"]
+        self.assertEqual(next_gate["proposal"], "M30_PUBLIC_ANSWER_SUBJECT_IDENTITY_DECISION")
+        self.assertFalse(next_gate["media_or_model_read_allowed"])
+        self.assertFalse(next_gate["schema_or_presentation_change_allowed"])
 
     def test_committed_presentation_and_judge_card_remain_accepted(self):
         failures: list[str] = []
