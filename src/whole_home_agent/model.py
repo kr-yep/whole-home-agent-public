@@ -300,6 +300,7 @@ class QueryRequest:
 @dataclass(frozen=True, slots=True)
 class AnswerTrace:
     status: QueryStatus
+    subject_id: str
     location_id: str | None
     relation_path: tuple[RelationStep, ...]
     source_claim_ids: tuple[str, ...]

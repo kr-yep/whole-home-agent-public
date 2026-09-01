@@ -3,9 +3,15 @@
 from __future__ import annotations
 
 import hashlib
+import inspect
 import tomllib
 import unittest
 from pathlib import Path
+
+from whole_home_agent import QueryRequest, QueryStatus, load_fixture, locate, run_fixture
+from whole_home_agent.cli import _answer_dict as b0_answer_dict
+from whole_home_agent.model import AnswerTrace
+from whole_home_agent.public_demo import _answer_dict as b1_answer_dict
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -26,9 +32,15 @@ class M31ContractTests(unittest.TestCase):
         )
 
     def test_prechange_files_and_m30_result_are_hash_pinned(self):
-        for item in self.document["prechange_file"]:
-            payload = (ROOT / item["path"]).read_bytes()
-            self.assertEqual(hashlib.sha256(payload).hexdigest(), item["sha256"])
+        self.assertEqual(
+            {item["path"]: item["sha256"] for item in self.document["prechange_file"]},
+            {
+                "src/whole_home_agent/model.py": "6cfb51c6cfc14ba86121d583c024c66a34719b7c6e0538580d5c0589f48fe824",
+                "src/whole_home_agent/relations.py": "4f6d1ef0be4b2b7c8f63d1a4d2afd6c2b4318857df74645aef602a7fccc67954",
+                "src/whole_home_agent/cli.py": "ccb10cf803a20148c8e97e2d8b41bb10b0b697357513b3829324cc51a1571030",
+                "src/whole_home_agent/public_demo.py": "646fea88077aeaf83a2d4a39fe67a99fa043713f8983d80f0c30c790c975737c",
+            },
+        )
         result = (ROOT / self.document["m30_result"]).read_bytes()
         self.assertEqual(hashlib.sha256(result).hexdigest(), self.document["m30_result_sha256"])
 
@@ -49,6 +61,88 @@ class M31ContractTests(unittest.TestCase):
     def test_every_runtime_and_semantic_boundary_is_closed(self):
         self.assertTrue(all(value is False for value in self.document["boundaries"].values()))
         self.assertFalse(self.document["decision"]["m29_retry_allowed"])
+
+
+class M31ImplementationTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        fixture_root = ROOT / "examples" / "fixtures"
+        cls.session = run_fixture(load_fixture(fixture_root / "b0_key_bag_sofa_v1.json"), replay_run_id="m31-statuses")
+        cls.conflict_session = run_fixture(load_fixture(fixture_root / "b0_multi_location_conflict_v1.json"), replay_run_id="m31-conflict")
+
+    def locate(self, subject_id: str, **overrides):
+        fields = {
+            "subject_id": subject_id,
+            "world_scope": self.session.world_scope,
+            "replay_run_id": self.session.replay_run_id,
+            "as_of_source_sequence": 2,
+        }
+        fields.update(overrides)
+        return locate(self.session, QueryRequest(**fields))
+
+    def test_subject_is_required_on_immutable_answer_trace(self):
+        parameter = inspect.signature(AnswerTrace).parameters["subject_id"]
+        self.assertIs(parameter.default, inspect.Parameter.empty)
+        self.assertEqual(AnswerTrace.__dataclass_params__.frozen, True)
+
+    def test_all_six_statuses_retain_exact_request_subject(self):
+        cases = [
+            (self.locate("key"), QueryStatus.FOUND, "key"),
+            (self.locate("missing-object"), QueryStatus.UNKNOWN, "missing-object"),
+            (self.locate("key", world_scope=""), QueryStatus.SCOPE_REQUIRED, "key"),
+            (self.locate("key", world_scope="fixture:other@1"), QueryStatus.OUT_OF_SCOPE, "key"),
+            (self.locate("key", as_of_source_sequence=3), QueryStatus.FRONTIER_MISMATCH, "key"),
+            (
+                locate(
+                    self.conflict_session,
+                    QueryRequest(
+                        subject_id="key",
+                        world_scope=self.conflict_session.world_scope,
+                        replay_run_id=self.conflict_session.replay_run_id,
+                        as_of_source_sequence=2,
+                    ),
+                ),
+                QueryStatus.CONFLICT,
+                "key",
+            ),
+        ]
+        self.assertEqual({status for _, status, _ in cases}, set(QueryStatus))
+        for answer, status, subject_id in cases:
+            with self.subTest(status=status):
+                self.assertEqual(answer.status, status)
+                self.assertEqual(answer.subject_id, subject_id)
+                if status is not QueryStatus.FOUND:
+                    self.assertEqual(answer.relation_path, ())
+
+    def test_b0_and_b1_serializers_add_only_subject_to_existing_keys(self):
+        answer = self.locate("key")
+        b0 = b0_answer_dict(answer)
+        b1 = b1_answer_dict(answer)
+        expected_b0_before = {
+            "as_of_source_sequence", "candidate_location_ids", "epistemic_status",
+            "location_id", "projection_frontier", "reason", "relation_path",
+            "replay_run_id", "source_content_hash", "source_claim_ids", "status",
+            "validator_version", "projector_version", "world_scope",
+        }
+        expected_b1_before = expected_b0_before - {
+            "source_content_hash", "validator_version", "projector_version"
+        }
+        self.assertEqual(set(b0), expected_b0_before | {"subject_id"})
+        self.assertEqual(set(b1), expected_b1_before | {"subject_id"})
+        self.assertEqual(b0["subject_id"], "key")
+        self.assertEqual(b1["subject_id"], "key")
+        for key in expected_b1_before - {"relation_path"}:
+            self.assertEqual(b0[key], b1[key])
+        self.assertTrue(all("epistemic_status" in item for item in b1["relation_path"]))
+
+    def test_session_semantics_and_golden_hash_are_unchanged(self):
+        document = tomllib.loads(CONTRACT.read_text(encoding="utf-8"))
+        self.assertEqual(self.session.canonical_hash, document["prechange_b0_golden_semantic_sha256"])
+        self.assertEqual(
+            tuple(claim.claim_id for claim in self.session.accepted_claims),
+            ("claim-key-inside-bag", "claim-bag-at-sofa"),
+        )
+        self.assertEqual(self.session.projection.frontier, 2)
 
 
 if __name__ == "__main__":

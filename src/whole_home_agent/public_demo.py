@@ -99,6 +99,7 @@ def _answer_dict(answer: AnswerTrace) -> dict[str, object]:
         "replay_run_id": answer.replay_run_id,
         "source_claim_ids": list(answer.source_claim_ids),
         "status": answer.status.value,
+        "subject_id": answer.subject_id,
         "world_scope": answer.world_scope,
     }
 

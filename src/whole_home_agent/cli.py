@@ -72,6 +72,7 @@ def _answer_dict(answer: AnswerTrace) -> dict[str, object]:
         "source_content_hash": answer.source_content_hash,
         "source_claim_ids": list(answer.source_claim_ids),
         "status": answer.status.value,
+        "subject_id": answer.subject_id,
         "validator_version": answer.validator_version,
         "projector_version": answer.projector_version,
         "world_scope": answer.world_scope,

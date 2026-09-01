@@ -152,6 +152,7 @@ def _trace(
 ) -> AnswerTrace:
     return AnswerTrace(
         status=status,
+        subject_id=request.subject_id,
         location_id=location_id,
         relation_path=path,
         source_claim_ids=tuple(step.source_claim_id for step in path),
