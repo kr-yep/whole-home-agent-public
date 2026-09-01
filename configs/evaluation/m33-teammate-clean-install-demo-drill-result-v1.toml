@@ -1,0 +1,79 @@
+schema_version = 1
+status = "RECORDED_NORMAL_STOP_BEFORE_INSTALL"
+gate_id = "m33-teammate-clean-install-demo-drill-v1"
+decision = "STOP_M33_TEAMMATE_HANDOFF_DRILL"
+contract_revision = "dc2b6fd2a51e8ea09ef199d7f4076ac74c9183b2"
+attempt_count = 1
+attempt_limit = 1
+source_repository = "https://github.com/kr-yep/whole-home-agent-public.git"
+checkout_revision = "dc2b6fd2a51e8ea09ef199d7f4076ac74c9183b2"
+failure_classes = ["INSTALL"]
+failure_code = "UV_VERSION_OUTPUT_FORMAT"
+
+[contract_ci]
+run_id = 33523229011
+revision = "dc2b6fd2a51e8ea09ef199d7f4076ac74c9183b2"
+status = "SUCCESS"
+verification_route = "PUBLIC_ACTIONS_HTML_COMPLETED_SUCCESSFULLY"
+url = "https://github.com/kr-yep/whole-home-agent-public/actions/runs/33523229011"
+
+[clone]
+started = true
+completed = true
+elapsed_ms = 1607.584
+head_matches_expected = true
+worktree_clean = true
+disposable_target_outside_source_checkout = true
+
+[install]
+uv_sync_started = false
+uv_sync_completed = false
+resolved_uv_output = "uv 0.11.24 (5e04460c0 2026-06-23 x86_64-pc-windows-msvc)"
+expected_semantic_version = "0.11.24"
+failure = "OUTER_ORCHESTRATION_COMPARED_THE_ENTIRE_VERSION_STRING_INSTEAD_OF_THE_SEMANTIC_VERSION_TOKEN"
+dependency_compatibility_evaluated = false
+
+[demo]
+started = false
+media_decoded_by_application = false
+network_guard_entered = false
+structured_output_produced = false
+semantic_sha256 = "NOT_AVAILABLE"
+
+[cleanup]
+clone_removed = true
+disposable_cache_removed = true
+retained_runtime_artifacts = false
+recoverability = "PUBLIC_REPOSITORY_CAN_BE_RECLONED"
+
+[claim_limits]
+stop_establishes_repository_install_failure = false
+stop_establishes_dependency_incompatibility = false
+stop_establishes_demo_failure = false
+stop_establishes_only_orchestration_preflight_failure = true
+clean_install_usability_verified = false
+product_or_cv_gain_established = false
+real_home_transfer_established = false
+
+[boundaries]
+third_party_private_or_live_media_used = false
+model_loaded = false
+m29_checker_or_retry_run = false
+production_schema_semantics_or_presentation_changed = false
+private_registry_or_credential_used = false
+cloud_inference_or_action_connected = false
+operate_enabled = false
+
+[verification]
+python = "3.12.13"
+focused_result_tests_status = "PASS_9_OF_9"
+public_audit_status = "PASS_282_FILES_564_SNAPSHOTS_ZERO_VIOLATIONS"
+public_ci_status = "PENDING"
+operate_enabled = false
+
+[next_gate]
+proposal = "M34_SINGLE_INFRASTRUCTURE_RETRY"
+allowed_change = "PARSE_UV_VERSION_PREFIX_OR_SEMANTIC_TOKEN_IN_OUTER_ORCHESTRATION_ONLY"
+same_contract_revision_required = true
+same_source_thresholds_expected_output_and_boundaries_required = true
+additional_retry_after_m34_allowed = false

@@ -29,11 +29,11 @@ indoor small-object gain; robust tracking under occlusion/camera motion; live ca
 multi-camera support; durable household memory/retention; assigned policy/data roles,
 consent, and any operational activation. Live/private sensing and actions remain blocked.
 
-**Latest milestone (M33 contract):** one public clean-clone teammate drill is frozen.
-It will install the locked demo environment in a disposable clone, deny network during
-the compact demo, validate the scoped key→bag→sofa trace, record timing/version/hash
-receipts, and clean up. The drill has not run yet, so clean-install usability is still
-unverified.
+**Latest milestone (M33 STOP):** the exact public clone succeeded, but the sole attempt
+stopped before `uv sync` because its outer preflight compared the full `uv --version`
+string, including Windows build metadata, instead of semantic version `0.11.24`.
+Dependency compatibility and clean-install demo usability remain untested. M34 may make
+one infrastructure-only retry with every product and evidence gate unchanged.
 
 ## What works today
 
@@ -334,6 +334,9 @@ the correct additive implementation and the distinct verification-boundary STOP.
 The [M32 result](docs/evaluation/m32-verification-fixture-boundary-decision-v1.md)
 separates static, complete-regression, and ad-hoc experiment authority without changing
 M31 history.
+The [M33 result](docs/evaluation/m33-teammate-clean-install-demo-drill-v1.md) records the
+clean-clone success and exact pre-install harness stop without mislabeling it as a repo
+or dependency failure.
 
 ## Safety and data boundary
 

@@ -1,6 +1,6 @@
 # Current capability status
 
-**Checkpoint:** M33 contract · **Runtime:** `OPERATE DISABLED` · **Production ready:** no
+**Checkpoint:** M33 normal STOP · **Runtime:** `OPERATE DISABLED` · **Production ready:** no
 
 This page is updated with every milestone push so a teammate can see what is usable and
 what is still missing without reconstructing the full experiment history.
@@ -40,12 +40,14 @@ what is still missing without reconstructing the full experiment history.
 These remain blocked by proposed governance, unassigned roles, absent consent and data
 policy, and `OPERATE DISABLED`.
 
-## Latest push: M33 drill contract
+## Latest push: M33 drill result
 
-Added a frozen one-attempt clean-clone contract and a small offline checker. They define
-exact install commands, time budgets, expected answer/trace, resolved-version and hash
-receipts, failure classes, and cleanup.
+The exact public clone succeeded and was clean, but the sole attempt stopped before
+dependency install. The harness compared the full Windows `uv --version` output rather
+than semantic version `0.11.24`; `uv sync` and the demo never ran. The clone and empty
+cache were safely removed.
 
-The existing demo remains usable in the previously verified environment. A new teammate
-environment has not yet passed the drill, so the clean-install item above remains
-missing until the next result push.
+The existing demo remains usable in its previously verified environment. Clean-install
+usability is still missing. M34 may retry once with only the uv version parser corrected;
+all revision, lock, fixture, answer/trace, timing, network, cleanup, and safety gates stay
+unchanged.
