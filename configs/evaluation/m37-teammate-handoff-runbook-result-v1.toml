@@ -5,6 +5,7 @@ decision = "PASS_M37_TEAMMATE_HANDOFF_RUNBOOK"
 contract_revision = "3310e3ab05a51acab6a791a9a718f7bdc507eca2"
 formatting_revision = "9c5caddcec8310ddb485f9edcfa87f7e8387131c"
 implementation_revision = "aaa48549eea700a4fdf215b76fec8342e55043af"
+shallow_checkout_test_fix_revision = "554757de905bae1a492a47f87b13e1827ae1e2d6"
 handoff_revision = "f16a0a4f99ac97dce16430b70568a3f47613cc0d"
 runbook_path = "docs/teammate-handoff-runbook.md"
 runbook_sha256 = "4ff613baffef5ec36a82b66b09a729abd0c7f09542d1b34dfc4d7572369dc7d0"
@@ -29,7 +30,10 @@ full_tests_passed = 393
 full_regression_profile = "M32_COMPLETE_REGRESSION"
 full_regression_is_teammate_acceptance = false
 public_audit_status = "PASS_300_FILES_600_SNAPSHOTS_ZERO_VIOLATIONS"
-public_ci_status = "PENDING"
+first_public_ci_run_id = 33529559775
+first_public_ci_status = "FAIL_4_PYTHON_MATRIX_JOBS_2_SPECIALIZED_JOBS_PASS"
+first_public_ci_failure_scope = "M37_TEST_REQUIRED_HISTORICAL_COMMIT_MISSING_FROM_DEPTH_1_CHECKOUT"
+public_ci_status = "FOLLOW_UP_PENDING"
 operate_enabled = false
 
 [claim_limits]

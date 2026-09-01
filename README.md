@@ -34,8 +34,9 @@ consent, and any operational activation. Live/private sensing and actions remain
 0.11.24, locked install, offline checker, receipt meanings, failure handling, guarded
 cleanup, 90-second presentation, CLI fallback, and a sanitized teammate result template
 for Windows PowerShell and macOS/Linux shells. All 393 regression tests and the 300-file
-public audit pass; CI is pending. No teammate drill was run, so independent
-teammate/platform success is still missing.
+public audit pass. The first CI run exposed a depth-1-checkout-only M37 test assumption;
+the smallest test-only fix is committed and follow-up CI is pending. No teammate drill
+was run, so independent teammate/platform success is still missing.
 
 ## What works today
 

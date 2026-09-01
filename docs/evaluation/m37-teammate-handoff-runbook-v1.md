@@ -21,6 +21,16 @@ with zero violations and `operate_enabled: false`; public CI is pending. PowerSh
 fenced blocks parsed without syntax errors. No command block from the runbook was
 executed as an acceptance drill.
 
+First public CI run
+[33529559775](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33529559775)
+passed the prerecorded-video and closed-demo jobs but failed Python 3.11–3.14. The new
+static test requested `f16a0a4…:uv.lock`, while `actions/checkout` defaults to a
+single-commit checkout; the historical object was therefore unavailable. Revision
+`554757de905bae1a492a47f87b13e1827ae1e2d6` keeps the exact handoff revision assertion
+but checks the retained lock identity at `HEAD`, avoiding an unnecessary full-history
+CI checkout. This is verification-harness portability only; the runbook, lock, fixture,
+product, and acceptance boundaries are unchanged. Follow-up CI is pending.
+
 ## Evidence boundary
 
 This is runbook usability evidence only. No clone, locked install, demo, checker
