@@ -279,12 +279,24 @@ def _write_json(path: Path, payload: object, *, exclusive: bool = False) -> None
 
 
 def _git_state() -> tuple[str, bool]:
+    safe_directory = f"safe.directory={ROOT.resolve()}"
     revision = subprocess.run(
-        ["git", "rev-parse", "HEAD"], cwd=ROOT, check=True, capture_output=True, text=True
+        ["git", "-c", safe_directory, "rev-parse", "HEAD"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
     ).stdout.strip()
     dirty = bool(
         subprocess.run(
-            ["git", "status", "--porcelain", "--untracked-files=all"],
+            [
+                "git",
+                "-c",
+                safe_directory,
+                "status",
+                "--porcelain",
+                "--untracked-files=all",
+            ],
             cwd=ROOT,
             check=True,
             capture_output=True,
