@@ -1,0 +1,142 @@
+schema_version = 1
+status = "RECORDED_NO_MEDIA_RESULT"
+gate_id = "m15-target-domain-substrate-v1"
+decision = "PIVOT_TO_SYNTHETIC_OR_PROJECT_GENERATED_TARGET_DATA_DESIGN"
+eligible_candidates = []
+eligible_count = 0
+selected_candidate = "NONE"
+selection_rule = "ALL_REQUIRED_GATES_MUST_PASS"
+unknown_is_selection_ineligible = true
+tie_break_applied = false
+
+required_gate_order = [
+  "author_or_institution_primary_sources",
+  "official_terms_for_evaluation_or_training",
+  "fixed_or_explicit_exocentric_indoor_view",
+  "temporally_ordered_source_video",
+  "frame_dimensions_available",
+  "per_frame_instance_localization",
+  "movable_household_object_labels",
+  "interaction_or_affordance_signal",
+  "source_group_split_metadata",
+  "stable_official_acquisition_path",
+  "post_acquisition_byte_manifest_possible",
+  "no_manual_access_approval_over_one_day",
+  "minimal_eligible_subset_at_most_20_gib",
+]
+
+[candidates."home-action-genome"]
+eligible = false
+fatal_reasons = [
+  "SPARSE_3_OR_5_FRAME_INTERACTION_ONLY_LOCALIZATION",
+  "ELIGIBLE_ANNOTATION_ACQUISITION_NOT_ESTABLISHED",
+  "ONE_DAY_AND_SUBSET_COST_NOT_ESTABLISHED",
+]
+nonfatal_caveats = [
+  "TERMS_LIMIT_USE_TO_COMPETITION_OR_NON_COMMERCIAL_ACADEMIC_PURPOSE",
+  "DATA_REDISTRIBUTION_PROHIBITED",
+  "SEQUENCE_SPLITS_DO_NOT_ESTABLISH_PERSON_OR_HOUSE_INDEPENDENCE",
+]
+official_sources = [
+  "https://homeactiongenome.org/",
+  "https://homeactiongenome.org/download.html",
+  "https://arxiv.org/pdf/2105.05226",
+]
+
+[candidates."home-action-genome".gates]
+author_or_institution_primary_sources = "PASS"
+official_terms_for_evaluation_or_training = "PASS"
+fixed_or_explicit_exocentric_indoor_view = "PASS"
+temporally_ordered_source_video = "PASS"
+frame_dimensions_available = "UNKNOWN"
+per_frame_instance_localization = "FAIL"
+movable_household_object_labels = "PASS"
+interaction_or_affordance_signal = "PASS"
+source_group_split_metadata = "PASS"
+stable_official_acquisition_path = "UNKNOWN"
+post_acquisition_byte_manifest_possible = "UNKNOWN"
+no_manual_access_approval_over_one_day = "UNKNOWN"
+minimal_eligible_subset_at_most_20_gib = "UNKNOWN"
+
+[candidates."cad-120"]
+eligible = false
+fatal_reasons = [
+  "OFFICIAL_USE_TERMS_NOT_ESTABLISHED",
+  "AUTHOR_CITED_ACQUISITION_ENDPOINT_UNAVAILABLE",
+  "MANIFESTABLE_ELIGIBLE_SUBSET_NOT_ESTABLISHED",
+]
+nonfatal_caveats = [
+  "ONLY_EVERY_50TH_FRAME_MANUALLY_BOXED",
+  "INTERMEDIATE_BOXES_ARE_SIFT_DEPTH_TRACKER_DERIVED",
+  "ACTIVITY_INVOLVED_OBJECTS_ARE_NOT_AN_EXHAUSTIVE_SCENE_ORACLE",
+]
+official_sources = [
+  "https://www.cs.cornell.edu/~hema/papers/activities_IJRR2013.pdf",
+  "http://pr.cs.cornell.edu/humanactivities/data.php",
+]
+
+[candidates."cad-120".gates]
+author_or_institution_primary_sources = "PASS"
+official_terms_for_evaluation_or_training = "UNKNOWN"
+fixed_or_explicit_exocentric_indoor_view = "PASS"
+temporally_ordered_source_video = "PASS"
+frame_dimensions_available = "UNKNOWN"
+per_frame_instance_localization = "PASS"
+movable_household_object_labels = "PASS"
+interaction_or_affordance_signal = "PASS"
+source_group_split_metadata = "PASS"
+stable_official_acquisition_path = "FAIL"
+post_acquisition_byte_manifest_possible = "UNKNOWN"
+no_manual_access_approval_over_one_day = "UNKNOWN"
+minimal_eligible_subset_at_most_20_gib = "UNKNOWN"
+
+[candidates."watch-n-patch"]
+eligible = false
+fatal_reasons = [
+  "PER_FRAME_GROUND_TRUTH_INSTANCE_LOCALIZATION_NOT_ESTABLISHED",
+  "OFFICIAL_USE_TERMS_NOT_ESTABLISHED",
+  "AUTHOR_CITED_ACQUISITION_ENDPOINT_UNAVAILABLE",
+]
+nonfatal_caveats = [
+  "OBJECT_REGIONS_DESCRIBED_AS_ALGORITHM_DERIVED_FEATURES",
+  "SOURCE_INDEPENDENT_SPLIT_NOT_ESTABLISHED",
+]
+official_sources = [
+  "https://www.cs.cornell.edu/~chenxiawu/papers/wpatch_wu_cvpr2015.pdf",
+  "https://www.cs.cornell.edu/~chenxiawu/",
+  "http://watchnpatch.cs.cornell.edu",
+]
+
+[candidates."watch-n-patch".gates]
+author_or_institution_primary_sources = "PASS"
+official_terms_for_evaluation_or_training = "UNKNOWN"
+fixed_or_explicit_exocentric_indoor_view = "PASS"
+temporally_ordered_source_video = "PASS"
+frame_dimensions_available = "PASS"
+per_frame_instance_localization = "FAIL"
+movable_household_object_labels = "PASS"
+interaction_or_affordance_signal = "PASS"
+source_group_split_metadata = "UNKNOWN"
+stable_official_acquisition_path = "FAIL"
+post_acquisition_byte_manifest_possible = "UNKNOWN"
+no_manual_access_approval_over_one_day = "UNKNOWN"
+minimal_eligible_subset_at_most_20_gib = "UNKNOWN"
+
+[interpretation]
+unknown_means = "NOT_ESTABLISHED_IN_ACCESSIBLE_OFFICIAL_SOURCES_CHECKED"
+fail_means = "OFFICIAL_EVIDENCE_CONTRADICTS_OR_CANNOT_SATISFY_THE_FROZEN_REQUIREMENT"
+pass_means = "DIRECT_OFFICIAL_EVIDENCE_SUPPORTS_ONLY_THE_NAMED_GATE"
+exactly_one_means = "SELECT_AT_MOST_ONE_AND_ONLY_IF_ALL_REQUIRED_GATES_PASS"
+metric_oracle_gap = "DENSE_EXHAUSTIVE_REFERENCE_QUALITY_AND_NEGATIVE_FRAME_SEMANTICS_NOT_YET_FROZEN"
+
+[boundaries]
+media_downloaded = false
+annotation_archive_downloaded = false
+model_downloaded_or_loaded = false
+training_run = false
+vost_or_visor_bytes_read = false
+reserved_source_read = false
+movement_candidate_created = false
+claim_committed = false
+live_private_cloud_or_action_connected = false
+operate_enabled = false

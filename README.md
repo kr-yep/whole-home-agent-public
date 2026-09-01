@@ -83,6 +83,13 @@ path that already failed the target development gate. The current off-the-shelf 
 tournament is therefore stopped; no new model or media was loaded. See the
 [M14 evidence report](docs/evaluation/m14-detector-scientific-priority-v1.md).
 
+M15 then checked exactly Home Action Genome, CAD-120, and Watch-n-Patch using official
+pages, papers, terms, and endpoint metadata without downloading media. No candidate
+passed every frozen localization, rights, acquisition, split, manifest, and bounded-cost
+gate. The project therefore selected none and pivoted to proving a no-media target-label
+oracle before generating or acquiring data. See the
+[M15 evidence report](docs/evaluation/m15-target-domain-substrate-v1.md).
+
 ## Run the demo
 
 Requires Python 3.11 or newer. The lockfile was generated with `uv 0.11.24`.
@@ -156,14 +163,13 @@ docs/                       architecture, demo, ADR, and technology notes
 ## Next evidence gate
 
 The first public detector, consecutive motion, target-tracking, failure-localization,
-RF-DETR replacement, D-FINE synthetic engineering, and M14 scientific-priority gates
-are frozen. M14 stopped the current off-the-shelf model tournament because neither
-named candidate supplied materially stronger, same-protocol target-relevant evidence.
-The next step is a no-media target-domain substrate reality gate, using at most three
-pre-named public candidates plus `STOP/PIVOT`; it must establish lawful use, fixed-camera
-indoor relevance, usable labels, immutable provenance, and source-separated evaluation
-before any acquisition or training. Tracker replacement remains a separate later
-co-gate.
+RF-DETR replacement, D-FINE synthetic engineering, M14 scientific-priority, and M15
+target-substrate gates are frozen. M15 selected none of HOMAGE, CAD-120, or
+Watch-n-Patch because none passed every required gate. The next step is the no-media M16
+target-label-oracle feasibility gate: prove exhaustive frame accounting, instance and
+visibility semantics, target metrics, and source-group split rejection using tiny
+semantic fixtures and fake predictions before choosing a data-generation strategy.
+Tracker replacement remains a separate later co-gate.
 The reserved VOST validation source and VISOR `P14_05` must remain untouched. Do not add
 a movement-candidate layer merely because scheduling is inexpensive. Training remains
 capped at 20 epochs with patience 5, and test tuning and automatic submissions remain
@@ -171,7 +177,8 @@ prohibited. See the [M11 diagnostic](docs/evaluation/vost-m11-failure-localizati
 and [M12 detector screen](docs/evaluation/vost-m12-rfdetr-small-v1.md), plus the
 [M13 engineering screen](docs/evaluation/m13-dfine-small-synthetic-v1.md), the
 [M14 priority decision](docs/evaluation/m14-detector-scientific-priority-v1.md), and the
-[M15 proposal](docs/evaluation/m15-target-domain-data-training-gate-proposal.md).
+[M15 result](docs/evaluation/m15-target-domain-substrate-v1.md), plus the
+[M16 proposal](docs/evaluation/m16-target-label-oracle-feasibility-proposal.md).
 
 ## Safety and data boundary
 
