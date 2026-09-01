@@ -133,15 +133,18 @@ docs/                       architecture, demo, ADR, and technology notes
 
 ## Next evidence gate
 
-The first public detector, consecutive motion, and target-tracking screens are frozen.
-The tile candidate and the current RetinaNet target-observation path were rejected; the
-earlier scheduler-only candidate passed its narrower cost/selection gate. The next step
-is development-only failure localization: distinguish confidence, localization IoU,
-target size/absence, and track-association failures before choosing another model or
-tracker. The reserved VOST validation source and VISOR `P14_05` must remain untouched.
-Do not add a movement-candidate layer merely because scheduling is inexpensive. Training
-remains capped at 20 epochs with patience 5, and test tuning and automatic submissions
-remain prohibited.
+The first public detector, consecutive motion, target-tracking, and development-only
+failure-localization screens are frozen. M11 found 30 confidence-filtered frames, 11
+localization misses, and 10 matches among 51 visible bottle targets. Threshold-only
+inclusion down to the existing model floor can match at most 26/51 (`0.5098`), below the
+unchanged `0.60` gate; the oracle-box tracker also produced 16 ID switches. The next step
+is to freeze one detector replacement with a reason to improve both score and
+localization, then screen development before any reserved validation. Tracker
+replacement remains a separate later co-gate. The reserved VOST validation source and
+VISOR `P14_05` must remain untouched. Do not add a movement-candidate layer merely
+because scheduling is inexpensive. Training remains capped at 20 epochs with patience
+5, and test tuning and automatic submissions remain prohibited. See the
+[M11 evidence report](docs/evaluation/vost-m11-failure-localization-v1.md).
 
 ## Safety and data boundary
 
