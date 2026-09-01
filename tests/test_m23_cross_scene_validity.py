@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 M16 = ROOT / "configs" / "evaluation" / "m16-target-label-oracle-v1.toml"
 M22 = ROOT / "configs" / "evaluation" / "m22-ycbv-annotation-failure-localization-result-v1.toml"
 CONTRACT = ROOT / "configs" / "evaluation" / "m23-cross-scene-transfer-oracle-validity-v1.toml"
+RESULT = ROOT / "configs" / "evaluation" / "m23-cross-scene-transfer-oracle-validity-result-v1.toml"
 
 
 class M23ContractTests(unittest.TestCase):
@@ -19,6 +20,7 @@ class M23ContractTests(unittest.TestCase):
         cls.m16 = tomllib.loads(M16.read_text(encoding="utf-8"))
         cls.m22 = tomllib.loads(M22.read_text(encoding="utf-8"))
         cls.document = tomllib.loads(CONTRACT.read_text(encoding="utf-8"))
+        cls.result = tomllib.loads(RESULT.read_text(encoding="utf-8"))
 
     def test_frozen_facts_are_exactly_the_m22_evidence_boundary(self):
         facts = self.document["frozen_input_facts"]
@@ -80,6 +82,43 @@ class M23ContractTests(unittest.TestCase):
         requirements = self.document["evidence_requirements"]
         self.assertTrue(requirements["primary_sources_only_for_technical_claims"])
         self.assertTrue(requirements["inference_must_be_labeled"])
+
+    def test_result_is_the_exact_all_pass_selection(self):
+        self.assertEqual(
+            self.result["decision"],
+            self.document["decision"]["selection"],
+        )
+        self.assertEqual(self.result["fatal_gate_count"], 5)
+        self.assertEqual(self.result["fatal_gate_pass_count"], 5)
+        self.assertTrue(self.result["all_fatal_gates_passed"])
+        self.assertEqual(
+            [gate["id"] for gate in self.result["fatal_gate"]],
+            [gate["id"] for gate in self.document["fatal_gate"]],
+        )
+        self.assertTrue(
+            all(gate["status"] == "PASS" for gate in self.result["fatal_gate"])
+        )
+
+    def test_result_preserves_the_narrow_authority_and_hostile_limits(self):
+        self.assertEqual(
+            self.result["selection_authorizes_only"],
+            self.document["decision"]["selection_authorizes_only"],
+        )
+        self.assertEqual(self.result["maximum_slice_frames"], 18)
+        self.assertEqual(self.result["project_split"], "test")
+        self.assertEqual(len(self.result["hostile_disposition"]), 5)
+        self.assertTrue(self.result["inference"]["is_inference"])
+        self.assertFalse(self.result["boundaries"]["d1_materialized"])
+        self.assertTrue(all(value is False for value in self.result["boundaries"].values()))
+
+    def test_next_gate_is_materialization_only_not_model_work(self):
+        next_gate = self.result["next_gate"]
+        self.assertEqual(next_gate["maximum_frames"], 18)
+        self.assertFalse(next_gate["training_prediction_or_test_tuning_allowed"])
+        self.assertEqual(
+            next_gate["proposal"],
+            "M24_MINIMAL_CROSS_SCENE_YCBV_D1_MATERIALIZATION",
+        )
 
 
 if __name__ == "__main__":

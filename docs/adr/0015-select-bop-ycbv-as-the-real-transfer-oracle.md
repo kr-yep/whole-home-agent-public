@@ -82,3 +82,14 @@ class-absent object/frame cases, but zero object/scene cells contain both. The f
 term is therefore same-scene pairing. Cross-scene pairing is not adopted by this finding:
 its validity and comparability require a separate no-data/no-model decision gate before
 any further materialization or detector experiment.
+
+## M23 cross-scene validity evidence
+
+The official BOP 2D evaluator filters target images within each scene, merges the
+scene-level COCO annotations/results, and runs one COCO evaluation over the combined
+image identities. The official COCO evaluator accumulates category TP/FP evidence over
+those image identities. Together with the local M16 complete-frame and protected-group
+contracts, this supports cross-scene positive/complete-absent pairing inside one
+test-only diagnostic oracle. It does not support scene invariance, training on test,
+movement, relations, physical truth, or whole-home transfer. M23 therefore selects only
+an at-most-18-frame materialization proposal; all data/model work remains a later gate.

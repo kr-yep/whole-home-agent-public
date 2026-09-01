@@ -133,8 +133,15 @@ class-absent requirements, so it stopped before RGB or D1 output. See the
 
 M22 localized that failure without reading media: the same public annotations contain
 81 qualifying small-positive frames and 14,775 safe negatives, but zero positive/negative
-pairs within one object/scene key. Cross-scene pairing is not yet adopted. See the
+pairs within one object/scene key. M22 alone did not adopt cross-scene pairing. See the
 [M22 evidence report](docs/evaluation/m22-ycbv-annotation-failure-localization-v1.md).
+
+M23 checked that proposed repair against current official BOP/COCO evaluator code and
+the executable M16 metric/split contract. All five frozen gates pass: one modeled class
+may aggregate a positive and complete class-absent negative from different scenes while
+remaining in the same test-only oracle. The selection is capped at 18 frames and does
+not authorize data/model work or a movement, relation, or whole-home claim. See the
+[M23 evidence report](docs/evaluation/m23-cross-scene-transfer-oracle-validity-v1.md).
 
 ## Run the demo
 
@@ -211,11 +218,11 @@ docs/                       architecture, demo, ADR, and technology notes
 The first public detector, consecutive motion, target-tracking, failure-localization,
 RF-DETR replacement, D-FINE synthetic engineering, M14 scientific-priority, M15
 target-substrate, M16 label-oracle, M17 generation-strategy, M18 vector-substrate, and
-M19 real-oracle through M22 failure-localization gates are frozen. M22 found that the
-positive and negative terms both exist but are separated by scene. M23 may only decide
-whether cross-scene detector evaluation is valid under authoritative protocols; it
-cannot reread data, loosen a threshold, load a model, or train. Tracker replacement
-remains a separate later co-gate.
+M19 real-oracle through M23 cross-scene-validity gates are frozen. M23 permits only one
+test-only diagnostic slice capped at 18 frames. M24 may freeze and materialize the
+smallest source-ordered one-class cross-scene positive/complete-absent pair with full
+provenance; it cannot loosen a threshold, load a model, predict, or train. Tracker
+replacement remains a separate later co-gate.
 The reserved VOST validation source and VISOR `P14_05` must remain untouched. Do not add
 a movement-candidate layer merely because scheduling is inexpensive. Training remains
 capped at 20 epochs with patience 5, and test tuning and automatic submissions remain
@@ -230,7 +237,8 @@ and [M12 detector screen](docs/evaluation/vost-m12-rfdetr-small-v1.md), plus the
 [M19 result](docs/evaluation/m19-real-transfer-oracle-reality-gate-v1.md), the
 [M20 result](docs/evaluation/m20-ycbv-bop19-acquisition-translation-v1.md), and the
 [M21 result](docs/evaluation/m21-ycbv-per-archive-root-repair-v1.md), and the
-[M22 result](docs/evaluation/m22-ycbv-annotation-failure-localization-v1.md).
+[M22 result](docs/evaluation/m22-ycbv-annotation-failure-localization-v1.md), and the
+[M23 result](docs/evaluation/m23-cross-scene-transfer-oracle-validity-v1.md).
 
 ## Safety and data boundary
 
