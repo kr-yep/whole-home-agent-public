@@ -139,6 +139,9 @@ live_private_cloud_inference_or_action_connected = false
 operate_enabled = false
 
 [verification]
+clean_result_revision = "e9185da4132265e2bccba8fd4c67cdd965b5e6bb"
+ci_run_url = "https://github.com/kr-yep/whole-home-agent-public/actions/runs/33512733734"
+ci_conclusion = "success"
 python = "3.12.13"
 focused_tests_passed = 19
 full_tests_passed = 262

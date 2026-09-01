@@ -86,3 +86,6 @@ Python 3.12.13 passed all `262/262` tests, including 19 M25 contract, synthetic,
 failure, and result checks. The staged public-release audit scanned 242 files / 484
 index-and-worktree snapshots with zero violations and `operate_enabled: false`. These
 checks support only the code, frozen source-envelope handling, and recorded result.
+Public CI independently reran the repository workflow successfully on clean result
+revision `e9185da4132265e2bccba8fd4c67cdd965b5e6bb` in
+[run 33512733734](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33512733734).
