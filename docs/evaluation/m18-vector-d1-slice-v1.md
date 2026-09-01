@@ -68,6 +68,8 @@ Key identities:
 - Clean implementation-revision suite: `161/161` passed under Python 3.12.13.
 - Clean implementation-revision public audit: 198 files / 396 snapshots, zero
   violations, `operate_enabled: false`.
+- Final result suite: `164/164` passed; final public audit: 201 files / 402
+  snapshots, zero violations, `operate_enabled: false`.
 - Four frames were visually inspected across visible, truncated, occluded, and
   destination roles.
 
