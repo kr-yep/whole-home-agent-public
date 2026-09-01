@@ -1,0 +1,140 @@
+schema_version = 1
+status = "FROZEN_BEFORE_REAL_ANNOTATION_REREAD"
+gate_id = "m25-ycbv-small-bbox-alignment-v1"
+intended_use = "ANNOTATION_ONLY_DUAL_AREA_TEST_ORACLE_SUITABILITY_DIAGNOSTIC"
+dataset_id = "BOP_YCBV_TEST_BOP19"
+license_id = "MIT"
+source_revision = "5c2c4aa229800355648cd268040aa814f8dc94f0"
+source_contract = "configs/evaluation/m21-ycbv-per-archive-root-repair-v1.toml"
+m16_contract = "configs/evaluation/m16-target-label-oracle-v1.toml"
+m24_result = "configs/evaluation/m24-ycbv-cross-scene-d1-materialization-result-v1.toml"
+source_archive_root = "data/external/ycbv-bop19-m20/archives"
+expected_target_entry_count = 4123
+expected_unique_target_frame_count = 900
+expected_scene_ids = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59]
+expected_annotation_member_count = 37
+frame_width = 640
+frame_height = 480
+frame_area = 307200
+
+[[archive]]
+name = "ycbv_base.zip"
+bytes = 15805
+sha256 = "98440f8bd403100b21cf11a6729fabe8b3d5ce714472edc57a18b7f1fcd4bb18"
+source_root = "ycbv"
+
+[[archive]]
+name = "ycbv_test_bop19.zip"
+bytes = 660198701
+sha256 = "c0c11251849877e7b2f373f6c7acf54739dc69d0fb2649c20050ca977bf5513d"
+source_root = "test"
+
+[input_access]
+target_member = "ycbv/test_targets_bop19.json"
+scene_member_template = "test/{scene_id:06d}/{name}"
+scene_members = ["scene_camera.json", "scene_gt.json", "scene_gt_info.json"]
+read_members_directly_from_verified_zip = true
+exact_m21_archive_identity_required = true
+filesystem_extraction_allowed = false
+archive_download_allowed = false
+rgb_read_allowed = false
+depth_read_allowed = false
+mask_read_allowed = false
+other_member_read_allowed = false
+
+[frame_completeness]
+target_scene_and_image_ids_required = true
+camera_record_required = true
+ground_truth_and_info_rows_required = true
+ground_truth_and_info_alignment_required = true
+unique_modeled_object_id_per_frame_required = true
+pose_required = true
+visible_bbox_required = true
+pixel_counts_required = true
+visibility_fraction_required = true
+invalid_or_incomplete_frame_is_scored = false
+invalid_or_incomplete_source_normal_stop = true
+
+[positive_predicate]
+name = "M25_DUAL_AREA_SMALL_VISIBLE_POSITIVE"
+modeled_object_ids = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+minimum_visibility_fraction_inclusive = 0.10
+minimum_area_fraction_inclusive = 0.001
+maximum_area_fraction_exclusive = 0.01
+visible_pixel_area_basis = "PX_COUNT_VISIB_DIV_307200"
+bbox_area_basis = "BBOX_VISIB_WIDTH_TIMES_HEIGHT_DIV_307200"
+both_area_predicates_required_on_same_annotation = true
+positive_bbox_width_and_height_required = true
+positive_bbox_must_fit_640x480_frame = true
+
+[negative_predicate]
+name = "M25_COMPLETE_SELECTED_CLASS_ABSENT_IN_DISTINCT_SCENE"
+same_modeled_object_id_required = true
+modeled_object_id_absent_from_complete_ground_truth_rows = true
+scene_must_differ_from_selected_positive = true
+occluded_object_is_negative = false
+under_ten_percent_visible_object_is_negative = false
+unmodeled_object_is_negative = false
+incomplete_frame_is_negative = false
+
+[selection]
+object_order = "ASCENDING_BOP_OBJECT_ID"
+positive_order = "ASCENDING_SCENE_ID_THEN_IMAGE_ID"
+negative_order = "ASCENDING_SCENE_ID_THEN_IMAGE_ID"
+branch_order = "FIRST_OBJECT_WITH_DUAL_AREA_POSITIVE_THEN_FIRST_POSITIVE_THEN_FIRST_DISTINCT_SCENE_NEGATIVE"
+adaptive_candidate_or_fallback_allowed = false
+threshold_change_after_observation_allowed = false
+source_substitution_allowed = false
+
+[aggregation]
+count_pixel_area_positive_frames = true
+count_bbox_area_positive_frames = true
+count_dual_area_positive_frames = true
+count_dual_area_positive_objects = true
+count_objects_with_distinct_scene_safe_pair = true
+record_source_ordered_selected_pair_if_any = true
+raw_annotations_in_result_allowed = false
+personal_or_high_cardinality_identifiers_allowed = false
+
+[execution]
+real_annotation_read_attempts = 1
+pure_diagnostic_runs_per_read = 2
+byte_identical_result_required = true
+contract_and_synthetic_implementation_committed_before_read = true
+
+[decision]
+priority = ["SOURCE_INVALID", "SELECT_IF_ANY_DUAL_AREA_CROSS_SCENE_PAIR", "STOP_IF_NONE"]
+select = "SELECT_DUAL_AREA_CROSS_SCENE_PAIR"
+stop = "STOP_YCBV_SMALL_BBOX_ORACLE"
+source_invalid = "STOP_YCBV_SMALL_BBOX_SOURCE_INVALID"
+select_authorizes_only = "ONE_EXACT_REPLACEMENT_D1_MATERIALIZATION_CONTRACT"
+select_does_not_authorize_rgb_read_until_next_contract = true
+select_does_not_authorize_prediction_training_or_transfer_claim = true
+stop_kills_only = "YCBV_BOP19_DUAL_AREA_SMALL_BBOX_TEST_ORACLE_ROUTE"
+stop_does_not_authorize_threshold_or_source_change = true
+
+[claim_limits]
+annotation_reference_is_not_detector_performance = true
+two_frame_oracle_is_not_prevalence_or_generalization_evidence = true
+bbox_visib_may_be_a_loose_rectangle_around_visible_pixels = true
+cross_scene_pair_is_not_movement_or_physical_identity = true
+test_only_source_cannot_be_used_for_training_or_tuning = true
+selection_is_dataset_suitability_only = true
+
+[boundaries]
+archive_or_dataset_download_allowed = false
+source_bytes_in_git_allowed = false
+real_annotations_in_git_allowed = false
+rgb_or_other_media_read_allowed = false
+model_detector_or_tracker_load_allowed = false
+prediction_allowed = false
+training_allowed = false
+test_tuning_allowed = false
+local_vost_or_visor_read_allowed = false
+reserved_source_allowed = false
+movement_candidate_allowed = false
+claim_candidate_allowed = false
+accepted_claim_allowed = false
+relation_or_transition_emission_allowed = false
+live_private_cloud_inference_or_action_allowed = false
+operate_enabled = false
