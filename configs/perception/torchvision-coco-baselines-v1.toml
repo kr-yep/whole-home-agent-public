@@ -1,0 +1,25 @@
+schema_version = 1
+status = "FROZEN_BASELINE"
+package_base_version = "0.26.0"
+license_id = "BSD-3-Clause"
+license_url = "https://github.com/pytorch/vision/blob/v0.26.0/LICENSE"
+selection_split = "validation"
+test_tuning_allowed = false
+confidence_threshold = 0.25
+scored_labels = ["bottle", "bowl", "cup", "knife", "refrigerator", "spoon", "toaster"]
+
+[[model]]
+model_id = "ssdlite320-mobilenet-v3-large-coco-v1"
+variant = "ssdlite320_mobilenet_v3_large"
+weights_url = "https://download.pytorch.org/models/ssdlite320_mobilenet_v3_large_coco-a79551df.pth"
+weights_path = "models/weights/torchvision/ssdlite320_mobilenet_v3_large_coco-a79551df.pth"
+weights_bytes = 14069355
+weights_sha256 = "a79551df90c79834bcd3bb3845ef9d966b5449a3a9b2833ae8404778ca5d65d2"
+
+[[model]]
+model_id = "retinanet-resnet50-fpn-v2-coco-v1"
+variant = "retinanet_resnet50_fpn_v2"
+weights_url = "https://download.pytorch.org/models/retinanet_resnet50_fpn_v2_coco-5905b1c5.pth"
+weights_path = "models/weights/torchvision/retinanet_resnet50_fpn_v2_coco-5905b1c5.pth"
+weights_bytes = 153130989
+weights_sha256 = "5905b1c544219215e544dbe319720397bc4e68de61a733a59350d7976645b769"

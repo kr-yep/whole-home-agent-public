@@ -31,6 +31,27 @@ The project-generated replay under `examples/media/generated` is separately mark
 
 RF-DETR is resolved only through the `rf-detr` optional extra. No third-party model weights are committed or distributed by this repository.
 
+## Optional public indoor evaluation data
+
+- [EPIC-KITCHENS VISOR](https://epic-kitchens.github.io/VISOR/site) — CC BY-NC 4.0,
+  used only as a separately downloaded, local, non-commercial D0 method screen. The
+  repository contains source URLs, hashes, conversion code, and derived bounded
+  findings; it contains no VISOR images, annotations, or archives.
+
+The upstream dataset requires attribution, a license link, and change indication, and
+prohibits commercial use under that license. This repository does not grant broader
+rights or redistribute the dataset.
+
+## Optional paired detector baseline
+
+- [torchvision](https://github.com/pytorch/vision/tree/v0.26.0) 0.26.0 — BSD-3-Clause.
+  The local screen uses official SSDLite320 MobileNetV3 Large COCO V1 and RetinaNet
+  ResNet50 FPN v2 COCO V1 weights from `download.pytorch.org`.
+
+Neither PyTorch, torchvision, nor model weights are installed by the default package or
+committed to this repository. Their exact source URLs, sizes, and hashes are recorded in
+the frozen baseline config. Upstream model/data terms continue to apply.
+
 ## Optional demo dependency
 
 - [Streamlit](https://pypi.org/project/streamlit/1.62.0/) 1.62.0 — Apache-2.0; used only by the local presentation app in the `demo` extra.

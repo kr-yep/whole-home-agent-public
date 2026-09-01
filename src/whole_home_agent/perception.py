@@ -73,6 +73,21 @@ class Detection:
 
 
 @dataclass(frozen=True, slots=True)
+class GroundTruthObject:
+    """One evaluation target translated into the canonical coordinate space."""
+
+    entity_id: str
+    label: str
+    bbox: BoundingBox
+
+    def __post_init__(self) -> None:
+        if not self.entity_id or self.entity_id != self.entity_id.strip():
+            raise ValueError("ground-truth entity ID must be a non-empty trimmed string")
+        if not self.label or self.label != self.label.strip():
+            raise ValueError("ground-truth label must be a non-empty trimmed string")
+
+
+@dataclass(frozen=True, slots=True)
 class TrackObservation:
     """A clip-local association; ``track_id`` is not a household entity ID."""
 

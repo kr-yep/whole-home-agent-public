@@ -19,9 +19,20 @@ from whole_home_agent.adapters.synthetic_color import (
     load_synthetic_color_config,
 )
 from whole_home_agent.adapters.tracking import IoUTracker, IoUTrackerConfig
-from whole_home_agent.evaluation import evaluate_perception
-from whole_home_agent.model import ProducerRef, SourcePosition, TimestampBasis
-from whole_home_agent.perception import BoundingBox, Detection
+from whole_home_agent.adapters.torchvision_coco import (
+    TorchvisionCocoConfig,
+    TorchvisionCocoDetector,
+)
+from whole_home_agent.evaluation import evaluate_frame_set, evaluate_perception
+from whole_home_agent.model import (
+    ProducerRef,
+    SourceDescriptor,
+    SourceKind,
+    SourcePosition,
+    TimestampBasis,
+    UseClass,
+)
+from whole_home_agent.perception import BoundingBox, Detection, GroundTruthObject, VideoFrame
 from whole_home_agent.video_manifest import load_video_manifest
 
 
@@ -143,6 +154,65 @@ class TrackerContractTests(unittest.TestCase):
         self.assertEqual(second_track.track_age, 2)
 
 
+class SparseFrameEvaluationTests(unittest.TestCase):
+    def test_source_index_evaluation_reports_size_and_no_real_time_factor(self):
+        producer = ProducerRef("fake", "1", "a" * 64, "b" * 64)
+        position = SourcePosition(
+            source_sequence=0,
+            source_offset=42,
+            timestamp_basis=TimestampBasis.SOURCE_FRAME_INDEX,
+            frame_index=0,
+        )
+        box = BoundingBox(0, 0, 10, 10)
+
+        class FakeSource:
+            descriptor = SourceDescriptor(
+                source_id="public:test",
+                source_revision="1",
+                source_kind=SourceKind.RECORDED_FRAME_SET,
+                use_class=UseClass.D0_PUBLIC,
+                timestamp_basis=TimestampBasis.SOURCE_FRAME_INDEX,
+                content_hash="c" * 64,
+                license_manifest_id="test-license",
+                world_scope="public-dataset:test",
+            )
+            split = "validation"
+            annotation_hash = "d" * 64
+            width = 100
+            height = 100
+            frame_count = 1
+            ground_truth = {0: (GroundTruthObject("target", "key", box),)}
+            source_diagnostics = {"annotation_scope": "test"}
+
+            def iter_frames(self):
+                yield VideoFrame(position=position, rgb=object())
+
+        class FakeDetector:
+            @property
+            def producer_ref(self):
+                return producer
+
+            @property
+            def device(self):
+                return "cpu"
+
+            def detect(self, frame):
+                return (Detection("key", 1.0, box, frame.position, producer),)
+
+            def peak_vram_bytes(self):
+                return 0
+
+            def runtime_metadata(self):
+                return {"kind": "test"}
+
+        report = evaluate_frame_set(FakeSource(), FakeDetector(), warmup_frames=0)
+        self.assertEqual(report.quality.recall50, 1.0)
+        self.assertEqual(dict(report.quality.size_recall50)["large_ge_1pct"], 1.0)
+        self.assertIsNone(report.cost.real_time_factor)
+        self.assertEqual(report.control["source_timing"], "source_frame_index_only")
+        self.assertEqual(report.control["source_diagnostics"]["annotation_scope"], "test")
+
+
 @unittest.skipUnless(HAS_VIDEO, "video optional dependencies are not installed")
 class RFDetrAdapterContractTests(unittest.TestCase):
     def test_training_candidate_is_capped_and_cannot_tune_on_test(self):
@@ -212,6 +282,73 @@ class RFDetrAdapterContractTests(unittest.TestCase):
                     weights_path=weights,
                     weights_sha256="0" * 64,
                     class_names=("key",),
+                )
+
+
+@unittest.skipUnless(HAS_VIDEO, "video optional dependencies are not installed")
+class TorchvisionAdapterContractTests(unittest.TestCase):
+    def test_fake_result_is_filtered_mapped_clipped_and_translated(self):
+        import numpy as np
+
+        class FakeModel:
+            def predict(self, image):
+                self.shape = image.shape
+                return {
+                    "boxes": [[-2, 2, 12, 20], [1, 1, 4, 4]],
+                    "labels": [1, 2],
+                    "scores": [0.8, 0.9],
+                }
+
+        with tempfile.TemporaryDirectory() as directory:
+            weights = Path(directory) / "fake.pth"
+            payload = b"test-only-fake-torchvision-weights"
+            weights.write_bytes(payload)
+            config = TorchvisionCocoConfig(
+                model_id="fake-ssdlite",
+                variant="ssdlite320_mobilenet_v3_large",
+                weights_path=weights,
+                weights_sha256=hashlib.sha256(payload).hexdigest(),
+                weights_bytes=len(payload),
+                scored_labels=("bottle",),
+                device="cpu",
+            )
+            model = FakeModel()
+            detector = TorchvisionCocoDetector(
+                config,
+                model_object=model,
+                test_class_names=("__background__", "bottle", "person"),
+            )
+            position = SourcePosition(
+                source_sequence=0,
+                source_offset=10,
+                timestamp_basis=TimestampBasis.SOURCE_FRAME_INDEX,
+                frame_index=0,
+            )
+            detections = detector.detect(
+                DecodedVideoFrame(
+                    position=position,
+                    rgb=np.zeros((16, 16, 3), dtype=np.uint8),
+                )
+            )
+        self.assertEqual(model.shape, (16, 16, 3))
+        self.assertEqual(len(detections), 1)
+        self.assertEqual(detections[0].label, "bottle")
+        self.assertEqual(detections[0].bbox.as_xyxy(), (0.0, 2.0, 12.0, 16.0))
+        self.assertEqual(detections[0].producer_ref.component, "torchvision-ssdlite320_mobilenet_v3_large")
+
+    def test_weight_hash_mismatch_fails_before_model_loading(self):
+        with tempfile.TemporaryDirectory() as directory:
+            weights = Path(directory) / "fake.pth"
+            weights.write_bytes(b"different")
+            with self.assertRaisesRegex(ValueError, "size/SHA-256"):
+                TorchvisionCocoConfig(
+                    model_id="fake",
+                    variant="ssdlite320_mobilenet_v3_large",
+                    weights_path=weights,
+                    weights_sha256="0" * 64,
+                    weights_bytes=9,
+                    scored_labels=("bottle",),
+                    device="cpu",
                 )
 
 

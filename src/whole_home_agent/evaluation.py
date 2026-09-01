@@ -11,23 +11,25 @@ import sys
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterator, Protocol
 
 from .adapters.motion import MotionPeriodicScheduler
 from .adapters.recorded_video import iter_decoded_frames
-from .perception import BoundingBox, Detection, Detector, TrackObservation, Tracker
+from .model import SourceDescriptor
+from .perception import (
+    BoundingBox,
+    Detection,
+    Detector,
+    GroundTruthObject,
+    TrackObservation,
+    Tracker,
+    VideoFrame,
+)
 from .video_manifest import VideoSourceManifest
 
 
 EVALUATOR_VERSION = "b1-perception-evaluator/1"
 IOU_THRESHOLDS = tuple(round(0.5 + index * 0.05, 2) for index in range(10))
-
-
-@dataclass(frozen=True, slots=True)
-class GroundTruthObject:
-    entity_id: str
-    label: str
-    bbox: BoundingBox
 
 
 @dataclass(frozen=True, slots=True)
@@ -38,6 +40,8 @@ class DetectionQuality:
     key_recall50: float | None
     false_positives50: int
     per_label_ap50: tuple[tuple[str, float], ...]
+    size_target_count: tuple[tuple[str, int], ...] = ()
+    size_recall50: tuple[tuple[str, float | None], ...] = ()
 
     def as_dict(self) -> dict[str, Any]:
         return {
@@ -47,6 +51,8 @@ class DetectionQuality:
             "map50_95": self.map50_95,
             "per_label_ap50": dict(self.per_label_ap50),
             "recall50": self.recall50,
+            "size_recall50": dict(self.size_recall50),
+            "size_target_count": dict(self.size_target_count),
         }
 
 
@@ -73,7 +79,7 @@ class CostMetrics:
     detector_latency_p95_ms: float
     detector_fps: float
     pipeline_fps: float
-    real_time_factor: float
+    real_time_factor: float | None
     peak_vram_bytes: int | None
     device: str
 
@@ -148,6 +154,21 @@ class PerceptionEvaluationReport:
             "source_revision": self.source_revision,
             "tracking": None if self.tracking is None else self.tracking.as_dict(),
         }
+
+
+class EvaluationFrameSet(Protocol):
+    """Finite, prerecorded frame-set port used by offline public-data evaluation."""
+
+    descriptor: SourceDescriptor
+    split: str
+    annotation_hash: str
+    width: int
+    height: int
+    frame_count: int
+    ground_truth: dict[int, tuple[GroundTruthObject, ...]]
+    source_diagnostics: dict[str, Any]
+
+    def iter_frames(self) -> Iterator[VideoFrame]: ...
 
 
 def _dependency_version(distribution: str) -> str | None:
@@ -325,6 +346,9 @@ def _label_metrics(
 def evaluate_detection_quality(
     ground_truth: dict[int, tuple[GroundTruthObject, ...]],
     predictions: dict[int, tuple[Detection, ...]],
+    *,
+    frame_width: int | None = None,
+    frame_height: int | None = None,
 ) -> DetectionQuality:
     labels = sorted(
         {item.label for items in ground_truth.values() for item in items}
@@ -355,6 +379,21 @@ def evaluate_detection_quality(
         sum(values) / len(values) if values else 0.0
         for values in ap_by_threshold.values()
     ]
+    size_target_count: tuple[tuple[str, int], ...] = ()
+    size_recall50: tuple[tuple[str, float | None], ...] = ()
+    if frame_width is not None or frame_height is not None:
+        if (
+            type(frame_width) is not int
+            or type(frame_height) is not int
+            or frame_width <= 0
+            or frame_height <= 0
+        ):
+            raise ValueError("frame dimensions must be positive integers")
+        size_target_count, size_recall50 = _evaluate_size_recall50(
+            ground_truth,
+            predictions,
+            frame_area=frame_width * frame_height,
+        )
     return DetectionQuality(
         ap50=threshold_means[0],
         map50_95=sum(threshold_means) / len(threshold_means),
@@ -362,7 +401,67 @@ def evaluate_detection_quality(
         key_recall50=key_tp / key_gt if key_gt else None,
         false_positives50=total_fp50,
         per_label_ap50=tuple(per_label_ap50),
+        size_target_count=size_target_count,
+        size_recall50=size_recall50,
     )
+
+
+def _evaluate_size_recall50(
+    ground_truth: dict[int, tuple[GroundTruthObject, ...]],
+    predictions: dict[int, tuple[Detection, ...]],
+    *,
+    frame_area: int,
+) -> tuple[tuple[tuple[str, int], ...], tuple[tuple[str, float | None], ...]]:
+    """Report recall by relative target area without redefining AP."""
+
+    bucket_names = ("tiny_lt_0.1pct", "small_0.1_to_1pct", "large_ge_1pct")
+    target_count = {name: 0 for name in bucket_names}
+    matched_count = {name: 0 for name in bucket_names}
+
+    def bucket(target: GroundTruthObject) -> str:
+        ratio = target.bbox.area / frame_area
+        if ratio < 0.001:
+            return bucket_names[0]
+        if ratio < 0.01:
+            return bucket_names[1]
+        return bucket_names[2]
+
+    for frame_index, targets in ground_truth.items():
+        used_targets: set[int] = set()
+        for target in targets:
+            target_count[bucket(target)] += 1
+        ranked = sorted(
+            predictions.get(frame_index, ()),
+            key=lambda item: (-item.confidence, item.label, item.bbox.as_xyxy()),
+        )
+        for prediction in ranked:
+            candidates = sorted(
+                (
+                    (-prediction.bbox.iou(target.bbox), target_index)
+                    for target_index, target in enumerate(targets)
+                    if target_index not in used_targets
+                    and target.label == prediction.label
+                    and prediction.bbox.iou(target.bbox) >= 0.5
+                )
+            )
+            if not candidates:
+                continue
+            target_index = candidates[0][1]
+            used_targets.add(target_index)
+            matched_count[bucket(targets[target_index])] += 1
+    counts = tuple((name, target_count[name]) for name in bucket_names)
+    recalls = tuple(
+        (
+            name,
+            (
+                matched_count[name] / target_count[name]
+                if target_count[name]
+                else None
+            ),
+        )
+        for name in bucket_names
+    )
+    return counts, recalls
 
 
 def evaluate_tracking_quality(
@@ -488,7 +587,12 @@ def evaluate_perception(
             "tracking_match_iou_threshold": 0.5,
             "warmup_frames": warmup_frames,
         },
-        quality=evaluate_detection_quality(ground_truth, predictions),
+        quality=evaluate_detection_quality(
+            ground_truth,
+            predictions,
+            frame_width=manifest.width,
+            frame_height=manifest.height,
+        ),
         tracking=(
             evaluate_tracking_quality(ground_truth, observations)
             if tracker is not None
@@ -516,6 +620,122 @@ def evaluate_perception(
             "Metrics apply only to this hash-pinned synthetic replay, adapter, "
             "configuration, interpreter, and machine; they do not establish indoor "
             "transfer, physical truth, real-time operation, or household readiness."
+        ),
+    )
+
+
+def evaluate_frame_set(
+    source: EvaluationFrameSet,
+    detector: Detector,
+    *,
+    tracker: Tracker | None = None,
+    warmup_frames: int = 1,
+    repository_root: str | Path | None = None,
+    code_revision: str | None = None,
+    dirty_worktree: bool | None = None,
+) -> PerceptionEvaluationReport:
+    """Evaluate one finite sparse frame set without inventing capture timing."""
+
+    if warmup_frames < 0:
+        raise ValueError("warmup_frames cannot be negative")
+    predictions: dict[int, tuple[Detection, ...]] = {}
+    observations: dict[int, tuple[TrackObservation, ...]] = {}
+    latencies_ms: list[float] = []
+    warmed = 0
+    if tracker is not None:
+        tracker.reset()
+    pipeline_start = time.perf_counter()
+    frame_count = 0
+    for frame in source.iter_frames():
+        expected_index = frame_count
+        if (
+            frame.position.frame_index != expected_index
+            or frame.position.timestamp_basis != source.descriptor.timestamp_basis
+        ):
+            raise ValueError("frame-set source violated ordered position semantics")
+        frame_count += 1
+        if warmed < warmup_frames:
+            detector.detect(frame)
+            warmed += 1
+        started = time.perf_counter()
+        detections = detector.detect(frame)
+        latencies_ms.append((time.perf_counter() - started) * 1000.0)
+        if any(
+            item.position != frame.position
+            or not item.bbox.within(width=source.width, height=source.height)
+            or item.producer_ref != detector.producer_ref
+            for item in detections
+        ):
+            raise ValueError("detector violated the canonical output contract")
+        predictions[expected_index] = detections
+        if tracker is not None:
+            observations[expected_index] = tracker.update(frame.position, detections)
+    pipeline_elapsed = time.perf_counter() - pipeline_start
+    if frame_count != source.frame_count or set(source.ground_truth) != set(
+        range(source.frame_count)
+    ):
+        raise ValueError("frame-set evaluation did not cover the declared replay")
+    detector_seconds = sum(latencies_ms) / 1000.0
+    producer = detector.producer_ref
+    return PerceptionEvaluationReport(
+        source_id=source.descriptor.source_id,
+        source_revision=source.descriptor.source_revision,
+        source_content_hash=source.descriptor.content_hash,
+        annotation_hash=source.annotation_hash,
+        evaluator_version=EVALUATOR_VERSION,
+        producer_ref={
+            "artifact_hash": producer.artifact_hash,
+            "component": producer.component,
+            "config_hash": producer.config_hash,
+            "version": producer.version,
+        },
+        control={
+            "detection_iou_thresholds": list(IOU_THRESHOLDS),
+            "evaluation_split": source.split,
+            "source_diagnostics": dict(source.source_diagnostics),
+            "source_timing": "source_frame_index_only",
+            "tracker": None if tracker is None else tracker.resolved_config(),
+            "tracking_match_iou_threshold": 0.5,
+            "warmup_frames": warmup_frames,
+        },
+        quality=evaluate_detection_quality(
+            source.ground_truth,
+            predictions,
+            frame_width=source.width,
+            frame_height=source.height,
+        ),
+        tracking=(
+            evaluate_tracking_quality(source.ground_truth, observations)
+            if tracker is not None
+            else None
+        ),
+        cost=CostMetrics(
+            decoded_frames=frame_count,
+            selected_frames=frame_count,
+            dropped_frames=0,
+            detector_latency_p50_ms=_percentile(latencies_ms, 0.50),
+            detector_latency_p95_ms=_percentile(latencies_ms, 0.95),
+            detector_fps=(frame_count / detector_seconds if detector_seconds else 0.0),
+            pipeline_fps=(frame_count / pipeline_elapsed if pipeline_elapsed else 0.0),
+            real_time_factor=None,
+            peak_vram_bytes=detector.peak_vram_bytes(),
+            device=detector.device,
+        ),
+        environment=collect_run_environment(
+            detector,
+            repository_root,
+            code_revision=code_revision,
+            dirty_worktree=dirty_worktree,
+        ),
+        evidence_limit=(
+            "Metrics apply only to this hash-pinned public VISOR sparse-frame source, "
+            "the explicit VISOR-to-COCO label mapping, adapter, configuration, "
+            "interpreter, and machine. Sparse frames have source indexes but no "
+            "declared capture timing. VISOR marks active objects rather than every "
+            "scene object, so false-positive and AP values do not measure exhaustive "
+            "generic object detection. These results do not establish streaming, "
+            "relation inference, transfer beyond the selected kitchens, physical "
+            "truth, or household readiness."
         ),
     )
 

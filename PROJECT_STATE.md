@@ -1,6 +1,6 @@
 # Whole Home Agent — Public Repository State
 
-**Checkpoint:** `PUBLIC-B1-M6-001`
+**Checkpoint:** `PUBLIC-B1-M7-001`
 
 **As of:** `2026-09-01 Asia/Taipei`
 
@@ -13,8 +13,8 @@ This file is the live checkpoint for the clean public repository. It records cur
 ## Current direction
 
 - Publish and collaborate on the smallest viable offline B0 semantic replay baseline plus one bounded B1 prerecorded replay.
-- Keep B0/B1 inputs limited to synthetic or lawfully reusable public fixtures.
-- Keep B1 limited to a fixed, hash-pinned, prerecorded project-generated clip behind a narrow adapter.
+- Keep B0/B1 inputs limited to synthetic or separately licensed, lawfully reusable public fixtures.
+- Keep the product slice limited to the fixed project-generated clip; use the local-only, hash-pinned VISOR sparse-frame set strictly as a non-commercial detector screen behind a separate adapter.
 - Reuse the implemented B0 `ClaimCandidate` → commit → projection → query path as the only semantic state path for B1.
 - Exclude live/private sensing and all physical or external action from the current scope.
 - Do not assume a graph, Memory Core, multi-agent runtime, or durable database is necessary.
@@ -37,24 +37,26 @@ This file is the live checkpoint for the clean public repository. It records cur
 |---|---|---|
 | `AGENTS.md` | `PROPOSED` | Conservative interim repository instructions |
 | `ACTION_POLICY.md` | `PROPOSED — NOT ADOPTED` | All sensing, private-data, egress, device, and physical operation disabled |
-| ADR 0001–0004 | `PROPOSED` | Design candidates, not automatically adopted requirements |
+| ADR 0001–0005 | `PROPOSED` | Design candidates, not automatically adopted requirements |
 | B0 implementation and fixtures | `IMPLEMENTED / VERIFIED IN DECLARED TEST ENVELOPE` | A bounded semantic replay slice exists; its frozen golden semantic hash is unchanged |
 | B1 candidate-source seam and run receipt | `IMPLEMENTED / VERIFIED WITH SYNTHETIC CONTRACT TESTS` | Generic finite source contract, provenance types, fail-closed run outcome, and B0 compatibility remain the sole semantic admission path used by the later prerecorded adapter |
 | B1 generated-video manifest, PTS decoder, and scheduler | `IMPLEMENTED / VERIFIED ON ONE SYNTHETIC REPLAY` | Hash-pinned allowlisted H.264 source revision 2, exact PTS/time-base decode, and motion-plus-periodic frame selection feed the later bounded perception source; revision 1 remains in Git history |
-| B1 perception/tracking/evaluation baseline | `IMPLEMENTED / VERIFIED ON ONE SYNTHETIC REPLAY` | Canonical detections, test-only annotation ceiling, RGB pixel smoke detector, clip-local IoU tracker, fixed quality/cost evaluator, and hash-pinned RF-DETR translation seam exist; no real indoor model evidence exists |
+| B1 perception/tracking/evaluation baseline | `IMPLEMENTED / VERIFIED ON SYNTHETIC REPLAY PLUS BOUNDED PUBLIC SCREEN` | Canonical detections, test-only annotation ceiling, RGB smoke detector, clip-local tracker, fixed quality/cost evaluator, RF-DETR translation seam, and paired torchvision public-data baselines exist; indoor evidence is limited to the separately described VISOR screen |
+| VISOR screen v1 and paired public baselines | `IMPLEMENTED / VERIFIED IN A BOUNDED LOCAL ENVELOPE` | Three source-video-split VISOR sequences, strict license/hash manifests, mask-to-box adapter, source-index timing, SSDLite320 and RetinaNet-FPN adapters, one frozen-test lock, and paired quality/cost receipts exist; source data and weights remain ignored and are not distributed |
 | B1 binding/relation/query slice | `IMPLEMENTED / VERIFIED ON ONE SYNTHETIC REPLAY` | One-instance binding, conservative containment/zone assertion and retraction rules, typed abstentions, estimated candidates through the unchanged committer, relation evaluation, and evidence-traceable `key → bag → sofa` query exist; no real indoor transfer evidence exists |
 | B1 CLI and Streamlit presentation | `IMPLEMENTED / VERIFIED ON ONE SYNTHETIC REPLAY` | A closed composition/presentation boundary exposes the fixed clip, scoped answer, evidence, abstentions, metrics, diagnostics, and receipt; it accepts no upload, camera, arbitrary path, free-form query, credential, or action handle |
 | Python package distribution | `IMPLEMENTED / VERIFIED BY LOCAL CLEAN INSTALL` | The wheel contains only the fixed D0 replay, its configs, and generator provenance; a fresh Python 3.12 environment ran the CLI from outside the checkout |
 | `docs/b0-b1-architecture-plan.md` | `PROPOSED — NOT ADOPTED` | Smallest B0 → B1 boundary, quality scenarios, gates, and deferred complexity |
+| ADR 0005 and `docs/evaluation/visor-screen-v1.md` | `PROPOSED DESIGN / VERIFIED BOUNDED EVIDENCE` | Public sparse-frame evaluation design and the exact Reality Gate findings; neither grants sensing, product, or policy authority |
 | B0 → B1 Archify diagrams | `VERIFIED RENDERING OF THE IMPLEMENTED BOUNDED SLICE` | 9/9 showcase and visual delivery passed; rendering evidence does not adopt governance or expand the implementation envelope |
 | MIT `LICENSE` | `SELECTED FOR PUBLIC RELEASE` | Applies to original repository code and documentation |
 
 ## Evidence envelope
 
-- The public export contains the B0 package, synthetic semantic fixtures, one project-generated CC0 prerecorded clip with manifests/annotations, B1 adapters, tests, presentation code, architecture documents, and proposed governance.
+- The public export contains the B0 package, synthetic semantic fixtures, one project-generated CC0 prerecorded clip with manifests/annotations, B1 adapters, public asset/hash configs, tests, presentation code, architecture/evaluation documents, and proposed governance. It does not contain VISOR source bytes or model weights.
 - It intentionally excludes prior private Git history, coursework/competition experiments, third-party datasets, household/private media, model weights, run outputs, local databases, environment files, and credentials.
 - Existing tests exercise semantic replay, provenance, idempotency, conflict/unknown handling, malformed input, boundary restrictions, media allowlisting and timing, detector/tracker/evaluator contracts, conservative relation inference, partial-source failure without a queryable session, and the fixed CLI/Streamlit presentation.
-- Local verification on 2026-09-01 used Python 3.12.13 with bytecode writes disabled: `72/72` unit, contract, integration, audit, CLI, and Streamlit smoke tests passed. The frozen B0 semantic hash remained `226d30a5b826720d607d0b9a29bf3dfb9f5429eeedbbd70ffd1ff23c21233c8f`.
+- Local M7 verification used Python 3.12.13 with bytecode writes disabled: `78/78` unit, contract, integration, audit, CLI, Streamlit, VISOR/hash/source-index, and torchvision-translation tests passed. The frozen B0 semantic hash remains `226d30a5b826720d607d0b9a29bf3dfb9f5429eeedbbd70ffd1ff23c21233c8f`.
 - Source revision 2 is an 80-frame H.264/yuv420p generated replay with SHA-256 `b9cc79476d77f8d45acd1803c924de73914ffc4790f4da271f77cc8d4742eb43`. It was versioned because revision 1's encoding failed Chromium playback. Two consecutive local generations matched; browser QA then showed duration 8 seconds, ready state 4, scoped revision-2 content, and zero console errors.
 - The source-revision-2 RGB smoke baseline measured AP50/key recall `1.0`, mAP50:95 about `0.7293`, zero false positives, zero clip-local ID switches/fragmentations, relation event F1 `1.0`, and the expected two-step answer. These are generated-artwork measurements only.
 - `uv build` produced a source archive and universal wheel. A new Python 3.12 environment installed `whole_home_agent-0.1.0-py3-none-any.whl[demo]`, then ran `demo-recorded` outside the checkout with a `COMPLETE` receipt, two accepted estimated claims, and `FOUND sofa` under `source:b1-key-bag-sofa@2`.
@@ -63,6 +65,8 @@ This file is the live checkpoint for the clean public repository. It records cur
 - M2 through the first M6 push had green B0 jobs but failed the Linux video/demo jobs because Windows-generated annotation bytes used CRLF before Git normalized them to LF, invalidating the manifest hash in CI. Run [33447377312](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33447377312) exposed the same failure after the M6 push. The generator now emits canonical LF, and a regression test checks both generated text artifacts.
 - GitHub Actions run [33447921546](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33447921546) completed successfully for canonical-LF commit `4117e933b4b6076a5cda9130f61ea09ec998934b`: Python 3.11–3.14 B0 jobs, the prerecorded-video contract job, and the closed-demo job all passed.
 - Archify v2.16.0 produced the proposed system and data-flow diagrams. Both passed 9/9 showcase checks with zero composition errors/warnings, desktop containment at 1440×900 through 2048×1320, and human inspection of light/dark captures. Exact source/artifact hashes and evidence limits are recorded in `docs/b0-b1-architecture-plan.md`.
+- VISOR screen v1 froze `P01_03` (development, 61 frames), `P03_11` (validation, 29), and `P14_05` (test, 22) before results. Official Bristol archives and annotations passed full size/SHA-256 verification. The adapter preserves source frame indexes, maps only explicit COCO-compatible labels, and reports six boundary-clipped polygon points across five mapped objects under an 8-pixel tolerance without rewriting source data.
+- On the RTX 4070 Laptop GPU, RetinaNet ResNet50 FPN v2 improved validation recall@0.5 from SSDLite320's `0.1429` to `0.2500`; validation 0.1–1% area recall moved from `0/3` to `1/3`. Detector p95 moved from about `47.4 ms` to `71.7 ms`, and peak VRAM from about `85.7 MiB` to `393.3 MiB`. The first and now locally locked test run improved overall recall from `0.1429` to `0.3929`, but both missed the test's only 0.1–1% target. VISOR active-object labels are not exhaustive scene labels, so generic-detector false positives and AP are not treated as exhaustive precision evidence.
 - Passing tests supports only the tested code, fixtures, interpreter, and environment. It does not support CV accuracy, household transfer, real-time performance, privacy compliance, production readiness, or physical truth.
 
 ## Recorded directions
@@ -75,15 +79,16 @@ This file is the live checkpoint for the clean public repository. It records cur
 | `PUB-DIR-004` | Use MIT for original public repository code/docs; review third-party artifacts separately | Active |
 | `PUB-DIR-005` | Keep B0 as the only claim-commit/query core; make prerecorded perception a replaceable candidate-producing adapter | Implemented and locally verified on one project-generated synthetic replay; no real indoor transfer claim |
 | `PUB-DIR-006` | Deliver a reproducible public demo, installable package, implemented-code diagrams, and release audit without widening sensing or action scope | Implemented, locally verified, and verified by public CI within the recorded envelope |
+| `PUB-DIR-007` | Acquire a small lawful public indoor substrate, freeze source-video splits before results, compare paired real detectors, and keep all third-party bytes out of Git | Implemented and locally screened within the VISOR CC BY-NC non-commercial envelope; no product-transfer claim |
 
 ## Open gates and blockers
 
 - Named project, policy, engineering, and data roles remain unassigned.
 - The full B0 conformance, recovery, runtime-path, performance, and independent maintainer exercise gates are incomplete.
-- The B1 candidate-source seam, one project-generated video/decoder/scheduler slice, a synthetic-only detector/tracker/evaluator, conservative binding/relation/query rules, and a closed CLI/Streamlit presentation are implemented under the explicit bounded implementation direction. The RGB and relation results measure the generated artwork only. The annotation oracle is test-only. RF-DETR has only a hash-pinned adapter translation contract; no real checkpoint was downloaded or benchmarked. No frozen real indoor evaluation set, live source, or operational capability exists.
+- The B1 candidate-source seam, generated video/decoder/scheduler slice, conservative binding/relation/query rules, and closed CLI/Streamlit presentation remain unchanged. VISOR adds a separate real-image detector screen, not a claim-producing source. It is sparse egocentric kitchen data with active-object rather than exhaustive-scene labels; it contains no mapped target below 0.1% frame area and no key→bag→sofa relation. RF-DETR still has only a hash-pinned translation contract. No fixed-camera transfer, live source, or operational capability exists.
 - No household data class, person, room, camera, credential, endpoint, device, or capability is enrolled.
 - Consent, retention, deletion, access, incident, kill-switch, and independent enforcement mechanisms do not exist.
 
 ## Next safe action
 
-Establish a separately licensed, frozen indoor prerecorded D0 evaluation set split by source video/scene, then run paired real-detector baselines under the recorded quality/cost gate. Do not add live capture, private household data, cloud egress, credentials, device control, or action capability; each requires its own authority and activation path.
+Run one validation-only sliced/ROI RetinaNet candidate against the frozen development/validation sources. Continue only if it materially improves small-target or overall validation recall under `200 ms` p95 and `1.5 GiB` VRAM. Do not rerun or tune on `P14_05`; acquire a new untouched source before another final test claim. Do not add live capture, private household data, cloud egress, credentials, device control, or action capability.

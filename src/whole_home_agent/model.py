@@ -35,11 +35,13 @@ class UseClass(str, Enum):
 class TimestampBasis(str, Enum):
     SYNTHETIC = "synthetic"
     MEDIA_PTS = "media_pts"
+    SOURCE_FRAME_INDEX = "source_frame_index"
 
 
 class SourceKind(str, Enum):
     SEMANTIC_FIXTURE = "semantic_fixture"
     RECORDED_VIDEO = "recorded_video"
+    RECORDED_FRAME_SET = "recorded_frame_set"
 
 
 class RunStatus(str, Enum):

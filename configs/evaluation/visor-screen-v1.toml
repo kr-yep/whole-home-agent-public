@@ -1,0 +1,68 @@
+schema_version = 1
+dataset_id = "visor-screen-v1"
+dataset_version = "2022-08-15"
+origin_url = "https://epic-kitchens.github.io/VISOR/site"
+repository_url = "https://data.bris.ac.uk/data/dataset/2v6cgv1x04ol22qp9rm9x2j6a7"
+license_id = "CC-BY-NC-4.0"
+license_url = "https://creativecommons.org/licenses/by-nc/4.0/"
+intended_use = "D0_PUBLIC_NONCOMMERCIAL_METHOD_SCREENING"
+redistribution_allowed = false
+local_root = "datasets/visor/visor-screen-v1"
+frame_width = 1920
+frame_height = 1080
+
+# Only semantically defensible mappings to categories present in the official
+# COCO label space are scored. Unlisted VISOR labels remain out of scope.
+[class_mapping]
+"bottle" = "bottle"
+"bowl" = "bowl"
+"cup" = "cup"
+"fridge" = "refrigerator"
+"knife" = "knife"
+"milk bottle" = "bottle"
+"refrigerator" = "refrigerator"
+"soy milk bottle" = "bottle"
+"spoon" = "spoon"
+"toaster" = "toaster"
+
+[[sequence]]
+sequence_id = "P01_03"
+split = "development"
+frame_count = 61
+annotation_path = "source/P01_03.annotations.json"
+annotation_url = "https://data.bris.ac.uk/datasets/2v6cgv1x04ol22qp9rm9x2j6a7/GroundTruth-SparseAnnotations/annotations/train/P01_03.json"
+annotation_bytes = 271379
+annotation_sha256 = "704b5127036610db970bb3602205efd794df4e6bcd0bc86d337f22c903c009b4"
+archive_path = "source/P01_03.rgb_frames.zip"
+archive_url = "https://data.bris.ac.uk/datasets/2v6cgv1x04ol22qp9rm9x2j6a7/GroundTruth-SparseAnnotations/rgb_frames/train/P01/P01_03.zip"
+archive_bytes = 16349310
+archive_sha256 = "5bd406deeb77b575d350e96c1b3a509b2a90bc9413c2fdbb95e34da9e4aae149"
+frames_path = "frames/P01_03"
+
+[[sequence]]
+sequence_id = "P03_11"
+split = "validation"
+frame_count = 29
+annotation_path = "source/P03_11.annotations.json"
+annotation_url = "https://data.bris.ac.uk/datasets/2v6cgv1x04ol22qp9rm9x2j6a7/GroundTruth-SparseAnnotations/annotations/train/P03_11.json"
+annotation_bytes = 464025
+annotation_sha256 = "76e5dc8f24ab749cea4ac8d2ebf26c4582397d2bc0d419c5b2b1e02dba2f3fbb"
+archive_path = "source/P03_11.rgb_frames.zip"
+archive_url = "https://data.bris.ac.uk/datasets/2v6cgv1x04ol22qp9rm9x2j6a7/GroundTruth-SparseAnnotations/rgb_frames/train/P03/P03_11.zip"
+archive_bytes = 9793335
+archive_sha256 = "9007ecdb904f879a596ff95830e1fd5e58c281d3127cf2424bb8e5dfb2b95362"
+frames_path = "frames/P03_11"
+
+[[sequence]]
+sequence_id = "P14_05"
+split = "test"
+frame_count = 22
+annotation_path = "source/P14_05.annotations.json"
+annotation_url = "https://data.bris.ac.uk/datasets/2v6cgv1x04ol22qp9rm9x2j6a7/GroundTruth-SparseAnnotations/annotations/train/P14_05.json"
+annotation_bytes = 464879
+annotation_sha256 = "c85f92bae2d17db5e6fb35d21e163f9027d4aeb872e91574b3490f831b1656f9"
+archive_path = "source/P14_05.rgb_frames.zip"
+archive_url = "https://data.bris.ac.uk/datasets/2v6cgv1x04ol22qp9rm9x2j6a7/GroundTruth-SparseAnnotations/rgb_frames/train/P14/P14_05.zip"
+archive_bytes = 6401461
+archive_sha256 = "9c1ec11d394d666670394d206a74c05c362c9f81ac00ace85afeb52707d171cf"
+frames_path = "frames/P14_05"
