@@ -80,3 +80,6 @@ passed. The M26 direct-startup test had hardcoded Windows `.venv/Scripts/python.
 instead of the active interpreter. This is an implementation-platform test failure, not
 evidence that the source or materialized result is invalid. No source rerun is permitted
 or needed; the regression uses `sys.executable` and must pass the full matrix.
+Revision `7f1f669ef295d959919b80e6389cd0637ea64cc1` made that bounded fix, and
+[CI run 33514451966](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33514451966)
+then passed the full workflow.

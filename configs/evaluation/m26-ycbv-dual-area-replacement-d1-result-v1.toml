@@ -134,6 +134,10 @@ model_prediction_training_or_test_tuning_allowed = false
 movement_relation_claim_or_operation_allowed = false
 
 [verification]
+clean_result_revision = "58f203ec5870559f1dbd6ca10cdda400f09ede24"
+cross_platform_fix_revision = "7f1f669ef295d959919b80e6389cd0637ea64cc1"
+successful_ci_run_url = "https://github.com/kr-yep/whole-home-agent-public/actions/runs/33514451966"
+ci_conclusion = "success"
 python = "3.12.13"
 focused_tests_passed = 14
 full_tests_passed = 276
