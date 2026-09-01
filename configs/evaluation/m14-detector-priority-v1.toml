@@ -1,0 +1,63 @@
+schema_version = 1
+status = "FROZEN_BEFORE_CANDIDATE_RESEARCH"
+gate_id = "m14-detector-priority-v1"
+intended_use = "NO_MEDIA_OFF_THE_SHELF_DETECTOR_PRIORITY_REALITY_GATE"
+candidates = ["dfine-medium-coco", "rt-detrv2-small-coco"]
+stop_baseline = "STOP_MODEL_SWAPPING"
+
+[reference]
+model = "dfine-small-coco"
+table_scope = "OFFICIAL_DFINE_COCO_VAL2017_TABLE"
+ap75 = 52.6
+ap_small = 29.1
+
+[eligibility]
+coco_only_required = true
+author_issued_artifact_required = true
+immutable_revision_or_bytes_required = true
+license_scope_required = true
+redistribution_required = false
+safe_offline_loader_required = true
+remote_code_allowed = false
+unsafe_pickle_fallback_allowed = false
+complete_dense_class_preprocess_box_contract_required = true
+same_protocol_primary_source_required = true
+minimum_gain_on_either_ap75_or_ap_small = 3.0
+maximum_decline_on_other_metric = 1.0
+maximum_simultaneous_params_flops_latency_ratio = 2.5
+published_latency_is_local_p95 = false
+indoor_or_fixed_camera_transfer_required = false
+
+[selection]
+exactly_one_candidate_required = true
+first_tiebreak = "MAXIMIZE_MINIMUM_OF_AP75_GAIN_AND_AP_SMALL_GAIN"
+second_tiebreak = "LOWER_AUTHOR_ARTIFACT_AND_SAFE_LOADER_RISK"
+third_tiebreak = "LOWER_TOTAL_INTEGRATION_COMPLEXITY"
+unresolved_tie_decision = "STOP_MODEL_SWAPPING"
+zero_eligible_decision = "STOP_MODEL_SWAPPING"
+selected_candidate_next_authority = "SYNTHETIC_ONLY_QUALIFICATION_GOAL"
+
+[evidence_rules]
+objects365_allowed = false
+community_conversion_counts_as_author_artifact = false
+community_conversion_inherits_author_metrics = false
+cross_paper_metric_fill_allowed = false
+missing_ap75_or_ap_small_is_failure = true
+published_tensor_rt_latency_must_record_hardware_precision_batch = true
+existing_vost_aggregate_receipts_are_context_only = true
+
+[boundaries]
+new_model_download_allowed = false
+new_model_load_allowed = false
+vost_bytes_allowed = false
+visor_bytes_allowed = false
+new_media_allowed = false
+training_allowed = false
+adapter_implementation_allowed = false
+movement_candidate_allowed = false
+claim_commit_allowed = false
+live_camera_allowed = false
+private_data_allowed = false
+cloud_allowed = false
+action_allowed = false
+operate_enabled = false
