@@ -18,6 +18,7 @@ from whole_home_agent.adapters.synthetic_color import (
     SyntheticColorDetector,
     load_synthetic_color_config,
 )
+from whole_home_agent.adapters.slicing import SlicedDetector, SlicedDetectorConfig
 from whole_home_agent.adapters.tracking import IoUTracker, IoUTrackerConfig
 from whole_home_agent.adapters.torchvision_coco import (
     TorchvisionCocoConfig,
@@ -211,6 +212,100 @@ class SparseFrameEvaluationTests(unittest.TestCase):
         self.assertIsNone(report.cost.real_time_factor)
         self.assertEqual(report.control["source_timing"], "source_frame_index_only")
         self.assertEqual(report.control["source_diagnostics"]["annotation_scope"], "test")
+
+
+@unittest.skipUnless(HAS_VIDEO, "video optional dependencies are not installed")
+class SlicedDetectorContractTests(unittest.TestCase):
+    def test_tiles_translate_to_original_coordinates_and_use_wrapper_provenance(self):
+        import numpy as np
+
+        base_producer = ProducerRef("base", "1", "a" * 64, "b" * 64)
+
+        class FakeBase:
+            calls = 0
+
+            @property
+            def producer_ref(self):
+                return base_producer
+
+            @property
+            def device(self):
+                return "cpu"
+
+            def detect(self, frame):
+                self.calls += 1
+                return (
+                    Detection(
+                        "key",
+                        0.9,
+                        BoundingBox(0, 0, 2, 2),
+                        frame.position,
+                        base_producer,
+                    ),
+                )
+
+            def peak_vram_bytes(self):
+                return 0
+
+            def runtime_metadata(self):
+                return {"kind": "fake"}
+
+        position = SourcePosition(
+            source_sequence=0,
+            source_offset=0,
+            timestamp_basis=TimestampBasis.SOURCE_FRAME_INDEX,
+            frame_index=0,
+        )
+        base = FakeBase()
+        detector = SlicedDetector(
+            base,
+            SlicedDetectorConfig(
+                tile_width=4,
+                tile_height=4,
+                overlap_fraction=0,
+                max_tiles=4,
+                nms_iou_threshold=0.5,
+            ),
+        )
+        detections = detector.detect(
+            VideoFrame(position=position, rgb=np.zeros((6, 8, 3), dtype=np.uint8))
+        )
+        self.assertEqual(base.calls, 4)
+        self.assertEqual(
+            {item.bbox.as_xyxy() for item in detections},
+            {(0, 0, 2, 2), (4, 0, 6, 2), (0, 2, 2, 4), (4, 2, 6, 4)},
+        )
+        self.assertTrue(
+            all(item.producer_ref.component == "sliced-base" for item in detections)
+        )
+
+    def test_resolved_tile_count_fails_closed(self):
+        import numpy as np
+
+        class NeverCalled:
+            producer_ref = ProducerRef("base", "1", "a" * 64, "b" * 64)
+            device = "cpu"
+
+            def detect(self, frame):
+                raise AssertionError("max tile check must happen first")
+
+            def peak_vram_bytes(self):
+                return 0
+
+            def runtime_metadata(self):
+                return {}
+
+        detector = SlicedDetector(
+            NeverCalled(),
+            SlicedDetectorConfig(4, 4, 0, 1, 0.5),
+        )
+        position = SourcePosition(
+            0, 0, TimestampBasis.SOURCE_FRAME_INDEX, frame_index=0
+        )
+        with self.assertRaisesRegex(ValueError, "max_tiles"):
+            detector.detect(
+                VideoFrame(position=position, rgb=np.zeros((8, 8, 3), dtype=np.uint8))
+            )
 
 
 @unittest.skipUnless(HAS_VIDEO, "video optional dependencies are not installed")

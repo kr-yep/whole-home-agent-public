@@ -111,12 +111,14 @@ docs/                       architecture, demo, ADR, and technology notes
 
 ## Next evidence gate
 
-The first public indoor screen is now frozen and evaluated. The next bounded step is a
-validation-only sliced/ROI RetinaNet experiment: improve validation small-target or
-overall recall materially while staying below `200 ms` p95 and `1.5 GiB` VRAM. The
-existing `P14_05` test must not be rerun or used for tuning; another untouched source is
-required before a later final claim. Training remains capped at 20 epochs with patience
-5, and test tuning and automatic submissions remain prohibited.
+The first public indoor screen is frozen and evaluated. A four-tile SSDLite candidate
+was then rejected on validation: recall fell from `14.3%` to `3.6%`, small-target recall
+stayed `0/3`, and p95 rose from `49.0 ms` to `243.5 ms`. The next bounded step is a
+license-compatible consecutive prerecorded clip for testing motion-plus-periodic gating
+with the full-frame FPN candidate. The existing `P14_05` test must not be rerun or used
+for tuning; another untouched source is required before a later final claim. Training
+remains capped at 20 epochs with patience 5, and test tuning and automatic submissions
+remain prohibited.
 
 ## Safety and data boundary
 

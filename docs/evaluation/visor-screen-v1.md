@@ -69,6 +69,30 @@ recall or overall recall materially while staying below `200 ms` p95 and `1.5 Gi
 VRAM. Do not rerun or tune on `P14_05`; obtain a new untouched source before the next
 final test claim.
 
+## Validation-only sliced candidate result
+
+The frozen follow-up wrapped SSDLite in four overlapping 1024×720 tiles, translated
+boxes back to original coordinates, and applied label-aware NMS. It had no code path for
+the test split.
+
+| Split | Variant | Recall@0.5 | 0.1–1% area recall | p95 detector | Peak VRAM |
+|---|---|---:|---:|---:|---:|
+| development | base SSDLite | 44.4% | 0/7 | 49.1 ms | 85.7 MiB |
+| development | four slices | 16.7% | 0/7 | 195.3 ms | 85.7 MiB |
+| validation | base SSDLite | 14.3% | 0/3 | 49.0 ms | 85.7 MiB |
+| validation | four slices | 3.6% | 0/3 | 243.5 ms | 85.7 MiB |
+
+Decision: **REJECT this sliced candidate.** Validation overall recall fell by `10.7`
+percentage points, small-target recall did not improve, and p95 exceeded the `200 ms`
+gate. The fixed 320×320 base model lost useful full-frame context while paying four
+serial inference calls. Running more tile variants on the frozen test is prohibited and
+would not repair this validation failure.
+
+The next useful substrate is a license-compatible consecutive prerecorded clip. It can
+test the already implemented motion-plus-periodic scheduler with the full-frame FPN
+candidate and measure event recall versus avoided detector calls. Sparse VISOR frames
+cannot support that timing question.
+
 Reproduction entry points:
 
 ```text
@@ -76,6 +100,7 @@ python tools/fetch_public_b1_assets.py visor \
   --acknowledge-visor-use-class D0_PUBLIC_NONCOMMERCIAL_METHOD_SCREENING
 python tools/fetch_public_b1_assets.py models
 python tools/run_visor_screen_eval.py --device cuda
+python tools/run_visor_slice_gate.py --device cuda
 ```
 
 The evaluator writes local receipts under ignored `runs/visor-screen-v1/`. It opens no

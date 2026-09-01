@@ -1,0 +1,15 @@
+schema_version = 1
+status = "CANDIDATE_VALIDATION_ONLY"
+base_model_id = "ssdlite320-mobilenet-v3-large-coco-v1"
+selection_split = "validation"
+test_evaluation_allowed = false
+tile_width = 1024
+tile_height = 720
+overlap_fraction = 0.10
+max_tiles = 4
+nms_iou_threshold = 0.50
+include_full_frame = false
+min_validation_overall_recall_gain = 0.05
+min_validation_small_recall_gain = 0.20
+max_detector_p95_ms = 200.0
+max_peak_vram_bytes = 1610612736
