@@ -47,9 +47,12 @@ The canonical manifest records the project-owned CC0-1.0 use class, Pillow versi
 contract and generator hashes, source-group seeds, and path/size/SHA-256 for every image,
 frame annotation, and M16 fixture. The manifest deliberately does not self-hash.
 
-Two independent clean generations produced identical bytes for every non-manifest
-output and the manifest, and those bytes matched the committed substrate. The old B1
-generator, MP4, annotation, and manifest retained their four frozen SHA-256 values.
+Two independent clean generations on the recorded Windows/Pillow 12.3.0 environment
+produced identical bytes for every non-manifest output and the manifest, and those bytes
+matched the committed substrate. Linux CI later produced a different PNG encoding (and
+therefore different image hashes in sidecars) while two clean Linux generations still
+matched each other. Cross-platform PNG byte identity is explicitly not established. The
+old B1 generator, MP4, annotation, and manifest retained their four frozen SHA-256 values.
 
 Key identities:
 
@@ -81,8 +84,9 @@ Key identities:
   diversity from three palettes and layouts.
 - The text, simple shapes, and clean backgrounds may become shortcuts for a detector.
 - Eighteen images are a schema/conformance slice, not a training dataset.
-- Byte identity is currently verified with Pillow 12.3.0 and in CI; it is not a promise
-  across arbitrary encoder versions.
+- Byte identity is verified between two runs within each recorded platform. Linux and
+  Windows Pillow 12.3.0 PNG bytes differed, so platform identity must accompany an exact
+  regeneration claim.
 - No detector was loaded and no AP, recall, latency, transfer, or tracking claim follows.
 
 ## Claim ledger

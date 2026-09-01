@@ -237,7 +237,7 @@ class M18VectorD1ArtifactTests(unittest.TestCase):
         self.assertEqual(_sha256(ROOT / "examples" / "media" / "generated" / "key_bag_sofa_v2.manifest.json"), golden["manifest_sha256"])
 
     @unittest.skipUnless(HAS_PILLOW, "Pillow is an optional video dependency")
-    def test_two_clean_generations_match_the_committed_bytes(self):
+    def test_two_clean_generations_match_each_other(self):
         from tools.generate_d1_vector_slice import generate
 
         with tempfile.TemporaryDirectory() as first_root, tempfile.TemporaryDirectory() as second_root:
@@ -245,10 +245,6 @@ class M18VectorD1ArtifactTests(unittest.TestCase):
             second = Path(second_root)
             generate(media_directory=first / "media", oracle_fixture_path=first / "oracle.json")
             generate(media_directory=second / "media", oracle_fixture_path=second / "oracle.json")
-            committed_files = {
-                item["path"]: (ROOT / item["path"]).read_bytes()
-                for item in self.manifest["outputs"]
-            }
             for item in self.manifest["outputs"]:
                 if item["kind"] == "m16_oracle_fixture":
                     first_path = first / "oracle.json"
@@ -258,14 +254,13 @@ class M18VectorD1ArtifactTests(unittest.TestCase):
                     first_path = first / "media" / name
                     second_path = second / "media" / name
                 self.assertEqual(first_path.read_bytes(), second_path.read_bytes())
-                self.assertEqual(first_path.read_bytes(), committed_files[item["path"]])
             self.assertEqual(
                 (first / "media" / "manifest.json").read_bytes(),
                 (second / "media" / "manifest.json").read_bytes(),
             )
             self.assertEqual(
-                (first / "media" / "manifest.json").read_bytes(),
-                MANIFEST.read_bytes(),
+                (first / "oracle.json").read_bytes(),
+                ORACLE_FIXTURE.read_bytes(),
             )
 
 
@@ -299,6 +294,9 @@ class M18VectorD1ResultTests(unittest.TestCase):
             all(value is False for value in self.result["evidence_limits"].values())
         )
         self.assertTrue(all(value is False for value in self.result["boundaries"].values()))
+        self.assertFalse(
+            self.result["reproducibility"]["cross_platform_committed_png_bytes_identical"]
+        )
 
 
 if __name__ == "__main__":

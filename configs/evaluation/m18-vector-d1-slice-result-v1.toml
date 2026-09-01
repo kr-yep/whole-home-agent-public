@@ -56,6 +56,7 @@ media_directory_files_per_generation = 37
 all_non_manifest_output_bytes_identical = true
 manifest_bytes_identical = true
 committed_output_bytes_identical = true
+cross_platform_committed_png_bytes_identical = false
 existing_b1_generator_hash_unchanged = true
 existing_b1_media_hash_unchanged = true
 existing_b1_annotations_hash_unchanged = true
@@ -84,6 +85,7 @@ tracking_or_movement_quality_established = false
 relation_physical_truth_established = false
 training_authorized = false
 operation_authorized = false
+cross_platform_png_byte_identity_established = false
 
 [boundaries]
 external_asset_or_media_downloaded = false
