@@ -1,0 +1,88 @@
+schema_version = 1
+status = "FROZEN_BEFORE_CANDIDATE_RESEARCH"
+gate_id = "m19-real-transfer-oracle-v1"
+intended_use = "NO_DOWNLOAD_REAL_INDOOR_SYNTHETIC_TO_REAL_EVALUATION_ORACLE_GATE"
+candidates = ["gmu-kitchens", "homebreweddb", "ycb-video"]
+stop_baseline = "STOP_NO_REAL_TRANSFER_ORACLE"
+
+required_gate_order = [
+  "official_author_or_institution_primary_source",
+  "official_terms_cover_noncommercial_evaluation_and_training",
+  "stable_official_acquisition_route",
+  "no_manual_approval_over_one_day",
+  "real_rgb_indoor_frames",
+  "frame_dimensions_established",
+  "per_frame_instance_boxes_or_masks",
+  "movable_household_object_labels",
+  "stable_instance_identity",
+  "annotation_completeness_or_safe_scoring_rule",
+  "protected_scene_video_object_camera_groups",
+  "small_target_0_1_to_1_percent_verification_path",
+  "negative_and_unknown_semantics_translatable",
+  "minimal_evaluation_subset_at_most_5_gib",
+  "exact_m16_d1_translation_feasible",
+  "first_slice_within_8_working_hours",
+]
+
+[estimand]
+purpose = "FALSIFY_SYNTHETIC_TO_REAL_DETECTOR_GAIN"
+real_images_required = true
+training_data_eligibility_required = true
+evaluation_data_eligibility_required = true
+small_object_area_fraction_range = [0.001, 0.01]
+relation_truth_required = false
+relation_truth_must_not_be_invented = true
+fixed_camera_preferred_but_not_fatal = true
+
+[split_integrity]
+assign_before_model_results = true
+protected_factors = ["scene", "source_video", "object_instance", "camera_or_capture_session"]
+protected_factor_cross_split_allowed = false
+adjacent_frame_random_split_allowed = false
+official_split_reused_when_stricter = true
+
+[evidence_rules]
+official_capability_annotation_terms_acquisition_and_split_sources_required = true
+third_party_summary_sufficient = false
+paper_claim_without_current_terms_sufficient = false
+endpoint_without_official_ownership_sufficient = false
+unknown_is_factual_fail = false
+unknown_is_selection_ineligible = true
+missing_required_evidence_is_selection_ineligible = true
+sample_images_without_annotation_contract_sufficient = false
+object_pose_without_2d_localization_sufficient = false
+unlabelled_objects_may_be_treated_as_negative = false
+metric_or_model_result_allowed = false
+
+[cost]
+maximum_minimal_evaluation_subset_gib = 5.0
+first_slice_max_working_hours = 8
+manual_approval_max_hours = 24
+paid_service_allowed = false
+private_data_dependency_allowed = false
+
+[selection]
+all_required_gates_must_pass = true
+select_at_most_one = true
+exactly_one_candidate_required_for_acquisition = true
+first_tiebreak = "STRONGEST_ANNOTATION_COMPLETENESS_AND_SAFE_NEGATIVE_SEMANTICS"
+second_tiebreak = "STRONGEST_FIXED_OR_EXPLICIT_CAMERA_RELEVANCE"
+third_tiebreak = "LOWEST_ACQUISITION_TRANSLATION_AND_STORAGE_COST"
+zero_eligible_decision = "STOP_NO_REAL_TRANSFER_ORACLE"
+unresolved_multiple_decision = "STOP_AMBIGUOUS_REAL_TRANSFER_ORACLE"
+selected_candidate_next_authority = "ONE_BOUNDED_ACQUISITION_AND_M16_TRANSLATION_SLICE"
+
+[boundaries]
+archive_media_or_annotation_download_allowed = false
+account_login_or_application_allowed = false
+local_vost_or_visor_read_allowed = false
+reserved_source_allowed = false
+model_detector_or_tracker_load_allowed = false
+training_allowed = false
+test_tuning_allowed = false
+movement_candidate_allowed = false
+claim_candidate_allowed = false
+accepted_claim_allowed = false
+live_private_cloud_or_action_allowed = false
+operate_enabled = false
+
