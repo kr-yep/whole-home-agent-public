@@ -142,6 +142,15 @@ public_audit_scanned_snapshots = 494
 public_audit_violations = 0
 operate_enabled = false
 
+[[verification_attempt]]
+revision = "58f203ec5870559f1dbd6ca10cdda400f09ede24"
+ci_run_url = "https://github.com/kr-yep/whole-home-agent-public/actions/runs/33514137173"
+status = "IMPLEMENTATION_PLATFORM_TEST_FAILURE"
+failed_scope = "PYTHON_3_11_3_12_3_13_3_14_MATRIX_TEST_STEP"
+cause = "M26_DIRECT_STARTUP_TEST_HARDCODED_WINDOWS_VENV_INTERPRETER_PATH"
+source_or_result_invalid_established = false
+source_rerun_allowed = false
+
 [boundaries]
 archive_or_dataset_downloaded = false
 source_bytes_in_git = false

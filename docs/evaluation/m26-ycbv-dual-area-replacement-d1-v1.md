@@ -73,3 +73,10 @@ Python 3.12.13 passed all `276/276` tests, including 14 M26 contract, exact-drif
 materialization, M16 metric, direct-startup, and result tests. The staged public-release
 audit scanned 247 files / 494 index-and-worktree snapshots with zero violations and
 `operate_enabled: false`. This verifies only the declared software and fixture envelope.
+
+The first public result run, [33514137173](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33514137173),
+failed only in every Linux Python matrix test step; the demo and prerecorded-video jobs
+passed. The M26 direct-startup test had hardcoded Windows `.venv/Scripts/python.exe`
+instead of the active interpreter. This is an implementation-platform test failure, not
+evidence that the source or materialized result is invalid. No source rerun is permitted
+or needed; the regression uses `sys.executable` and must pass the full matrix.

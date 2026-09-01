@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import subprocess
+import sys
 import tempfile
 import tomllib
 import unittest
@@ -198,7 +199,7 @@ class M26SyntheticMaterializationTests(unittest.TestCase):
         for forbidden in ("requests", "urllib", "def _download", "select_cross_scene_ycbv_bop19_slice("):
             self.assertNotIn(forbidden, source)
         completed = subprocess.run(
-            [str(ROOT / ".venv" / "Scripts" / "python.exe"), str(ROOT / "tools" / "materialize_ycbv_dual_area_replacement.py"), "--help"],
+            [sys.executable, str(ROOT / "tools" / "materialize_ycbv_dual_area_replacement.py"), "--help"],
             cwd=ROOT,
             capture_output=True,
             text=True,
