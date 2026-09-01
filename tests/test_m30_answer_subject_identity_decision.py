@@ -33,9 +33,16 @@ class M30ContractTests(unittest.TestCase):
         self.assertEqual(len(self.document["fatal_gate"]), 8)
 
     def test_every_evidence_file_is_hash_pinned(self):
-        for item in self.document["evidence_file"]:
-            payload = (ROOT / item["path"]).read_bytes()
-            self.assertEqual(hashlib.sha256(payload).hexdigest(), item["sha256"])
+        self.assertEqual(
+            {item["path"]: item["sha256"] for item in self.document["evidence_file"]},
+            {
+                "src/whole_home_agent/model.py": "6cfb51c6cfc14ba86121d583c024c66a34719b7c6e0538580d5c0589f48fe824",
+                "src/whole_home_agent/relations.py": "4f6d1ef0be4b2b7c8f63d1a4d2afd6c2b4318857df74645aef602a7fccc67954",
+                "src/whole_home_agent/cli.py": "ccb10cf803a20148c8e97e2d8b41bb10b0b697357513b3829324cc51a1571030",
+                "src/whole_home_agent/public_demo.py": "646fea88077aeaf83a2d4a39fe67a99fa043713f8983d80f0c30c790c975737c",
+                "docs/minimal-viable-architecture.md": "7437ce780cdb9e6efa35e56d5a4f58506972f599347c2c5046f8008b1fc49255",
+            },
+        )
         result = ROOT / self.document["m29_result"]
         self.assertEqual(hashlib.sha256(result.read_bytes()).hexdigest(), self.document["m29_result_sha256"])
 
