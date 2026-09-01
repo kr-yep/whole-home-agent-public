@@ -50,6 +50,8 @@ tests establish only that the two presentation failures are removed.
 Python 3.12.13 passed all `299/299` tests, including `13/13` M28 contract,
 helper, and result tests. The staged public-release audit scanned 258 files / 516
 index-and-worktree snapshots with zero violations and `operate_enabled: false`.
+[Public CI run 33516926134](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33516926134)
+succeeded for result revision `7d940c7fe8e4045746760d473ffe9923d8fac823`.
 
 ## Next authority
 
