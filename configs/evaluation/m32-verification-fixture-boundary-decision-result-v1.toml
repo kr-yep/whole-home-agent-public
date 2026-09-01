@@ -116,4 +116,3 @@ separately_frozen_contract_required = true
 exact_committed_d0_fixture_only = true
 external_private_live_media_or_model_allowed = false
 operate_enabled = false
-

@@ -43,4 +43,3 @@ M33 may separately freeze one teammate clean-install and closed-demo drill using
 exact committed D0 fixture. It must define a disposable environment, commands, time
 limit, expected structured output, receipts, failure classes, cleanup, and an explicit
 statement of what is usable and what is still missing.
-

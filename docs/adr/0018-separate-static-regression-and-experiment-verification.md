@@ -29,4 +29,3 @@ Contracts become slightly more explicit but no longer hide incompatible verifica
 requirements. Fixture identity, workflow revision, result, and evidence limits must be
 receipted. M31 remains a normal stop. This ADR grants no new fixture, model, private or
 live data, action, M29 retry, or `OPERATE` authority.
-
