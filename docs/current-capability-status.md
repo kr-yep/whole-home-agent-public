@@ -1,6 +1,6 @@
 # Current capability status
 
-**Checkpoint:** M34 contract · **Runtime:** `OPERATE DISABLED` · **Production ready:** no
+**Checkpoint:** M34 normal STOP · **Runtime:** `OPERATE DISABLED` · **Production ready:** no
 
 This page is updated with every milestone push so a teammate can see what is usable and
 what is still missing without reconstructing the full experiment history.
@@ -20,7 +20,8 @@ what is still missing without reconstructing the full experiment history.
 
 ## Still missing before a credible hackathon handoff
 
-- An independent teammate clean-install and 90-second/CLI-fallback demo drill.
+- An independent teammate/platform clean-install and 90-second/CLI-fallback demo drill;
+  one agent-run Windows clean clone/install/offline CLI path now works mechanically.
 - Protected-group development plus untouched-test evidence for real indoor small-object
   detection; one synthetic fixture and one tiny YCB-V smoke target are insufficient.
 - A tracker that survives occlusion and camera motion strongly enough for movement-event
@@ -40,11 +41,14 @@ what is still missing without reconstructing the full experiment history.
 These remain blocked by proposed governance, unassigned roles, absent consent and data
 policy, and `OPERATE DISABLED`.
 
-## Latest push: M34 retry contract
+## Latest push: M34 retry result
 
-Added a one-attempt M34 contract. Only the outer uv semantic-version parser changes;
-the exact M33 revision, checker, lock, fixture, expected output, budgets, socket guard,
-and cleanup remain unchanged, and no further retry is allowed.
+The one allowed retry parsed uv correctly, made a new public clone, installed 40 locked
+packages from an empty cache, and ran the unchanged demo offline. It returned the exact
+scoped key→bag→sofa result in 30.427 seconds total with zero demo network attempts.
 
-The existing demo remains usable in its previously verified environment. Clean-install
-usability is still missing until the M34 result is recorded.
+The contract still stopped: Windows `core.autocrlf` converted the text lock from LF to
+CRLF, so its raw working-tree hash differed while the Git blob and `uv sync --frozen`
+remained exact. The agent-run Windows path is mechanically usable; independent teammate
+and other-platform evidence is still missing. M35 may fix text identity only and cannot
+rerun M34.

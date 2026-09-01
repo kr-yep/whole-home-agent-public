@@ -1,0 +1,112 @@
+schema_version = 1
+status = "RECORDED_NORMAL_STOP_AFTER_MECHANICAL_DEMO_SUCCESS"
+gate_id = "m34-teammate-drill-infrastructure-retry-v1"
+decision = "STOP_M34_TEAMMATE_HANDOFF_DRILL"
+contract_revision = "8db1745b37484cee20b3bc76a09a25b84d4ee2c1"
+contract_ci_run_id = 33524517567
+contract_ci_status = "SUCCESS"
+attempt_count = 1
+attempt_limit = 1
+additional_retry_allowed = false
+checkout_revision = "dc2b6fd2a51e8ea09ef199d7f4076ac74c9183b2"
+failure_classes = ["LOCK_OR_MANIFEST"]
+localized_failure = "UV_LOCK_WORKTREE_EOL_NORMALIZATION"
+
+[infrastructure_repair]
+observed_uv_output = "uv 0.11.24 (5e04460c0 2026-06-23 x86_64-pc-windows-msvc)"
+parsed_semantic_version = "0.11.24"
+required_semantic_version = "0.11.24"
+repair_passed = true
+only_outer_parser_changed = true
+
+[clone]
+completed = true
+elapsed_ms = 1612.715
+revision_exact = true
+worktree_clean = true
+
+[install]
+completed = true
+elapsed_ms = 7059.658
+cache_mode = "DISPOSABLE_EMPTY_CACHE"
+python = "3.12.13"
+package_count = 40
+uv_frozen = true
+
+[demo]
+completed = true
+checker_status = "STOP"
+elapsed_ms = 21754.661
+total_clone_install_demo_elapsed_ms = 30427.034
+network_attempt_count = 0
+semantic_sha256 = "23d57ee4bb7c612c752f61369d5b18450532d24283bacc59b7683b0a2d35d322"
+source_content_sha256 = "b9cc79476d77f8d45acd1803c924de73914ffc4790f4da271f77cc8d4742eb43"
+
+[demo.answer]
+status = "FOUND"
+subject_id = "key"
+location_id = "sofa"
+epistemic_status = "estimated"
+world_scope = "source:b1-key-bag-sofa@2"
+as_of_source_sequence = 68
+claim_count = 2
+relation_path = ["key|inside|bag", "bag|at_zone|sofa"]
+run_receipt_status = "COMPLETE"
+operate = "DISABLED"
+physical_truth_claimed = false
+
+[resolved_versions]
+whole_home_agent = "0.1.0"
+av = "18.1.0"
+numpy = "2.5.2"
+pillow = "12.3.0"
+streamlit = "1.62.0"
+
+[lock_diagnostic]
+contract_sha256 = "f2d3639c4b34b9c8a05381baec95cd178d39e056d81bbb7bc028eaeba1c94c3e"
+git_blob_sha256 = "f2d3639c4b34b9c8a05381baec95cd178d39e056d81bbb7bc028eaeba1c94c3e"
+clean_checkout_raw_sha256 = "2cd58c6d22bc8d9d6bbad631432e354f8dffdfc13cea4370340c770271479a10"
+git_blob_bytes = 571954
+clean_checkout_bytes = 574709
+git_blob_crlf_count = 0
+clean_checkout_crlf_count = 2755
+line_count = 2755
+core_autocrlf = true
+manifest_sha256_matched = true
+uv_sync_frozen_succeeded = true
+
+[cleanup]
+clone_removed = true
+cache_removed = true
+first_cache_removal_required_elevation = true
+retained_runtime_artifacts = false
+
+[claim_limits]
+m34_contract_passed = false
+mechanical_clean_clone_install_observed_on_this_host = true
+offline_demo_semantics_observed_on_this_host = true
+independent_teammate_or_other_platform_verified = false
+cross_platform_raw_text_hash_stable = false
+product_or_cv_gain_established = false
+real_home_transfer_established = false
+
+[boundaries]
+external_private_or_live_media_used = false
+model_loaded = false
+m29_checker_or_retry_run = false
+production_code_schema_semantics_or_presentation_changed = false
+private_registry_or_credential_used = false
+cloud_inference_or_action_connected = false
+operate_enabled = false
+
+[verification]
+focused_tests_status = "PASS_9_OF_9"
+public_audit_status = "PASS_286_FILES_572_SNAPSHOTS_ZERO_VIOLATIONS"
+result_ci_status = "PENDING"
+operate_enabled = false
+
+[next_gate]
+proposal = "M35_VERSIONED_TEXT_IDENTITY_PORTABILITY"
+acceptance_or_demo_retry_allowed = false
+allowed_work = "REPOSITORY_ONLY_SELECTION_AND_NON_ACCEPTANCE_HARDENING_OF_GIT_TEXT_IDENTITY"
+production_semantics_or_fixture_change_allowed = false

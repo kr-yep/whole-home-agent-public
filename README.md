@@ -29,10 +29,12 @@ indoor small-object gain; robust tracking under occlusion/camera motion; live ca
 multi-camera support; durable household memory/retention; assigned policy/data roles,
 consent, and any operational activation. Live/private sensing and actions remain blocked.
 
-**Latest milestone (M34 contract):** exactly one infrastructure retry is frozen. Its
-only change is parsing semantic uv version `0.11.24` from the preflight output; the M33
-revision, checker, lock, fixture, expected answer/trace, time budgets, network boundary,
-and cleanup are byte-for-byte or contractually unchanged. The retry has not run yet.
+**Latest milestone (M34 STOP):** a Windows clean clone with an empty dependency cache
+installed and ran the offline demo correctly in 30.427 seconds total, with zero network
+attempts during demo and the exact key→bag→sofa answer/trace. The frozen checker still
+stopped because Git converted `uv.lock` LF bytes to CRLF at checkout, changing its raw
+SHA-256 without changing the Git blob or frozen dependency resolution. M34 cannot retry;
+M35 may harden versioned-text identity without rerunning acceptance.
 
 ## What works today
 
@@ -336,6 +338,8 @@ M31 history.
 The [M33 result](docs/evaluation/m33-teammate-clean-install-demo-drill-v1.md) records the
 clean-clone success and exact pre-install harness stop without mislabeling it as a repo
 or dependency failure.
+The [M34 result](docs/evaluation/m34-teammate-drill-infrastructure-retry-v1.md) records
+the successful clean install/offline semantics and the distinct CRLF lock-identity STOP.
 
 ## Safety and data boundary
 
