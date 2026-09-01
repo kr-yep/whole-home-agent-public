@@ -62,6 +62,15 @@ detector-transfer oracle depends on the intended metric, source-group semantics,
 comparison protocol. That is a material evaluation decision and belongs in a separate
 reality gate.
 
+## Verification
+
+On clean result revision `ed4d63baacfd40208db1648c8d0f30970a2ffc29`, Python
+3.12.13 passed all `220/220` tests. The M22-focused module contributed 17 passing
+contract, four-branch, parser/wiring, source-boundary, and result tests. The public
+release audit scanned 228 tracked files and 456 index/worktree snapshots with zero
+violations and `operate_enabled: false`. These checks support only the bounded software,
+execution, and release claims above.
+
 ## What did not occur
 
 - archive download, extraction, RGB/depth/mask or non-allowlisted member read;

@@ -5,6 +5,7 @@ decision = "STOP_YCBV_PAIRING_SCOPE_TERM"
 contract_revision = "41e02477d7830637fa1da2234b6231ec074e05f8"
 implementation_revision = "11f083e7940dab3c6b2a5ce4f36f60b91f8bb9dd"
 infrastructure_fix_revision = "c169693d5ff99b94066fccd5f4465be4edccfa5f"
+clean_result_revision = "ed4d63baacfd40208db1648c8d0f30970a2ffc29"
 source_revision = "5c2c4aa229800355648cd268040aa814f8dc94f0"
 source_identity_passed = true
 target_entry_count = 4123
@@ -86,9 +87,15 @@ materialization_retry_allowed = false
 model_prediction_or_training_allowed = false
 
 [verification]
+python = "3.12.13"
 contract_tests_before_annotation_reread_passed = 5
 synthetic_tests_before_real_diagnosis_passed = 12
 regression_tests_before_infrastructure_retry_passed = 13
+focused_tests_on_clean_result_revision_passed = 17
+full_tests_on_clean_result_revision_passed = 220
+public_audit_scanned_files = 228
+public_audit_scanned_snapshots = 456
+public_audit_violations = 0
 real_diagnostic_attempts = 2
 byte_identical_diagnostic_runs_within_attempt_2 = 2
 filesystem_extraction_count = 0
