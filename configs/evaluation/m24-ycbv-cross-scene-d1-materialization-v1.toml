@@ -1,0 +1,106 @@
+schema_version = 1
+status = "FROZEN_BEFORE_SOURCE_ARCHIVE_ANNOTATION_OR_MEDIA_REREAD"
+gate_id = "m24-ycbv-cross-scene-d1-materialization-v1"
+intended_use = "TEST_ONLY_MINIMAL_DETECTOR_TRANSFER_ORACLE"
+dataset_id = "BOP_YCBV_TEST_BOP19"
+license_id = "MIT"
+source_revision = "5c2c4aa229800355648cd268040aa814f8dc94f0"
+source_contract = "configs/evaluation/m21-ycbv-per-archive-root-repair-v1.toml"
+authority_result = "configs/evaluation/m23-cross-scene-transfer-oracle-validity-result-v1.toml"
+source_archive_root = "data/external/ycbv-bop19-m20/archives"
+local_root = "data/external/ycbv-bop19-m24"
+local_d1_root = "data/external/ycbv-bop19-m24/d1"
+local_receipt = "data/external/ycbv-bop19-m24/m24-local-receipt.json"
+expected_target_frame_count = 900
+expected_scene_ids = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59]
+expected_annotation_member_count = 37
+target_frame_count = 2
+maximum_frame_count = 18
+
+[archive_reuse]
+download_allowed = false
+exact_m21_archive_table_required = true
+archive_identity_reverified_before_any_member_read = true
+full_header_and_mapped_namespace_preflight_required = true
+expected_combined_member_count = 10092
+expected_combined_uncompressed_bytes = 671106741
+annotation_members_may_be_read = true
+rgb_unique_member_read_count = 2
+depth_or_mask_member_read_allowed = false
+filesystem_bulk_extraction_allowed = false
+
+[selection]
+project_split = "test"
+same_modeled_class_required = true
+positive_and_negative_distinct_scene_required = true
+object_order = "ASCENDING_BOP_OBJECT_ID"
+positive_order = "ASCENDING_SCENE_ID_THEN_IMAGE_ID"
+negative_order = "ASCENDING_SCENE_ID_THEN_IMAGE_ID"
+branch_order = "FIRST_OBJECT_WITH_POSITIVE_THEN_FIRST_POSITIVE_THEN_FIRST_DISTINCT_SCENE_NEGATIVE"
+positive_visible_area_fraction_range = [0.001, 0.01]
+positive_minimum_visibility_fraction = 0.10
+positive_visible_bbox_required = true
+negative_requires_complete_modeled_class_absence = true
+unknown_unmodeled_or_occluded_is_negative = false
+smallest_source_ordered_proving_set = true
+adaptive_candidate_or_fallback_allowed = false
+
+[d1_mapping]
+frame_width = 640
+frame_height = 480
+one_source_sequence_per_scene = true
+each_sequence_local_frame_index = 0
+source_sequence_mapping = "BOP_SCENE_ID"
+original_scene_and_image_id_in_manifest = true
+positive_instance_identity = "SCENE_SCOPED_BOP_OBJECT_ID"
+negative_physical_instance_fabricated = false
+negative_sequence_has_zero_scorable_instances = true
+complete_scored_frame_denominator = true
+reference_transition_count = 0
+relation_or_movement_truth_emitted = false
+source_rgb_names_rewritten_to_local_frame_names = true
+
+[output]
+clean_materialization_runs = 2
+unique_archive_rgb_reads = 2
+byte_identical_relative_file_manifest_required = true
+canonical_json_lf_required = true
+final_files = ["manifest.json", "oracle.json", "rgb/000000.png", "rgb/000001.png"]
+third_party_bytes_in_git_allowed = false
+raw_annotation_rows_in_git_allowed = false
+sanitized_result_may_record_source_ids_boxes_visibility_counts_and_hashes = true
+staging_removed_on_success_or_failure = true
+overwrite_existing_output_allowed = false
+
+[oracle_gate]
+evaluated_frame_count = 2
+negative_frame_count = 1
+scorable_target_count = 1
+source_sequence_count = 2
+reference_transition_count = 0
+empty_prediction_false_positives = 0
+empty_prediction_recall = 0.0
+
+[decision]
+pass = "PASS_M24_MINIMAL_CROSS_SCENE_D1"
+normal_stop = "STOP_M24_MINIMAL_CROSS_SCENE_D1"
+pass_authorizes_only = "M25_PAIRED_NO_TRAINING_TRANSFER_EXPERIMENT_DESIGN"
+pass_is_not_prediction_training_or_transfer_gain = true
+stop_on_any_source_identity_header_namespace_completeness_selection_mapping_or_determinism_failure = true
+
+[boundaries]
+archive_or_dataset_download_allowed = false
+source_bytes_in_git_allowed = false
+real_annotations_in_git_allowed = false
+model_detector_or_tracker_load_allowed = false
+prediction_allowed = false
+training_allowed = false
+test_tuning_allowed = false
+local_vost_or_visor_read_allowed = false
+reserved_source_allowed = false
+movement_candidate_allowed = false
+claim_candidate_allowed = false
+accepted_claim_allowed = false
+relation_or_transition_emission_allowed = false
+live_private_cloud_inference_or_action_allowed = false
+operate_enabled = false
