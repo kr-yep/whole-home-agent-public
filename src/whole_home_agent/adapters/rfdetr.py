@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import importlib.metadata
 import json
+import math
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
@@ -14,6 +15,18 @@ from ..perception import BoundingBox, Detection, VideoFrame
 
 
 SUPPORTED_PACKAGE_VERSION = "1.9.4"
+SUPPORTED_VARIANTS = {
+    "nano": ("RFDETRNano", "rfdetr-nano"),
+    "small": ("RFDETRSmall", "rfdetr-small"),
+}
+
+
+def _file_hash(path: Path, algorithm: str) -> str:
+    digest = hashlib.new(algorithm)
+    with path.open("rb") as stream:
+        for block in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
 
 
 @dataclass(frozen=True, slots=True)
@@ -22,34 +35,60 @@ class RFDetrConfig:
 
     weights_path: Path
     weights_sha256: str
-    class_names: tuple[str, ...]
+    weights_md5: str
+    weights_bytes: int
+    class_id_map: tuple[tuple[int, str], ...]
+    scored_labels: tuple[str, ...]
     model_variant: str = "nano"
     package_version: str = SUPPORTED_PACKAGE_VERSION
     confidence_threshold: float = 0.35
     device: str = "cuda"
-    optimize_for_inference: bool = True
+    inference_compile: bool = False
+    inference_dtype: str = "float32"
+    inference_inplace: bool = False
 
     def __post_init__(self) -> None:
         path = self.weights_path.resolve()
         if not path.is_file():
             raise ValueError("RF-DETR weights must be an existing local file")
-        actual_hash = hashlib.sha256(path.read_bytes()).hexdigest()
-        if actual_hash != self.weights_sha256:
-            raise ValueError("RF-DETR weights do not match the configured SHA-256")
-        if self.model_variant != "nano":
-            raise ValueError("only the reviewed Apache-2.0 RF-DETR Nano variant is allowed")
+        if (
+            path.stat().st_size != self.weights_bytes
+            or _file_hash(path, "sha256") != self.weights_sha256
+            or _file_hash(path, "md5") != self.weights_md5
+        ):
+            raise ValueError("RF-DETR weights do not match configured size/hashes")
+        if self.model_variant not in SUPPORTED_VARIANTS:
+            raise ValueError("unsupported reviewed RF-DETR variant")
         if self.package_version != SUPPORTED_PACKAGE_VERSION:
             raise ValueError("RF-DETR package version must match the reviewed pin")
+        class_ids = tuple(item[0] for item in self.class_id_map)
+        class_names = tuple(item[1] for item in self.class_id_map)
         if (
-            not self.class_names
-            or len(set(self.class_names)) != len(self.class_names)
-            or any(not name or name != name.strip() for name in self.class_names)
+            not self.class_id_map
+            or any(type(item) is not int or item < 0 for item in class_ids)
+            or tuple(sorted(class_ids)) != class_ids
+            or len(set(class_ids)) != len(class_ids)
+            or len(set(class_names)) != len(class_names)
+            or any(not name or name != name.strip() for name in class_names)
         ):
-            raise ValueError("RF-DETR class names must be unique non-empty strings")
-        if not 0.0 <= self.confidence_threshold <= 1.0:
+            raise ValueError("RF-DETR sparse class map is invalid")
+        if (
+            not self.scored_labels
+            or len(set(self.scored_labels)) != len(self.scored_labels)
+            or any(name not in set(class_names) for name in self.scored_labels)
+        ):
+            raise ValueError("RF-DETR scored labels are invalid")
+        if (
+            not math.isfinite(self.confidence_threshold)
+            or not 0.0 <= self.confidence_threshold <= 1.0
+        ):
             raise ValueError("RF-DETR confidence threshold must be between zero and one")
         if self.device not in {"cpu", "cuda"}:
             raise ValueError("RF-DETR device must be 'cpu' or 'cuda'")
+        if self.inference_dtype not in {"float16", "float32"}:
+            raise ValueError("RF-DETR inference dtype is not reviewed")
+        if self.inference_compile and self.inference_inplace:
+            raise ValueError("compiled RF-DETR inference cannot be in-place")
 
 
 class RFDetrDetector:
@@ -63,14 +102,17 @@ class RFDetrDetector:
     def __init__(self, config: RFDetrConfig, *, model_object: object | None = None):
         self._config = config
         config_payload = asdict(config)
-        config_payload["weights_path"] = config.weights_path.resolve().as_posix()
+        # The local path is an allowlisting concern at composition time, not part
+        # of the portable semantic identity of identical checkpoint bytes.
+        del config_payload["weights_path"]
         config_hash = hashlib.sha256(
             json.dumps(config_payload, sort_keys=True, separators=(",", ":")).encode(
                 "utf-8"
             )
         ).hexdigest()
+        model_symbol, producer_component = SUPPORTED_VARIANTS[config.model_variant]
         self._producer_ref = ProducerRef(
-            component="rfdetr-nano",
+            component=producer_component,
             version=config.package_version,
             artifact_hash=config.weights_sha256,
             config_hash=config_hash,
@@ -81,19 +123,26 @@ class RFDetrDetector:
                 raise RuntimeError(
                     f"installed rfdetr {installed!r} disagrees with the resolved config"
                 )
-            from rfdetr import RFDETRNano
+            import rfdetr
 
-            # An explicit path with a directory component prevents the package's
-            # bare-name cache/download resolution. The SHA-256 check above happens
-            # before any third-party checkpoint loader is invoked.
-            model_object = RFDETRNano(
+            model_class = getattr(rfdetr, model_symbol)
+            model_object = model_class(
                 pretrain_weights=str(config.weights_path.resolve()),
                 device=config.device,
                 trust_checkpoint=False,
             )
-            if config.optimize_for_inference:
-                model_object.optimize_for_inference()
+            model_object.inference(
+                compile=config.inference_compile,
+                dtype=config.inference_dtype,
+                inplace=config.inference_inplace,
+            )
+            if config.device == "cuda":
+                import torch
+
+                torch.cuda.reset_peak_memory_stats()
         self._model = model_object
+        self._class_id_to_name = dict(config.class_id_map)
+        self._scored_labels = frozenset(config.scored_labels)
 
     @property
     def producer_ref(self) -> ProducerRef:
@@ -113,28 +162,48 @@ class RFDetrDetector:
         if image_array.ndim != 3 or image_array.shape[2] != 3:
             raise ValueError("RF-DETR adapter requires one RGB frame")
         height, width = image_array.shape[:2]
+        # RF-DETR applies ``score > threshold`` internally. Asking for the
+        # preceding representable float and then applying the canonical filter
+        # below gives this adapter an explicit ``score >= threshold`` contract.
+        sdk_threshold = math.nextafter(
+            self._config.confidence_threshold, -math.inf
+        )
         result = self._model.predict(
-            Image.fromarray(image_array), threshold=self._config.confidence_threshold
+            Image.fromarray(image_array),
+            threshold=sdk_threshold,
+            include_source_image=False,
         )
         boxes = np.asarray(result.xyxy)
         confidences = np.asarray(result.confidence)
         class_ids = np.asarray(result.class_id)
+        result_data = getattr(result, "data", None)
+        returned_names = None
+        if isinstance(result_data, dict) and "class_name" in result_data:
+            returned_names = np.asarray(result_data["class_name"])
         if (
             boxes.ndim != 2
             or boxes.shape[1:] != (4,)
             or len(boxes) != len(confidences)
             or len(boxes) != len(class_ids)
+            or (returned_names is not None and len(boxes) != len(returned_names))
         ):
             raise ValueError("RF-DETR returned an invalid result shape")
         detections: list[Detection] = []
-        for box_values, confidence_value, class_id_value in zip(
-            boxes, confidences, class_ids
+        for index, (box_values, confidence_value, class_id_value) in enumerate(
+            zip(boxes, confidences, class_ids)
         ):
             class_id = int(class_id_value)
             confidence = float(confidence_value)
-            if class_id < 0 or class_id >= len(self._config.class_names):
+            label = self._class_id_to_name.get(class_id)
+            if label is None:
                 raise ValueError("RF-DETR returned a class outside the configured map")
-            if confidence < self._config.confidence_threshold:
+            if returned_names is not None and str(returned_names[index]) != label:
+                raise ValueError("RF-DETR class name disagrees with the frozen sparse map")
+            if (
+                label not in self._scored_labels
+                or not math.isfinite(confidence)
+                or confidence < self._config.confidence_threshold
+            ):
                 continue
             x_min, y_min, x_max, y_max = (float(value) for value in box_values)
             x_min = min(max(0.0, x_min), float(width))
@@ -145,7 +214,7 @@ class RFDetrDetector:
                 continue
             detections.append(
                 Detection(
-                    label=self._config.class_names[class_id],
+                    label=label,
                     confidence=confidence,
                     bbox=BoundingBox(x_min, y_min, x_max, y_max),
                     position=frame.position,
@@ -174,8 +243,26 @@ class RFDetrDetector:
             return None
 
     def runtime_metadata(self) -> dict[str, Any]:
+        package_metadata = {
+            name.replace("-", "_") + "_version": _installed_version(name)
+            for name in (
+                "pydantic",
+                "rfdetr",
+                "supervision",
+                "transformers",
+            )
+        }
+        package_metadata.update(
+            {
+                "inference_compile": self._config.inference_compile,
+                "inference_dtype": self._config.inference_dtype,
+                "inference_inplace": self._config.inference_inplace,
+                "model_variant": self._config.model_variant,
+            }
+        )
         if self._config.device != "cuda":
             return {
+                **package_metadata,
                 "cuda_version": None,
                 "cudnn_version": None,
                 "gpu_name": None,
@@ -185,6 +272,7 @@ class RFDetrDetector:
             import torch
 
             return {
+                **package_metadata,
                 "cuda_version": torch.version.cuda,
                 "cudnn_version": (
                     str(torch.backends.cudnn.version())
@@ -196,6 +284,7 @@ class RFDetrDetector:
             }
         except (ImportError, RuntimeError):
             return {
+                **package_metadata,
                 "cuda_version": None,
                 "cudnn_version": None,
                 "gpu_name": None,

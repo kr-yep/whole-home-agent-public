@@ -310,6 +310,21 @@ class SlicedDetectorContractTests(unittest.TestCase):
 
 @unittest.skipUnless(HAS_VIDEO, "video optional dependencies are not installed")
 class RFDetrAdapterContractTests(unittest.TestCase):
+    @staticmethod
+    def _config(weights: Path, **overrides) -> RFDetrConfig:
+        payload = weights.read_bytes()
+        values = {
+            "weights_path": weights,
+            "weights_sha256": hashlib.sha256(payload).hexdigest(),
+            "weights_md5": hashlib.md5(payload).hexdigest(),  # noqa: S324 - artifact identity
+            "weights_bytes": len(payload),
+            "class_id_map": ((44, "bottle"), (47, "cup")),
+            "scored_labels": ("bottle",),
+            "device": "cpu",
+        }
+        values.update(overrides)
+        return RFDetrConfig(**values)
+
     def test_training_candidate_is_capped_and_cannot_tune_on_test(self):
         config = tomllib.loads(
             (ROOT / "configs" / "perception" / "rfdetr-nano-training-gate-v1.toml")
@@ -325,24 +340,23 @@ class RFDetrAdapterContractTests(unittest.TestCase):
         import numpy as np
 
         class FakeModel:
-            def predict(self, image, *, threshold):
+            def predict(self, image, *, threshold, include_source_image):
                 self.image_size = image.size
                 self.threshold = threshold
+                self.include_source_image = include_source_image
                 return SimpleNamespace(
                     xyxy=np.asarray([[-4.0, 2.0, 12.0, 20.0], [5.0, 5.0, 5.0, 8.0]]),
-                    confidence=np.asarray([0.9, 0.8]),
-                    class_id=np.asarray([0, 0]),
+                    confidence=np.asarray([0.35, 0.8]),
+                    class_id=np.asarray([44, 47]),
+                    data={"class_name": np.asarray(["bottle", "cup"], dtype=object)},
                 )
 
         with tempfile.TemporaryDirectory() as directory:
-            weights = Path(directory) / "local-nano.pth"
+            weights = Path(directory) / "rf-detr-small.pth"
             weights.write_bytes(b"test-only-fake-weights")
-            config = RFDetrConfig(
-                weights_path=weights,
-                weights_sha256=hashlib.sha256(weights.read_bytes()).hexdigest(),
-                class_names=("key",),
-                device="cpu",
-                optimize_for_inference=False,
+            config = self._config(
+                weights,
+                model_variant="small",
             )
             model = FakeModel()
             detector = RFDetrDetector(config, model_object=model)
@@ -362,21 +376,56 @@ class RFDetrAdapterContractTests(unittest.TestCase):
                 )
             )
         self.assertEqual(model.image_size, (16, 16))
-        self.assertEqual(model.threshold, 0.35)
+        self.assertLess(model.threshold, 0.35)
+        self.assertFalse(model.include_source_image)
         self.assertEqual(len(detections), 1)
-        self.assertEqual(detections[0].label, "key")
+        self.assertEqual(detections[0].label, "bottle")
+        self.assertEqual(detections[0].confidence, 0.35)
         self.assertEqual(detections[0].bbox.as_xyxy(), (0.0, 2.0, 12.0, 16.0))
-        self.assertEqual(detections[0].producer_ref.component, "rfdetr-nano")
+        self.assertEqual(detections[0].producer_ref.component, "rfdetr-small")
+
+    def test_sdk_class_name_must_match_frozen_sparse_coco_id(self):
+        import numpy as np
+
+        class FakeModel:
+            def predict(self, image, *, threshold, include_source_image):
+                return SimpleNamespace(
+                    xyxy=np.asarray([[0.0, 0.0, 4.0, 4.0]]),
+                    confidence=np.asarray([0.9]),
+                    class_id=np.asarray([44]),
+                    data={"class_name": np.asarray(["cup"], dtype=object)},
+                )
+
+        with tempfile.TemporaryDirectory() as directory:
+            weights = Path(directory) / "fake.pth"
+            weights.write_bytes(b"test-only-fake-weights")
+            detector = RFDetrDetector(self._config(weights), model_object=FakeModel())
+            position = SourcePosition(
+                source_sequence=0,
+                source_offset=0,
+                timestamp_basis=TimestampBasis.SOURCE_FRAME_INDEX,
+                frame_index=0,
+            )
+            with self.assertRaisesRegex(ValueError, "frozen sparse map"):
+                detector.detect(
+                    DecodedVideoFrame(
+                        position=position,
+                        rgb=np.zeros((8, 8, 3), dtype=np.uint8),
+                    )
+                )
 
     def test_weight_hash_mismatch_fails_before_model_loading(self):
         with tempfile.TemporaryDirectory() as directory:
             weights = Path(directory) / "local-nano.pth"
             weights.write_bytes(b"different")
-            with self.assertRaises(ValueError):
+            with self.assertRaisesRegex(ValueError, "size/hashes"):
                 RFDetrConfig(
                     weights_path=weights,
                     weights_sha256="0" * 64,
-                    class_names=("key",),
+                    weights_md5="0" * 32,
+                    weights_bytes=len(weights.read_bytes()),
+                    class_id_map=((44, "bottle"),),
+                    scored_labels=("bottle",),
                 )
 
 
