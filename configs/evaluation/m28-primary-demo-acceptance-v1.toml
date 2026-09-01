@@ -1,0 +1,111 @@
+schema_version = 1
+status = "FROZEN_BEFORE_COMMITTED_DEMO_EXECUTION"
+gate_id = "m28-primary-demo-acceptance-v1"
+intended_use = "COMMITTED_D0_SYNTHETIC_PRIMARY_DEMO_ACCEPTANCE"
+m27_result = "configs/evaluation/m27-demo-evaluation-contract-result-v1.toml"
+source_manifest = "examples/media/generated/key_bag_sofa_v2.manifest.json"
+source_id = "b1-key-bag-sofa"
+source_revision = "2"
+source_content_sha256 = "b9cc79476d77f8d45acd1803c924de73914ffc4790f4da271f77cc8d4742eb43"
+source_use_class = "D0_SYNTHETIC"
+source_license = "CC0-1.0"
+source_frame_count = 80
+target_seconds = 90
+acceptance_runs = 2
+run_ids = ["m28-acceptance-direct", "m28-acceptance-cli"]
+
+[execution]
+committed_project_owned_media_allowed = true
+third_party_or_private_media_allowed = false
+network_denied_during_both_runs = true
+first_run_interface = "PUBLIC_DEMO_PYTHON_BOUNDARY"
+second_run_interface = "CLI_DEMO_RECORDED_COMPACT"
+semantic_comparison_excludes_only = ["replay_run_id"]
+model_or_runtime_configuration_change_allowed = false
+
+[expected_governance]
+operate = "DISABLED"
+physical_truth_claimed = false
+allowed_data = "D0_SYNTHETIC"
+mode = "OFFLINE_PRERECORDED_REPLAY"
+
+[expected_answer]
+status = "FOUND"
+subject_id = "key"
+location_id = "sofa"
+epistemic_status = "estimated"
+relation_path_length = 2
+source_claim_count = 2
+world_scope_required = true
+as_of_source_sequence_required = true
+
+[[expected_claim]]
+operation = "assert"
+predicate = "inside"
+subject_id = "key"
+object_id = "bag"
+epistemic_status = "estimated"
+confirmation_frame = 37
+evidence_start_frame = 35
+evidence_end_frame = 37
+
+[[expected_claim]]
+operation = "assert"
+predicate = "at_zone"
+subject_id = "bag"
+object_id = "sofa"
+epistemic_status = "estimated"
+confirmation_frame = 68
+evidence_start_frame = 65
+evidence_end_frame = 68
+
+[expected_limits]
+warning_count_minimum = 3
+abstention_section_required = true
+easy_replay_zero_abstentions_allowed = true
+fail_closed_ambiguous_unsupported_interrupted_text_required = true
+run_receipt_required = true
+evidence_limits_expander_required = true
+synthetic_not_indoor_evidence_text_required = true
+general_language_understanding_claim_allowed = false
+real_home_accuracy_or_gain_claim_allowed = false
+
+[presentation]
+operate_disabled_banner_required = true
+fixed_public_replay_required = true
+fixed_question_required = true
+answer_scope_required = true
+evidence_table_required = true
+abstention_behavior_required = true
+perfect_fixture_metrics_in_primary_visible_area_allowed = false
+fixture_metrics_must_be_in_collapsed_expander = true
+fixture_metrics_label = "OPTIONAL_SYNTHETIC_FIXTURE_METRICS_NOT_INDOOR_EVIDENCE"
+upload_camera_chat_arbitrary_path_widgets_allowed = false
+credentials_actions_or_generic_tools_allowed = false
+
+[judge_card]
+path = "docs/judge-demo-card.md"
+problem_change_answer_evidence_limit_timeline_required = true
+windows_commands_required = true
+posix_commands_required = true
+compact_cli_backup_required = true
+failure_recovery_text_required = true
+do_not_claim_list_required = true
+
+[decision]
+pass = "PASS_M28_PRIMARY_DEMO_ACCEPTANCE"
+normal_stop = "STOP_M28_PRIMARY_DEMO_ACCEPTANCE"
+pass_requires_every_assertion = true
+pass_authorizes_only = "M29_TEAMMATE_CLEAN_INSTALL_AND_DEMO_DRILL"
+stop_allows_only = "FIX_DEMONSTRATED_PRESENTATION_SCRIPT_OR_PACKAGING_GAP_WITHOUT_CHANGING_SEMANTICS"
+
+[boundaries]
+third_party_or_private_media_read_allowed = false
+new_model_detector_or_tracker_load_allowed = false
+prediction_experiment_allowed = false
+training_allowed = false
+test_tuning_allowed = false
+new_candidate_or_claim_semantics_allowed = false
+relation_or_transition_semantics_change_allowed = false
+live_private_cloud_inference_or_action_allowed = false
+operate_enabled = false
