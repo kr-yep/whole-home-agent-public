@@ -210,6 +210,13 @@ not_established = "SMALL_TARGET_PRESENCE_DETECTOR_GAIN_SYNTHETIC_TO_REAL_TRANSFE
 
 [verification]
 contract_revision = "443184f"
+result_revision = "380ebf18fbb463af28ba975ddcceaff3cbfeccef"
+python = "3.12.13"
+focused_tests_passed = 9
+clean_result_revision_full_tests_passed = 173
+final_staged_public_audit_files = 207
+final_staged_public_audit_snapshots = 414
+final_staged_public_audit_violations = 0
 official_sources_checked_at = "2026-09-01"
 archive_media_or_annotation_download_count = 0
 account_login_or_application_count = 0

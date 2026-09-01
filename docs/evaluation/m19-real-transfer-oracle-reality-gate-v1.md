@@ -138,6 +138,17 @@ corpus; it selected only BOP's smaller test subset.
 | M19-C4 | Frozen AND matrix and tie-breaks | YCB-Video is the unique bounded acquisition choice | It is the best real-home dataset or will improve a detector |
 | M19-C5 | No-download boundary | One acquisition/translation slice is justified next | Training, test tuning, claims, live sensing, or operation is authorized |
 
+## Verification
+
+- Frozen contract commit: `443184f`.
+- Recorded-result revision: `380ebf18fbb463af28ba975ddcceaff3cbfeccef`.
+- Focused M19 tests: `9/9` passed.
+- Clean result-revision suite: `173/173` passed under Python 3.12.13.
+- Final staged public audit: 207 files / 414 index-and-worktree
+  snapshots, zero violations, `operate_enabled: false`.
+- Archive/media/annotation downloads, account use, model/tracker loads, training runs,
+  VOST/VISOR reads, movement candidates, claims, and operational connections: zero.
+
 ## Next gate
 
 M20 may acquire only `ycbv_base.zip` and `ycbv_test_bop19.zip` from the selected BOP
@@ -148,4 +159,3 @@ one 0.1–1% positive and one class-scoped negative. It must stop on license/sou
 unsafe archive paths, missing public ground truth, missing small targets, incomplete
 negative semantics, or the eight-hour bound. No model, prediction, training, relation,
 claim, private/live source, cloud inference, or action belongs in M20.
-
