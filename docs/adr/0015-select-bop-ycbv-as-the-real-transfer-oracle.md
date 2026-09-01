@@ -103,3 +103,13 @@ identity or transition crosses them. The frozen visible-pixel predicate passes, 
 positive bbox occupies 3.043% of the frame, so M16 classifies it as `large_ge_1pct`.
 This does not invalidate the bounded materialization result; it blocks a small-bbox
 detector experiment until a separate annotation-only metric-alignment gate passes.
+
+## M25 dual-area alignment evidence
+
+The separately frozen M25 diagnostic applied the M16-exclusive upper bound to both
+visible-pixel and visible-bbox area on the same reference annotation. Two of 900 target
+frames pass, across object 4 and object 18, and both classes have a complete class-absent
+frame in a different scene. The deterministic replacement pair is object 4 at scene
+50/image 722 plus scene 48/image 1. This authorizes only one exact replacement
+materialization contract. The tiny, label-selected test oracle cannot establish a
+detector gain, transfer, natural prevalence, movement, relation, or product value.

@@ -19,6 +19,7 @@ M16 = ROOT / "configs" / "evaluation" / "m16-target-label-oracle-v1.toml"
 M21 = ROOT / "configs" / "evaluation" / "m21-ycbv-per-archive-root-repair-v1.toml"
 M24 = ROOT / "configs" / "evaluation" / "m24-ycbv-cross-scene-d1-materialization-result-v1.toml"
 CONTRACT = ROOT / "configs" / "evaluation" / "m25-ycbv-small-bbox-alignment-v1.toml"
+RESULT = ROOT / "configs" / "evaluation" / "m25-ycbv-small-bbox-alignment-result-v1.toml"
 
 
 class M25ContractTests(unittest.TestCase):
@@ -218,6 +219,57 @@ class M25SyntheticDiagnosticTests(unittest.TestCase):
         source = (ROOT / "tools" / "diagnose_ycbv_dual_area.py").read_text(encoding="utf-8")
         for forbidden in ("rgb/", ".extract(", "extractall", "requests", "urllib", "torch"):
             self.assertNotIn(forbidden, source)
+
+
+class M25ResultTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.contract = tomllib.loads(CONTRACT.read_text(encoding="utf-8"))
+        cls.result = tomllib.loads(RESULT.read_text(encoding="utf-8"))
+
+    def test_result_selects_the_exact_frozen_branch_without_posthoc_change(self):
+        self.assertEqual(self.result["decision"], self.contract["decision"]["select"])
+        self.assertEqual(self.result["area_contract"]["minimum_fraction_inclusive"], 0.001)
+        self.assertEqual(self.result["area_contract"]["maximum_fraction_exclusive"], 0.01)
+        self.assertFalse(self.result["area_contract"]["threshold_or_predicate_changed_after_observation"])
+
+    def test_exact_counts_and_selected_identity_are_recorded(self):
+        diagnostic = self.result["diagnostic"]
+        self.assertEqual(diagnostic["pixel_positive_frame_count"], 81)
+        self.assertEqual(diagnostic["bbox_positive_frame_count"], 2)
+        self.assertEqual(diagnostic["dual_positive_frame_count"], 2)
+        self.assertEqual(diagnostic["distinct_scene_pair_object_count"], 2)
+        self.assertEqual(diagnostic["complete_absent_frame_count"], 14775)
+        selection = self.result["selection"]
+        self.assertEqual(selection["selected_object_id"], 4)
+        self.assertEqual([selection["positive"]["source_scene_id"], selection["positive"]["source_image_id"]], [50, 722])
+        self.assertEqual([selection["negative"]["source_scene_id"], selection["negative"]["source_image_id"]], [48, 1])
+        self.assertGreaterEqual(selection["positive"]["bbox_area_fraction"], 0.001)
+        self.assertLess(selection["positive"]["bbox_area_fraction"], 0.01)
+
+    def test_result_is_one_read_with_two_byte_identical_pure_runs(self):
+        self.assertEqual(self.result["annotation_member_count"], 37)
+        self.assertEqual(self.result["real_annotation_read_attempts"], 1)
+        self.assertEqual(self.result["pure_diagnostic_runs"], 2)
+        self.assertTrue(self.result["byte_identical_result"])
+
+    def test_adversarial_limits_block_gain_and_movement_claims(self):
+        review = self.result["adversarial_review"]
+        self.assertEqual(review["independent_reviewer_count"], 0)
+        self.assertTrue(review["one_positive_and_one_negative_cannot_measure_stable_gain"])
+        self.assertTrue(review["cross_scene_pair_is_not_a_physical_transition"])
+        limits = self.result["claim_limits"]
+        self.assertFalse(limits["annotation_reference_is_detector_performance"])
+        self.assertFalse(limits["two_frame_oracle_is_generalization_evidence"])
+        self.assertFalse(limits["training_or_tuning_on_test_is_allowed"])
+
+    def test_next_gate_is_exact_materialization_only_and_every_boundary_is_closed(self):
+        next_gate = self.result["next_gate"]
+        self.assertEqual(next_gate["proposal"], "M26_EXACT_DUAL_AREA_PAIR_REPLACEMENT_MATERIALIZATION")
+        self.assertEqual(next_gate["maximum_rgb_members"], 2)
+        self.assertFalse(next_gate["adaptive_frame_or_threshold_change_allowed"])
+        self.assertFalse(next_gate["prediction_training_or_test_tuning_allowed"])
+        self.assertTrue(all(value is False for value in self.result["boundaries"].values()))
 
 
 if __name__ == "__main__":

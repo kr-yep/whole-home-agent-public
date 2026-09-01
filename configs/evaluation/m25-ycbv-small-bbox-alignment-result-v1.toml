@@ -1,0 +1,148 @@
+schema_version = 1
+status = "RECORDED_ANNOTATION_ONLY_DUAL_AREA_SELECTION"
+gate_id = "m25-ycbv-small-bbox-alignment-v1"
+decision = "SELECT_DUAL_AREA_CROSS_SCENE_PAIR"
+contract_revision = "73af8ffc73a74c9f69b3b7b9fda9e96028592f0a"
+implementation_revision = "5bbf39efc43bd3f5ab944f369b0016acc25b6d8b"
+source_revision = "5c2c4aa229800355648cd268040aa814f8dc94f0"
+license_id = "MIT"
+project_split = "test"
+target_entry_count = 4123
+target_frame_count = 900
+scene_count = 12
+annotation_member_count = 37
+real_annotation_read_attempts = 1
+pure_diagnostic_runs = 2
+byte_identical_result = true
+
+[[archive]]
+name = "ycbv_base.zip"
+bytes = 15805
+sha256 = "98440f8bd403100b21cf11a6729fabe8b3d5ce714472edc57a18b7f1fcd4bb18"
+status = "VERIFIED_EXISTING"
+
+[[archive]]
+name = "ycbv_test_bop19.zip"
+bytes = 660198701
+sha256 = "c0c11251849877e7b2f373f6c7acf54739dc69d0fb2649c20050ca977bf5513d"
+status = "VERIFIED_EXISTING"
+
+[area_contract]
+minimum_fraction_inclusive = 0.001
+maximum_fraction_exclusive = 0.01
+visible_pixel_basis = "PX_COUNT_VISIB_DIV_307200"
+bbox_basis = "BBOX_VISIB_WIDTH_TIMES_HEIGHT_DIV_307200"
+same_annotation_must_pass_both = true
+minimum_visibility_fraction_inclusive = 0.10
+frame_area = 307200
+threshold_or_predicate_changed_after_observation = false
+
+[diagnostic]
+pixel_positive_frame_count = 81
+bbox_positive_frame_count = 2
+dual_positive_frame_count = 2
+complete_absent_frame_count = 14775
+dual_positive_object_count = 2
+distinct_scene_pair_object_count = 2
+raw_annotations_emitted = false
+
+[[positive_object]]
+object_id = 4
+label = "005_tomato_soup_can"
+pixel_positive_frame_count = 21
+bbox_positive_frame_count = 1
+dual_positive_frame_count = 1
+distinct_scene_pair_available = true
+first_dual_positive_scene_id = 50
+first_dual_positive_image_id = 722
+
+[[positive_object]]
+object_id = 17
+label = "037_scissors"
+pixel_positive_frame_count = 2
+bbox_positive_frame_count = 0
+dual_positive_frame_count = 0
+distinct_scene_pair_available = false
+
+[[positive_object]]
+object_id = 18
+label = "040_large_marker"
+pixel_positive_frame_count = 58
+bbox_positive_frame_count = 1
+dual_positive_frame_count = 1
+distinct_scene_pair_available = true
+first_dual_positive_scene_id = 59
+first_dual_positive_image_id = 164
+
+[selection]
+selected_object_id = 4
+selected_label = "005_tomato_soup_can"
+selection_rule = "LOWEST_OBJECT_ID_THEN_FIRST_DUAL_AREA_POSITIVE_THEN_FIRST_DISTINCT_SCENE_COMPLETE_ABSENT_NEGATIVE"
+
+[selection.positive]
+source_scene_id = 50
+source_image_id = 722
+bbox_visible_xywh = [473, 161, 22, 129]
+visible_pixel_area_fraction = 0.005660807291666667
+bbox_area_fraction = 0.00923828125
+visible_fraction = 0.17551473556721842
+
+[selection.negative]
+source_scene_id = 48
+source_image_id = 1
+selected_class_present = false
+complete_ground_truth_required = true
+
+[adversarial_review]
+independent_reviewer_count = 0
+review_type = "SINGLE_AGENT_NON_INDEPENDENT_ADVERSARIAL_PASS"
+material_objection_remaining = false
+selection_is_label_driven_test_oracle_construction = true
+selected_bbox_is_narrow_and_elongated = true
+positive_is_partially_visible = true
+one_positive_and_one_negative_cannot_measure_stable_gain = true
+bbox_visib_rectangle_need_not_equal_visible_mask_support = true
+cross_scene_pair_is_not_a_physical_transition = true
+disposition = "THESE_LIMITS_BLOCK_ACCURACY_GENERALIZATION_AND_MOVEMENT_CLAIMS_BUT_DO_NOT_BLOCK_ONE_EXACT_MECHANICAL_REPLACEMENT_MATERIALIZATION"
+
+[claim_limits]
+established = "THE_PINNED_900_FRAME_ANNOTATION_SCOPE_CONTAINS_TWO_SOURCE_ORDERED_MODELED_CLASS_POSITIVES_THAT_PASS_BOTH_FROZEN_SMALL_AREA_DEFINITIONS_AND_HAVE_A_DISTINCT_SCENE_COMPLETE_CLASS_ABSENT_FRAME"
+not_established = "DETECTOR_GAIN_STATISTICAL_POWER_NATURAL_HOUSEHOLD_PREVALENCE_FIXED_CAMERA_TRANSFER_MOVEMENT_IDENTITY_RELATION_OR_WHOLE_HOME_VALUE"
+annotation_reference_is_detector_performance = false
+two_frame_oracle_is_generalization_evidence = false
+training_or_tuning_on_test_is_allowed = false
+
+[next_gate]
+proposal = "M26_EXACT_DUAL_AREA_PAIR_REPLACEMENT_MATERIALIZATION"
+allowed_work = "FREEZE_THEN_REPLACE_THE_IGNORED_M24_TWO_FRAME_D1_WITH_ONLY_SCENE_50_IMAGE_722_AND_SCENE_48_IMAGE_1_AND_VERIFY_ONE_M16_SMALL_BBOX_TARGET"
+maximum_rgb_members = 2
+adaptive_frame_or_threshold_change_allowed = false
+prediction_training_or_test_tuning_allowed = false
+movement_relation_claim_or_operation_allowed = false
+
+[boundaries]
+archive_or_dataset_downloaded = false
+source_bytes_in_git = false
+real_annotations_in_git = false
+rgb_or_other_media_read = false
+model_detector_or_tracker_loaded = false
+prediction_run = false
+training_run = false
+test_tuning = false
+local_vost_or_visor_read = false
+reserved_source_read = false
+movement_candidate_created = false
+claim_candidate_created = false
+accepted_claim_created = false
+relation_or_transition_emitted = false
+live_private_cloud_inference_or_action_connected = false
+operate_enabled = false
+
+[verification]
+python = "3.12.13"
+focused_tests_passed = 19
+full_tests_passed = 262
+public_audit_scanned_files = 242
+public_audit_scanned_snapshots = 484
+public_audit_violations = 0
+operate_enabled = false

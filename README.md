@@ -151,6 +151,14 @@ image, but the bbox occupies 3.043%, so M16 does not count it as a small-bbox ta
 No detector run is authorized until that mismatch is resolved. See the
 [M24 evidence report](docs/evaluation/m24-ycbv-cross-scene-d1-materialization-v1.md).
 
+M25 repaired the evaluation definition before touching media: the same annotation must
+occupy 0.1–1% under both visible pixels and the M16 visible-bbox area. Only 2 of 900
+target frames pass. The fixed source-order replacement is object 4 at scene 50/image
+722 with the complete class-absent scene 48/image 1 frame. This selects one exact
+two-frame replacement materialization only; it is too small to support a detector-gain
+or household-transfer claim. See the
+[M25 evidence report](docs/evaluation/m25-ycbv-small-bbox-alignment-v1.md).
+
 ## Run the demo
 
 Requires Python 3.11 or newer. The lockfile was generated with `uv 0.11.24`.
@@ -226,10 +234,11 @@ docs/                       architecture, demo, ADR, and technology notes
 The first public detector, consecutive motion, target-tracking, failure-localization,
 RF-DETR replacement, D-FINE synthetic engineering, M14 scientific-priority, M15
 target-substrate, M16 label-oracle, M17 generation-strategy, M18 vector-substrate, and
-M19 real-oracle through M24 materialization gates are frozen. M24 produced a valid local
-two-frame fixture, but its positive is small only by visible pixels and large under the
-M16 bbox-area metric. M25 may only run a frozen annotation-only dual-area diagnostic;
-it cannot read RGB, loosen a threshold after results, load a model, predict, or train.
+M19 real-oracle through M25 dual-area gates are frozen. M25 found exactly two reference
+frames that satisfy both small-area definitions and selected one exact replacement pair.
+M26 may only freeze and materialize those two RGB members, preserve separate scene
+sequences, and verify exactly one M16 small-bbox target. It cannot adaptively select
+frames, load a model, predict, tune, or train.
 Tracker replacement remains a separate later co-gate.
 The reserved VOST validation source and VISOR `P14_05` must remain untouched. Do not add
 a movement-candidate layer merely because scheduling is inexpensive. Training remains
@@ -247,7 +256,8 @@ and [M12 detector screen](docs/evaluation/vost-m12-rfdetr-small-v1.md), plus the
 [M21 result](docs/evaluation/m21-ycbv-per-archive-root-repair-v1.md), and the
 [M22 result](docs/evaluation/m22-ycbv-annotation-failure-localization-v1.md), and the
 [M23 result](docs/evaluation/m23-cross-scene-transfer-oracle-validity-v1.md), and the
-[M24 result](docs/evaluation/m24-ycbv-cross-scene-d1-materialization-v1.md).
+[M24 result](docs/evaluation/m24-ycbv-cross-scene-d1-materialization-v1.md), plus the
+[M25 result](docs/evaluation/m25-ycbv-small-bbox-alignment-v1.md).
 
 ## Safety and data boundary
 
