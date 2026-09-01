@@ -1,9 +1,10 @@
-"""Run the frozen M28 offline primary-demo acceptance checks."""
+"""Run the single frozen M29 offline primary-demo acceptance retry."""
 
 from __future__ import annotations
 
 import contextlib
 import argparse
+import hashlib
 import io
 import json
 from pathlib import Path
@@ -22,10 +23,10 @@ from whole_home_agent.cli import main as cli_main
 from whole_home_agent.public_demo import run_public_demo
 
 
-CONTRACT = ROOT / "configs" / "evaluation" / "m28-primary-demo-acceptance-v1.toml"
+CONTRACT = ROOT / "configs" / "evaluation" / "m29-primary-demo-acceptance-retry-v1.toml"
 STREAMLIT = ROOT / "src" / "whole_home_agent" / "streamlit_app.py"
 JUDGE_CARD = ROOT / "docs" / "judge-demo-card.md"
-USE_CLASS = "COMMITTED_D0_SYNTHETIC_PRIMARY_DEMO"
+USE_CLASS = "COMMITTED_D0_SYNTHETIC_PRIMARY_DEMO_M29_SINGLE_RETRY"
 
 
 @contextlib.contextmanager
@@ -36,7 +37,7 @@ def _deny_network(counter: dict[str, int]) -> Iterator[None]:
 
     def denied(*_args, **_kwargs):
         counter["attempts"] += 1
-        raise RuntimeError("M28 acceptance denies network access")
+        raise RuntimeError("M29 acceptance retry denies network access")
 
     socket.socket.connect = denied
     socket.socket.connect_ex = denied
@@ -80,6 +81,33 @@ def _claim_signature(claim: dict[str, object]) -> tuple[object, ...]:
     )
 
 
+def _assert_frozen_basis(contract: dict[str, object]) -> list[tuple[object, ...]]:
+    expected_paths = {
+        "m28_result": "configs/evaluation/m28-primary-demo-acceptance-result-v1.toml",
+        "source_manifest": "examples/media/generated/key_bag_sofa_v2.manifest.json",
+        "relation_engine": "src/whole_home_agent/relation_inference.py",
+        "relation_rules": "configs/perception/relation-rules-v1.toml",
+    }
+    for key, expected in expected_paths.items():
+        if contract.get(key) != expected:
+            raise RuntimeError(f"M29 frozen path changed: {key}")
+        path = ROOT / expected
+        actual = hashlib.sha256(path.read_bytes()).hexdigest()
+        if actual != contract[f"{key}_sha256"]:
+            raise RuntimeError(f"M29 frozen hash changed: {key}")
+    manifest = json.loads((ROOT / expected_paths["source_manifest"]).read_text(encoding="utf-8"))
+    return [
+        (
+            event["operation"],
+            event["predicate"],
+            event["subject_id"],
+            event["object_id"],
+            event["frame_index"],
+        )
+        for event in manifest["events"]
+    ]
+
+
 def _assert_result(
     result: dict[str, object], contract: dict[str, object], failures: list[str]
 ) -> None:
@@ -109,15 +137,31 @@ def _assert_result(
     }:
         failures.append("GOVERNANCE_BOUNDARY")
     answer = result.get("answer", {})
-    if (
+    expected_answer = contract["expected_answer"]
+    answer_mismatch = (
         answer.get("status"),
+        answer.get("subject_id"),
         answer.get("location_id"),
         answer.get("epistemic_status"),
         len(answer.get("relation_path", ())),
         len(answer.get("source_claim_ids", ())),
-        bool(answer.get("world_scope")),
-        answer.get("as_of_source_sequence") is not None,
-    ) != ("FOUND", "sofa", "estimated", 2, 2, True, True):
+    ) != (
+        expected_answer["status"],
+        expected_answer["subject_id"],
+        expected_answer["location_id"],
+        expected_answer["epistemic_status"],
+        expected_answer["relation_path_length"],
+        expected_answer["source_claim_count"],
+    )
+    if "world_scope" in expected_answer:
+        answer_mismatch |= answer.get("world_scope") != expected_answer["world_scope"]
+    elif expected_answer.get("world_scope_required"):
+        answer_mismatch |= not bool(answer.get("world_scope"))
+    if "as_of_source_sequence" in expected_answer:
+        answer_mismatch |= answer.get("as_of_source_sequence") != expected_answer["as_of_source_sequence"]
+    elif expected_answer.get("as_of_source_sequence_required"):
+        answer_mismatch |= answer.get("as_of_source_sequence") is None
+    if answer_mismatch:
         failures.append("SCOPED_ANSWER")
     expected_claims = [
         (
@@ -192,8 +236,21 @@ def _assert_judge_card(failures: list[str]) -> None:
 
 def check() -> dict[str, object]:
     contract = tomllib.loads(CONTRACT.read_text(encoding="utf-8"))
-    if contract.get("status") != "FROZEN_BEFORE_COMMITTED_DEMO_EXECUTION":
-        raise RuntimeError("M28 contract identity changed")
+    if contract.get("status") != "FROZEN_BEFORE_SINGLE_COMMITTED_ACCEPTANCE_RETRY":
+        raise RuntimeError("M29 contract identity changed")
+    source_event_labels = _assert_frozen_basis(contract)
+    expected_event_labels = [
+        (
+            item["operation"],
+            item["predicate"],
+            item["subject_id"],
+            item["object_id"],
+            item["source_event_label_frame"],
+        )
+        for item in contract["expected_claim"]
+    ]
+    if source_event_labels != expected_event_labels:
+        raise RuntimeError("M29 source event-label contract changed")
     counter = {"attempts": 0}
     with _deny_network(counter):
         direct = run_public_demo(
@@ -226,8 +283,6 @@ def check() -> dict[str, object]:
         json.dumps(direct_semantic, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
         + "\n"
     ).encode("utf-8")
-    import hashlib
-
     return {
         "schema_version": 1,
         "gate_id": contract["gate_id"],
@@ -238,6 +293,16 @@ def check() -> dict[str, object]:
         "semantic_outputs_equal": direct_semantic == cli_semantic,
         "semantic_sha256": hashlib.sha256(semantic_bytes).hexdigest(),
         "failure_codes": failures,
+        "source_event_labels": [
+            {
+                "operation": item[0],
+                "predicate": item[1],
+                "subject_id": item[2],
+                "object_id": item[3],
+                "frame_index": item[4],
+            }
+            for item in source_event_labels
+        ],
         "source": direct.get("source"),
         "answer": direct.get("answer"),
         "claims": direct.get("claims"),

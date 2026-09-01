@@ -2,10 +2,22 @@
 
 from __future__ import annotations
 
+import contextlib
 import hashlib
+import io
 import tomllib
 import unittest
 from pathlib import Path
+
+from tools.check_primary_demo import (
+    CONTRACT as CHECKER_CONTRACT,
+    USE_CLASS,
+    _assert_frozen_basis,
+    _assert_judge_card,
+    _assert_presentation,
+    _assert_result,
+    _parser,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -81,6 +93,91 @@ class M29ContractTests(unittest.TestCase):
             "M30_TEAMMATE_CLEAN_INSTALL_AND_DEMO_DRILL",
         )
         self.assertTrue(decision["stop_authorizes_no_second_retry"])
+
+
+class M29CommittedCheckerTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.document = tomllib.loads(CONTRACT.read_text(encoding="utf-8"))
+
+    def test_checker_is_closed_to_m29_contract_and_acknowledgement(self):
+        self.assertEqual(CHECKER_CONTRACT, CONTRACT)
+        self.assertEqual(
+            USE_CLASS,
+            "COMMITTED_D0_SYNTHETIC_PRIMARY_DEMO_M29_SINGLE_RETRY",
+        )
+        with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
+            _parser().parse_args([])
+        parsed = _parser().parse_args(["--acknowledge-use-class", USE_CLASS])
+        self.assertEqual(parsed.acknowledge_use_class, USE_CLASS)
+
+    def test_checker_validates_exact_frozen_basis_and_event_labels(self):
+        self.assertEqual(
+            _assert_frozen_basis(self.document),
+            [
+                ("assert", "inside", "key", "bag", 35),
+                ("assert", "at_zone", "bag", "sofa", 65),
+            ],
+        )
+
+    def test_corrected_trace_contract_accepts_a_matching_semantic_result(self):
+        result = {
+            "source": {
+                "source_id": "b1-key-bag-sofa",
+                "source_revision": "2",
+                "content_hash": self.document["source_content_sha256"],
+                "license": "CC0-1.0",
+                "frame_count": 80,
+            },
+            "governance": {
+                "allowed_data": "D0_SYNTHETIC",
+                "mode": "OFFLINE_PRERECORDED_REPLAY",
+                "operate": "DISABLED",
+                "physical_truth_claimed": False,
+            },
+            "answer": {
+                "status": "FOUND",
+                "subject_id": "key",
+                "location_id": "sofa",
+                "epistemic_status": "estimated",
+                "relation_path": [{}, {}],
+                "source_claim_ids": ["a", "b"],
+                "world_scope": "source:b1-key-bag-sofa@2",
+                "as_of_source_sequence": 68,
+            },
+            "claims": [
+                {
+                    "operation": "assert",
+                    "predicate": "inside",
+                    "subject_id": "key",
+                    "object_id": "bag",
+                    "epistemic_status": "estimated",
+                    "source_position": {"frame_index": 37},
+                    "evidence": [{"start": {"frame_index": 33}, "end": {"frame_index": 37}}],
+                },
+                {
+                    "operation": "assert",
+                    "predicate": "at_zone",
+                    "subject_id": "bag",
+                    "object_id": "sofa",
+                    "epistemic_status": "estimated",
+                    "source_position": {"frame_index": 68},
+                    "evidence": [{"start": {"frame_index": 66}, "end": {"frame_index": 68}}],
+                },
+            ],
+            "warnings": ["a", "b", "c"],
+            "source_diagnostics": {"abstentions": [], "completed": True},
+            "run_receipt": {"status": "COMPLETE"},
+        }
+        failures: list[str] = []
+        _assert_result(result, self.document, failures)
+        self.assertEqual(failures, [])
+
+    def test_committed_presentation_and_judge_card_remain_accepted(self):
+        failures: list[str] = []
+        _assert_presentation(failures)
+        _assert_judge_card(failures)
+        self.assertEqual(failures, [])
 
 
 if __name__ == "__main__":
