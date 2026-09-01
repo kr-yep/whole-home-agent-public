@@ -7,6 +7,7 @@ failure_code = "NO_FROZEN_SLICE"
 failure_summary = "NO_OBJECT_AND_SCENE_PAIR_HAS_BOTH_A_0_1_TO_1_PERCENT_VISIBLE_POSITIVE_AND_A_COMPLETE_SELECTED_CLASS_ABSENT_FRAME"
 contract_revision = "07f498341c55ae65836bbf6c84b100f7f0566c20"
 implementation_revision = "5164634ec419f3547996001f45d4aac1978acff7"
+clean_result_revision = "5da866ce90b57baf77bb22d1eb040fbab5e20bad"
 source_revision = "5c2c4aa229800355648cd268040aa814f8dc94f0"
 source_identity_passed = true
 archive_header_preflight_passed = true
@@ -66,8 +67,14 @@ materialization_retry_allowed = false
 model_or_training_allowed = false
 
 [verification]
+python = "3.12.13"
 contract_tests_before_real_archive_reuse_passed = 5
 synthetic_and_prior_contract_tests_before_real_annotation_passed = 26
+focused_tests_on_clean_result_revision_passed = 15
+full_tests_on_clean_result_revision_passed = 203
+public_audit_scanned_files = 222
+public_audit_scanned_snapshots = 444
+public_audit_violations = 0
 archive_reuse_attempts = 1
 combined_archive_member_count = 10092
 combined_total_uncompressed_bytes = 671106741

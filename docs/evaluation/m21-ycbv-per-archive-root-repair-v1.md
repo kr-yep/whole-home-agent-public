@@ -52,6 +52,15 @@ frames under any other lawful protocol, or that a detector cannot benefit from i
 Separately diagnosing those terms is useful, but doing so cannot retroactively turn M21
 into a pass or authorize a changed negative definition.
 
+## Verification
+
+On clean result revision `5da866ce90b57baf77bb22d1eb040fbab5e20bad`, Python
+3.12.13 passed all `203/203` tests. The M21-focused module contributed 15 passing
+contract, mapping, safety, selective-extraction, and stopped-result tests. The public
+release audit scanned 222 tracked files and 444 index/worktree snapshots with zero
+violations and `operate_enabled: false`. These checks support only the bounded software,
+execution, and release claims above.
+
 ## What did not occur
 
 - archive download or alternate mirror/source use in M21;
