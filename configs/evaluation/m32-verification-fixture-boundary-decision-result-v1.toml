@@ -1,0 +1,119 @@
+schema_version = 1
+status = "RECORDED_SINGLE_ELIGIBLE_SELECTION"
+gate_id = "m32-verification-fixture-boundary-decision-v1"
+decision = "SELECT_ONE_FUTURE_VERIFICATION_PROFILE_POLICY"
+contract_revision = "a28ae6c09e07369ad35976d595b301bcf2c59518"
+selected_candidate = "A_EXPLICIT_VERIFICATION_PROFILES"
+eligible_candidate_count = 1
+repository_evidence_only = true
+scoring_phase_test_demo_checker_or_audit_executed = false
+scoring_phase_media_or_model_read = false
+production_code_schema_or_presentation_changed = false
+m31_status_after_m32 = "CONTRACT_NORMAL_STOP"
+
+[[observed_fact]]
+id = "F1_CURRENT_CI_HAS_DISTINCT_TEXT_VIDEO_AND_DEMO_JOBS"
+status = "PASS"
+evidence = "PINNED_CI_WORKFLOW_RUNS_B0_TESTS_PRERECORDED_CONTRACT_TESTS_PUBLIC_DEMO_TESTS_COMPACT_CLI_AND_RELEASE_AUDIT"
+
+[[observed_fact]]
+id = "F2_DEMO_REGRESSION_READ_IS_EXPLICIT"
+status = "PASS"
+evidence = "TEST_PUBLIC_DEMO_LOADS_PUBLIC_DEMO_MEDIA_AND_COMPARES_ITS_SHA256_TO_THE_MANIFEST"
+
+[[observed_fact]]
+id = "F3_FIXTURE_IDENTITY_IS_CLOSED"
+status = "PASS"
+evidence = "MANIFEST_NAMES_EXACT_PATH_SHA256_PROJECT_GENERATED_SYNTHETIC_PROVENANCE_CC0_LICENSE_AND_D0_SYNTHETIC_USE_CLASS"
+
+[[observed_fact]]
+id = "F4_RELEASE_AUDIT_EXCEPTION_IS_NARROW"
+status = "PASS"
+evidence = "AUDIT_ACCEPTS_GENERATED_MEDIA_ONLY_UNDER_THE_DECLARED_DIRECTORY_WITH_MANIFEST_HASH_LICENSE_USE_CLASS_AND_PROVENANCE"
+
+[[observed_fact]]
+id = "F5_M31_HISTORY_IS_EXPLICIT"
+status = "PASS"
+evidence = "M31_RESULT_DISTINGUISHES_MECHANICALLY_CORRECT_IMPLEMENTATION_FROM_ITS_CONTRACT_NORMAL_STOP"
+
+[[candidate_result]]
+id = "A_EXPLICIT_VERIFICATION_PROFILES"
+eligible = true
+pass_count = 8
+fail_count = 0
+gate_results = ["PASS", "PASS", "PASS", "PASS", "PASS", "PASS", "PASS", "PASS"]
+
+[[candidate_result]]
+id = "B_ZERO_MEDIA_FOR_EVERY_VERIFICATION"
+eligible = false
+pass_count = 6
+fail_count = 2
+gate_results = ["FAIL", "PASS", "PASS", "PASS", "PASS", "FAIL", "PASS", "PASS"]
+failure = "COLLAPSES_STATIC_AND_COMPLETE_PROFILES_AND_CANNOT_RECEIPT_THE_CURRENT_MEDIA_CONFORMANCE_PATH"
+
+[[candidate_result]]
+id = "C_ALL_D0_MEDIA_ALLOWED_FOR_VERIFICATION"
+eligible = false
+pass_count = 2
+fail_count = 6
+gate_results = ["FAIL", "FAIL", "FAIL", "FAIL", "PASS", "FAIL", "PASS", "FAIL"]
+failure = "REMOVES_EXACT_IDENTITY_PURPOSE_AND_SEPARATE_GATE_BOUNDARIES"
+
+[selected_policy]
+static_contract_media = "FORBIDDEN"
+static_contract_application_or_demo_execution = "FORBIDDEN"
+complete_regression_media = "EXACT_ALLOWLIST_ONLY"
+complete_regression_allowlist = ["examples/media/generated/key_bag_sofa_v2.manifest.json"]
+complete_regression_required_use_class = "D0_SYNTHETIC"
+complete_regression_required_provenance = "project_generated_synthetic"
+complete_regression_evidence_meaning = "REGRESSION_ONLY"
+complete_regression_acceptance_retry_or_experiment = "FORBIDDEN"
+ad_hoc_acceptance_or_experiment_authorized = false
+new_path_or_use_class_requires_separate_gate = true
+m29_checker_or_retry_allowed = false
+
+[receipt_requirements]
+record_code_or_workflow_revision = true
+record_manifest_path_and_hash = true
+record_result_and_claim_limits = true
+network_source_or_credential_allowed = false
+
+[outside_scope]
+existing_m18_project_generated_d1_contract_changed_or_revoked = false
+third_party_public_fixture_authorized = false
+private_or_live_fixture_authorized = false
+new_fixture_authorized = false
+model_work_authorized = false
+
+[claim_limits]
+m31_retroactive_pass = false
+product_or_cv_gain_established = false
+real_home_transfer_established = false
+publication_rights_established_by_hash = false
+operation_or_household_authority_established = false
+
+[verification]
+python = "3.12.13"
+local_test_execution_count = 0
+static_toml_parse_passed = true
+public_audit_status = "PENDING_POST_SELECTION_RECEIPT"
+public_ci_status = "PENDING"
+operate_enabled = false
+
+[boundaries]
+third_party_private_or_live_media_read = false
+model_loaded = false
+new_dependency_or_storage_added = false
+prediction_training_or_tuning_run = false
+production_code_schema_or_presentation_changed = false
+m29_checker_or_retry_run = false
+live_private_cloud_inference_or_action_connected = false
+operate_enabled = false
+
+[next_gate]
+proposal = "M33_TEAMMATE_CLEAN_INSTALL_AND_CLOSED_DEMO_DRILL"
+separately_frozen_contract_required = true
+exact_committed_d0_fixture_only = true
+external_private_live_media_or_model_allowed = false
+operate_enabled = false
+

@@ -1,6 +1,6 @@
 # Current capability status
 
-**Checkpoint:** M31 · **Runtime:** `OPERATE DISABLED` · **Production ready:** no
+**Checkpoint:** M32 · **Runtime:** `OPERATE DISABLED` · **Production ready:** no
 
 This page is updated with every milestone push so a teammate can see what is usable and
 what is still missing without reconstructing the full experiment history.
@@ -40,18 +40,12 @@ what is still missing without reconstructing the full experiment history.
 These remain blocked by proposed governance, unassigned roles, absent consent and data
 policy, and `OPERATE DISABLED`.
 
-## Latest push: M31 CI receipt
+## Latest push: M32 verification boundary
 
-Added required immutable query-scope `subject_id` to canonical `AnswerTrace`, populated
-it at the sole constructor, and exposed it in both B0 and B1 answer serializers. All six
-query statuses retain identity and the B0 semantic hash is unchanged.
+Added three explicit verification profiles. Static work cannot read media or execute
+the demo; complete regression may read only the exact manifest-backed project-owned D0
+synthetic fixture and cannot count as a new acceptance/model experiment; ad-hoc work
+still requires a separate gate. M31 remains a normal STOP.
 
-The implementation is usable, but the M31 Goal is a normal contract STOP: mandatory
-full regression reads the repository's pinned D0 synthetic clip, while the frozen M31
-contract also forbade every media read. M32 must classify that verification boundary
-using repository evidence only; it may not silently rewrite M31 as PASS.
-
-The latest push records that the M31 result/handoff revision passed
-[public CI run 33520669687](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33520669687).
-This adds verification evidence only: the usable capabilities and missing work listed
-above are unchanged.
+The usable product behavior is unchanged. The next missing delivery proof is one
+teammate-style clean install and closed-demo drill in a disposable environment.

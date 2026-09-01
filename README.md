@@ -29,12 +29,11 @@ indoor small-object gain; robust tracking under occlusion/camera motion; live ca
 multi-camera support; durable household memory/retention; assigned policy/data roles,
 consent, and any operational activation. Live/private sensing and actions remain blocked.
 
-**Latest milestone (M31):** the additive `AnswerTrace.subject_id` implementation passes
-all semantic tests, but M31 is recorded as a normal contract STOP because its required
-full suite reads the pinned synthetic clip while the same contract forbade every media
-read. The M31 result/handoff revision passed
-[public CI](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33520669687).
-M32 must clarify that verification classification without changing code.
+**Latest milestone (M32):** verification is now split into static-contract,
+complete-regression, and ad-hoc acceptance/experiment profiles. Only complete
+regression may read the exact manifest-backed project-owned D0 synthetic fixture, and
+only as regression evidence. M31 remains a historical normal STOP. M33 is the bounded
+teammate clean-install and closed-demo drill.
 
 ## What works today
 
@@ -295,13 +294,14 @@ docs/                       architecture, demo, ADR, and technology notes
 The first public detector, consecutive motion, target-tracking, failure-localization,
 RF-DETR replacement, D-FINE synthetic engineering, M14 scientific-priority, M15
 target-substrate, M16 label-oracle, M17 generation-strategy, M18 vector-substrate, and
-M19 real-oracle through M31 answer-identity-implementation gates are frozen. M27 selects the existing
+M19 real-oracle through M32 verification-boundary gates are frozen. M27 selects the existing
 synthetic end-to-end replay as the primary demo, keeps M26 as optional smoke, and defers
 scientific gain to a separately contracted protected-group development/untouched-test
-lane. M31's additive implementation passes all semantic checks but records a normal
-contract stop: mandatory full regression reads the pinned D0 synthetic clip, conflicting
-with its no-media assertion. M32 may clarify only that verification classification using
-repository evidence; it cannot change code, rerun M29, load a model, tune, or train.
+lane. M31's additive implementation passes all semantic checks but remains a historical
+normal stop. M32 now permits the exact committed D0 synthetic fixture only inside the
+complete-regression profile. M33 is one separately frozen teammate clean-install and
+closed-demo drill; it cannot use external/private/live media, rerun M29, load a model,
+tune, or train.
 Tracker replacement remains a separate later co-gate.
 The reserved VOST validation source and VISOR `P14_05` must remain untouched. Do not add
 a movement-candidate layer merely because scheduling is inexpensive. Training remains
@@ -331,6 +331,9 @@ The [M30 result](docs/evaluation/m30-answer-subject-identity-decision-v1.md) sel
 canonical boundary for one separately frozen implementation.
 The [M31 result](docs/evaluation/m31-answer-trace-subject-implementation-v1.md) records
 the correct additive implementation and the distinct verification-boundary STOP.
+The [M32 result](docs/evaluation/m32-verification-fixture-boundary-decision-v1.md)
+separates static, complete-regression, and ad-hoc experiment authority without changing
+M31 history.
 
 ## Safety and data boundary
 
