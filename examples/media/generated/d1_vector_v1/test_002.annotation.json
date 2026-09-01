@@ -1,0 +1,57 @@
+{
+  "coordinate_space": "pixel_xyxy_exclusive",
+  "dataset_id": "synthetic:d1-vector-slice@1",
+  "evaluation_state": "SCORED",
+  "frame_index": 2,
+  "frame_role": "occluded_inside_container",
+  "image": {
+    "height": 360,
+    "path": "examples/media/generated/d1_vector_v1/test_002.png",
+    "sha256": "f489e3c18244e47f94871ed8b0033ac839c98a9918f1bd2d32dfb24a0a1fdd07",
+    "width": 640
+  },
+  "instances": [
+    {
+      "bbox": null,
+      "instance_id": "key-test",
+      "label": "key",
+      "visibility": "OCCLUDED"
+    }
+  ],
+  "reference_objects": [
+    {
+      "bbox": [
+        286,
+        212,
+        378,
+        284
+      ],
+      "instance_id": "bag-test",
+      "label": "bag"
+    },
+    {
+      "bbox": [
+        426,
+        170,
+        636,
+        295
+      ],
+      "instance_id": "sofa-test",
+      "label": "sofa"
+    }
+  ],
+  "relation_state": "INSIDE_BAG",
+  "relations": [
+    {
+      "epistemic_status": "synthetic_reference",
+      "object_id": "bag-test",
+      "predicate": "inside",
+      "subject_id": "key-test"
+    }
+  ],
+  "schema_version": 1,
+  "source_sequence": 2,
+  "source_sequence_id": "d1-vector-test-v1",
+  "split": "test",
+  "use_class": "D0_SYNTHETIC"
+}

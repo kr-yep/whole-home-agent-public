@@ -71,6 +71,9 @@ jobs:
       - name: Run prerecorded perception contract tests
         run: .venv/bin/python -m unittest discover -s tests -p "test_b1_*.py" -v
 
+      - name: Run deterministic vector D1 substrate tests
+        run: .venv/bin/python -m unittest tests.test_m18_vector_d1_slice -v
+
       - name: Audit public release contents
         run: .venv/bin/python tools/audit_public_release.py
 

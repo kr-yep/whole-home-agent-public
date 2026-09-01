@@ -1,0 +1,50 @@
+{
+  "coordinate_space": "pixel_xyxy_exclusive",
+  "dataset_id": "synthetic:d1-vector-slice@1",
+  "evaluation_state": "UNKNOWN",
+  "frame_index": 5,
+  "frame_role": "unknown",
+  "image": {
+    "height": 360,
+    "path": "examples/media/generated/d1_vector_v1/validation_005.png",
+    "sha256": "07abf3051482fa1d47366132bfaf94ae58e5635d2a5d5c69e41bc0da8d856e4c",
+    "width": 640
+  },
+  "instances": [
+    {
+      "bbox": null,
+      "instance_id": "key-validation",
+      "label": "key",
+      "visibility": "UNKNOWN"
+    }
+  ],
+  "reference_objects": [
+    {
+      "bbox": [
+        274,
+        220,
+        366,
+        292
+      ],
+      "instance_id": "bag-validation",
+      "label": "bag"
+    },
+    {
+      "bbox": [
+        414,
+        178,
+        624,
+        303
+      ],
+      "instance_id": "sofa-validation",
+      "label": "sofa"
+    }
+  ],
+  "relation_state": "UNKNOWN",
+  "relations": [],
+  "schema_version": 1,
+  "source_sequence": 1,
+  "source_sequence_id": "d1-vector-validation-v1",
+  "split": "validation",
+  "use_class": "D0_SYNTHETIC"
+}

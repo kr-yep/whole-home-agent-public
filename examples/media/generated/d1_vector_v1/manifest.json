@@ -1,0 +1,582 @@
+{
+  "annotations": [
+    {
+      "image_path": "examples/media/generated/d1_vector_v1/development_000.png",
+      "image_sha256": "28c7476fbf26e9872ddefcdb7413a82fe381726e257cc76b70c0c591fa5689ab",
+      "kind": "frame_annotation",
+      "path": "examples/media/generated/d1_vector_v1/development_000.annotation.json",
+      "sha256": "fc6aaabf273f62f67c185ede96b574937d329732d606bd7e095ac3a8c49f1ac5",
+      "size_bytes": 1127
+    },
+    {
+      "image_path": "examples/media/generated/d1_vector_v1/development_001.png",
+      "image_sha256": "eaec34aee0759760777c6fba84108d66af51c031363b87d4cca372a1909d2ef4",
+      "kind": "frame_annotation",
+      "path": "examples/media/generated/d1_vector_v1/development_001.annotation.json",
+      "sha256": "f895c51ea91ecf03a28374cd3dba9c8bbb0ce8a989696d5f4cee95dbc2c63cbc",
+      "size_bytes": 1139
+    },
+    {
+      "image_path": "examples/media/generated/d1_vector_v1/development_002.png",
+      "image_sha256": "f6074b4a9af68af9f9eec037d448b09fd53df28c9832745205468be426adb3db",
+      "kind": "frame_annotation",
+      "path": "examples/media/generated/d1_vector_v1/development_002.annotation.json",
+      "sha256": "302c2b13bf1a33aef30daa3c51c69ea7b922ce61ab2d41b8be09319fa4ca1ed1",
+      "size_bytes": 1258
+    },
+    {
+      "image_path": "examples/media/generated/d1_vector_v1/development_003.png",
+      "image_sha256": "436e0959ee074748f26ab1717a6584624fa0b2d543cfd7dafb929ef7e6b412b3",
+      "kind": "frame_annotation",
+      "path": "examples/media/generated/d1_vector_v1/development_003.annotation.json",
+      "sha256": "a8eb3a828082fc814f467442a5f589c0de04eba19bf45ccfe8fcb739622d14f0",
+      "size_bytes": 1306
+    },
+    {
+      "image_path": "examples/media/generated/d1_vector_v1/development_004.png",
+      "image_sha256": "a026c0dcdf6eb552be440d9306056c6f774321a4e77b9663028eae9185b6fc7e",
+      "kind": "frame_annotation",
+      "path": "examples/media/generated/d1_vector_v1/development_004.annotation.json",
+      "sha256": "ad1624005af0882742682a11ee8bf1cc9eeb14158f25669f1db340541f36b2c8",
+      "size_bytes": 1071
+    },
+    {
+      "image_path": "examples/media/generated/d1_vector_v1/development_005.png",
+      "image_sha256": "801aada6fc6288cdb59955980bd1d482d06b1109a707edd724dc77216e954199",
+      "kind": "frame_annotation",
+      "path": "examples/media/generated/d1_vector_v1/development_005.annotation.json",
+      "sha256": "2684961c3c197939100f1be9456622ba846acdc9b71c26a60e7755467c3c8d2c",
+      "size_bytes": 1068
+    },
+    {
+      "image_path": "examples/media/generated/d1_vector_v1/validation_000.png",
+      "image_sha256": "2e650b7ac5c14afaf916f059d7cf228875fadb6f1941307f98f543e23087d482",
+      "kind": "frame_annotation",
+      "path": "examples/media/generated/d1_vector_v1/validation_000.annotation.json",
+      "sha256": "490c9b97cd6bb79341447f9627c79d499db374de1c4801d990df27fc72688a41",
+      "size_bytes": 1121
+    },
+    {
+      "image_path": "examples/media/generated/d1_vector_v1/validation_001.png",
+      "image_sha256": "c3b64a6074a9851cc1be20ee269e4ff2507f027d0b66758fd343a1dcd7f8df86",
+      "kind": "frame_annotation",
+      "path": "examples/media/generated/d1_vector_v1/validation_001.annotation.json",
+      "sha256": "707e9812dc33d053f8e6128e40809d50ca635b59658a6de8904cefe98f074e0f",
+      "size_bytes": 1133
+    },
+    {
+      "image_path": "examples/media/generated/d1_vector_v1/validation_002.png",
+      "image_sha256": "0633e2cf5d81e722859f3f9568d3242d12ca1c262c9369e613e5698756a468d2",
+      "kind": "frame_annotation",
+      "path": "examples/media/generated/d1_vector_v1/validation_002.annotation.json",
+      "sha256": "7fd386b23089066f093d2c6669f269a1280a171f36bed4f452f2457508c7176f",
+      "size_bytes": 1250
+    },
+    {
+      "image_path": "examples/media/generated/d1_vector_v1/validation_003.png",
+      "image_sha256": "c82b5cfc554569411dc7c18aa1b6a4d5f80bcc3ab7ecd74309006fb9cbc7e65f",
+      "kind": "frame_annotation",
+      "path": "examples/media/generated/d1_vector_v1/validation_003.annotation.json",
+      "sha256": "9ca517468e0f0d17904cf324829946676f7740eb382c0bf8530d4ea273eb8f6b",
+      "size_bytes": 1298
+    },
+    {
+      "image_path": "examples/media/generated/d1_vector_v1/validation_004.png",
+      "image_sha256": "9f3368505286ad10d40240230f5831519d292da901b1cda45aa04b87b6788c44",
+      "kind": "frame_annotation",
+      "path": "examples/media/generated/d1_vector_v1/validation_004.annotation.json",
+      "sha256": "578ac69becd08c10994728ae571662a0f64f302df827ceacd48a997df7caa908",
+      "size_bytes": 1065
+    },
+    {
+      "image_path": "examples/media/generated/d1_vector_v1/validation_005.png",
+      "image_sha256": "07abf3051482fa1d47366132bfaf94ae58e5635d2a5d5c69e41bc0da8d856e4c",
+      "kind": "frame_annotation",
+      "path": "examples/media/generated/d1_vector_v1/validation_005.annotation.json",
+      "sha256": "feb2fbea96965ad4f5e6f6e5f481922560e9ae26789ae6d7374563eccc358e75",
+      "size_bytes": 1062
+    },
+    {
+      "image_path": "examples/media/generated/d1_vector_v1/test_000.png",
+      "image_sha256": "c2bcefa0202ef5d938bb5d0a195e4e854bae16a1a9c6523a96c70989bd2d8528",
+      "kind": "frame_annotation",
+      "path": "examples/media/generated/d1_vector_v1/test_000.annotation.json",
+      "sha256": "178723a3b1894ab461045c0e794e83b7508f1dd0d0891698c6946ce244fc9689",
+      "size_bytes": 1085
+    },
+    {
+      "image_path": "examples/media/generated/d1_vector_v1/test_001.png",
+      "image_sha256": "3ca7177329c10ae1ab07ddba76b5c0201dcd328715a15d569e599453a0ba0c64",
+      "kind": "frame_annotation",
+      "path": "examples/media/generated/d1_vector_v1/test_001.annotation.json",
+      "sha256": "342c21415b9c0f20a61280cdc44bb0fee79a807016466d24484786416eb0cedc",
+      "size_bytes": 1097
+    },
+    {
+      "image_path": "examples/media/generated/d1_vector_v1/test_002.png",
+      "image_sha256": "f489e3c18244e47f94871ed8b0033ac839c98a9918f1bd2d32dfb24a0a1fdd07",
+      "kind": "frame_annotation",
+      "path": "examples/media/generated/d1_vector_v1/test_002.annotation.json",
+      "sha256": "1d20458b28fdcaefb58b92752abe45c4fc0cebaf4c36a6292c490e8b54643385",
+      "size_bytes": 1202
+    },
+    {
+      "image_path": "examples/media/generated/d1_vector_v1/test_003.png",
+      "image_sha256": "211e163b28be71c6425525cd3e13a2ad5b8d4ea338fb0b8adc1b0dd8a079ca11",
+      "kind": "frame_annotation",
+      "path": "examples/media/generated/d1_vector_v1/test_003.annotation.json",
+      "sha256": "41978ae5e932632a8077fba8d6adf2a9d0266267c6f789581d233517946a90ca",
+      "size_bytes": 1250
+    },
+    {
+      "image_path": "examples/media/generated/d1_vector_v1/test_004.png",
+      "image_sha256": "581400935e837a9e29e98319bb3a6a7c8d3ed808b84f85df98f5e8ce1c64f3b6",
+      "kind": "frame_annotation",
+      "path": "examples/media/generated/d1_vector_v1/test_004.annotation.json",
+      "sha256": "2d4ce65991811a47eed12c3dfa141f9c939204c0f6c1a1670c1029d63a1eace5",
+      "size_bytes": 1029
+    },
+    {
+      "image_path": "examples/media/generated/d1_vector_v1/test_005.png",
+      "image_sha256": "02568dfaf7c28ee50d03483f6c7566fd498a9fa1625960698f041c27a1487bd3",
+      "kind": "frame_annotation",
+      "path": "examples/media/generated/d1_vector_v1/test_005.annotation.json",
+      "sha256": "73817a872dea555dfe351d1c184a143c8a88161477d267c172f7470691f9d38e",
+      "size_bytes": 1026
+    }
+  ],
+  "coordinate_space": "pixel_xyxy_exclusive",
+  "dataset_id": "synthetic:d1-vector-slice@1",
+  "height": 360,
+  "image_annotation_pair_count": 18,
+  "license": "CC0-1.0",
+  "manifest_self_hash": null,
+  "media": [
+    {
+      "kind": "image",
+      "path": "examples/media/generated/d1_vector_v1/development_000.png",
+      "sha256": "28c7476fbf26e9872ddefcdb7413a82fe381726e257cc76b70c0c591fa5689ab",
+      "size_bytes": 4035
+    },
+    {
+      "kind": "image",
+      "path": "examples/media/generated/d1_vector_v1/development_001.png",
+      "sha256": "eaec34aee0759760777c6fba84108d66af51c031363b87d4cca372a1909d2ef4",
+      "size_bytes": 4064
+    },
+    {
+      "kind": "image",
+      "path": "examples/media/generated/d1_vector_v1/development_002.png",
+      "sha256": "f6074b4a9af68af9f9eec037d448b09fd53df28c9832745205468be426adb3db",
+      "size_bytes": 4184
+    },
+    {
+      "kind": "image",
+      "path": "examples/media/generated/d1_vector_v1/development_003.png",
+      "sha256": "436e0959ee074748f26ab1717a6584624fa0b2d543cfd7dafb929ef7e6b412b3",
+      "size_bytes": 4156
+    },
+    {
+      "kind": "image",
+      "path": "examples/media/generated/d1_vector_v1/development_004.png",
+      "sha256": "a026c0dcdf6eb552be440d9306056c6f774321a4e77b9663028eae9185b6fc7e",
+      "size_bytes": 4006
+    },
+    {
+      "kind": "image",
+      "path": "examples/media/generated/d1_vector_v1/development_005.png",
+      "sha256": "801aada6fc6288cdb59955980bd1d482d06b1109a707edd724dc77216e954199",
+      "size_bytes": 4013
+    },
+    {
+      "kind": "image",
+      "path": "examples/media/generated/d1_vector_v1/validation_000.png",
+      "sha256": "2e650b7ac5c14afaf916f059d7cf228875fadb6f1941307f98f543e23087d482",
+      "size_bytes": 4084
+    },
+    {
+      "kind": "image",
+      "path": "examples/media/generated/d1_vector_v1/validation_001.png",
+      "sha256": "c3b64a6074a9851cc1be20ee269e4ff2507f027d0b66758fd343a1dcd7f8df86",
+      "size_bytes": 4026
+    },
+    {
+      "kind": "image",
+      "path": "examples/media/generated/d1_vector_v1/validation_002.png",
+      "sha256": "0633e2cf5d81e722859f3f9568d3242d12ca1c262c9369e613e5698756a468d2",
+      "size_bytes": 4162
+    },
+    {
+      "kind": "image",
+      "path": "examples/media/generated/d1_vector_v1/validation_003.png",
+      "sha256": "c82b5cfc554569411dc7c18aa1b6a4d5f80bcc3ab7ecd74309006fb9cbc7e65f",
+      "size_bytes": 4163
+    },
+    {
+      "kind": "image",
+      "path": "examples/media/generated/d1_vector_v1/validation_004.png",
+      "sha256": "9f3368505286ad10d40240230f5831519d292da901b1cda45aa04b87b6788c44",
+      "size_bytes": 3962
+    },
+    {
+      "kind": "image",
+      "path": "examples/media/generated/d1_vector_v1/validation_005.png",
+      "sha256": "07abf3051482fa1d47366132bfaf94ae58e5635d2a5d5c69e41bc0da8d856e4c",
+      "size_bytes": 3976
+    },
+    {
+      "kind": "image",
+      "path": "examples/media/generated/d1_vector_v1/test_000.png",
+      "sha256": "c2bcefa0202ef5d938bb5d0a195e4e854bae16a1a9c6523a96c70989bd2d8528",
+      "size_bytes": 3815
+    },
+    {
+      "kind": "image",
+      "path": "examples/media/generated/d1_vector_v1/test_001.png",
+      "sha256": "3ca7177329c10ae1ab07ddba76b5c0201dcd328715a15d569e599453a0ba0c64",
+      "size_bytes": 3976
+    },
+    {
+      "kind": "image",
+      "path": "examples/media/generated/d1_vector_v1/test_002.png",
+      "sha256": "f489e3c18244e47f94871ed8b0033ac839c98a9918f1bd2d32dfb24a0a1fdd07",
+      "size_bytes": 4077
+    },
+    {
+      "kind": "image",
+      "path": "examples/media/generated/d1_vector_v1/test_003.png",
+      "sha256": "211e163b28be71c6425525cd3e13a2ad5b8d4ea338fb0b8adc1b0dd8a079ca11",
+      "size_bytes": 4059
+    },
+    {
+      "kind": "image",
+      "path": "examples/media/generated/d1_vector_v1/test_004.png",
+      "sha256": "581400935e837a9e29e98319bb3a6a7c8d3ed808b84f85df98f5e8ce1c64f3b6",
+      "size_bytes": 3842
+    },
+    {
+      "kind": "image",
+      "path": "examples/media/generated/d1_vector_v1/test_005.png",
+      "sha256": "02568dfaf7c28ee50d03483f6c7566fd498a9fa1625960698f041c27a1487bd3",
+      "size_bytes": 3799
+    }
+  ],
+  "oracle_fixture": {
+    "kind": "m16_oracle_fixture",
+    "path": "examples/fixtures/evaluation/d1_vector_slice_v1.json",
+    "sha256": "20ea1209acc64aad987d85482ce3e17f625c78c068c3d0063c1950ff1a78bea2",
+    "size_bytes": 10971
+  },
+  "outputs": [
+    {
+      "kind": "m16_oracle_fixture",
+      "path": "examples/fixtures/evaluation/d1_vector_slice_v1.json",
+      "sha256": "20ea1209acc64aad987d85482ce3e17f625c78c068c3d0063c1950ff1a78bea2",
+      "size_bytes": 10971
+    },
+    {
+      "image_path": "examples/media/generated/d1_vector_v1/development_000.png",
+      "image_sha256": "28c7476fbf26e9872ddefcdb7413a82fe381726e257cc76b70c0c591fa5689ab",
+      "kind": "frame_annotation",
+      "path": "examples/media/generated/d1_vector_v1/development_000.annotation.json",
+      "sha256": "fc6aaabf273f62f67c185ede96b574937d329732d606bd7e095ac3a8c49f1ac5",
+      "size_bytes": 1127
+    },
+    {
+      "kind": "image",
+      "path": "examples/media/generated/d1_vector_v1/development_000.png",
+      "sha256": "28c7476fbf26e9872ddefcdb7413a82fe381726e257cc76b70c0c591fa5689ab",
+      "size_bytes": 4035
+    },
+    {
+      "image_path": "examples/media/generated/d1_vector_v1/development_001.png",
+      "image_sha256": "eaec34aee0759760777c6fba84108d66af51c031363b87d4cca372a1909d2ef4",
+      "kind": "frame_annotation",
+      "path": "examples/media/generated/d1_vector_v1/development_001.annotation.json",
+      "sha256": "f895c51ea91ecf03a28374cd3dba9c8bbb0ce8a989696d5f4cee95dbc2c63cbc",
+      "size_bytes": 1139
+    },
+    {
+      "kind": "image",
+      "path": "examples/media/generated/d1_vector_v1/development_001.png",
+      "sha256": "eaec34aee0759760777c6fba84108d66af51c031363b87d4cca372a1909d2ef4",
+      "size_bytes": 4064
+    },
+    {
+      "image_path": "examples/media/generated/d1_vector_v1/development_002.png",
+      "image_sha256": "f6074b4a9af68af9f9eec037d448b09fd53df28c9832745205468be426adb3db",
+      "kind": "frame_annotation",
+      "path": "examples/media/generated/d1_vector_v1/development_002.annotation.json",
+      "sha256": "302c2b13bf1a33aef30daa3c51c69ea7b922ce61ab2d41b8be09319fa4ca1ed1",
+      "size_bytes": 1258
+    },
+    {
+      "kind": "image",
+      "path": "examples/media/generated/d1_vector_v1/development_002.png",
+      "sha256": "f6074b4a9af68af9f9eec037d448b09fd53df28c9832745205468be426adb3db",
+      "size_bytes": 4184
+    },
+    {
+      "image_path": "examples/media/generated/d1_vector_v1/development_003.png",
+      "image_sha256": "436e0959ee074748f26ab1717a6584624fa0b2d543cfd7dafb929ef7e6b412b3",
+      "kind": "frame_annotation",
+      "path": "examples/media/generated/d1_vector_v1/development_003.annotation.json",
+      "sha256": "a8eb3a828082fc814f467442a5f589c0de04eba19bf45ccfe8fcb739622d14f0",
+      "size_bytes": 1306
+    },
+    {
+      "kind": "image",
+      "path": "examples/media/generated/d1_vector_v1/development_003.png",
+      "sha256": "436e0959ee074748f26ab1717a6584624fa0b2d543cfd7dafb929ef7e6b412b3",
+      "size_bytes": 4156
+    },
+    {
+      "image_path": "examples/media/generated/d1_vector_v1/development_004.png",
+      "image_sha256": "a026c0dcdf6eb552be440d9306056c6f774321a4e77b9663028eae9185b6fc7e",
+      "kind": "frame_annotation",
+      "path": "examples/media/generated/d1_vector_v1/development_004.annotation.json",
+      "sha256": "ad1624005af0882742682a11ee8bf1cc9eeb14158f25669f1db340541f36b2c8",
+      "size_bytes": 1071
+    },
+    {
+      "kind": "image",
+      "path": "examples/media/generated/d1_vector_v1/development_004.png",
+      "sha256": "a026c0dcdf6eb552be440d9306056c6f774321a4e77b9663028eae9185b6fc7e",
+      "size_bytes": 4006
+    },
+    {
+      "image_path": "examples/media/generated/d1_vector_v1/development_005.png",
+      "image_sha256": "801aada6fc6288cdb59955980bd1d482d06b1109a707edd724dc77216e954199",
+      "kind": "frame_annotation",
+      "path": "examples/media/generated/d1_vector_v1/development_005.annotation.json",
+      "sha256": "2684961c3c197939100f1be9456622ba846acdc9b71c26a60e7755467c3c8d2c",
+      "size_bytes": 1068
+    },
+    {
+      "kind": "image",
+      "path": "examples/media/generated/d1_vector_v1/development_005.png",
+      "sha256": "801aada6fc6288cdb59955980bd1d482d06b1109a707edd724dc77216e954199",
+      "size_bytes": 4013
+    },
+    {
+      "image_path": "examples/media/generated/d1_vector_v1/test_000.png",
+      "image_sha256": "c2bcefa0202ef5d938bb5d0a195e4e854bae16a1a9c6523a96c70989bd2d8528",
+      "kind": "frame_annotation",
+      "path": "examples/media/generated/d1_vector_v1/test_000.annotation.json",
+      "sha256": "178723a3b1894ab461045c0e794e83b7508f1dd0d0891698c6946ce244fc9689",
+      "size_bytes": 1085
+    },
+    {
+      "kind": "image",
+      "path": "examples/media/generated/d1_vector_v1/test_000.png",
+      "sha256": "c2bcefa0202ef5d938bb5d0a195e4e854bae16a1a9c6523a96c70989bd2d8528",
+      "size_bytes": 3815
+    },
+    {
+      "image_path": "examples/media/generated/d1_vector_v1/test_001.png",
+      "image_sha256": "3ca7177329c10ae1ab07ddba76b5c0201dcd328715a15d569e599453a0ba0c64",
+      "kind": "frame_annotation",
+      "path": "examples/media/generated/d1_vector_v1/test_001.annotation.json",
+      "sha256": "342c21415b9c0f20a61280cdc44bb0fee79a807016466d24484786416eb0cedc",
+      "size_bytes": 1097
+    },
+    {
+      "kind": "image",
+      "path": "examples/media/generated/d1_vector_v1/test_001.png",
+      "sha256": "3ca7177329c10ae1ab07ddba76b5c0201dcd328715a15d569e599453a0ba0c64",
+      "size_bytes": 3976
+    },
+    {
+      "image_path": "examples/media/generated/d1_vector_v1/test_002.png",
+      "image_sha256": "f489e3c18244e47f94871ed8b0033ac839c98a9918f1bd2d32dfb24a0a1fdd07",
+      "kind": "frame_annotation",
+      "path": "examples/media/generated/d1_vector_v1/test_002.annotation.json",
+      "sha256": "1d20458b28fdcaefb58b92752abe45c4fc0cebaf4c36a6292c490e8b54643385",
+      "size_bytes": 1202
+    },
+    {
+      "kind": "image",
+      "path": "examples/media/generated/d1_vector_v1/test_002.png",
+      "sha256": "f489e3c18244e47f94871ed8b0033ac839c98a9918f1bd2d32dfb24a0a1fdd07",
+      "size_bytes": 4077
+    },
+    {
+      "image_path": "examples/media/generated/d1_vector_v1/test_003.png",
+      "image_sha256": "211e163b28be71c6425525cd3e13a2ad5b8d4ea338fb0b8adc1b0dd8a079ca11",
+      "kind": "frame_annotation",
+      "path": "examples/media/generated/d1_vector_v1/test_003.annotation.json",
+      "sha256": "41978ae5e932632a8077fba8d6adf2a9d0266267c6f789581d233517946a90ca",
+      "size_bytes": 1250
+    },
+    {
+      "kind": "image",
+      "path": "examples/media/generated/d1_vector_v1/test_003.png",
+      "sha256": "211e163b28be71c6425525cd3e13a2ad5b8d4ea338fb0b8adc1b0dd8a079ca11",
+      "size_bytes": 4059
+    },
+    {
+      "image_path": "examples/media/generated/d1_vector_v1/test_004.png",
+      "image_sha256": "581400935e837a9e29e98319bb3a6a7c8d3ed808b84f85df98f5e8ce1c64f3b6",
+      "kind": "frame_annotation",
+      "path": "examples/media/generated/d1_vector_v1/test_004.annotation.json",
+      "sha256": "2d4ce65991811a47eed12c3dfa141f9c939204c0f6c1a1670c1029d63a1eace5",
+      "size_bytes": 1029
+    },
+    {
+      "kind": "image",
+      "path": "examples/media/generated/d1_vector_v1/test_004.png",
+      "sha256": "581400935e837a9e29e98319bb3a6a7c8d3ed808b84f85df98f5e8ce1c64f3b6",
+      "size_bytes": 3842
+    },
+    {
+      "image_path": "examples/media/generated/d1_vector_v1/test_005.png",
+      "image_sha256": "02568dfaf7c28ee50d03483f6c7566fd498a9fa1625960698f041c27a1487bd3",
+      "kind": "frame_annotation",
+      "path": "examples/media/generated/d1_vector_v1/test_005.annotation.json",
+      "sha256": "73817a872dea555dfe351d1c184a143c8a88161477d267c172f7470691f9d38e",
+      "size_bytes": 1026
+    },
+    {
+      "kind": "image",
+      "path": "examples/media/generated/d1_vector_v1/test_005.png",
+      "sha256": "02568dfaf7c28ee50d03483f6c7566fd498a9fa1625960698f041c27a1487bd3",
+      "size_bytes": 3799
+    },
+    {
+      "image_path": "examples/media/generated/d1_vector_v1/validation_000.png",
+      "image_sha256": "2e650b7ac5c14afaf916f059d7cf228875fadb6f1941307f98f543e23087d482",
+      "kind": "frame_annotation",
+      "path": "examples/media/generated/d1_vector_v1/validation_000.annotation.json",
+      "sha256": "490c9b97cd6bb79341447f9627c79d499db374de1c4801d990df27fc72688a41",
+      "size_bytes": 1121
+    },
+    {
+      "kind": "image",
+      "path": "examples/media/generated/d1_vector_v1/validation_000.png",
+      "sha256": "2e650b7ac5c14afaf916f059d7cf228875fadb6f1941307f98f543e23087d482",
+      "size_bytes": 4084
+    },
+    {
+      "image_path": "examples/media/generated/d1_vector_v1/validation_001.png",
+      "image_sha256": "c3b64a6074a9851cc1be20ee269e4ff2507f027d0b66758fd343a1dcd7f8df86",
+      "kind": "frame_annotation",
+      "path": "examples/media/generated/d1_vector_v1/validation_001.annotation.json",
+      "sha256": "707e9812dc33d053f8e6128e40809d50ca635b59658a6de8904cefe98f074e0f",
+      "size_bytes": 1133
+    },
+    {
+      "kind": "image",
+      "path": "examples/media/generated/d1_vector_v1/validation_001.png",
+      "sha256": "c3b64a6074a9851cc1be20ee269e4ff2507f027d0b66758fd343a1dcd7f8df86",
+      "size_bytes": 4026
+    },
+    {
+      "image_path": "examples/media/generated/d1_vector_v1/validation_002.png",
+      "image_sha256": "0633e2cf5d81e722859f3f9568d3242d12ca1c262c9369e613e5698756a468d2",
+      "kind": "frame_annotation",
+      "path": "examples/media/generated/d1_vector_v1/validation_002.annotation.json",
+      "sha256": "7fd386b23089066f093d2c6669f269a1280a171f36bed4f452f2457508c7176f",
+      "size_bytes": 1250
+    },
+    {
+      "kind": "image",
+      "path": "examples/media/generated/d1_vector_v1/validation_002.png",
+      "sha256": "0633e2cf5d81e722859f3f9568d3242d12ca1c262c9369e613e5698756a468d2",
+      "size_bytes": 4162
+    },
+    {
+      "image_path": "examples/media/generated/d1_vector_v1/validation_003.png",
+      "image_sha256": "c82b5cfc554569411dc7c18aa1b6a4d5f80bcc3ab7ecd74309006fb9cbc7e65f",
+      "kind": "frame_annotation",
+      "path": "examples/media/generated/d1_vector_v1/validation_003.annotation.json",
+      "sha256": "9ca517468e0f0d17904cf324829946676f7740eb382c0bf8530d4ea273eb8f6b",
+      "size_bytes": 1298
+    },
+    {
+      "kind": "image",
+      "path": "examples/media/generated/d1_vector_v1/validation_003.png",
+      "sha256": "c82b5cfc554569411dc7c18aa1b6a4d5f80bcc3ab7ecd74309006fb9cbc7e65f",
+      "size_bytes": 4163
+    },
+    {
+      "image_path": "examples/media/generated/d1_vector_v1/validation_004.png",
+      "image_sha256": "9f3368505286ad10d40240230f5831519d292da901b1cda45aa04b87b6788c44",
+      "kind": "frame_annotation",
+      "path": "examples/media/generated/d1_vector_v1/validation_004.annotation.json",
+      "sha256": "578ac69becd08c10994728ae571662a0f64f302df827ceacd48a997df7caa908",
+      "size_bytes": 1065
+    },
+    {
+      "kind": "image",
+      "path": "examples/media/generated/d1_vector_v1/validation_004.png",
+      "sha256": "9f3368505286ad10d40240230f5831519d292da901b1cda45aa04b87b6788c44",
+      "size_bytes": 3962
+    },
+    {
+      "image_path": "examples/media/generated/d1_vector_v1/validation_005.png",
+      "image_sha256": "07abf3051482fa1d47366132bfaf94ae58e5635d2a5d5c69e41bc0da8d856e4c",
+      "kind": "frame_annotation",
+      "path": "examples/media/generated/d1_vector_v1/validation_005.annotation.json",
+      "sha256": "feb2fbea96965ad4f5e6f6e5f481922560e9ae26789ae6d7374563eccc358e75",
+      "size_bytes": 1062
+    },
+    {
+      "kind": "image",
+      "path": "examples/media/generated/d1_vector_v1/validation_005.png",
+      "sha256": "07abf3051482fa1d47366132bfaf94ae58e5635d2a5d5c69e41bc0da8d856e4c",
+      "size_bytes": 3976
+    }
+  ],
+  "provenance": {
+    "config_path": "configs/evaluation/m18-vector-d1-slice-v1.toml",
+    "config_sha256": "2675f4f99aceb2064ab68ea4e656200f10cf07e76e39ced1620d87fd26adec9a",
+    "generator_path": "tools/generate_d1_vector_slice.py",
+    "generator_sha256": "27aa7fe14fa4fb4654fc7ad601470420b92a81e3198cb8e40d8d36367b6c2472",
+    "kind": "project_generated_synthetic",
+    "license": "CC0-1.0",
+    "pillow_version": "12.3.0",
+    "use_class": "D0_SYNTHETIC"
+  },
+  "schema_version": 1,
+  "source_groups": [
+    {
+      "asset_identity": "vector-assets-development-v1",
+      "background_identity": "vector-background-development-v1",
+      "camera_time_group": "synthetic-camera-time-development-v1",
+      "layout_seed_family": "vector-layout-development-v1",
+      "scene_or_room_identity": "synthetic-room-development-v1",
+      "seed": 18001,
+      "source_sequence": 0,
+      "source_sequence_id": "d1-vector-development-v1",
+      "split": "development",
+      "synchronized_view_group": "synthetic-sync-development-v1"
+    },
+    {
+      "asset_identity": "vector-assets-validation-v1",
+      "background_identity": "vector-background-validation-v1",
+      "camera_time_group": "synthetic-camera-time-validation-v1",
+      "layout_seed_family": "vector-layout-validation-v1",
+      "scene_or_room_identity": "synthetic-room-validation-v1",
+      "seed": 18002,
+      "source_sequence": 1,
+      "source_sequence_id": "d1-vector-validation-v1",
+      "split": "validation",
+      "synchronized_view_group": "synthetic-sync-validation-v1"
+    },
+    {
+      "asset_identity": "vector-assets-test-v1",
+      "background_identity": "vector-background-test-v1",
+      "camera_time_group": "synthetic-camera-time-test-v1",
+      "layout_seed_family": "vector-layout-test-v1",
+      "scene_or_room_identity": "synthetic-room-test-v1",
+      "seed": 18003,
+      "source_sequence": 2,
+      "source_sequence_id": "d1-vector-test-v1",
+      "split": "test",
+      "synchronized_view_group": "synthetic-sync-test-v1"
+    }
+  ],
+  "total_non_manifest_output_bytes": 103957,
+  "use_class": "D0_SYNTHETIC",
+  "width": 640
+}

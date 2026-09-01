@@ -1,0 +1,50 @@
+{
+  "coordinate_space": "pixel_xyxy_exclusive",
+  "dataset_id": "synthetic:d1-vector-slice@1",
+  "evaluation_state": "UNKNOWN",
+  "frame_index": 5,
+  "frame_role": "unknown",
+  "image": {
+    "height": 360,
+    "path": "examples/media/generated/d1_vector_v1/development_005.png",
+    "sha256": "801aada6fc6288cdb59955980bd1d482d06b1109a707edd724dc77216e954199",
+    "width": 640
+  },
+  "instances": [
+    {
+      "bbox": null,
+      "instance_id": "key-development",
+      "label": "key",
+      "visibility": "UNKNOWN"
+    }
+  ],
+  "reference_objects": [
+    {
+      "bbox": [
+        262,
+        216,
+        354,
+        288
+      ],
+      "instance_id": "bag-development",
+      "label": "bag"
+    },
+    {
+      "bbox": [
+        402,
+        174,
+        612,
+        299
+      ],
+      "instance_id": "sofa-development",
+      "label": "sofa"
+    }
+  ],
+  "relation_state": "UNKNOWN",
+  "relations": [],
+  "schema_version": 1,
+  "source_sequence": 0,
+  "source_sequence_id": "d1-vector-development-v1",
+  "split": "development",
+  "use_class": "D0_SYNTHETIC"
+}

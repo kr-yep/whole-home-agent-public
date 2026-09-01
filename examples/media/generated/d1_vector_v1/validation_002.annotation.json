@@ -1,0 +1,57 @@
+{
+  "coordinate_space": "pixel_xyxy_exclusive",
+  "dataset_id": "synthetic:d1-vector-slice@1",
+  "evaluation_state": "SCORED",
+  "frame_index": 2,
+  "frame_role": "occluded_inside_container",
+  "image": {
+    "height": 360,
+    "path": "examples/media/generated/d1_vector_v1/validation_002.png",
+    "sha256": "0633e2cf5d81e722859f3f9568d3242d12ca1c262c9369e613e5698756a468d2",
+    "width": 640
+  },
+  "instances": [
+    {
+      "bbox": null,
+      "instance_id": "key-validation",
+      "label": "key",
+      "visibility": "OCCLUDED"
+    }
+  ],
+  "reference_objects": [
+    {
+      "bbox": [
+        274,
+        220,
+        366,
+        292
+      ],
+      "instance_id": "bag-validation",
+      "label": "bag"
+    },
+    {
+      "bbox": [
+        414,
+        178,
+        624,
+        303
+      ],
+      "instance_id": "sofa-validation",
+      "label": "sofa"
+    }
+  ],
+  "relation_state": "INSIDE_BAG",
+  "relations": [
+    {
+      "epistemic_status": "synthetic_reference",
+      "object_id": "bag-validation",
+      "predicate": "inside",
+      "subject_id": "key-validation"
+    }
+  ],
+  "schema_version": 1,
+  "source_sequence": 1,
+  "source_sequence_id": "d1-vector-validation-v1",
+  "split": "validation",
+  "use_class": "D0_SYNTHETIC"
+}

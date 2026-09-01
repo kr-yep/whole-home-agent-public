@@ -1,0 +1,400 @@
+{
+  "dataset": {
+    "dataset_id": "synthetic:d1-vector-slice@1",
+    "height": 360,
+    "sequences": [
+      {
+        "frames": [
+          {
+            "frame_index": 0,
+            "instances": [
+              {
+                "bbox": [
+                  108,
+                  242,
+                  136,
+                  254
+                ],
+                "instance_id": "key-development",
+                "label": "key",
+                "visibility": "VISIBLE"
+              }
+            ],
+            "state": "SCORED"
+          },
+          {
+            "frame_index": 1,
+            "instances": [
+              {
+                "bbox": [
+                  269,
+                  250,
+                  283,
+                  262
+                ],
+                "instance_id": "key-development",
+                "label": "key",
+                "visibility": "TRUNCATED"
+              }
+            ],
+            "state": "SCORED"
+          },
+          {
+            "frame_index": 2,
+            "instances": [
+              {
+                "bbox": null,
+                "instance_id": "key-development",
+                "label": "key",
+                "visibility": "OCCLUDED"
+              }
+            ],
+            "state": "SCORED"
+          },
+          {
+            "frame_index": 3,
+            "instances": [
+              {
+                "bbox": [
+                  436,
+                  216,
+                  464,
+                  228
+                ],
+                "instance_id": "key-development",
+                "label": "key",
+                "visibility": "VISIBLE"
+              }
+            ],
+            "state": "SCORED"
+          },
+          {
+            "frame_index": 4,
+            "instances": [
+              {
+                "bbox": null,
+                "instance_id": "key-development",
+                "label": "key",
+                "visibility": "ABSENT"
+              }
+            ],
+            "state": "SCORED"
+          },
+          {
+            "frame_index": 5,
+            "instances": [
+              {
+                "bbox": null,
+                "instance_id": "key-development",
+                "label": "key",
+                "visibility": "UNKNOWN"
+              }
+            ],
+            "state": "UNKNOWN"
+          }
+        ],
+        "group": {
+          "camera_time_group_id": "synthetic-camera-time-development-v1",
+          "house_room_id": "synthetic-room-development-v1",
+          "participant_id": "synthetic-none-development",
+          "session_id": "synthetic-session-development",
+          "source_sequence": 0,
+          "source_sequence_id": "d1-vector-development-v1",
+          "split": "development",
+          "synchronized_view_group_id": "synthetic-sync-development-v1"
+        }
+      },
+      {
+        "frames": [
+          {
+            "frame_index": 0,
+            "instances": [
+              {
+                "bbox": [
+                  120,
+                  246,
+                  148,
+                  258
+                ],
+                "instance_id": "key-validation",
+                "label": "key",
+                "visibility": "VISIBLE"
+              }
+            ],
+            "state": "SCORED"
+          },
+          {
+            "frame_index": 1,
+            "instances": [
+              {
+                "bbox": [
+                  281,
+                  254,
+                  295,
+                  266
+                ],
+                "instance_id": "key-validation",
+                "label": "key",
+                "visibility": "TRUNCATED"
+              }
+            ],
+            "state": "SCORED"
+          },
+          {
+            "frame_index": 2,
+            "instances": [
+              {
+                "bbox": null,
+                "instance_id": "key-validation",
+                "label": "key",
+                "visibility": "OCCLUDED"
+              }
+            ],
+            "state": "SCORED"
+          },
+          {
+            "frame_index": 3,
+            "instances": [
+              {
+                "bbox": [
+                  448,
+                  220,
+                  476,
+                  232
+                ],
+                "instance_id": "key-validation",
+                "label": "key",
+                "visibility": "VISIBLE"
+              }
+            ],
+            "state": "SCORED"
+          },
+          {
+            "frame_index": 4,
+            "instances": [
+              {
+                "bbox": null,
+                "instance_id": "key-validation",
+                "label": "key",
+                "visibility": "ABSENT"
+              }
+            ],
+            "state": "SCORED"
+          },
+          {
+            "frame_index": 5,
+            "instances": [
+              {
+                "bbox": null,
+                "instance_id": "key-validation",
+                "label": "key",
+                "visibility": "UNKNOWN"
+              }
+            ],
+            "state": "UNKNOWN"
+          }
+        ],
+        "group": {
+          "camera_time_group_id": "synthetic-camera-time-validation-v1",
+          "house_room_id": "synthetic-room-validation-v1",
+          "participant_id": "synthetic-none-validation",
+          "session_id": "synthetic-session-validation",
+          "source_sequence": 1,
+          "source_sequence_id": "d1-vector-validation-v1",
+          "split": "validation",
+          "synchronized_view_group_id": "synthetic-sync-validation-v1"
+        }
+      },
+      {
+        "frames": [
+          {
+            "frame_index": 0,
+            "instances": [
+              {
+                "bbox": [
+                  132,
+                  238,
+                  160,
+                  250
+                ],
+                "instance_id": "key-test",
+                "label": "key",
+                "visibility": "VISIBLE"
+              }
+            ],
+            "state": "SCORED"
+          },
+          {
+            "frame_index": 1,
+            "instances": [
+              {
+                "bbox": [
+                  293,
+                  246,
+                  307,
+                  258
+                ],
+                "instance_id": "key-test",
+                "label": "key",
+                "visibility": "TRUNCATED"
+              }
+            ],
+            "state": "SCORED"
+          },
+          {
+            "frame_index": 2,
+            "instances": [
+              {
+                "bbox": null,
+                "instance_id": "key-test",
+                "label": "key",
+                "visibility": "OCCLUDED"
+              }
+            ],
+            "state": "SCORED"
+          },
+          {
+            "frame_index": 3,
+            "instances": [
+              {
+                "bbox": [
+                  460,
+                  212,
+                  488,
+                  224
+                ],
+                "instance_id": "key-test",
+                "label": "key",
+                "visibility": "VISIBLE"
+              }
+            ],
+            "state": "SCORED"
+          },
+          {
+            "frame_index": 4,
+            "instances": [
+              {
+                "bbox": null,
+                "instance_id": "key-test",
+                "label": "key",
+                "visibility": "ABSENT"
+              }
+            ],
+            "state": "SCORED"
+          },
+          {
+            "frame_index": 5,
+            "instances": [
+              {
+                "bbox": null,
+                "instance_id": "key-test",
+                "label": "key",
+                "visibility": "UNKNOWN"
+              }
+            ],
+            "state": "UNKNOWN"
+          }
+        ],
+        "group": {
+          "camera_time_group_id": "synthetic-camera-time-test-v1",
+          "house_room_id": "synthetic-room-test-v1",
+          "participant_id": "synthetic-none-test",
+          "session_id": "synthetic-session-test",
+          "source_sequence": 2,
+          "source_sequence_id": "d1-vector-test-v1",
+          "split": "test",
+          "synchronized_view_group_id": "synthetic-sync-test-v1"
+        }
+      }
+    ],
+    "transitions": [
+      {
+        "end_frame_index": 2,
+        "episode_id": "development-key-containment",
+        "instance_id": "key-development",
+        "kind": "CONTAINMENT_CHANGE",
+        "source_sequence": 0,
+        "start_frame_index": 1
+      },
+      {
+        "end_frame_index": 3,
+        "episode_id": "development-key-location",
+        "instance_id": "key-development",
+        "kind": "LOCATION_CHANGE",
+        "source_sequence": 0,
+        "start_frame_index": 2
+      },
+      {
+        "end_frame_index": 2,
+        "episode_id": "validation-key-containment",
+        "instance_id": "key-validation",
+        "kind": "CONTAINMENT_CHANGE",
+        "source_sequence": 1,
+        "start_frame_index": 1
+      },
+      {
+        "end_frame_index": 3,
+        "episode_id": "validation-key-location",
+        "instance_id": "key-validation",
+        "kind": "LOCATION_CHANGE",
+        "source_sequence": 1,
+        "start_frame_index": 2
+      },
+      {
+        "end_frame_index": 2,
+        "episode_id": "test-key-containment",
+        "instance_id": "key-test",
+        "kind": "CONTAINMENT_CHANGE",
+        "source_sequence": 2,
+        "start_frame_index": 1
+      },
+      {
+        "end_frame_index": 3,
+        "episode_id": "test-key-location",
+        "instance_id": "key-test",
+        "kind": "LOCATION_CHANGE",
+        "source_sequence": 2,
+        "start_frame_index": 2
+      }
+    ],
+    "width": 640
+  },
+  "fixture_id": "d1-vector-slice-v1",
+  "prediction_cases": {
+    "empty": []
+  },
+  "schema_version": 1,
+  "split_groups": [
+    {
+      "camera_time_group_id": "synthetic-camera-time-development-v1",
+      "house_room_id": "synthetic-room-development-v1",
+      "participant_id": "synthetic-none-development",
+      "session_id": "synthetic-session-development",
+      "source_sequence": 0,
+      "source_sequence_id": "d1-vector-development-v1",
+      "split": "development",
+      "synchronized_view_group_id": "synthetic-sync-development-v1"
+    },
+    {
+      "camera_time_group_id": "synthetic-camera-time-validation-v1",
+      "house_room_id": "synthetic-room-validation-v1",
+      "participant_id": "synthetic-none-validation",
+      "session_id": "synthetic-session-validation",
+      "source_sequence": 1,
+      "source_sequence_id": "d1-vector-validation-v1",
+      "split": "validation",
+      "synchronized_view_group_id": "synthetic-sync-validation-v1"
+    },
+    {
+      "camera_time_group_id": "synthetic-camera-time-test-v1",
+      "house_room_id": "synthetic-room-test-v1",
+      "participant_id": "synthetic-none-test",
+      "session_id": "synthetic-session-test",
+      "source_sequence": 2,
+      "source_sequence_id": "d1-vector-test-v1",
+      "split": "test",
+      "synchronized_view_group_id": "synthetic-sync-test-v1"
+    }
+  ],
+  "use_class": "D0_SYNTHETIC"
+}

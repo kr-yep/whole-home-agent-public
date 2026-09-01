@@ -82,6 +82,10 @@ evidence/
 !examples/media/generated/*.manifest.json
 !examples/media/generated/*.annotations.json
 
+# M18 permits only this bounded, manifest-verified project-generated PNG slice.
+!examples/media/generated/d1_vector_v1/
+!examples/media/generated/d1_vector_v1/*.png
+
 # Runtime outputs and local diagnostics
 var/
 runtime/

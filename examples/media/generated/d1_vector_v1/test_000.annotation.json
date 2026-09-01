@@ -1,0 +1,55 @@
+{
+  "coordinate_space": "pixel_xyxy_exclusive",
+  "dataset_id": "synthetic:d1-vector-slice@1",
+  "evaluation_state": "SCORED",
+  "frame_index": 0,
+  "frame_role": "visible_source",
+  "image": {
+    "height": 360,
+    "path": "examples/media/generated/d1_vector_v1/test_000.png",
+    "sha256": "c2bcefa0202ef5d938bb5d0a195e4e854bae16a1a9c6523a96c70989bd2d8528",
+    "width": 640
+  },
+  "instances": [
+    {
+      "bbox": [
+        132,
+        238,
+        160,
+        250
+      ],
+      "instance_id": "key-test",
+      "label": "key",
+      "visibility": "VISIBLE"
+    }
+  ],
+  "reference_objects": [
+    {
+      "bbox": [
+        286,
+        212,
+        378,
+        284
+      ],
+      "instance_id": "bag-test",
+      "label": "bag"
+    },
+    {
+      "bbox": [
+        426,
+        170,
+        636,
+        295
+      ],
+      "instance_id": "sofa-test",
+      "label": "sofa"
+    }
+  ],
+  "relation_state": "NONE",
+  "relations": [],
+  "schema_version": 1,
+  "source_sequence": 2,
+  "source_sequence_id": "d1-vector-test-v1",
+  "split": "test",
+  "use_class": "D0_SYNTHETIC"
+}
