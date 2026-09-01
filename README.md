@@ -125,6 +125,12 @@ uses `ycbv/`, while the test archive uses `test/`, contradicting M20's frozen si
 assumption. No real annotation or image was read. See the
 [M20 evidence report](docs/evaluation/m20-ycbv-bop19-acquisition-translation-v1.md).
 
+M21 repaired only that mapping and passed archive identity, complete ZIP-header safety,
+and destination-collision checks. The unchanged real annotation selector then found no
+same-object/same-scene pair satisfying both the 0.1–1% visible-positive and complete
+class-absent requirements, so it stopped before RGB or D1 output. See the
+[M21 evidence report](docs/evaluation/m21-ycbv-per-archive-root-repair-v1.md).
+
 ## Run the demo
 
 Requires Python 3.11 or newer. The lockfile was generated with `uv 0.11.24`.
@@ -200,11 +206,11 @@ docs/                       architecture, demo, ADR, and technology notes
 The first public detector, consecutive motion, target-tracking, failure-localization,
 RF-DETR replacement, D-FINE synthetic engineering, M14 scientific-priority, M15
 target-substrate, M16 label-oracle, M17 generation-strategy, M18 vector-substrate, and
-M19 real-oracle and M20 materialization gates are frozen. M20 stopped before extraction
-on a packaging-contract mismatch. M21 may repair only the per-archive source-root to
-destination mapping, then retry the same bounded translation with every scientific and
-safety threshold unchanged. It cannot load a model or train. Tracker replacement
-remains a separate later co-gate.
+M19 real-oracle, M20 materialization, and M21 single-repair gates are frozen. M21 proved
+the archive mapping but stopped at the unchanged combined annotation predicate. M22 may
+only localize which predicate term failed on the same pinned metadata; it cannot retry,
+loosen the rule, load a model, or train. Tracker replacement remains a separate later
+co-gate.
 The reserved VOST validation source and VISOR `P14_05` must remain untouched. Do not add
 a movement-candidate layer merely because scheduling is inexpensive. Training remains
 capped at 20 epochs with patience 5, and test tuning and automatic submissions remain
@@ -218,7 +224,7 @@ and [M12 detector screen](docs/evaluation/vost-m12-rfdetr-small-v1.md), plus the
 [M18 result](docs/evaluation/m18-vector-d1-slice-v1.md), and the
 [M19 result](docs/evaluation/m19-real-transfer-oracle-reality-gate-v1.md), the
 [M20 result](docs/evaluation/m20-ycbv-bop19-acquisition-translation-v1.md), and the
-[M21 proposal](docs/evaluation/m21-ycbv-per-archive-root-repair-proposal.md).
+[M21 result](docs/evaluation/m21-ycbv-per-archive-root-repair-v1.md).
 
 ## Safety and data boundary
 

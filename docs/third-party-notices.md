@@ -44,10 +44,11 @@ RF-DETR is resolved only through the `rf-detr` optional extra. No third-party mo
 
 - [YCB-Video through BOP](https://bop.felk.cvut.cz/datasets/) — MIT, selected only as a
   local real-image detector-transfer oracle. M20 downloaded the hash-pinned BOP base and
-  BOP'19 test archives into `data/external/`, then stopped before extraction because the
-  frozen archive-root contract did not match the official packaging. No YCB-V archive,
-  image, annotation, model, or derived real-data fixture is committed or redistributed.
-  The upstream dataset and author toolbox remain subject to their own MIT notice.
+  BOP'19 test archives into `data/external/`. M21 transiently read the public target and
+  scene annotations, then stopped before RGB because no frame pair passed the unchanged
+  combined predicate. No YCB-V archive, image, annotation, model, or derived real-data
+  fixture is committed or redistributed. The upstream dataset and author toolbox remain
+  subject to their own MIT notice.
 
 - [EPIC-KITCHENS VISOR](https://epic-kitchens.github.io/VISOR/site) — CC BY-NC 4.0,
   used only as a separately downloaded, local, non-commercial D0 method screen. The

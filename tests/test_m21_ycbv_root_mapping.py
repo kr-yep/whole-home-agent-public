@@ -22,6 +22,7 @@ from whole_home_agent.adapters.bop_d1 import (
 ROOT = Path(__file__).resolve().parents[1]
 M20 = ROOT / "configs" / "evaluation" / "m20-ycbv-bop19-acquisition-v1.toml"
 CONTRACT = ROOT / "configs" / "evaluation" / "m21-ycbv-per-archive-root-repair-v1.toml"
+RESULT = ROOT / "configs" / "evaluation" / "m21-ycbv-per-archive-root-repair-result-v1.toml"
 FIXTURE = ROOT / "tests" / "fixtures" / "bop" / "ycbv_m20_minimal"
 TOOL_PATH = ROOT / "tools" / "materialize_ycbv_bop19.py"
 TOOL_SPEC = importlib.util.spec_from_file_location("materialize_ycbv_bop19_m21", TOOL_PATH)
@@ -327,6 +328,55 @@ class M21MappedArchiveTests(unittest.TestCase):
             target.write_text('[{"scene_id":48,"scene_id":49}]', encoding="utf-8")
             with self.assertRaisesRegex(TOOL.MaterializationError, "duplicate JSON key"):
                 TOOL._read_json_strict(target)
+
+
+class M21StoppedResultTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.contract = tomllib.loads(CONTRACT.read_text(encoding="utf-8"))
+        cls.result = tomllib.loads(RESULT.read_text(encoding="utf-8"))
+
+    def test_stop_matches_the_frozen_scientific_failure_branch(self):
+        self.assertEqual(
+            self.result["decision"],
+            self.contract["gate"]["normal_stop_decision"],
+        )
+        self.assertEqual(self.result["failure_code"], "NO_FROZEN_SLICE")
+        self.assertTrue(self.result["normal_stop"])
+        self.assertTrue(self.result["archive_header_preflight_passed"])
+        self.assertTrue(self.result["mapped_destination_namespace_preflight_passed"])
+        self.assertFalse(self.result["d1_translation_completed"])
+
+    def test_result_preserves_conjunct_uncertainty(self):
+        selection = self.result["selection"]
+        self.assertFalse(selection["frozen_positive_and_negative_pair_found"])
+        self.assertEqual(
+            selection["small_target_presence_alone"],
+            "NOT_SEPARATELY_ESTABLISHED_BY_M21",
+        )
+        self.assertEqual(
+            selection["complete_absent_presence_alone"],
+            "NOT_SEPARATELY_ESTABLISHED_BY_M21",
+        )
+        self.assertFalse(selection["threshold_or_selection_rule_changed_after_observation"])
+
+    def test_real_structure_counts_and_empty_persistent_output_are_exact(self):
+        verification = self.result["verification"]
+        self.assertEqual(verification["combined_archive_member_count"], 10092)
+        self.assertEqual(verification["combined_total_uncompressed_bytes"], 671106741)
+        self.assertEqual(verification["transient_extracted_annotation_file_count"], 37)
+        self.assertEqual(verification["persistent_extracted_file_count"], 0)
+        self.assertEqual(verification["persistent_derived_file_count"], 0)
+        self.assertEqual(self.result["selection"]["unique_target_frames"], 900)
+        self.assertEqual(self.result["selection"]["scene_ids"], list(range(48, 60)))
+
+    def test_next_gate_is_diagnostic_only_and_all_boundaries_remain_closed(self):
+        next_gate = self.result["next_gate"]
+        self.assertEqual(next_gate["proposal"], "M22_ANNOTATION_ONLY_FAILURE_LOCALIZATION")
+        for key, value in next_gate.items():
+            if key.endswith("_allowed"):
+                self.assertFalse(value, key)
+        self.assertTrue(all(value is False for value in self.result["boundaries"].values()))
 
 
 if __name__ == "__main__":

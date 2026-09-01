@@ -1,0 +1,96 @@
+schema_version = 1
+status = "RECORDED_NORMAL_STOP"
+gate_id = "m21-ycbv-per-archive-root-repair-v1"
+decision = "STOP_YCBV_REAL_TRANSFER_ORACLE_AFTER_SINGLE_ROOT_REPAIR"
+failure_stage = "ANNOTATION_ONLY_FROZEN_SLICE_SELECTION"
+failure_code = "NO_FROZEN_SLICE"
+failure_summary = "NO_OBJECT_AND_SCENE_PAIR_HAS_BOTH_A_0_1_TO_1_PERCENT_VISIBLE_POSITIVE_AND_A_COMPLETE_SELECTED_CLASS_ABSENT_FRAME"
+contract_revision = "07f498341c55ae65836bbf6c84b100f7f0566c20"
+implementation_revision = "5164634ec419f3547996001f45d4aac1978acff7"
+source_revision = "5c2c4aa229800355648cd268040aa814f8dc94f0"
+source_identity_passed = true
+archive_header_preflight_passed = true
+mapped_destination_namespace_preflight_passed = true
+selective_extraction_started = true
+real_annotation_read = true
+real_rgb_read = false
+d1_translation_completed = false
+staging_cleanup_passed = true
+normal_stop = true
+
+[[archive]]
+name = "ycbv_base.zip"
+bytes = 15805
+sha256 = "98440f8bd403100b21cf11a6729fabe8b3d5ce714472edc57a18b7f1fcd4bb18"
+source_root = "ycbv"
+destination_root = "ycbv"
+member_count = 5
+total_uncompressed_bytes = 271812
+identity = "PASS"
+header_and_mapping_preflight = "PASS"
+
+[[archive]]
+name = "ycbv_test_bop19.zip"
+bytes = 660198701
+sha256 = "c0c11251849877e7b2f373f6c7acf54739dc69d0fb2649c20050ca977bf5513d"
+source_root = "test"
+destination_root = "ycbv/test"
+member_count = 10087
+total_uncompressed_bytes = 670834929
+identity = "PASS"
+header_and_mapping_preflight = "PASS"
+
+[selection]
+target_entries = 4123
+unique_target_frames = 900
+scene_count = 12
+scene_ids = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59]
+frozen_positive_and_negative_pair_found = false
+small_target_presence_alone = "NOT_SEPARATELY_ESTABLISHED_BY_M21"
+complete_absent_presence_alone = "NOT_SEPARATELY_ESTABLISHED_BY_M21"
+threshold_or_selection_rule_changed_after_observation = false
+
+[interpretation]
+established = "THE_SINGLE_ARCHIVE_MAPPING_REPAIR_IS_CORRECT_FOR_THE_PINNED_BYTES_BUT_THE_COMBINED_FROZEN_SLICE_PREDICATE_RETURNS_NO_MATCH"
+not_established = "WHETHER_THE_SMALL_TARGET_TERM_OR_THE_COMPLETE_ABSENT_TERM_IS_INDIVIDUALLY_UNSATISFIED_OR_WHETHER_ANY_DETECTOR_WOULD_TRANSFER"
+failure_means = "YCBV_CANNOT_ADVANCE_UNDER_THE_EXACT_M21_COMBINED_TRANSFER_ORACLE_RULE"
+failure_does_not_mean = "YCBV_HAS_NO_SMALL_OBJECTS_OR_IS_GLOBALLY_UNSUITABLE_FOR_OBJECT_DETECTION"
+
+[next_gate]
+proposal = "M22_ANNOTATION_ONLY_FAILURE_LOCALIZATION"
+allowed_work = "CLASSIFY_THE_FAILED_CONJUNCT_USING_ONLY_THE_ALREADY_PINNED_PUBLIC_METADATA_AND_THE_UNCHANGED_M21_PREDICATE"
+source_download_allowed = false
+threshold_change_allowed = false
+selection_change_allowed = false
+materialization_retry_allowed = false
+model_or_training_allowed = false
+
+[verification]
+contract_tests_before_real_archive_reuse_passed = 5
+synthetic_and_prior_contract_tests_before_real_annotation_passed = 26
+archive_reuse_attempts = 1
+combined_archive_member_count = 10092
+combined_total_uncompressed_bytes = 671106741
+transient_extracted_annotation_file_count = 37
+persistent_extracted_file_count = 0
+persistent_derived_file_count = 0
+selected_rgb_file_count = 0
+model_or_prediction_runs = 0
+
+[boundaries]
+archive_downloaded_in_m21 = false
+account_login_or_application_used = false
+source_bytes_in_git = false
+real_annotations_in_git = false
+local_vost_or_visor_read = false
+reserved_source_read = false
+model_detector_or_tracker_loaded = false
+prediction_run = false
+training_run = false
+test_tuning = false
+movement_candidate_created = false
+claim_candidate_created = false
+accepted_claim_created = false
+relation_or_transition_emitted = false
+live_private_cloud_inference_or_action_connected = false
+operate_enabled = false

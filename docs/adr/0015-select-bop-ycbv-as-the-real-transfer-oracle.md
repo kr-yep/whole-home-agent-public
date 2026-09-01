@@ -65,3 +65,12 @@ extraction into an existing dataset directory. The frozen single-root contract t
 failed as designed. This does not change the dataset selection or its thresholds. A
 separate M21 proposal may repair only the per-archive source-to-destination mapping and
 must prove collision safety before reusing the ignored local archives.
+
+## M21 annotation-selection evidence
+
+The sole per-archive mapping repair passed for the exact pinned archives. The unchanged
+selector then found no same-object/same-scene pair with both the required small visible
+positive and complete class-absent frame, so M21 stopped before RGB or D1 completion.
+This closes the one materialization-repair authority. A bounded annotation-only
+diagnostic may distinguish the two failed conjuncts, but it cannot make M21 pass or
+authorize a changed source, threshold, or negative definition.
