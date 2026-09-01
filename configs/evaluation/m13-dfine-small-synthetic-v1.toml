@@ -1,0 +1,120 @@
+schema_version = 1
+status = "FROZEN_BEFORE_SYNTHETIC_PREFLIGHT"
+screen_id = "m13-dfine-small-synthetic-v1"
+intended_use = "SYNTHETIC_ONLY_ENGINEERING_QUALIFICATION"
+candidate_count = 1
+
+[implementation]
+library = "transformers"
+version = "5.16.1"
+tag = "v5.16.1"
+tag_commit = "fb405cdf1bb6fa7b85ac8871b5d8a8b1376f5a3c"
+wheel_sha256 = "2f2d5b98a5ad3718713653734298fa620754ed683702a635ebb587df3ed29c7e"
+adapter_path = "src/whole_home_agent/adapters/dfine.py"
+adapter_sha256 = "8dc6f331698364720c17f67e309878fa49b448e2f05096b140c98c6c06faf453"
+
+[artifact]
+repository = "ustc-community/dfine-small-coco"
+revision = "f79e65b5fbb33ceb9d3ebba042955d7410c608f8"
+provenance = "COMMUNITY_CONVERTED_NOT_DFINE_AUTHOR_RELEASE"
+original_equivalence_verified = false
+model_dir = "models/weights/dfine/hf-small-coco-f79e65b"
+weights_filename = "model.safetensors"
+weights_url = "https://huggingface.co/ustc-community/dfine-small-coco/resolve/f79e65b5fbb33ceb9d3ebba042955d7410c608f8/model.safetensors"
+weights_bytes = 41497620
+weights_sha256 = "a144baff3a27bfd538fe37b11fa8d4fca5744b8c054b5301e7c699a1379cd18f"
+config_filename = "config.json"
+config_bytes = 6865
+config_sha256 = "9f206c4c935c67c957af2f15c3333b4ff224e72b1881bc7bbde9f873edf4448e"
+preprocessor_filename = "preprocessor_config.json"
+preprocessor_bytes = 470
+preprocessor_sha256 = "7e9e2245806aa3ef068a5321f5eebee3116fa4cec560173231954ffaca930eca"
+
+[license]
+declared_id = "Apache-2.0"
+metadata_url = "https://huggingface.co/ustc-community/dfine-small-coco/tree/f79e65b5fbb33ceb9d3ebba042955d7410c608f8"
+local_evaluation_allowed = true
+redistribution_allowed_by_project = false
+commercial_clearance_claimed = false
+
+[semantics]
+architecture = "DFineForObjectDetection"
+model_type = "d_fine"
+input_width = 640
+input_height = 640
+resize_preserves_aspect_ratio = false
+rescale_factor = 0.00392156862745098
+normalize = false
+pad = false
+num_queries = 300
+dense_class_count = 80
+confidence_threshold = 0.25
+confidence_operator = ">="
+postprocessor_threshold = 0.0
+output_coordinates = "ORIGINAL_FRAME_ABSOLUTE_XYXY"
+scored_class_ids = [39, 41, 43, 44, 45, 70, 72]
+scored_labels = ["bottle", "cup", "knife", "spoon", "bowl", "toaster", "refrigerator"]
+
+[runtime]
+device = "cuda"
+cuda_visible_devices = "0"
+inference_dtype = "float16"
+batch_size = 1
+compile = false
+warmup_calls = 1
+measured_calls = 51
+pythonhashseed = "13"
+cublas_workspace_config = ":4096:8"
+random_seed = 13
+numpy_seed = 13
+torch_seed = 13
+deterministic_algorithms_required = true
+network_connections_allowed = false
+local_files_only = true
+trust_remote_code = false
+use_safetensors = true
+installed_python = "3.12.13"
+installed_torch = "2.11.0+cu128"
+installed_torchvision = "0.26.0+cu128"
+installed_transformers = "5.16.1"
+installed_safetensors = "0.8.0"
+uv_lock_sha256 = "f2d3639c4b34b9c8a05381baec95cd178d39e056d81bbb7bc028eaeba1c94c3e"
+uv_lock_reproduces_gpu_environment = false
+
+[fixture]
+kind = "GENERATED_IN_MEMORY_RGB"
+width = 960
+height = 540
+generator_version = "m13-gradient-rectangles-v1"
+rgb_sha256 = "c0ef097cb129dbaaac0963d6a1e81341280584480308621de26636c7b49c0b98"
+public_or_private_media_bytes_allowed = false
+
+[gate]
+latency_statistic = "NEAREST_RANK_P95_49_OF_51"
+detector_p95_ms_strictly_less_than = 100.0
+peak_vram_bytes_strictly_less_than = 1073741824
+canonical_digest_must_be_constant = true
+
+[boundaries]
+vost_bytes_allowed = false
+visor_bytes_allowed = false
+household_media_allowed = false
+live_camera_allowed = false
+training_allowed = false
+movement_candidate_allowed = false
+claim_commit_allowed = false
+cloud_allowed = false
+action_allowed = false
+operate_enabled = false
+
+[attempt]
+maximum_real_load_attempts = 1
+marker_path = "runs/m13-dfine-small-synthetic-v1/attempt.json"
+receipt_path = "runs/m13-dfine-small-synthetic-v1/receipt.json"
+dirty_worktree_allowed = false
+
+[decision]
+engineering_pass_status = "ENGINEERING_COMPATIBLE_SYNTHETIC_ONLY"
+engineering_fail_status = "STOP_DFINE_SMALL_INELIGIBLE"
+development_screen_status = "STOP_DFINE_SMALL_NO_DEVELOPMENT_SCREEN"
+reason = "COMMUNITY_CONVERSION_HAS_NO_VERIFIED_PARITY_AND_SMALL_OBJECT_PRIOR_IS_WEAK"
