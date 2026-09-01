@@ -245,8 +245,62 @@ def select_cross_scene_ycbv_bop19_slice(
             "NO_CROSS_SCENE_SLICE",
             "no modeled class has a frozen positive and distinct-scene complete absence",
         )
+    return _build_cross_scene_slice(*selected)
 
-    object_id, positive_frame, positive_annotation, negative_frame = selected
+
+def select_exact_cross_scene_ycbv_bop19_slice(
+    frames: tuple[BopFrame, ...],
+    *,
+    object_id: int,
+    positive_identity: tuple[int, int],
+    negative_identity: tuple[int, int],
+    expected_bbox_visible_xywh: tuple[int, int, int, int],
+    expected_visible_pixel_area_fraction: float,
+    expected_bbox_area_fraction: float,
+    expected_visible_fraction: float,
+) -> BopCrossSceneD1Slice:
+    """Validate one preselected dual-area pair without searching for a fallback."""
+
+    if object_id not in range(1, len(YCB_VIDEO_CLASS_NAMES) + 1):
+        raise BopD1Error("OBJECT_ID_INVALID", "exact selection object is outside YCB-V")
+    if positive_identity[0] == negative_identity[0]:
+        raise BopD1Error("EXACT_PAIR_INVALID", "exact pair scenes must differ")
+    by_identity = {(frame.scene_id, frame.image_id): frame for frame in frames}
+    if len(by_identity) != len(frames):
+        raise BopD1Error("DUPLICATE_FRAME_IDENTITY", "exact selection frames must be unique")
+    positive_frame = by_identity.get(positive_identity)
+    negative_frame = by_identity.get(negative_identity)
+    if positive_frame is None or negative_frame is None:
+        raise BopD1Error("EXACT_PAIR_MISSING", "exact selected frame is absent")
+    matches = [item for item in positive_frame.annotations if item.object_id == object_id]
+    if len(matches) != 1:
+        raise BopD1Error("EXACT_POSITIVE_INVALID", "exact positive annotation is not unique")
+    annotation = matches[0]
+    x, y, width, height = annotation.bbox_visible_xywh
+    bbox_area_fraction = width * height / FRAME_AREA
+    if (
+        annotation.bbox_visible_xywh != expected_bbox_visible_xywh
+        or annotation.area_fraction != expected_visible_pixel_area_fraction
+        or bbox_area_fraction != expected_bbox_area_fraction
+        or annotation.visible_fraction != expected_visible_fraction
+        or annotation.visible_fraction < 0.10
+        or not 0.001 <= annotation.area_fraction < 0.01
+        or not 0.001 <= bbox_area_fraction < 0.01
+    ):
+        raise BopD1Error("EXACT_POSITIVE_DRIFT", "exact dual-area annotation changed")
+    if any(item.object_id == object_id for item in negative_frame.annotations):
+        raise BopD1Error("EXACT_NEGATIVE_DRIFT", "selected class is present in exact negative")
+    return _build_cross_scene_slice(object_id, positive_frame, annotation, negative_frame)
+
+
+def _build_cross_scene_slice(
+    object_id: int,
+    positive_frame: BopFrame,
+    positive_annotation: BopFrameAnnotation,
+    negative_frame: BopFrame,
+) -> BopCrossSceneD1Slice:
+    """Translate an already validated positive/negative pair to the canonical oracle."""
+
     label = YCB_VIDEO_CLASS_NAMES[object_id - 1]
     x, y, width, height = positive_annotation.bbox_visible_xywh
     bbox = BoundingBox(float(x), float(y), float(x + width), float(y + height))
@@ -321,6 +375,8 @@ def select_cross_scene_ycbv_bop19_slice(
 
 def cross_scene_slice_oracle_document(
     result: BopCrossSceneD1Slice,
+    *,
+    use_class: str = "TEST_ONLY_MINIMAL_DETECTOR_TRANSFER_ORACLE",
 ) -> dict[str, object]:
     """Serialize the bounded cross-scene slice into the exact M16 fixture schema."""
 
@@ -361,7 +417,7 @@ def cross_scene_slice_oracle_document(
     return {
         "schema_version": 1,
         "fixture_id": "ycbv-cross-scene-d1-v1",
-        "use_class": "TEST_ONLY_MINIMAL_DETECTOR_TRANSFER_ORACLE",
+        "use_class": use_class,
         "dataset": {
             "dataset_id": result.dataset.dataset_id,
             "width": result.dataset.width,

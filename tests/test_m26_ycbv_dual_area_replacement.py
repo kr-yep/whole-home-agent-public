@@ -4,9 +4,20 @@ from __future__ import annotations
 
 import hashlib
 import subprocess
+import tempfile
 import tomllib
 import unittest
 from pathlib import Path
+
+from whole_home_agent.adapters.bop_d1 import (
+    BopD1Error,
+    BopFrame,
+    BopFrameAnnotation,
+    select_exact_cross_scene_ycbv_bop19_slice,
+)
+from whole_home_agent.target_oracle import evaluate_target_oracle, load_target_oracle_fixture
+from tools.materialize_ycbv_cross_scene_d1 import write_clean_d1
+from tools.materialize_ycbv_dual_area_replacement import USE_CLASS
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -79,6 +90,119 @@ class M26ContractTests(unittest.TestCase):
         self.assertTrue(decision["pass_is_not_prediction_training_or_transfer_gain"])
         self.assertTrue(all(self.document["claim_limits"].values()))
         self.assertTrue(all(value is False for value in self.document["boundaries"].values()))
+
+
+def _annotation(
+    object_id: int,
+    *,
+    bbox: tuple[int, int, int, int] = (473, 161, 22, 129),
+    visible_pixels: int = 1739,
+    all_pixels: int = 9908,
+    visible_fraction: float = 0.17551473556721842,
+) -> BopFrameAnnotation:
+    return BopFrameAnnotation(
+        object_id=object_id,
+        bbox_visible_xywh=bbox,
+        pixel_count_all=all_pixels,
+        pixel_count_visible=visible_pixels,
+        visible_fraction=visible_fraction,
+    )
+
+
+def _frames() -> tuple[BopFrame, ...]:
+    return (
+        BopFrame(scene_id=48, image_id=1, annotations=(_annotation(2, bbox=(10, 10, 80, 80)),)),
+        BopFrame(scene_id=50, image_id=722, annotations=(_annotation(4),)),
+    )
+
+
+def _select(frames: tuple[BopFrame, ...] | None = None):
+    return select_exact_cross_scene_ycbv_bop19_slice(
+        _frames() if frames is None else frames,
+        object_id=4,
+        positive_identity=(50, 722),
+        negative_identity=(48, 1),
+        expected_bbox_visible_xywh=(473, 161, 22, 129),
+        expected_visible_pixel_area_fraction=1739 / 307200,
+        expected_bbox_area_fraction=(22 * 129) / 307200,
+        expected_visible_fraction=0.17551473556721842,
+    )
+
+
+class M26SyntheticMaterializationTests(unittest.TestCase):
+    def test_exact_pair_translates_without_search_or_physical_transition(self):
+        selected = _select()
+        self.assertEqual(selected.selected_object_id, 4)
+        self.assertEqual(
+            [(item["source_scene_id"], item["source_image_id"]) for item in selected.source_frames],
+            [(50, 722), (48, 1)],
+        )
+        self.assertEqual(len(selected.dataset.sequences), 2)
+        self.assertEqual(len(selected.dataset.transitions), 0)
+
+    def test_any_exact_positive_or_negative_drift_fails_closed(self):
+        with self.assertRaises(BopD1Error) as bbox_error:
+            _select(
+                (
+                    _frames()[0],
+                    BopFrame(scene_id=50, image_id=722, annotations=(_annotation(4, bbox=(473, 161, 23, 129)),)),
+                )
+            )
+        self.assertEqual(bbox_error.exception.code, "EXACT_POSITIVE_DRIFT")
+        with self.assertRaises(BopD1Error) as negative_error:
+            _select(
+                (
+                    BopFrame(scene_id=48, image_id=1, annotations=(_annotation(4),)),
+                    _frames()[1],
+                )
+            )
+        self.assertEqual(negative_error.exception.code, "EXACT_NEGATIVE_DRIFT")
+
+    def test_two_outputs_are_identical_and_have_one_m16_small_target(self):
+        selected = _select()
+        png = b"\x89PNG\r\n\x1a\n" + b"synthetic-not-source"
+        archives = [{"name": "synthetic.zip", "bytes": 1, "sha256": "0" * 64}]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            first = root / "first"
+            second = root / "second"
+            first_records = write_clean_d1(
+                first,
+                selected=selected,
+                rgb_payloads=(png, png),
+                source_revision="synthetic",
+                archive_rows=archives,
+                use_class=USE_CLASS,
+            )
+            second_records = write_clean_d1(
+                second,
+                selected=selected,
+                rgb_payloads=(png, png),
+                source_revision="synthetic",
+                archive_rows=archives,
+                use_class=USE_CLASS,
+            )
+            self.assertEqual(first_records, second_records)
+            fixture = load_target_oracle_fixture(
+                first / "oracle.json", allowed_use_classes=frozenset({USE_CLASS})
+            )
+            report = evaluate_target_oracle(fixture.dataset, fixture.predictions_for("empty"))
+        self.assertEqual(
+            dict(report.quality.size_target_count),
+            {"tiny_lt_0.1pct": 0, "small_0.1_to_1pct": 1, "large_ge_1pct": 0},
+        )
+
+    def test_tool_has_no_network_download_or_adaptive_selector(self):
+        source = (ROOT / "tools" / "materialize_ycbv_dual_area_replacement.py").read_text(encoding="utf-8")
+        for forbidden in ("requests", "urllib", "def _download", "select_cross_scene_ycbv_bop19_slice("):
+            self.assertNotIn(forbidden, source)
+        completed = subprocess.run(
+            [str(ROOT / ".venv" / "Scripts" / "python.exe"), str(ROOT / "tools" / "materialize_ycbv_dual_area_replacement.py"), "--help"],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(completed.returncode, 0, completed.stderr)
 
 
 if __name__ == "__main__":

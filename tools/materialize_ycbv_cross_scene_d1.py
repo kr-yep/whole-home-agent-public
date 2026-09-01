@@ -150,6 +150,7 @@ def write_clean_d1(
     rgb_payloads: tuple[bytes, bytes],
     source_revision: str,
     archive_rows: list[dict[str, object]],
+    use_class: str = USE_CLASS,
 ) -> list[dict[str, object]]:
     """Write one clean deterministic output from two already-validated RGB payloads."""
 
@@ -161,7 +162,9 @@ def write_clean_d1(
     for index, payload in enumerate(rgb_payloads):
         (output_root / "rgb" / f"{index:06d}.png").write_bytes(payload)
 
-    oracle_bytes = _canonical_bytes(cross_scene_slice_oracle_document(selected))
+    oracle_bytes = _canonical_bytes(
+        cross_scene_slice_oracle_document(selected, use_class=use_class)
+    )
     (output_root / "oracle.json").write_bytes(oracle_bytes)
     media_rows: list[dict[str, object]] = []
     for frame, payload in zip(selected.source_frames, rgb_payloads, strict=True):
@@ -181,7 +184,7 @@ def write_clean_d1(
     manifest = {
         "schema_version": 1,
         "dataset_id": selected.dataset.dataset_id,
-        "use_class": USE_CLASS,
+        "use_class": use_class,
         "project_split": "test",
         "source_revision": source_revision,
         "source_archives": archive_rows,
