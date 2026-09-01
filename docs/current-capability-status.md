@@ -41,7 +41,7 @@ what is still missing without reconstructing the full experiment history.
 These remain blocked by proposed governance, unassigned roles, absent consent and data
 policy, and `OPERATE DISABLED`.
 
-## Latest push: M35 text-identity decision
+## Latest push: M35 CI receipt
 
 Selected Git-blob SHA-256 plus exact revision and clean worktree as the authoritative
 identity for versioned text in clone drills. Raw checkout hash will be diagnostic only;
@@ -50,3 +50,7 @@ demo, or acceptance and leaves M34 as a normal STOP.
 
 The agent-run Windows path remains mechanically usable; independent teammate/platform
 evidence is still missing. M36 may harden only the checker and tests.
+
+The M35 result passed
+[public CI run 33526177365](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33526177365).
+This receipt does not claim that the M36 checker change already exists.

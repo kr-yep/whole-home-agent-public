@@ -35,4 +35,5 @@ M34 remains a normal STOP with no retry. `OPERATE` remains disabled.
 
 Python 3.12.13 passed `7/7` focused M35 contract/result tests. The staged public audit
 scanned 291 files / 582 index-and-worktree snapshots with zero violations and
-`operate_enabled: false`. Public CI is pending.
+`operate_enabled: false`. The result revision passed
+[public CI run 33526177365](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33526177365).

@@ -83,8 +83,15 @@ selection_authorizes_only_separately_frozen_m36 = true
 [verification]
 focused_tests_status = "PASS_7_OF_7"
 public_audit_status = "PASS_291_FILES_582_SNAPSHOTS_ZERO_VIOLATIONS"
-public_ci_status = "PENDING"
+public_ci_status = "SUCCESS_RUN_33526177365"
 operate_enabled = false
+
+[public_ci]
+result_revision = "61907c0bad266642e304484bcaabf117fe7f03c7"
+run_id = 33526177365
+status = "SUCCESS"
+verification_route = "PUBLIC_ACTIONS_HTML_COMPLETED_SUCCESSFULLY"
+url = "https://github.com/kr-yep/whole-home-agent-public/actions/runs/33526177365"
 [boundaries]
 clone_install_demo_checker_or_acceptance_executed = false
 checker_or_gitattributes_changed = false
