@@ -1,0 +1,127 @@
+schema_version = 1
+status = "FROZEN_BEFORE_OPTION_SCORING"
+gate_id = "m27-demo-evaluation-contract-v1"
+intended_use = "NO_MODEL_NO_MEDIA_PRIMARY_DEMO_AND_EVALUATION_LANE_DECISION"
+repository_evidence_revision = "05e2002048d386d1cf3afb49ffb41a10bf2381c9"
+team_size = 5
+hackathon_days = 3
+primary_demo_target_seconds = 90
+
+[evidence_scope]
+demo_guide = "docs/demo-guide.md"
+public_demo_module = "src/whole_home_agent/public_demo.py"
+streamlit_module = "src/whole_home_agent/streamlit_app.py"
+public_demo_tests = "tests/test_public_demo.py"
+m26_result = "configs/evaluation/m26-ycbv-dual-area-replacement-d1-result-v1.toml"
+committed_repository_evidence_only = true
+source_or_media_read_allowed = false
+network_research_allowed = false
+
+[[option]]
+id = "A_EXISTING_SYNTHETIC_E2E"
+description = "PROJECT_OWNED_PRERECORDED_KEY_TO_BAG_TO_SOFA_WITH_TRACE_AND_ABSTENTION_LIMITS"
+requires_new_implementation_before_selection = false
+
+[[option]]
+id = "B_M26_TWO_FRAME_ORACLE_PRIMARY"
+description = "IGNORED_TEST_ONLY_M26_POSITIVE_AND_NEGATIVE_AS_PRIMARY_JUDGE_DEMO"
+requires_new_implementation_before_selection = true
+
+[[option]]
+id = "C_NEW_MODEL_DATA_FIRST"
+description = "NEW_DATA_OR_MODEL_EXPERIMENT_BEFORE_ANY_PRIMARY_DEMO"
+requires_new_implementation_before_selection = true
+
+[[fatal_gate]]
+id = "G1_NINETY_SECOND_CLARITY"
+question = "CAN_A_JUDGE_SEE_PROBLEM_CHANGE_MEMORY_ANSWER_AND_LIMIT_WITHIN_90_SECONDS"
+
+[[fatal_gate]]
+id = "G2_PUBLIC_TEAMMATE_REPRODUCIBILITY"
+question = "CAN_A_TEAMMATE_RUN_THE_PRIMARY_STORY_FROM_THE_PUBLIC_REPO_WITHOUT_PRIVATE_OR_IGNORED_REQUIRED_BYTES"
+
+[[fatal_gate]]
+id = "G3_END_TO_END_USER_VALUE"
+question = "DOES_THE_STORY_SHOW_OBJECT_CONTAINER_LOCATION_MEMORY_AND_A_SCOPED_QUERY_ANSWER"
+
+[[fatal_gate]]
+id = "G4_TRACE_AND_UNCERTAINTY_VISIBLE"
+question = "ARE_PROVENANCE_EPISTEMIC_STATUS_ABSTENTION_LIMITS_AND_FAILURE_BOUNDARY_VISIBLE"
+
+[[fatal_gate]]
+id = "G5_NO_THIRD_PARTY_PRIMARY_DEPENDENCY"
+question = "DOES_THE_PRIMARY_PATH_AVOID_REQUIRED_THIRD_PARTY_BYTES_THAT_ARE_EXCLUDED_FROM_GIT"
+
+[[fatal_gate]]
+id = "G6_NO_UNSUPPORTED_ACCURACY_CLAIM"
+question = "CAN_THE_STORY_BE_PRESENTED_WITHOUT_IMPLYING_REAL_HOME_MODEL_ACCURACY_OR_GAIN"
+
+[[fatal_gate]]
+id = "G7_SCOPE_AND_SAFETY"
+question = "IS_THE_STORY_WITHIN_FIVE_PEOPLE_THREE_DAYS_LOCAL_PRERECORDED_AND_OPERATE_DISABLED"
+
+[decision]
+option_order = ["A_EXISTING_SYNTHETIC_E2E", "B_M26_TWO_FRAME_ORACLE_PRIMARY", "C_NEW_MODEL_DATA_FIRST"]
+selection_requires_every_fatal_gate_pass = true
+unknown_is_selection_ineligible = true
+select_first_all_pass_option = true
+selection = "SELECT_EXISTING_SYNTHETIC_E2E_PRIMARY_DEMO"
+normal_stop = "STOP_NO_PRIMARY_DEMO_MEETS_M27"
+selection_authorizes_only = "M28_PRIMARY_DEMO_ACCEPTANCE_GAP_AUDIT_AND_SCRIPT_HARDENING"
+
+[evaluation_lane.public_product_demo]
+input = "COMMITTED_PROJECT_OWNED_HASH_PINNED_PRERECORDED_CLIP"
+purpose = "JUDGE_VISIBLE_END_TO_END_SEMANTIC_VALUE_AND_FAILURE_BOUNDARY"
+allowed_claim = "ONE_GENERATED_FIXTURE_REPLAY_IS_TRACEABLE_AND_REPRODUCIBLE"
+model_accuracy_or_home_transfer_claim_allowed = false
+
+[evaluation_lane.mechanical_cv_smoke]
+input = "IGNORED_M26_TWO_FRAME_TEST_ONLY_ORACLE_PLUS_PUBLIC_RECEIPT"
+purpose = "OPTIONAL_SMALL_BBOX_ADAPTER_AND_METRIC_PLUMBING_SMOKE"
+allowed_claim = "ONE_REFERENCE_TARGET_IS_IN_THE_M16_SMALL_BUCKET"
+primary_demo_dependency_allowed = false
+gain_claim_or_threshold_tuning_allowed = false
+
+[evaluation_lane.future_scientific]
+development_and_frozen_test_separated = true
+protected_source_groups_required = true
+adjacent_frame_random_split_allowed = false
+development_only_model_threshold_tiling_and_crop_selection = true
+untouched_test_used_once_after_selection = true
+paired_same_hardware_input_warmup_and_measurement_required = true
+quality_and_cost_metrics_required = true
+bootstrap_interval_requires_multiple_independent_protected_groups = true
+single_positive_bootstrap_or_gain_claim_allowed = false
+training_epoch_cap = 20
+early_stopping_patience = 5
+separate_contract_required_before_data_model_or_training = true
+
+[hostile_review]
+objections = [
+  "SYNTHETIC_DEMO_CAN_LOOK_LIKE_A_TOY",
+  "PERFECT_FIXTURE_METRICS_CAN_BE_MISREAD_AS_MODEL_ACCURACY",
+  "M26_IS_TOO_SMALL_AND_ITS_BYTES_ARE_NOT_IN_GIT",
+  "NO_LIVE_CAMERA_MAY_LOOK_LESS_AMBITIOUS",
+  "FIXED_QUESTION_DOES_NOT_PROVE_GENERAL_LANGUAGE_UNDERSTANDING",
+]
+every_objection_requires_explicit_disposition = true
+unresolved_material_objection_is_fatal = true
+independent_reviewer_required_for_this_bounded_repo_evidence_decision = false
+
+[claim_limits]
+primary_demo_selection_is_product_validation = false
+synthetic_success_is_real_home_accuracy = false
+m26_smoke_is_detector_gain = false
+future_scientific_lane_is_current_authority = false
+
+[boundaries]
+source_or_media_read_allowed = false
+model_detector_or_tracker_load_allowed = false
+prediction_allowed = false
+training_allowed = false
+test_tuning_allowed = false
+new_runtime_dependency_allowed = false
+candidate_or_claim_emission_allowed = false
+relation_or_transition_emission_allowed = false
+live_private_cloud_inference_or_action_allowed = false
+operate_enabled = false
