@@ -1,0 +1,105 @@
+schema_version = 1
+status = "FROZEN_BEFORE_REPOSITORY_EVIDENCE_SCORING"
+gate_id = "m30-answer-subject-identity-decision-v1"
+intended_use = "REPOSITORY_ONLY_PUBLIC_ANSWER_SUBJECT_IDENTITY_DECISION"
+candidate_count = 3
+fatal_gate_count = 8
+selection_rule = "SELECT_AT_MOST_ONE_CANDIDATE_THAT_PASSES_EVERY_FATAL_GATE"
+tie_break_order = ["lowest_architectural_duplication", "smallest_coherent_diff", "lowest_compatibility_risk"]
+m29_result = "configs/evaluation/m29-primary-demo-acceptance-retry-result-v1.toml"
+m29_result_sha256 = "63b7c1699cd26c2fbf56c0805df25976f4a3c917174bbb8852fba4c3d6575eb4"
+
+[[evidence_file]]
+path = "src/whole_home_agent/model.py"
+sha256 = "6cfb51c6cfc14ba86121d583c024c66a34719b7c6e0538580d5c0589f48fe824"
+role = "CANONICAL_QUERY_AND_ANSWER_TYPES"
+
+[[evidence_file]]
+path = "src/whole_home_agent/relations.py"
+sha256 = "4f6d1ef0be4b2b7c8f63d1a4d2afd6c2b4318857df74645aef602a7fccc67954"
+role = "SOLE_ANSWER_CONSTRUCTION_PATH"
+
+[[evidence_file]]
+path = "src/whole_home_agent/cli.py"
+sha256 = "ccb10cf803a20148c8e97e2d8b41bb10b0b697357513b3829324cc51a1571030"
+role = "B0_CLI_ANSWER_SERIALIZER"
+
+[[evidence_file]]
+path = "src/whole_home_agent/public_demo.py"
+sha256 = "646fea88077aeaf83a2d4a39fe67a99fa043713f8983d80f0c30c790c975737c"
+role = "B1_PUBLIC_ANSWER_SERIALIZER_AND_QUERY_CONTEXT"
+
+[[evidence_file]]
+path = "docs/minimal-viable-architecture.md"
+sha256 = "7437ce780cdb9e6efa35e56d5a4f58506972f599347c2c5046f8008b1fc49255"
+role = "ANSWER_TRACE_SCOPE_AND_PRESENTATION_BOUNDARY"
+
+[[candidate]]
+id = "A_CANONICAL_ANSWER_TRACE_SUBJECT"
+proposal = "ADD_REQUIRED_SUBJECT_ID_TO_IMMUTABLE_ANSWER_TRACE_COPY_IT_FROM_VALIDATED_QUERY_REQUEST_AND_SERIALIZE_IT_IN_BOTH_B0_AND_B1_ANSWER_DICTIONARIES"
+
+[[candidate]]
+id = "B_PUBLIC_DTO_ONLY_SUBJECT"
+proposal = "KEEP_ANSWER_TRACE_UNCHANGED_AND_ADD_SUBJECT_ID_ONLY_TO_PUBLIC_DEMO_PRESENTATION_OUTPUT_FROM_RUN_PUBLIC_DEMO_QUERY_CONTEXT"
+
+[[candidate]]
+id = "C_KEEP_CURRENT_TRACE_CONTEXT"
+proposal = "MAKE_NO_CHANGE_AND_TREAT_FIXED_UI_TEXT_PLUS_RELATION_PATH_AS_SUFFICIENT_SUBJECT_CONTEXT"
+
+[[fatal_gate]]
+id = "G1_CANONICAL_QUERY_IDENTITY"
+requirement = "THE_STRUCTURED_ANSWER_INDEPENDENTLY_IDENTIFIES_THE_EXACT_QUERY_SUBJECT"
+
+[[fatal_gate]]
+id = "G2_AUTHORITATIVE_SOURCE"
+requirement = "SUBJECT_ID_COMES_DIRECTLY_FROM_QUERY_REQUEST_NOT_RELATION_PATH_INFERENCE_OR_PRESENTATION_TEXT"
+
+[[fatal_gate]]
+id = "G3_B0_B1_PARITY"
+requirement = "THE_SAME_CANONICAL_ANSWER_MEANING_IS_EXPOSED_BY_B0_CLI_AND_B1_PUBLIC_DEMO"
+
+[[fatal_gate]]
+id = "G4_NON_FOUND_COMPLETENESS"
+requirement = "SCOPE_REQUIRED_OUT_OF_SCOPE_FRONTIER_MISMATCH_UNKNOWN_AND_CONFLICT_ANSWERS_RETAIN_SUBJECT_ID_WHEN_PATH_IS_EMPTY"
+
+[[fatal_gate]]
+id = "G5_SINGLE_SOURCE_NO_DRIFT"
+requirement = "IDENTITY_IS_STORED_ONCE_AT_THE_QUERY_ANSWER_BOUNDARY_AND_SERIALIZERS_ONLY_PROJECT_IT"
+
+[[fatal_gate]]
+id = "G6_ADDITIVE_COMPATIBILITY"
+requirement = "NO_EXISTING_FIELD_IS_REMOVED_OR_RENAMED_AND_SESSION_CLAIM_PROJECTION_CANONICAL_HASH_SEMANTICS_REMAIN_UNCHANGED"
+
+[[fatal_gate]]
+id = "G7_JUDGE_AND_DEBUG_CLARITY"
+requirement = "TOP_LEVEL_STRUCTURED_ANSWER_SHOWS_WHICH_ENTITY_FOUND_UNKNOWN_OR_CONFLICT_REFERS_TO_WITHOUT_READING_UI_PROSE_OR_PATH_STEPS"
+
+[[fatal_gate]]
+id = "G8_BOUNDED_IMPLEMENTATION"
+requirement = "IMPLEMENTATION_REQUIRES_NO_NEW_DEPENDENCY_STORAGE_MODEL_MEDIA_ACTION_OR_GENERIC_INTERFACE_AND_HAS_FOCUSED_ALL_STATUS_TESTS"
+
+[hostile_review]
+adding_subject_changes_physical_truth = false
+subject_identity_is_epistemic_evidence = false
+subject_identity_is_query_scope_metadata = true
+relation_path_is_sufficient_for_unknown_or_conflict = false
+public_only_duplication_can_drift_from_b0 = true
+strict_external_json_consumers_may_need_additive_field_tolerance = true
+package_has_promised_stable_answer_schema = false
+
+[decision]
+single_pass = "SELECT_ONE_M31_BOUNDED_IMPLEMENTATION"
+zero_pass = "STOP_M30_NO_ELIGIBLE_SUBJECT_IDENTITY_CHANGE"
+multiple_pass = "STOP_M30_AMBIGUOUS_SUBJECT_IDENTITY_CHANGE"
+selected_work_must_be_separately_frozen = true
+m29_retry_allowed = false
+
+[boundaries]
+media_or_model_read_allowed = false
+demo_or_checker_execution_allowed = false
+code_schema_or_presentation_change_allowed = false
+new_dependency_or_storage_allowed = false
+prediction_training_or_tuning_allowed = false
+claim_relation_or_query_resolution_change_allowed = false
+live_private_cloud_inference_or_action_allowed = false
+operate_enabled = false
