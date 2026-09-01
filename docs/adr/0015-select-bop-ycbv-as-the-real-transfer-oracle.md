@@ -93,3 +93,13 @@ contracts, this supports cross-scene positive/complete-absent pairing inside one
 test-only diagnostic oracle. It does not support scene invariance, training on test,
 movement, relations, physical truth, or whole-home transfer. M23 therefore selects only
 an at-most-18-frame materialization proposal; all data/model work remains a later gate.
+
+## M24 materialization evidence
+
+The smallest source-ordered cross-scene pair materialized deterministically into an
+ignored local M16 fixture: object 4 is positive at scene 50/image 620 and completely
+absent at scene 48/image 1. The scenes remain separate sequences and no physical
+identity or transition crosses them. The frozen visible-pixel predicate passes, but the
+positive bbox occupies 3.043% of the frame, so M16 classifies it as `large_ge_1pct`.
+This does not invalidate the bounded materialization result; it blocks a small-bbox
+detector experiment until a separate annotation-only metric-alignment gate passes.

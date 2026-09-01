@@ -1,0 +1,137 @@
+schema_version = 1
+status = "RECORDED_LOCAL_MATERIALIZATION_PASS_WITH_METRIC_ALIGNMENT_GAP"
+gate_id = "m24-ycbv-cross-scene-d1-materialization-v1"
+decision = "PASS_M24_MINIMAL_CROSS_SCENE_D1"
+contract_revision = "4e0be76ddd64def94f47b4bbb733dd200671ba42"
+implementation_revision = "5a8c42f"
+direct_script_fix_revision = "5f15d0c"
+clean_run_revision = "5f15d0c"
+source_revision = "5c2c4aa229800355648cd268040aa814f8dc94f0"
+license_id = "MIT"
+target_frame_count = 900
+scene_count = 12
+annotation_member_count = 37
+unique_rgb_member_read_count = 2
+clean_materialization_runs = 2
+byte_identical_outputs = true
+third_party_output_location = "GIT_IGNORED_DATA_EXTERNAL"
+
+[[archive]]
+name = "ycbv_base.zip"
+bytes = 15805
+sha256 = "98440f8bd403100b21cf11a6729fabe8b3d5ce714472edc57a18b7f1fcd4bb18"
+member_count = 5
+uncompressed_bytes = 271812
+
+[[archive]]
+name = "ycbv_test_bop19.zip"
+bytes = 660198701
+sha256 = "c0c11251849877e7b2f373f6c7acf54739dc69d0fb2649c20050ca977bf5513d"
+member_count = 10087
+uncompressed_bytes = 670834929
+
+[preflight]
+archive_identity_passed = true
+full_header_preflight_passed = true
+mapped_namespace_preflight_passed = true
+combined_member_count = 10092
+combined_uncompressed_bytes = 671106741
+target_and_annotation_completeness_passed = true
+
+[selection]
+selected_object_id = 4
+selected_label = "005_tomato_soup_can"
+project_split = "test"
+source_sequence_count = 2
+
+[selection.positive]
+role = "POSITIVE"
+source_scene_id = 50
+source_image_id = 620
+local_frame_index = 0
+bbox_xyxy = [396.0, 158.0, 472.0, 281.0]
+visible_pixel_area_fraction = 0.005107421875
+visible_fraction = 0.16643683038082105
+source_rgb_sha256 = "f51b8e0ed5a1285577ad9fcf2050196476ad45b24b09552322b3075bcd4e37d8"
+
+[selection.negative]
+role = "COMPLETE_CLASS_ABSENT_NEGATIVE"
+source_scene_id = 48
+source_image_id = 1
+local_frame_index = 0
+scorable_instance_count = 0
+source_rgb_sha256 = "5a97d73a934afc62324662d3a6224f1d4783cbb0b4d7965cb4d3ed50f26c2a79"
+
+[oracle]
+dataset_id = "bop-ycbv-bop19-cross-scene-test-oracle-v1"
+evaluated_frame_count = 2
+negative_frame_count = 1
+scorable_target_count = 1
+source_sequence_count = 2
+reference_transition_count = 0
+empty_prediction_recall50 = 0.0
+empty_prediction_false_positives50 = 0
+
+[metric_alignment]
+status = "VISIBLE_PIXEL_SMALL_BUT_M16_BBOX_LARGE"
+visible_pixel_area_fraction = 0.005107421875
+bbox_area_fraction = 0.0304296875
+m16_small_bbox_target_count = 0
+m16_large_bbox_target_count = 1
+materialization_contract_passed = true
+small_bbox_detector_oracle_established = false
+transfer_gain_experiment_authorized = false
+interpretation = "THE_FROZEN_PIXEL_VISIBLE_AREA_PREDICATE_PASSED_BUT_THE_M16_DETECTOR_SIZE_BUCKET_USES_BBOX_AREA_SO_THIS_FRAME_DOES_NOT_TEST_SMALL_BBOX_DETECTION"
+
+[[output_file]]
+path = "manifest.json"
+bytes = 2685
+sha256 = "0547bb9d6f09c834491dc767965b3c6133fc7d21279e602195113f66d64fa66b"
+
+[[output_file]]
+path = "oracle.json"
+bytes = 2827
+sha256 = "8081f0528a9878f05000bd12219962ad958215f7fd2a514ca16a86de18d6ef4b"
+
+[[output_file]]
+path = "rgb/000000.png"
+bytes = 484715
+sha256 = "f51b8e0ed5a1285577ad9fcf2050196476ad45b24b09552322b3075bcd4e37d8"
+
+[[output_file]]
+path = "rgb/000001.png"
+bytes = 551684
+sha256 = "5a97d73a934afc62324662d3a6224f1d4783cbb0b4d7965cb4d3ed50f26c2a79"
+
+[output]
+relative_file_manifest_sha256 = "02bcc544798e495f3fb5b3f6e743b860a689b4cfe66d447f3a09eb176bb5f096"
+file_count = 4
+total_bytes = 1041911
+all_files_git_ignored = true
+raw_annotation_rows_persisted = false
+staging_remaining = false
+
+[next_gate]
+proposal = "M25_YCBV_SMALL_BBOX_METRIC_ALIGNMENT_DIAGNOSTIC"
+allowed_work = "FREEZE_THEN_REREAD_ONLY_THE_SAME_37_ANNOTATION_MEMBERS_TO_DECIDE_IF_ANY_SOURCE_ORDERED_CLASS_HAS_A_COMPLETE_DISTINCT_SCENE_NEGATIVE_AND_A_POSITIVE_THAT_IS_SMALL_UNDER_BOTH_VISIBLE_PIXEL_AND_M16_BBOX_AREA"
+source_or_media_download_allowed = false
+rgb_read_allowed = false
+model_prediction_training_or_test_tuning_allowed = false
+
+[boundaries]
+archive_or_dataset_downloaded = false
+source_bytes_in_git = false
+real_annotations_in_git = false
+depth_or_mask_read = false
+model_detector_or_tracker_loaded = false
+prediction_run = false
+training_run = false
+test_tuning = false
+local_vost_or_visor_read = false
+reserved_source_read = false
+movement_candidate_created = false
+claim_candidate_created = false
+accepted_claim_created = false
+relation_or_transition_emitted = false
+live_private_cloud_inference_or_action_connected = false
+operate_enabled = false

@@ -30,6 +30,7 @@ ROOT = Path(__file__).resolve().parents[1]
 M21 = ROOT / "configs" / "evaluation" / "m21-ycbv-per-archive-root-repair-v1.toml"
 M23 = ROOT / "configs" / "evaluation" / "m23-cross-scene-transfer-oracle-validity-result-v1.toml"
 CONTRACT = ROOT / "configs" / "evaluation" / "m24-ycbv-cross-scene-d1-materialization-v1.toml"
+RESULT = ROOT / "configs" / "evaluation" / "m24-ycbv-cross-scene-d1-materialization-result-v1.toml"
 
 
 class M24ContractTests(unittest.TestCase):
@@ -233,6 +234,70 @@ class M24CrossSceneSelectionTests(unittest.TestCase):
         self.assertNotIn("urllib", source)
         self.assertNotIn("requests", source)
         self.assertNotIn("def _download", source)
+
+
+class M24ResultTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.contract = tomllib.loads(CONTRACT.read_text(encoding="utf-8"))
+        cls.result = tomllib.loads(RESULT.read_text(encoding="utf-8"))
+
+    def test_materialization_pass_matches_the_frozen_branch(self):
+        self.assertEqual(self.result["decision"], self.contract["decision"]["pass"])
+        self.assertEqual(self.result["contract_revision"], "4e0be76ddd64def94f47b4bbb733dd200671ba42")
+        self.assertTrue(self.result["preflight"]["archive_identity_passed"])
+        self.assertTrue(self.result["preflight"]["full_header_preflight_passed"])
+        self.assertTrue(self.result["preflight"]["mapped_namespace_preflight_passed"])
+        self.assertEqual(self.result["target_frame_count"], 900)
+        self.assertEqual(self.result["unique_rgb_member_read_count"], 2)
+        self.assertTrue(self.result["byte_identical_outputs"])
+
+    def test_exact_source_ordered_pair_is_recorded_without_fake_identity(self):
+        selection = self.result["selection"]
+        self.assertEqual(selection["selected_object_id"], 4)
+        self.assertEqual(selection["selected_label"], "005_tomato_soup_can")
+        self.assertEqual(
+            [selection["positive"]["source_scene_id"], selection["positive"]["source_image_id"]],
+            [50, 620],
+        )
+        self.assertEqual(
+            [selection["negative"]["source_scene_id"], selection["negative"]["source_image_id"]],
+            [48, 1],
+        )
+        self.assertEqual(selection["negative"]["scorable_instance_count"], 0)
+        self.assertEqual(self.result["oracle"]["source_sequence_count"], 2)
+        self.assertEqual(self.result["oracle"]["reference_transition_count"], 0)
+
+    def test_metric_alignment_gap_is_not_silently_promoted(self):
+        gap = self.result["metric_alignment"]
+        self.assertEqual(gap["status"], "VISIBLE_PIXEL_SMALL_BUT_M16_BBOX_LARGE")
+        self.assertGreaterEqual(gap["visible_pixel_area_fraction"], 0.001)
+        self.assertLessEqual(gap["visible_pixel_area_fraction"], 0.01)
+        self.assertGreaterEqual(gap["bbox_area_fraction"], 0.01)
+        self.assertEqual(gap["m16_small_bbox_target_count"], 0)
+        self.assertEqual(gap["m16_large_bbox_target_count"], 1)
+        self.assertTrue(gap["materialization_contract_passed"])
+        self.assertFalse(gap["small_bbox_detector_oracle_established"])
+        self.assertFalse(gap["transfer_gain_experiment_authorized"])
+
+    def test_public_result_contains_hashes_but_no_third_party_bytes(self):
+        self.assertEqual(len(self.result["output_file"]), 4)
+        self.assertEqual(self.result["output"]["file_count"], 4)
+        self.assertEqual(self.result["output"]["total_bytes"], 1041911)
+        self.assertTrue(self.result["output"]["all_files_git_ignored"])
+        self.assertFalse(self.result["output"]["raw_annotation_rows_persisted"])
+        self.assertFalse(self.result["output"]["staging_remaining"])
+
+    def test_next_gate_is_annotation_only_and_boundaries_remain_closed(self):
+        self.assertEqual(
+            self.result["next_gate"]["proposal"],
+            "M25_YCBV_SMALL_BBOX_METRIC_ALIGNMENT_DIAGNOSTIC",
+        )
+        self.assertFalse(self.result["next_gate"]["rgb_read_allowed"])
+        self.assertFalse(
+            self.result["next_gate"]["model_prediction_training_or_test_tuning_allowed"]
+        )
+        self.assertTrue(all(value is False for value in self.result["boundaries"].values()))
 
 
 if __name__ == "__main__":

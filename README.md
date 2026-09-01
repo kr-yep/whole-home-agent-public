@@ -143,6 +143,14 @@ remaining in the same test-only oracle. The selection is capped at 18 frames and
 not authorize data/model work or a movement, relation, or whole-home claim. See the
 [M23 evidence report](docs/evaluation/m23-cross-scene-transfer-oracle-validity-v1.md).
 
+M24 materialized the smallest pair into ignored local storage: one object-4 positive
+from scene 50/image 620 and one complete class-absent negative from scene 48/image 1.
+Archive safety, two-run determinism, separate scene identities, and M16 fixture loading
+passed. The run also exposed a metric mismatch: visible pixels occupy 0.5107% of the
+image, but the bbox occupies 3.043%, so M16 does not count it as a small-bbox target.
+No detector run is authorized until that mismatch is resolved. See the
+[M24 evidence report](docs/evaluation/m24-ycbv-cross-scene-d1-materialization-v1.md).
+
 ## Run the demo
 
 Requires Python 3.11 or newer. The lockfile was generated with `uv 0.11.24`.
@@ -218,11 +226,11 @@ docs/                       architecture, demo, ADR, and technology notes
 The first public detector, consecutive motion, target-tracking, failure-localization,
 RF-DETR replacement, D-FINE synthetic engineering, M14 scientific-priority, M15
 target-substrate, M16 label-oracle, M17 generation-strategy, M18 vector-substrate, and
-M19 real-oracle through M23 cross-scene-validity gates are frozen. M23 permits only one
-test-only diagnostic slice capped at 18 frames. M24 may freeze and materialize the
-smallest source-ordered one-class cross-scene positive/complete-absent pair with full
-provenance; it cannot loosen a threshold, load a model, predict, or train. Tracker
-replacement remains a separate later co-gate.
+M19 real-oracle through M24 materialization gates are frozen. M24 produced a valid local
+two-frame fixture, but its positive is small only by visible pixels and large under the
+M16 bbox-area metric. M25 may only run a frozen annotation-only dual-area diagnostic;
+it cannot read RGB, loosen a threshold after results, load a model, predict, or train.
+Tracker replacement remains a separate later co-gate.
 The reserved VOST validation source and VISOR `P14_05` must remain untouched. Do not add
 a movement-candidate layer merely because scheduling is inexpensive. Training remains
 capped at 20 epochs with patience 5, and test tuning and automatic submissions remain
@@ -238,7 +246,8 @@ and [M12 detector screen](docs/evaluation/vost-m12-rfdetr-small-v1.md), plus the
 [M20 result](docs/evaluation/m20-ycbv-bop19-acquisition-translation-v1.md), and the
 [M21 result](docs/evaluation/m21-ycbv-per-archive-root-repair-v1.md), and the
 [M22 result](docs/evaluation/m22-ycbv-annotation-failure-localization-v1.md), and the
-[M23 result](docs/evaluation/m23-cross-scene-transfer-oracle-validity-v1.md).
+[M23 result](docs/evaluation/m23-cross-scene-transfer-oracle-validity-v1.md), and the
+[M24 result](docs/evaluation/m24-ycbv-cross-scene-d1-materialization-v1.md).
 
 ## Safety and data boundary
 
