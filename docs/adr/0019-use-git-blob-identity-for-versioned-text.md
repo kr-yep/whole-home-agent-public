@@ -26,3 +26,9 @@ Receipts distinguish version authority from checkout representation without chan
 the lockfile, dependency resolution, or product. Archive/wheel-only environments are not
 covered by this checker. M34 remains a normal STOP, and this ADR grants no demo retry,
 data, model, action, or `OPERATE` authority.
+
+## M36 implementation evidence
+
+The bounded checker/test change implements the selected Git-blob identity, separates
+blob/worktree receipt fields, and fails without Git. LF/CRLF, dirty-content, wrong-hash,
+and non-Git focused cases pass without running a new acceptance drill.

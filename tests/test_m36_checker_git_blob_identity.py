@@ -14,6 +14,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / "configs" / "evaluation" / "m36-checker-git-blob-identity-hardening-v1.toml"
 CHECKER = ROOT / "tools" / "check_teammate_drill.py"
+RESULT = ROOT / "configs" / "evaluation" / "m36-checker-git-blob-identity-hardening-result-v1.toml"
 
 
 def _load_checker_module():
@@ -151,6 +152,44 @@ class M36ImplementationTests(unittest.TestCase):
         self.assertIn('"uv_lock_worktree_sha256"', source)
         self.assertIn('"uv_lock_worktree_representation_matches_git_blob"', source)
         self.assertNotIn('"uv_lock_sha256"', source)
+
+
+class M36ResultTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.result = tomllib.loads(RESULT.read_text(encoding="utf-8"))
+
+    def test_bounded_checker_implementation_passes(self):
+        self.assertEqual(self.result["decision"], "PASS_M36_GIT_BLOB_IDENTITY_HARDENING")
+        self.assertEqual(self.result["production_file_change_count"], 0)
+        self.assertEqual(self.result["tool_file_change_count"], 1)
+        self.assertTrue(self.result["implementation"]["exact_revision_required"])
+        self.assertTrue(self.result["implementation"]["clean_worktree_required"])
+        self.assertFalse(self.result["implementation"]["non_git_fallback"])
+
+    def test_receipt_identity_fields_and_focused_evidence_are_exact(self):
+        self.assertEqual(
+            self.result["implementation"]["receipt_fields"],
+            [
+                "uv_lock_git_blob_sha256",
+                "uv_lock_worktree_sha256",
+                "uv_lock_worktree_representation_matches_git_blob",
+            ],
+        )
+        self.assertTrue(all(self.result["focused_evidence"].values()))
+
+    def test_m34_and_product_claims_are_not_rewritten(self):
+        self.assertEqual(self.result["m34_status_after_m36"], "CONTRACT_NORMAL_STOP")
+        self.assertFalse(self.result["m34_retry_or_acceptance_run"])
+        limits = self.result["claim_limits"]
+        self.assertFalse(limits["m36_pass_establishes_cross_platform_demo_success"])
+        self.assertFalse(limits["m36_pass_establishes_independent_teammate_success"])
+        self.assertFalse(limits["m36_pass_establishes_m34_pass"])
+        self.assertTrue(all(value is False for value in self.result["boundaries"].values()))
+
+
+if __name__ == "__main__":
+    unittest.main()
 
 
 if __name__ == "__main__":

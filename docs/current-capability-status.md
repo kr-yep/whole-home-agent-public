@@ -1,6 +1,6 @@
 # Current capability status
 
-**Checkpoint:** M35 decision · **Runtime:** `OPERATE DISABLED` · **Production ready:** no
+**Checkpoint:** M36 checker hardening · **Runtime:** `OPERATE DISABLED` · **Production ready:** no
 
 This page is updated with every milestone push so a teammate can see what is usable and
 what is still missing without reconstructing the full experiment history.
@@ -17,6 +17,9 @@ what is still missing without reconstructing the full experiment history.
 - Rebuild the same B0 claim ledger/projection; the golden semantic SHA-256 remains
   `226d30a5b826720d607d0b9a29bf3dfb9f5429eeedbbd70ffd1ff23c21233c8f`.
 - Run the public test/CI matrix and mechanical release audit.
+- Use the teammate checker without false `uv.lock` failures from Git LF/CRLF checkout
+  representation; exact revision, clean worktree, and committed blob identity remain
+  fail-closed.
 
 ## Still missing before a credible hackathon handoff
 
@@ -41,16 +44,12 @@ what is still missing without reconstructing the full experiment history.
 These remain blocked by proposed governance, unassigned roles, absent consent and data
 policy, and `OPERATE DISABLED`.
 
-## Latest push: M35 CI receipt
+## Latest push: M36 checker hardening
 
-Selected Git-blob SHA-256 plus exact revision and clean worktree as the authoritative
-identity for versioned text in clone drills. Raw checkout hash will be diagnostic only;
-canonical-LF fallback is not allowed. This decision ran no clone, install, checker,
-demo, or acceptance and leaves M34 as a normal STOP.
+Implemented Git-blob identity in the teammate checker and separated committed versus
+worktree receipt hashes. Synthetic Git tests cover LF/CRLF checkout, content tampering,
+wrong identity, and non-Git failure. All 382 complete-regression tests and the 295-file
+public audit pass.
 
 The agent-run Windows path remains mechanically usable; independent teammate/platform
-evidence is still missing. M36 may harden only the checker and tests.
-
-The M35 result passed
-[public CI run 33526177365](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33526177365).
-This receipt does not claim that the M36 checker change already exists.
+evidence is still missing. M34 remains STOP and was not rerun.

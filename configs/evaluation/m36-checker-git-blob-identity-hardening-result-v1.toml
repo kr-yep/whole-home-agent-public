@@ -1,0 +1,70 @@
+schema_version = 1
+status = "RECORDED_IMPLEMENTATION_PASS"
+gate_id = "m36-checker-git-blob-identity-hardening-v1"
+decision = "PASS_M36_GIT_BLOB_IDENTITY_HARDENING"
+contract_revision = "2cb2e9ae339ce6368a554bbc4e72e15969f385de"
+implementation_revision = "82378fe40a635c019a66ae481ab26848b35035fc"
+historical_test_fix_revision = "d7cab829cf67dd57eeec6b395183f7294648e11b"
+prechange_checker_sha256 = "cd285badb9e4ccd6b5ab8e94a657cdfa814294ceffc9d72468875ea977118c5f"
+postchange_checker_sha256 = "4c2f3a5252bfa6711bffb20e1e3d708efa43e0f27ef6a9ac246202669f328d1e"
+production_file_change_count = 0
+tool_file_change_count = 1
+m34_status_after_m36 = "CONTRACT_NORMAL_STOP"
+m34_retry_or_acceptance_run = false
+
+[implementation]
+fatal_lock_identity = "SHA256_OF_EXACT_HEAD_UV_LOCK_GIT_BLOB_BYTES"
+exact_revision_required = true
+clean_worktree_required = true
+non_git_fallback = false
+raw_worktree_hash_is_diagnostic_only = true
+receipt_fields = ["uv_lock_git_blob_sha256", "uv_lock_worktree_sha256", "uv_lock_worktree_representation_matches_git_blob"]
+ambiguous_uv_lock_sha256_removed = true
+
+[focused_evidence]
+lf_and_crlf_same_git_blob_identity = true
+lf_and_crlf_raw_worktree_hashes_differ = true
+crlf_checkout_can_remain_git_clean = true
+content_tamper_is_git_dirty = true
+wrong_blob_hash_rejected = true
+non_git_environment_fails_without_fallback = true
+receipt_fields_distinct = true
+
+[compatibility]
+checker_receipt_schema_changed = true
+stable_external_checker_receipt_schema_previously_promised = false
+product_or_public_demo_schema_changed = false
+archive_or_wheel_without_git_supported = false
+
+[claim_limits]
+m36_pass_establishes_checker_portability_contract_only = true
+m36_pass_establishes_cross_platform_demo_success = false
+m36_pass_establishes_independent_teammate_success = false
+m36_pass_establishes_m34_pass = false
+product_or_cv_gain_established = false
+real_home_transfer_established = false
+
+[verification]
+python = "3.12.13"
+focused_tests_passed = 12
+full_tests_passed = 382
+full_regression_profile = "M32_COMPLETE_REGRESSION"
+full_regression_is_m34_retry = false
+public_audit_status = "PASS_295_FILES_590_SNAPSHOTS_ZERO_VIOLATIONS"
+public_ci_status = "PENDING"
+operate_enabled = false
+
+[boundaries]
+clone_install_or_acceptance_executed = false
+gitattributes_lock_fixture_dependency_or_threshold_changed = false
+production_code_schema_semantics_or_presentation_changed = false
+external_private_or_live_media_used = false
+model_loaded_or_trained = false
+m29_or_m34_retry_run = false
+private_registry_credential_cloud_or_action_connected = false
+operate_enabled = false
+
+[next_gate]
+proposal = "M37_TEAMMATE_HANDOFF_RUNBOOK"
+allowed_work = "DOCUMENT_CHECKER_INSTALL_COMMANDS_EXPECTED_RECEIPT_TROUBLESHOOTING_AND_LIMITS_WITHOUT_DEMO_OR_ACCEPTANCE_RERUN"
+independent_teammate_execution_requires_real_TEAMMATE = true

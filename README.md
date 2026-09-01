@@ -29,11 +29,11 @@ indoor small-object gain; robust tracking under occlusion/camera motion; live ca
 multi-camera support; durable household memory/retention; assigned policy/data roles,
 consent, and any operational activation. Live/private sensing and actions remain blocked.
 
-**Latest milestone (M35):** repository-only scoring selects exact Git-blob SHA-256 plus
-exact revision and clean-worktree checks as the stable identity for versioned text. Raw
-checkout hash becomes diagnostic only; canonical-LF fallback is rejected. M34 remains a
-normal STOP and was not rerun. M36 may harden only the checker and focused tests. The
-M35 result passed [public CI](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33526177365).
+**Latest milestone (M36):** the teammate checker now uses exact Git-blob SHA-256 plus
+exact revision and clean-worktree checks for `uv.lock`. Raw checkout hash is diagnostic,
+so Git-filtered LF/CRLF representations no longer create false identity failures. All
+382 regression tests and the 295-file public audit pass. M34 remains a normal STOP; an
+actual independent teammate or other-platform handoff is still missing.
 
 ## What works today
 
@@ -341,6 +341,8 @@ The [M34 result](docs/evaluation/m34-teammate-drill-infrastructure-retry-v1.md) 
 the successful clean install/offline semantics and the distinct CRLF lock-identity STOP.
 The [M35 result](docs/evaluation/m35-versioned-text-identity-portability-decision-v1.md)
 selects Git-blob identity for the separately bounded non-acceptance checker hardening.
+The [M36 result](docs/evaluation/m36-checker-git-blob-identity-hardening-v1.md) implements
+that checker-only hardening without rerunning acceptance.
 
 ## Safety and data boundary
 
