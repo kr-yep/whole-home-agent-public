@@ -1,0 +1,97 @@
+schema_version = 1
+status = "RECORDED_BOUNDED_PASS"
+gate_id = "m18-vector-d1-slice-v1"
+decision = "PASS_TO_REALISM_TRANSFER_GATE_DESIGN"
+contract_revision = "709f37e8e7cb06ba4f4686b2043f498c4224a2d3"
+implementation_revision = "a7ea0b8582558c293307e727c703bcb059c6613a"
+dataset_id = "synthetic:d1-vector-slice@1"
+use_class = "D0_SYNTHETIC"
+license = "CC0-1.0"
+new_runtime_dependencies = 0
+
+[artifacts]
+config_path = "configs/evaluation/m18-vector-d1-slice-v1.toml"
+config_sha256 = "2675f4f99aceb2064ab68ea4e656200f10cf07e76e39ced1620d87fd26adec9a"
+generator_path = "tools/generate_d1_vector_slice.py"
+generator_sha256 = "27aa7fe14fa4fb4654fc7ad601470420b92a81e3198cb8e40d8d36367b6c2472"
+manifest_path = "examples/media/generated/d1_vector_v1/manifest.json"
+manifest_sha256 = "68a6e873c210626736a9e6c71e6d2829e205b35d1d27cbbf8d0dc1f6ad8193a9"
+oracle_fixture_path = "examples/fixtures/evaluation/d1_vector_slice_v1.json"
+oracle_fixture_sha256 = "20ea1209acc64aad987d85482ce3e17f625c78c068c3d0063c1950ff1a78bea2"
+pillow_version = "12.3.0"
+
+[shape]
+width = 640
+height = 360
+source_group_count = 3
+frames_per_group = 6
+image_count = 18
+frame_annotation_count = 18
+m16_oracle_fixture_count = 1
+non_manifest_output_count = 37
+total_non_manifest_output_bytes = 103957
+maximum_allowed_bytes = 5242880
+
+[coverage]
+development_validation_test_groups = true
+visible_instances = 6
+truncated_instances = 3
+occluded_instances = 3
+absent_instances = 3
+unknown_instances = 3
+scored_frames = 15
+unknown_frames = 3
+explicit_scored_negative_frames = 3
+containment_reference_transitions = 3
+location_reference_transitions = 3
+visible_key_area_pixels = 336
+frame_area_pixels = 230400
+visible_key_area_fraction = 0.0014583333333333334
+small_object_range_passed_in_each_split = true
+protected_factor_split_validation_passed = true
+
+[reproducibility]
+independent_clean_generations = 2
+media_directory_files_per_generation = 37
+all_non_manifest_output_bytes_identical = true
+manifest_bytes_identical = true
+committed_output_bytes_identical = true
+existing_b1_generator_hash_unchanged = true
+existing_b1_media_hash_unchanged = true
+existing_b1_annotations_hash_unchanged = true
+existing_b1_manifest_hash_unchanged = true
+
+[verification]
+python = "3.12.13"
+focused_tests_passed = 12
+clean_implementation_revision_full_tests_passed = 161
+clean_implementation_revision_public_audit_files = 198
+clean_implementation_revision_public_audit_snapshots = 396
+clean_implementation_revision_public_audit_violations = 0
+visual_samples_inspected = 4
+operate_enabled = false
+
+[evidence_limits]
+image_realism_established = false
+detector_gain_established = false
+synthetic_to_real_transfer_established = false
+fixed_camera_household_transfer_established = false
+tracking_or_movement_quality_established = false
+relation_physical_truth_established = false
+training_authorized = false
+operation_authorized = false
+
+[boundaries]
+external_asset_or_media_downloaded = false
+dependency_installed = false
+blender_or_kubric_used = false
+recording_performed = false
+vost_or_visor_bytes_read = false
+reserved_source_read = false
+detector_or_tracker_loaded = false
+training_run = false
+movement_candidate_created = false
+claim_candidate_created = false
+accepted_claim_created = false
+live_private_cloud_or_action_connected = false
+operate_enabled = false

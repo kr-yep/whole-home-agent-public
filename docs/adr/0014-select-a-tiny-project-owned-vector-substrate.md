@@ -51,3 +51,12 @@ Negative:
 - a Blender or Kubric route has a pinned, licensed, fully local, bounded implementation
   plan with stronger expected information value.
 
+## Bounded implementation evidence
+
+M18 implemented this proposal at revision
+`a7ea0b8582558c293307e727c703bcb059c6613a`. Three protected source groups contain
+18 PNG/annotation pairs and one exact M16 fixture; two clean generations matched all
+committed bytes, total non-manifest output was 103,957 bytes, and the old golden replay
+hashes remained unchanged. This is implementation evidence only and does not change the
+ADR's Proposed status or establish detector transfer.
+

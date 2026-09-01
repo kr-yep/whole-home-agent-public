@@ -21,6 +21,7 @@ from whole_home_agent.target_oracle import (
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / "configs" / "evaluation" / "m18-vector-d1-slice-v1.toml"
+RESULT = ROOT / "configs" / "evaluation" / "m18-vector-d1-slice-result-v1.toml"
 MEDIA_ROOT = ROOT / "examples" / "media" / "generated" / "d1_vector_v1"
 MANIFEST = MEDIA_ROOT / "manifest.json"
 ORACLE_FIXTURE = ROOT / "examples" / "fixtures" / "evaluation" / "d1_vector_slice_v1.json"
@@ -266,6 +267,38 @@ class M18VectorD1ArtifactTests(unittest.TestCase):
                 (first / "media" / "manifest.json").read_bytes(),
                 MANIFEST.read_bytes(),
             )
+
+
+class M18VectorD1ResultTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.contract = tomllib.loads(CONTRACT.read_text(encoding="utf-8"))
+        cls.result = tomllib.loads(RESULT.read_text(encoding="utf-8"))
+
+    def test_pass_decision_matches_only_the_frozen_next_gate(self):
+        self.assertEqual(self.result["status"], "RECORDED_BOUNDED_PASS")
+        self.assertEqual(self.result["decision"], self.contract["gate"]["pass_decision"])
+        self.assertEqual(self.result["new_runtime_dependencies"], 0)
+
+    def test_result_hashes_match_the_committed_contract_and_outputs(self):
+        artifacts = self.result["artifacts"]
+        for path_field, hash_field in (
+            ("config_path", "config_sha256"),
+            ("generator_path", "generator_sha256"),
+            ("manifest_path", "manifest_sha256"),
+            ("oracle_fixture_path", "oracle_fixture_sha256"),
+        ):
+            self.assertEqual(_sha256(ROOT / artifacts[path_field]), artifacts[hash_field])
+        self.assertEqual(
+            self.result["shape"]["total_non_manifest_output_bytes"],
+            json.loads(MANIFEST.read_text(encoding="utf-8"))["total_non_manifest_output_bytes"],
+        )
+
+    def test_result_does_not_promote_mechanics_to_transfer_or_operation(self):
+        self.assertTrue(
+            all(value is False for value in self.result["evidence_limits"].values())
+        )
+        self.assertTrue(all(value is False for value in self.result["boundaries"].values()))
 
 
 if __name__ == "__main__":

@@ -18,6 +18,7 @@ The answer is an `estimated` result scoped to that replay. It is not a claim abo
 ## What works today
 
 - hash-pinned, project-generated 80-frame MP4 replay with exact annotations;
+- a separate three-group, 18-image project-generated D1 oracle substrate;
 - PTS-aware PyAV decoding and optional motion-plus-periodic scheduling;
 - a deterministic RGB smoke detector for the generated artwork;
 - a hash-pinned RF-DETR Nano/Small offline adapter with sparse COCO-ID validation;
@@ -104,6 +105,13 @@ remain possible later realism routes, but their bounded exact integrations were 
 established here. M17 installed nothing and generated no media. See the
 [M17 evidence report](docs/evaluation/m17-generation-strategy-reality-gate-v1.md).
 
+M18 used that route to generate a deliberately tiny D1 substrate: three protected
+development/validation/test groups, 18 PNG/annotation pairs, six reference transitions,
+and explicit visible/truncated/occluded/absent/unknown cases. Two clean generations
+matched every committed byte, the output stayed at 103,957 bytes, and the old golden
+replay was unchanged. This proves data mechanics, not detector transfer. See the
+[M18 evidence report](docs/evaluation/m18-vector-d1-slice-v1.md).
+
 ## Run the demo
 
 Requires Python 3.11 or newer. The lockfile was generated with `uv 0.11.24`.
@@ -178,12 +186,11 @@ docs/                       architecture, demo, ADR, and technology notes
 
 The first public detector, consecutive motion, target-tracking, failure-localization,
 RF-DETR replacement, D-FINE synthetic engineering, M14 scientific-priority, M15
-target-substrate, M16 label-oracle, and M17 generation-strategy gates are frozen. M17
-selected only one tiny extension of the existing project-owned vector renderer. M18 will
-freeze and generate exactly three protected source groups and 18 D1 image/annotation
-pairs, verify repeated byte identity, and preserve the old golden replay. It cannot
-acquire external assets, load a model, or train. Tracker replacement remains a separate
-later co-gate.
+target-substrate, M16 label-oracle, M17 generation-strategy, and M18 vector-substrate
+gates are frozen. M18 passed only mechanics and reproducibility. M19 will compare exactly
+GMU Kitchens, HomebrewedDB, YCB-Video, and STOP using official sources to find at most one
+real transfer oracle before any synthetic scaling or training. It cannot download data,
+load a model, or train. Tracker replacement remains a separate later co-gate.
 The reserved VOST validation source and VISOR `P14_05` must remain untouched. Do not add
 a movement-candidate layer merely because scheduling is inexpensive. Training remains
 capped at 20 epochs with patience 5, and test tuning and automatic submissions remain
@@ -193,8 +200,9 @@ and [M12 detector screen](docs/evaluation/vost-m12-rfdetr-small-v1.md), plus the
 [M14 priority decision](docs/evaluation/m14-detector-scientific-priority-v1.md), and the
 [M15 result](docs/evaluation/m15-target-domain-substrate-v1.md), plus the
 [M16 result](docs/evaluation/m16-target-label-oracle-feasibility-v1.md), the
-[M17 result](docs/evaluation/m17-generation-strategy-reality-gate-v1.md), and the
-[M18 proposal](docs/evaluation/m18-vector-d1-slice-proposal.md).
+[M17 result](docs/evaluation/m17-generation-strategy-reality-gate-v1.md), the
+[M18 result](docs/evaluation/m18-vector-d1-slice-v1.md), and the
+[M19 proposal](docs/evaluation/m19-real-transfer-oracle-reality-gate-proposal.md).
 
 ## Safety and data boundary
 
