@@ -96,9 +96,18 @@ operation_or_household_authority_established = false
 python = "3.12.13"
 local_test_execution_count = 0
 static_toml_parse_passed = true
-public_audit_status = "PENDING_POST_SELECTION_RECEIPT"
-public_ci_status = "PENDING"
+public_audit_status = "PASS_IN_PUBLIC_CI_RUN_33521751091"
+public_ci_status = "SUCCESS"
 operate_enabled = false
+
+[public_ci]
+result_revision = "5ea23d81f762d060a2cc8f9b7e22ae686d595a0f"
+run_id = 33521751091
+job_count = 6
+successful_job_count = 6
+release_audit_job_succeeded = true
+status = "SUCCESS"
+url = "https://github.com/kr-yep/whole-home-agent-public/actions/runs/33521751091"
 
 [boundaries]
 third_party_private_or_live_media_read = false

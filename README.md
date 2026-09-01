@@ -32,8 +32,10 @@ consent, and any operational activation. Live/private sensing and actions remain
 **Latest milestone (M32):** verification is now split into static-contract,
 complete-regression, and ad-hoc acceptance/experiment profiles. Only complete
 regression may read the exact manifest-backed project-owned D0 synthetic fixture, and
-only as regression evidence. M31 remains a historical normal STOP. M33 is the bounded
-teammate clean-install and closed-demo drill.
+only as regression evidence. All six jobs passed in
+[public CI](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33521751091).
+M31 remains a historical normal STOP. M33 is the bounded teammate clean-install and
+closed-demo drill.
 
 ## What works today
 

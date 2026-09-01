@@ -40,7 +40,7 @@ what is still missing without reconstructing the full experiment history.
 These remain blocked by proposed governance, unassigned roles, absent consent and data
 policy, and `OPERATE DISABLED`.
 
-## Latest push: M32 verification boundary
+## Latest push: M32 CI receipt
 
 Added three explicit verification profiles. Static work cannot read media or execute
 the demo; complete regression may read only the exact manifest-backed project-owned D0
@@ -49,3 +49,8 @@ still requires a separate gate. M31 remains a normal STOP.
 
 The usable product behavior is unchanged. The next missing delivery proof is one
 teammate-style clean install and closed-demo drill in a disposable environment.
+
+All six complete-regression jobs passed in
+[public CI run 33521751091](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33521751091).
+This push adds that receipt only; the usable capabilities and missing work above do not
+change.

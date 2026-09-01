@@ -29,6 +29,12 @@ Scoring used those text files and recorded metadata only. It executed no tests, 
 checker, or audit and read no media or model. M32 changes no production code, schema,
 presentation, dependency, storage, or runtime boundary.
 
+After selection, the committed complete-regression workflow ran as a separate receipt.
+All six jobs, including the prerecorded D0, closed-demo, and release-audit jobs,
+succeeded in [public CI run 33521751091](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33521751091)
+for revision `5ea23d81f762d060a2cc8f9b7e22ae686d595a0f`. This receipt does not
+change the decision's evidence limits.
+
 ## Limits
 
 This decision does not make M31 retroactively pass. It does not authorize M29 retry,
