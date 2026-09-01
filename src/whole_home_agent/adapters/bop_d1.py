@@ -101,7 +101,21 @@ class BopD1Slice:
 
 
 def load_and_translate_ycbv_bop19(dataset_root: str | Path) -> BopD1Slice:
-    """Load only BOP metadata/PNG headers and apply the frozen M20 selection rule."""
+    """Apply the frozen selection rule and verify only the selected RGB headers."""
+
+    root = Path(dataset_root).resolve()
+    result = select_ycbv_bop19_slice_from_metadata(root)
+    for frame in result.source_frames:
+        scene_id = int(frame["source_scene_id"])
+        image_id = int(frame["source_image_id"])
+        _verify_png_dimensions(
+            root / "test" / f"{scene_id:06d}" / "rgb" / f"{image_id:06d}.png"
+        )
+    return result
+
+
+def select_ycbv_bop19_slice_from_metadata(dataset_root: str | Path) -> BopD1Slice:
+    """Select the frozen slice without reading image bytes or requiring RGB files."""
 
     root = Path(dataset_root).resolve()
     if not root.is_dir():
@@ -149,8 +163,6 @@ def _load_frame(root: Path, scene_id: int, image_id: int) -> BopFrame:
         raise BopD1Error("FRAME_GROUND_TRUTH_MISSING", "selected frame lacks ground truth")
     if len(gt_rows) != len(info_rows):
         raise BopD1Error("GROUND_TRUTH_ALIGNMENT_ERROR", "pose/info row counts differ")
-    _verify_png_dimensions(scene_root / "rgb" / f"{image_id:06d}.png")
-
     annotations: list[BopFrameAnnotation] = []
     seen_objects: set[int] = set()
     for gt, info in zip(gt_rows, info_rows, strict=True):
@@ -288,7 +300,7 @@ def _select_and_translate(frames: tuple[BopFrame, ...]) -> BopD1Slice:
         synchronized_view_group_id=f"not_applicable:ycbv-single-view-{scene_id:06d}",
     )
     dataset = TargetOracleDataset(
-        dataset_id="bop-ycbv-bop19-m20-local-slice",
+        dataset_id="bop-ycbv-bop19-local-slice",
         width=FRAME_WIDTH,
         height=FRAME_HEIGHT,
         sequences=(OracleSequence(group=group, frames=tuple(oracle_frames)),),
@@ -371,4 +383,3 @@ def _finite_number(document: dict[str, Any], field: str) -> float:
     if type(value) not in {int, float} or not math.isfinite(value):
         raise BopD1Error("SOURCE_SCHEMA_INVALID", f"{field} must be finite")
     return float(value)
-
