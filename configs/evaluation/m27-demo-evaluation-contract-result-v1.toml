@@ -1,0 +1,241 @@
+schema_version = 1
+status = "RECORDED_NO_MODEL_PRIMARY_DEMO_SELECTION"
+gate_id = "m27-demo-evaluation-contract-v1"
+decision = "SELECT_EXISTING_SYNTHETIC_E2E_PRIMARY_DEMO"
+contract_revision = "f02555accafd0909756bed6ea0802b535590576b"
+repository_evidence_revision = "05e2002048d386d1cf3afb49ffb41a10bf2381c9"
+selected_option = "A_EXISTING_SYNTHETIC_E2E"
+fatal_gate_count = 7
+selected_option_pass_count = 7
+selected_option_unknown_count = 0
+selected_option_fail_count = 0
+all_fatal_gates_passed = true
+source_or_media_read = false
+model_or_prediction_used = false
+
+[[option_result]]
+id = "A_EXISTING_SYNTHETIC_E2E"
+pass_count = 7
+fail_count = 0
+unknown_count = 0
+eligible = true
+disposition = "SELECT_PRIMARY"
+
+[[option_result]]
+id = "B_M26_TWO_FRAME_ORACLE_PRIMARY"
+pass_count = 3
+fail_count = 4
+unknown_count = 0
+eligible = false
+disposition = "KEEP_OPTIONAL_MECHANICAL_SMOKE_ONLY"
+
+[[option_result]]
+id = "C_NEW_MODEL_DATA_FIRST"
+pass_count = 0
+fail_count = 0
+unknown_count = 7
+eligible = false
+disposition = "DEFER_TO_SEPARATE_FUTURE_SCIENTIFIC_CONTRACT"
+
+[[gate_result]]
+option_id = "A_EXISTING_SYNTHETIC_E2E"
+gate_id = "G1_NINETY_SECOND_CLARITY"
+status = "PASS"
+evidence = "DOCS_DEMO_GUIDE_HAS_EXACT_SIX_STEP_90_SECOND_FLOW"
+
+[[gate_result]]
+option_id = "A_EXISTING_SYNTHETIC_E2E"
+gate_id = "G2_PUBLIC_TEAMMATE_REPRODUCIBILITY"
+status = "PASS"
+evidence = "COMMITTED_GENERATED_CLIP_MANIFEST_PACKAGE_AND_PUBLIC_DEMO_TESTS"
+
+[[gate_result]]
+option_id = "A_EXISTING_SYNTHETIC_E2E"
+gate_id = "G3_END_TO_END_USER_VALUE"
+status = "PASS"
+evidence = "FIXED_CLIP_AND_QUERY_SHOW_KEY_IN_BAG_THEN_BAG_AT_SOFA_AND_SCOPED_ANSWER"
+
+[[gate_result]]
+option_id = "A_EXISTING_SYNTHETIC_E2E"
+gate_id = "G4_TRACE_AND_UNCERTAINTY_VISIBLE"
+status = "PASS"
+evidence = "STREAMLIT_SHOWS_ESTIMATED_SCOPE_EVIDENCE_FRAMES_ABSTENTION_SECTION_RECEIPT_AND_LIMITS"
+
+[[gate_result]]
+option_id = "A_EXISTING_SYNTHETIC_E2E"
+gate_id = "G5_NO_THIRD_PARTY_PRIMARY_DEPENDENCY"
+status = "PASS"
+evidence = "PRIMARY_MEDIA_IS_PROJECT_GENERATED_CC0_AND_COMMITTED"
+
+[[gate_result]]
+option_id = "A_EXISTING_SYNTHETIC_E2E"
+gate_id = "G6_NO_UNSUPPORTED_ACCURACY_CLAIM"
+status = "PASS"
+evidence = "UI_AND_GUIDE_LABEL_FIXED_FIXTURE_SYNTHETIC_ONLY_AND_FORBID_HOME_TRANSFER_CLAIMS"
+
+[[gate_result]]
+option_id = "A_EXISTING_SYNTHETIC_E2E"
+gate_id = "G7_SCOPE_AND_SAFETY"
+status = "PASS"
+evidence = "EXISTING_LOCAL_OFFLINE_REPLAY_HAS_OPERATE_DISABLED_AND_NO_LIVE_ACCOUNT_OR_ACTION_PATH"
+
+[[gate_result]]
+option_id = "B_M26_TWO_FRAME_ORACLE_PRIMARY"
+gate_id = "G1_NINETY_SECOND_CLARITY"
+status = "PASS"
+evidence = "TWO_FRAME_POSITIVE_NEGATIVE_CAN_BE_EXPLAINED_WITHIN_TIME"
+
+[[gate_result]]
+option_id = "B_M26_TWO_FRAME_ORACLE_PRIMARY"
+gate_id = "G2_PUBLIC_TEAMMATE_REPRODUCIBILITY"
+status = "FAIL"
+evidence = "REQUIRED_THIRD_PARTY_RGB_BYTES_ARE_INTENTIONALLY_IGNORED_AND_NOT_IN_PUBLIC_REPO"
+
+[[gate_result]]
+option_id = "B_M26_TWO_FRAME_ORACLE_PRIMARY"
+gate_id = "G3_END_TO_END_USER_VALUE"
+status = "FAIL"
+evidence = "TWO_INDEPENDENT_SCENES_HAVE_NO_CONTAINER_LOCATION_MEMORY_TRANSITION_OR_QUERY_ANSWER"
+
+[[gate_result]]
+option_id = "B_M26_TWO_FRAME_ORACLE_PRIMARY"
+gate_id = "G4_TRACE_AND_UNCERTAINTY_VISIBLE"
+status = "FAIL"
+evidence = "RECEIPT_HAS_PROVENANCE_LIMITS_BUT_NO_PRODUCT_ANSWER_TRACE_OR_RUNTIME_ABSTENTION_STORY"
+
+[[gate_result]]
+option_id = "B_M26_TWO_FRAME_ORACLE_PRIMARY"
+gate_id = "G5_NO_THIRD_PARTY_PRIMARY_DEPENDENCY"
+status = "FAIL"
+evidence = "PRIMARY_VISUAL_WOULD_REQUIRE_IGNORED_YCBV_RGB"
+
+[[gate_result]]
+option_id = "B_M26_TWO_FRAME_ORACLE_PRIMARY"
+gate_id = "G6_NO_UNSUPPORTED_ACCURACY_CLAIM"
+status = "PASS"
+evidence = "PUBLIC_M26_RECEIPT_EXPLICITLY_DENIES_GAIN_AND_TRANSFER"
+
+[[gate_result]]
+option_id = "B_M26_TWO_FRAME_ORACLE_PRIMARY"
+gate_id = "G7_SCOPE_AND_SAFETY"
+status = "PASS"
+evidence = "LOCAL_TEST_ONLY_TWO_FRAME_ORACLE_HAS_NO_OPERATION_PATH"
+
+[[gate_result]]
+option_id = "C_NEW_MODEL_DATA_FIRST"
+gate_id = "G1_NINETY_SECOND_CLARITY"
+status = "UNKNOWN"
+evidence = "NO_IMPLEMENTED_STORY"
+
+[[gate_result]]
+option_id = "C_NEW_MODEL_DATA_FIRST"
+gate_id = "G2_PUBLIC_TEAMMATE_REPRODUCIBILITY"
+status = "UNKNOWN"
+evidence = "NO_PINNED_PUBLIC_DELIVERY"
+
+[[gate_result]]
+option_id = "C_NEW_MODEL_DATA_FIRST"
+gate_id = "G3_END_TO_END_USER_VALUE"
+status = "UNKNOWN"
+evidence = "NO_IMPLEMENTED_SEMANTIC_PATH"
+
+[[gate_result]]
+option_id = "C_NEW_MODEL_DATA_FIRST"
+gate_id = "G4_TRACE_AND_UNCERTAINTY_VISIBLE"
+status = "UNKNOWN"
+evidence = "NO_IMPLEMENTED_PRESENTATION"
+
+[[gate_result]]
+option_id = "C_NEW_MODEL_DATA_FIRST"
+gate_id = "G5_NO_THIRD_PARTY_PRIMARY_DEPENDENCY"
+status = "UNKNOWN"
+evidence = "NO_SELECTED_DATA_OR_ARTIFACT"
+
+[[gate_result]]
+option_id = "C_NEW_MODEL_DATA_FIRST"
+gate_id = "G6_NO_UNSUPPORTED_ACCURACY_CLAIM"
+status = "UNKNOWN"
+evidence = "NO_FROZEN_RESULT_OR_CLAIM_ENVELOPE"
+
+[[gate_result]]
+option_id = "C_NEW_MODEL_DATA_FIRST"
+gate_id = "G7_SCOPE_AND_SAFETY"
+status = "UNKNOWN"
+evidence = "NO_BOUNDED_IMPLEMENTATION_OR_DELIVERY_ESTIMATE"
+
+[[hostile_disposition]]
+objection = "SYNTHETIC_DEMO_CAN_LOOK_LIKE_A_TOY"
+resolution = "PRESENT_IT_AS_AN_ARCHITECTURE_AND_USER_VALUE_PROTOTYPE_AND_KEEP_REAL_CV_RECEIPTS_SEPARATE"
+material_objection_remaining = false
+
+[[hostile_disposition]]
+objection = "PERFECT_FIXTURE_METRICS_CAN_BE_MISREAD_AS_MODEL_ACCURACY"
+resolution = "DO_NOT_LEAD_WITH_METRICS_AND_KEEP_FIXED_FIXTURE_NOT_INDOOR_EVIDENCE_WARNING_VISIBLE"
+material_objection_remaining = false
+
+[[hostile_disposition]]
+objection = "M26_IS_TOO_SMALL_AND_ITS_BYTES_ARE_NOT_IN_GIT"
+resolution = "KEEP_M26_AS_OPTIONAL_PUBLIC_RECEIPT_AND_LOCAL_REPRODUCTION_SMOKE_NOT_PRIMARY_DEMO"
+material_objection_remaining = false
+
+[[hostile_disposition]]
+objection = "NO_LIVE_CAMERA_MAY_LOOK_LESS_AMBITIOUS"
+resolution = "FRAME_PRERECORDED_LOCAL_ONLY_AS_THE_THREE_DAY_SAFETY_AND_REPRODUCIBILITY_BOUNDARY_AND_LABEL_LIVE_AS_B2"
+material_objection_remaining = false
+
+[[hostile_disposition]]
+objection = "FIXED_QUESTION_DOES_NOT_PROVE_GENERAL_LANGUAGE_UNDERSTANDING"
+resolution = "CALL_IT_A_SCOPED_STATE_QUERY_AND_DO_NOT_CLAIM_GENERAL_CHAT_OR_LANGUAGE_UNDERSTANDING"
+material_objection_remaining = false
+
+[lane_decision.public_product_demo]
+status = "PRIMARY"
+input = "COMMITTED_PROJECT_OWNED_PRERECORDED_CLIP"
+claim = "ONE_GENERATED_REPLAY_DEMONSTRATES_TRACEABLE_END_TO_END_MEMORY"
+
+[lane_decision.mechanical_cv_smoke]
+status = "OPTIONAL_SUPPORTING_EVIDENCE"
+input = "PUBLIC_M26_RECEIPT_WITH_IGNORED_LOCAL_BYTES"
+claim = "ONE_REFERENCE_TARGET_EXERCISES_THE_M16_SMALL_BUCKET"
+
+[lane_decision.future_scientific]
+status = "DEFERRED_REQUIRES_SEPARATE_CONTRACT"
+required_before_gain_claim = "PROTECTED_GROUP_DEVELOPMENT_SELECTION_THEN_ONE_UNTOUCHED_TEST_RUN_WITH_PAIRED_QUALITY_COST_AND_GROUP_AWARE_UNCERTAINTY"
+training_epoch_cap = 20
+early_stopping_patience = 5
+
+[claim_ledger]
+selected_claim = "THE_EXISTING_PROJECT_OWNED_SYNTHETIC_E2E_IS_THE_ONLY_OPTION_THAT_CURRENTLY_PASSES_ALL_PRIMARY_DEMO_GATES"
+not_selected_claim = "THE_SYSTEM_HAS_REAL_HOME_ACCURACY_A_SMALL_OBJECT_GAIN_GENERAL_LANGUAGE_UNDERSTANDING_LIVE_SENSING_OR_PRODUCT_VALIDATION"
+selection_is_product_validation = false
+m26_is_gain_evidence = false
+future_lane_is_implementation_authority = false
+
+[next_gate]
+proposal = "M28_PRIMARY_DEMO_ACCEPTANCE_GAP_AUDIT_AND_SCRIPT_HARDENING"
+allowed_work = "RUN_ONLY_THE_COMMITTED_PROJECT_OWNED_DEMO_AND_PUBLIC_TESTS_AGAINST_A_FROZEN_90_SECOND_ACCEPTANCE_CHECKLIST_THEN_FIX_ONLY_DEMONSTRATED_PRESENTATION_OR_SCRIPT_GAPS"
+committed_d0_synthetic_media_allowed = true
+third_party_or_private_media_allowed = false
+model_prediction_training_or_test_tuning_allowed = false
+live_cloud_action_allowed = false
+
+[verification]
+python = "3.12.13"
+focused_tests_passed = 10
+full_tests_passed = 286
+public_audit_scanned_files = 252
+public_audit_scanned_snapshots = 504
+public_audit_violations = 0
+operate_enabled = false
+
+[boundaries]
+source_or_media_read = false
+model_detector_or_tracker_loaded = false
+prediction_run = false
+training_run = false
+test_tuning = false
+new_runtime_dependency_added = false
+candidate_or_claim_emitted = false
+relation_or_transition_emitted = false
+live_private_cloud_inference_or_action_connected = false
+operate_enabled = false
