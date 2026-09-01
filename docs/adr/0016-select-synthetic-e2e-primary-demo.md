@@ -41,3 +41,12 @@ Negative:
   evidence without test tuning;
 - a teammate exercise finds the public primary demo non-reproducible;
 - the judge format materially differs from the current 90-second assumption.
+
+## M28 acceptance evidence
+
+Both selected demo interfaces ran offline and agreed semantically, but the first frozen
+acceptance normally stopped. Two presentation gaps were hardened by collapsing and
+strongly labeling perfect synthetic fixture metrics. One contract mismatch remains:
+manifest event frames are not inference evidence-window starts. M29 must freeze that
+meaning correction before one retry; M28 does not change the accepted claim semantics
+or invalidate the M27 primary-demo selection.

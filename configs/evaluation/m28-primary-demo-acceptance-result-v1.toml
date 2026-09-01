@@ -1,0 +1,116 @@
+schema_version = 1
+status = "RECORDED_NORMAL_STOP_WITH_PRESENTATION_GAPS_HARDENED"
+gate_id = "m28-primary-demo-acceptance-v1"
+decision = "STOP_M28_PRIMARY_DEMO_ACCEPTANCE"
+contract_revision = "01b6bccba1475d956b7f72132fbf00318e6a7b48"
+implementation_revision = "2d8bf868fa4c3bb2ee1d1332535b882bd0d45dbe"
+acceptance_attempt_count = 1
+acceptance_run_count = 2
+acceptance_revision = "01b6bccba1475d956b7f72132fbf00318e6a7b48"
+acceptance_worktree_dirty = true
+acceptance_checker_committed_at_run = false
+network_attempt_count = 0
+semantic_outputs_equal = true
+semantic_sha256 = "18233bb9d86cc6ff3cdd3a8b7179ac8019e6dd90de790b4e215f49fcfa11936e"
+failure_count = 3
+failure_codes = ["EXACT_EVIDENCE_TRACE", "METRICS_NOT_COLLAPSED_OR_LABELED", "PERFECT_METRICS_PRIMARY_VISIBLE"]
+source_or_media_class = "COMMITTED_D0_SYNTHETIC"
+third_party_or_private_media_read = false
+
+[source]
+source_id = "b1-key-bag-sofa"
+source_revision = "2"
+content_hash = "b9cc79476d77f8d45acd1803c924de73914ffc4790f4da271f77cc8d4742eb43"
+frame_count = 80
+license = "CC0-1.0"
+
+[answer]
+status = "FOUND"
+location_id = "sofa"
+epistemic_status = "estimated"
+as_of_source_sequence = 68
+relation_path_length = 2
+source_claim_count = 2
+world_scope = "source:b1-key-bag-sofa@2"
+
+[[observed_claim]]
+operation = "assert"
+predicate = "inside"
+subject_id = "key"
+object_id = "bag"
+confirmation_frame = 37
+source_event_frame = 35
+observed_evidence_start_frame = 33
+observed_evidence_end_frame = 37
+
+[[observed_claim]]
+operation = "assert"
+predicate = "at_zone"
+subject_id = "bag"
+object_id = "sofa"
+confirmation_frame = 68
+source_event_frame = 65
+observed_evidence_start_frame = 66
+observed_evidence_end_frame = 68
+
+[[gap_disposition]]
+code = "PERFECT_METRICS_PRIMARY_VISIBLE"
+status = "HARDENED_WITHOUT_SEMANTIC_CHANGE"
+revision = "2d8bf868fa4c3bb2ee1d1332535b882bd0d45dbe"
+resolution = "MOVE_FIXTURE_METRICS_FROM_PRIMARY_VISIBLE_SECTION_TO_COLLAPSED_EXPANDER"
+
+[[gap_disposition]]
+code = "METRICS_NOT_COLLAPSED_OR_LABELED"
+status = "HARDENED_WITHOUT_SEMANTIC_CHANGE"
+revision = "2d8bf868fa4c3bb2ee1d1332535b882bd0d45dbe"
+resolution = "LABEL_OPTIONAL_SYNTHETIC_FIXTURE_METRICS_NOT_INDOOR_EVIDENCE"
+
+[[gap_disposition]]
+code = "EXACT_EVIDENCE_TRACE"
+status = "UNRESOLVED_FROZEN_CONTRACT_FACT_MISMATCH"
+revision = ""
+resolution = "M29_MUST_DISTINGUISH_SOURCE_EVENT_FRAME_FROM_ENGINE_EVIDENCE_WINDOW_BEFORE_ONE_SEPARATELY_FROZEN_RETRY"
+
+[static_acceptance]
+judge_card_complete = true
+windows_commands_present = true
+posix_commands_present = true
+compact_cli_backup_present = true
+failure_recovery_present = true
+do_not_claim_list_present = true
+hardened_streamlit_static_checks_passed = true
+second_media_acceptance_attempt_run = false
+
+[claim_limits]
+stop_invalidates_m27_primary_demo_selection = false
+stop_establishes_demo_runtime_failure = false
+stop_establishes_precommitted_trace_contract_mismatch = true
+presentation_hardening_changes_claim_or_relation_semantics = false
+
+[next_gate]
+proposal = "M29_TRACE_WINDOW_CONTRACT_CORRECTION_AND_SINGLE_ACCEPTANCE_RETRY"
+allowed_work = "FREEZE_THE_DISTINCTION_BETWEEN_SOURCE_EVENT_LABEL_FRAME_CONFIRMATION_FRAME_AND_ENGINE_EVIDENCE_WINDOW_FROM_COMMITTED_CODE_AND_M28_RECEIPT_THEN_RUN_EXACTLY_ONE_ACCEPTANCE_RETRY_WITH_THE_COMMITTED_CHECKER"
+committed_d0_synthetic_media_allowed = true
+acceptance_retry_count = 1
+presentation_or_semantic_change_allowed = false
+third_party_private_model_training_tuning_live_cloud_action_allowed = false
+
+[verification]
+python = "3.12.13"
+focused_tests_passed = 13
+full_tests_passed = 299
+public_audit_scanned_files = 258
+public_audit_scanned_snapshots = 516
+public_audit_violations = 0
+operate_enabled = false
+
+[boundaries]
+third_party_or_private_media_read = false
+new_model_detector_or_tracker_loaded = false
+prediction_experiment_run = false
+training_run = false
+test_tuning = false
+new_candidate_or_claim_semantics_added = false
+relation_or_transition_semantics_changed = false
+live_private_cloud_inference_or_action_connected = false
+operate_enabled = false

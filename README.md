@@ -172,6 +172,13 @@ evidence; future model gain requires a separate protected-group development plus
 untouched-test contract. See the
 [M27 evidence report](docs/evaluation/m27-demo-evaluation-contract-v1.md).
 
+M28 ran the direct and compact-CLI demo paths offline. They agreed on the scoped
+`FOUND sofa` answer and semantic output, with zero socket attempts. The frozen check
+stopped because it incorrectly equated source event-label frames with inference
+evidence-window starts; two separate presentation gaps were hardened by collapsing and
+strongly labeling perfect synthetic fixture metrics. See the
+[M28 evidence report](docs/evaluation/m28-primary-demo-acceptance-v1.md).
+
 ## Run the demo
 
 Requires Python 3.11 or newer. The lockfile was generated with `uv 0.11.24`.
@@ -247,12 +254,14 @@ docs/                       architecture, demo, ADR, and technology notes
 The first public detector, consecutive motion, target-tracking, failure-localization,
 RF-DETR replacement, D-FINE synthetic engineering, M14 scientific-priority, M15
 target-substrate, M16 label-oracle, M17 generation-strategy, M18 vector-substrate, and
-M19 real-oracle through M27 demo/evaluation gates are frozen. M27 selects the existing
+M19 real-oracle through M28 demo-acceptance gates are frozen. M27 selects the existing
 synthetic end-to-end replay as the primary demo, keeps M26 as optional smoke, and defers
 scientific gain to a separately contracted protected-group development/untouched-test
-lane. M28 may run only the committed synthetic demo against a frozen 90-second
-acceptance checklist and harden demonstrated presentation or script gaps. It cannot
-read third-party/private media, load another model, tune, or train.
+lane. M28 normally stopped after one acceptance attempt: both interfaces agreed, but
+the contract confused source event labels with inference evidence windows. M29 may
+freeze only that distinction and run exactly one committed acceptance retry. It cannot
+change presentation or relation semantics, read third-party/private media, load another
+model, tune, or train.
 Tracker replacement remains a separate later co-gate.
 The reserved VOST validation source and VISOR `P14_05` must remain untouched. Do not add
 a movement-candidate layer merely because scheduling is inexpensive. Training remains
@@ -274,6 +283,8 @@ and [M12 detector screen](docs/evaluation/vost-m12-rfdetr-small-v1.md), plus the
 [M25 result](docs/evaluation/m25-ycbv-small-bbox-alignment-v1.md), and the
 [M26 result](docs/evaluation/m26-ycbv-dual-area-replacement-d1-v1.md), and the
 [M27 result](docs/evaluation/m27-demo-evaluation-contract-v1.md).
+The [M28 result](docs/evaluation/m28-primary-demo-acceptance-v1.md) records the
+normal stop, exact trace mismatch, and bounded presentation hardening.
 
 ## Safety and data boundary
 

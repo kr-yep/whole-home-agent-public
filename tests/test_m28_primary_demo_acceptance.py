@@ -17,6 +17,7 @@ from tools.check_primary_demo import (
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / "configs" / "evaluation" / "m28-primary-demo-acceptance-v1.toml"
 M27 = ROOT / "configs" / "evaluation" / "m27-demo-evaluation-contract-result-v1.toml"
+RESULT = ROOT / "configs" / "evaluation" / "m28-primary-demo-acceptance-result-v1.toml"
 
 
 class M28ContractTests(unittest.TestCase):
@@ -97,6 +98,50 @@ class M28AcceptanceHelperTests(unittest.TestCase):
         card_failures: list[str] = []
         _assert_judge_card(card_failures)
         self.assertEqual(card_failures, [])
+
+
+class M28ResultTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.contract = tomllib.loads(CONTRACT.read_text(encoding="utf-8"))
+        cls.result = tomllib.loads(RESULT.read_text(encoding="utf-8"))
+
+    def test_normal_stop_records_exact_three_frozen_failures(self):
+        self.assertEqual(self.result["decision"], self.contract["decision"]["normal_stop"])
+        self.assertEqual(
+            self.result["failure_codes"],
+            ["EXACT_EVIDENCE_TRACE", "METRICS_NOT_COLLAPSED_OR_LABELED", "PERFECT_METRICS_PRIMARY_VISIBLE"],
+        )
+        self.assertEqual(self.result["network_attempt_count"], 0)
+        self.assertTrue(self.result["semantic_outputs_equal"])
+
+    def test_observed_trace_keeps_event_evidence_and_confirmation_distinct(self):
+        rows = self.result["observed_claim"]
+        self.assertEqual(
+            [(item["source_event_frame"], item["observed_evidence_start_frame"], item["confirmation_frame"]) for item in rows],
+            [(35, 33, 37), (65, 66, 68)],
+        )
+
+    def test_only_two_presentation_gaps_are_hardened(self):
+        dispositions = {item["code"]: item for item in self.result["gap_disposition"]}
+        self.assertEqual(dispositions["PERFECT_METRICS_PRIMARY_VISIBLE"]["status"], "HARDENED_WITHOUT_SEMANTIC_CHANGE")
+        self.assertEqual(dispositions["METRICS_NOT_COLLAPSED_OR_LABELED"]["status"], "HARDENED_WITHOUT_SEMANTIC_CHANGE")
+        self.assertEqual(dispositions["EXACT_EVIDENCE_TRACE"]["status"], "UNRESOLVED_FROZEN_CONTRACT_FACT_MISMATCH")
+        self.assertFalse(self.result["static_acceptance"]["second_media_acceptance_attempt_run"])
+
+    def test_stop_does_not_invalidate_m27_or_claim_runtime_failure(self):
+        limits = self.result["claim_limits"]
+        self.assertFalse(limits["stop_invalidates_m27_primary_demo_selection"])
+        self.assertFalse(limits["stop_establishes_demo_runtime_failure"])
+        self.assertTrue(limits["stop_establishes_precommitted_trace_contract_mismatch"])
+        self.assertFalse(limits["presentation_hardening_changes_claim_or_relation_semantics"])
+
+    def test_next_gate_allows_one_semantic_contract_retry_only(self):
+        next_gate = self.result["next_gate"]
+        self.assertEqual(next_gate["proposal"], "M29_TRACE_WINDOW_CONTRACT_CORRECTION_AND_SINGLE_ACCEPTANCE_RETRY")
+        self.assertEqual(next_gate["acceptance_retry_count"], 1)
+        self.assertFalse(next_gate["presentation_or_semantic_change_allowed"])
+        self.assertTrue(all(value is False for value in self.result["boundaries"].values()))
 
 
 if __name__ == "__main__":
