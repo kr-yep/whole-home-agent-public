@@ -1,0 +1,114 @@
+schema_version = 1
+status = "FROZEN_BEFORE_IMAGE_GENERATION"
+gate_id = "m18-vector-d1-slice-v1"
+dataset_id = "synthetic:d1-vector-slice@1"
+use_class = "D0_SYNTHETIC"
+license = "CC0-1.0"
+generator_path = "tools/generate_d1_vector_slice.py"
+output_directory = "examples/media/generated/d1_vector_v1"
+manifest_path = "examples/media/generated/d1_vector_v1/manifest.json"
+oracle_fixture_path = "examples/fixtures/evaluation/d1_vector_slice_v1.json"
+
+[shape]
+width = 640
+height = 360
+image_format = "PNG"
+coordinate_space = "pixel_xyxy_exclusive"
+source_group_count = 3
+frames_per_group = 6
+image_annotation_pair_count = 18
+
+[coverage]
+small_object_area_fraction_range = [0.001, 0.01]
+at_least_one_small_visible_target_per_split = true
+explicit_scored_negative_per_split = true
+explicit_unknown_frame_per_split = true
+required_visibility_states = ["VISIBLE", "TRUNCATED", "OCCLUDED", "ABSENT"]
+required_evaluation_states = ["SCORED", "UNKNOWN"]
+required_transition_kinds = ["CONTAINMENT_CHANGE", "LOCATION_CHANGE"]
+persistent_instance_ids_required = true
+
+[split_integrity]
+splits = ["development", "validation", "test"]
+one_source_group_per_split = true
+assign_before_render = true
+protected_factors = [
+  "asset_identity",
+  "background_identity",
+  "layout_seed_family",
+  "scene_or_room_identity",
+  "camera_time_group",
+  "synchronized_view_group",
+]
+protected_factor_cross_split_allowed = false
+adjacent_frame_random_split_allowed = false
+
+[manifest]
+canonical_json = true
+newline = "LF"
+required_provenance_fields = [
+  "generator_path",
+  "generator_sha256",
+  "config_path",
+  "config_sha256",
+  "license",
+  "use_class",
+  "pillow_version",
+]
+required_group_fields = [
+  "split",
+  "source_sequence",
+  "source_sequence_id",
+  "asset_identity",
+  "background_identity",
+  "layout_seed_family",
+  "scene_or_room_identity",
+  "camera_time_group",
+  "synchronized_view_group",
+  "seed",
+]
+required_output_fields = ["path", "size_bytes", "sha256", "kind"]
+manifest_self_hash_required = false
+all_non_manifest_outputs_hashed = true
+
+[reproducibility]
+clean_generation_count = 2
+all_non_manifest_output_bytes_must_match = true
+manifest_bytes_must_match = true
+maximum_total_non_manifest_output_bytes = 5242880
+new_dependency_allowed = false
+
+[existing_golden]
+generator_sha256 = "f99e2141bc34beba3b48b845c1ed0964ea7dfbf11b3e8d54a8f318f8db41d8e4"
+media_sha256 = "b9cc79476d77f8d45acd1803c924de73914ffc4790f4da271f77cc8d4742eb43"
+annotations_sha256 = "d96035eda0bb89e4fda3fceda56ab8e7cf39ec4625eb005629028879c0d2218a"
+manifest_sha256 = "2e83bbcecbe239b8bb91e503ba753b3de4684297015e703763b1882cd9d4db49"
+must_remain_unchanged = true
+
+[gate]
+all_contract_tests_must_pass = true
+all_m16_oracle_records_must_load = true
+source_group_split_validation_must_pass = true
+image_annotation_pairing_must_pass = true
+coverage_must_pass = true
+repeated_byte_identity_must_pass = true
+existing_golden_hashes_must_pass = true
+size_bound_must_pass = true
+failure_decision = "STOP_VECTOR_D1_SLICE"
+pass_decision = "PASS_TO_REALISM_TRANSFER_GATE_DESIGN"
+
+[boundaries]
+external_asset_or_media_download_allowed = false
+dependency_install_allowed = false
+blender_or_kubric_allowed = false
+recording_allowed = false
+vost_or_visor_bytes_allowed = false
+reserved_source_allowed = false
+detector_or_tracker_load_allowed = false
+training_allowed = false
+movement_candidate_allowed = false
+claim_candidate_allowed = false
+accepted_claim_allowed = false
+live_private_cloud_or_action_allowed = false
+operate_enabled = false
+
