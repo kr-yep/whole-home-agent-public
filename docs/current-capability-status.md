@@ -41,7 +41,7 @@ what is still missing without reconstructing the full experiment history.
 These remain blocked by proposed governance, unassigned roles, absent consent and data
 policy, and `OPERATE DISABLED`.
 
-## Latest push: M34 retry result
+## Latest push: M34 CI receipt
 
 The one allowed retry parsed uv correctly, made a new public clone, installed 40 locked
 packages from an empty cache, and ran the unchanged demo offline. It returned the exact
@@ -52,3 +52,7 @@ CRLF, so its raw working-tree hash differed while the Git blob and `uv sync --fr
 remained exact. The agent-run Windows path is mechanically usable; independent teammate
 and other-platform evidence is still missing. M35 may fix text identity only and cannot
 rerun M34.
+
+The M34 result passed
+[public CI run 33525316891](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33525316891).
+This adds verification evidence only; the usable and missing claims above are unchanged.

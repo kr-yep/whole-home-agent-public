@@ -39,7 +39,8 @@ CV gain, or operational authority. M34 is not a PASS and may not be retried.
 
 Python 3.12.13 passed `9/9` focused M34 contract/result tests. The staged public audit
 scanned 286 files / 572 index-and-worktree snapshots with zero violations and
-`operate_enabled: false`. Result CI is pending.
+`operate_enabled: false`. The result revision passed
+[public CI run 33525316891](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33525316891).
 
 M35 may only select and harden a checkout-stable identity for versioned text, without an
 acceptance/demo rerun or any product/fixture/lock semantic change. `OPERATE` remains

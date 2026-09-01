@@ -102,8 +102,15 @@ operate_enabled = false
 [verification]
 focused_tests_status = "PASS_9_OF_9"
 public_audit_status = "PASS_286_FILES_572_SNAPSHOTS_ZERO_VIOLATIONS"
-result_ci_status = "PENDING"
+result_ci_status = "SUCCESS_RUN_33525316891"
 operate_enabled = false
+
+[public_ci]
+result_revision = "dbeb13a894ea7ee164df297b1eb0c360b1b64f5d"
+run_id = 33525316891
+status = "SUCCESS"
+verification_route = "PUBLIC_ACTIONS_HTML_COMPLETED_SUCCESSFULLY"
+url = "https://github.com/kr-yep/whole-home-agent-public/actions/runs/33525316891"
 
 [next_gate]
 proposal = "M35_VERSIONED_TEXT_IDENTITY_PORTABILITY"

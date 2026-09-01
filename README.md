@@ -34,7 +34,8 @@ installed and ran the offline demo correctly in 30.427 seconds total, with zero 
 attempts during demo and the exact key→bag→sofa answer/trace. The frozen checker still
 stopped because Git converted `uv.lock` LF bytes to CRLF at checkout, changing its raw
 SHA-256 without changing the Git blob or frozen dependency resolution. M34 cannot retry;
-M35 may harden versioned-text identity without rerunning acceptance.
+M35 may harden versioned-text identity without rerunning acceptance. The M34 result
+passed [public CI](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33525316891).
 
 ## What works today
 
