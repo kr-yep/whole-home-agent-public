@@ -73,17 +73,23 @@ def main() -> None:
         hide_index=True,
     )
 
-    quality = result["perception_evaluation"]["quality"]
-    relation_quality = result["relation_evaluation"]["quality"]
-    cost = result["perception_evaluation"]["cost"]
-    st.subheader("4 · Fixed-fixture evaluation (not indoor evidence)")
-    metric_columns = st.columns(5)
-    metric_columns[0].metric("AP50", f"{quality['ap50']:.3f}")
-    metric_columns[1].metric("mAP50:95", f"{quality['map50_95']:.3f}")
-    metric_columns[2].metric("Key recall", f"{quality['key_recall50']:.3f}")
-    metric_columns[3].metric("Event F1", f"{relation_quality['f1']:.3f}")
-    metric_columns[4].metric("Detector p95", f"{cost['detector_latency_p95_ms']:.1f} ms")
-    st.warning(result["perception_evaluation"]["evidence_limit"])
+    with st.expander("Optional synthetic fixture metrics — not indoor evidence"):
+        quality = result["perception_evaluation"]["quality"]
+        relation_quality = result["relation_evaluation"]["quality"]
+        cost = result["perception_evaluation"]["cost"]
+        st.caption(
+            "These values only check the fixed generated replay and are not a model "
+            "accuracy or real-home transfer result."
+        )
+        metric_columns = st.columns(5)
+        metric_columns[0].metric("AP50", f"{quality['ap50']:.3f}")
+        metric_columns[1].metric("mAP50:95", f"{quality['map50_95']:.3f}")
+        metric_columns[2].metric("Key recall", f"{quality['key_recall50']:.3f}")
+        metric_columns[3].metric("Event F1", f"{relation_quality['f1']:.3f}")
+        metric_columns[4].metric(
+            "Detector p95", f"{cost['detector_latency_p95_ms']:.1f} ms"
+        )
+        st.warning(result["perception_evaluation"]["evidence_limit"])
 
     st.subheader("5 · Abstention behavior")
     abstentions = result["source_diagnostics"]["abstentions"]

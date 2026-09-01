@@ -6,6 +6,13 @@ import tomllib
 import unittest
 from pathlib import Path
 
+from tools.check_primary_demo import (
+    _assert_judge_card,
+    _assert_presentation,
+    _assert_result,
+    _semantic_document,
+)
+
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / "configs" / "evaluation" / "m28-primary-demo-acceptance-v1.toml"
@@ -54,6 +61,42 @@ class M28ContractTests(unittest.TestCase):
     def test_next_authority_and_every_non_demo_boundary_are_closed(self):
         self.assertEqual(self.document["decision"]["pass_authorizes_only"], "M29_TEAMMATE_CLEAN_INSTALL_AND_DEMO_DRILL")
         self.assertTrue(all(value is False for value in self.document["boundaries"].values()))
+
+
+class M28AcceptanceHelperTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.document = tomllib.loads(CONTRACT.read_text(encoding="utf-8"))
+
+    def test_semantic_document_ignores_only_run_id_and_cost_timing(self):
+        base = {
+            "source": {"source_id": "x"},
+            "governance": {"operate": "DISABLED"},
+            "answer": {"replay_run_id": "a", "status": "FOUND"},
+            "claims": [],
+            "source_diagnostics": {},
+            "warnings": [],
+            "perception_evaluation": {"quality": {"ap50": 1.0}, "cost": {"p95": 1}},
+            "relation_evaluation": {"quality": {"f1": 1.0}},
+        }
+        changed = {**base, "answer": {"replay_run_id": "b", "status": "FOUND"}, "perception_evaluation": {"quality": {"ap50": 1.0}, "cost": {"p95": 999}}}
+        self.assertEqual(_semantic_document(base), _semantic_document(changed))
+
+    def test_invalid_result_accumulates_typed_failures(self):
+        failures: list[str] = []
+        _assert_result({}, self.document, failures)
+        self.assertIn("SOURCE_IDENTITY", failures)
+        self.assertIn("GOVERNANCE_BOUNDARY", failures)
+        self.assertIn("SCOPED_ANSWER", failures)
+        self.assertIn("EXACT_EVIDENCE_TRACE", failures)
+
+    def test_hardened_static_presentation_and_judge_card_pass(self):
+        presentation_failures: list[str] = []
+        _assert_presentation(presentation_failures)
+        self.assertEqual(presentation_failures, [])
+        card_failures: list[str] = []
+        _assert_judge_card(card_failures)
+        self.assertEqual(card_failures, [])
 
 
 if __name__ == "__main__":
