@@ -1,0 +1,70 @@
+schema_version = 1
+status = "FROZEN_BEFORE_BOUNDED_IMPLEMENTATION"
+gate_id = "m31-answer-trace-subject-implementation-v1"
+intended_use = "ADDITIVE_QUERY_SCOPE_IDENTITY_ON_CANONICAL_ANSWER"
+m30_result = "configs/evaluation/m30-answer-subject-identity-decision-result-v1.toml"
+m30_result_sha256 = "889e9b7f844c6f14222b41bd3960e795b937e1ea7ad4042d04b583b1383341fd"
+selected_candidate = "A_CANONICAL_ANSWER_TRACE_SUBJECT"
+prechange_b0_golden_semantic_sha256 = "226d30a5b826720d607d0b9a29bf3dfb9f5429eeedbbd70ffd1ff23c21233c8f"
+required_statuses = ["FOUND", "UNKNOWN", "CONFLICT", "SCOPE_REQUIRED", "OUT_OF_SCOPE", "FRONTIER_MISMATCH"]
+
+[[prechange_file]]
+path = "src/whole_home_agent/model.py"
+sha256 = "6cfb51c6cfc14ba86121d583c024c66a34719b7c6e0538580d5c0589f48fe824"
+
+[[prechange_file]]
+path = "src/whole_home_agent/relations.py"
+sha256 = "4f6d1ef0be4b2b7c8f63d1a4d2afd6c2b4318857df74645aef602a7fccc67954"
+
+[[prechange_file]]
+path = "src/whole_home_agent/cli.py"
+sha256 = "ccb10cf803a20148c8e97e2d8b41bb10b0b697357513b3829324cc51a1571030"
+
+[[prechange_file]]
+path = "src/whole_home_agent/public_demo.py"
+sha256 = "646fea88077aeaf83a2d4a39fe67a99fa043713f8983d80f0c30c790c975737c"
+
+[implementation]
+answer_trace_add_required_subject_id = true
+subject_source = "QUERY_REQUEST_SUBJECT_ID_AT_RELATIONS_TRACE"
+answer_trace_construction_site_count = 1
+b0_cli_serializer_add_subject_id = true
+b1_public_demo_serializer_add_subject_id = true
+other_production_file_changes_allowed = false
+existing_answer_field_removal_or_rename_allowed = false
+query_resolution_change_allowed = false
+epistemic_status_change_allowed = false
+claim_or_projection_change_allowed = false
+session_semantic_serialization_change_allowed = false
+
+[compatibility]
+serialized_output_change = "ADDITIVE_SUBJECT_ID_FIELD"
+manual_or_positional_answer_trace_constructor_may_require_update = true
+legacy_default_or_empty_subject_allowed = false
+schema_version_bump_required = false
+reason = "UNVERSIONED_PACKAGE_0_1_INTERNAL_CONSTRUCTION_WITH_NO_PROMISED_STABLE_ANSWER_SCHEMA"
+
+[verification]
+all_required_statuses_retain_exact_request_subject = true
+non_found_empty_path_subject_required = true
+b0_and_b1_serializer_key_sets_equal_for_shared_fields = true
+all_prechange_answer_fields_remain = true
+b0_golden_semantic_sha256_unchanged = true
+accepted_claims_and_projection_unchanged = true
+no_media_model_demo_or_checker_execution = true
+
+[decision]
+pass = "PASS_M31_ADDITIVE_ANSWER_SUBJECT_IMPLEMENTATION"
+normal_stop = "STOP_M31_ANSWER_SUBJECT_IMPLEMENTATION"
+pass_authorizes_only = "M32_TEAMMATE_CLEAN_INSTALL_AND_CLOSED_DEMO_DRILL_CONTRACT"
+m29_retry_allowed = false
+
+[boundaries]
+media_or_model_read_allowed = false
+demo_or_m29_checker_execution_allowed = false
+new_dependency_or_storage_allowed = false
+prediction_training_or_tuning_allowed = false
+claim_relation_query_resolution_or_epistemic_change_allowed = false
+presentation_layout_or_text_change_allowed = false
+live_private_cloud_inference_or_action_allowed = false
+operate_enabled = false
