@@ -42,6 +42,18 @@ The upstream dataset requires attribution, a license link, and change indication
 prohibits commercial use under that license. This repository does not grant broader
 rights or redistribute the dataset.
 
+- [VOST](https://www.vostdataset.org/data.html) — CC BY-NC-SA 4.0, used only as a
+  separately downloaded, local, non-commercial consecutive-frame motion screen. The
+  source sequences are credited upstream to Ego4D and EPIC-KITCHENS; VOST requests that
+  publications cite VOST, Ego4D, and EPIC-KITCHENS. The repository includes an exact
+  range-acquisition manifest, adapter, and derived bounded metrics, but no VOST image,
+  mask, video, split, README, or license bytes.
+
+VOST attribution, non-commercial, ShareAlike, license-link, and change-indication terms
+continue to apply to the dataset and distributed adapted material. The repository's MIT
+license applies only to original project code and documentation and grants no broader
+rights over VOST content.
+
 ## Optional paired detector baseline
 
 - [torchvision](https://github.com/pytorch/vision/tree/v0.26.0) 0.26.0 — BSD-3-Clause.

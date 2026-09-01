@@ -88,10 +88,10 @@ gate. The fixed 320×320 base model lost useful full-frame context while paying 
 serial inference calls. Running more tile variants on the frozen test is prohibited and
 would not repair this validation failure.
 
-The next useful substrate is a license-compatible consecutive prerecorded clip. It can
-test the already implemented motion-plus-periodic scheduler with the full-frame FPN
-candidate and measure event recall versus avoided detector calls. Sparse VISOR frames
-cannot support that timing question.
+That next substrate is now implemented as the separate
+[VOST motion screen v1](vost-motion-screen-v1.md). It tests the existing scheduler on
+consecutive public frames without changing this frozen VISOR result or rerunning
+`P14_05`.
 
 Reproduction entry points:
 

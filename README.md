@@ -1,6 +1,6 @@
 # Whole Home Agent
 
-> **Current milestone:** `B1 — offline replay + public sparse-frame perception screen`
+> **Current milestone:** `B1 — offline replay + public perception and motion screens`
 >
 > **Status:** `NOT PRODUCTION` · `OPERATE DISABLED`
 > **Allowed data:** included generated fixtures plus separately downloaded, licensed D0 public data
@@ -27,6 +27,8 @@ The answer is an `estimated` result scoped to that replay. It is not a claim abo
 - fixed AP, event, answer, latency, FPS, dropped-frame, and VRAM reporting;
 - a frozen, source-video-split VISOR indoor screen with hash-pinned local assets;
 - paired SSDLite320 and RetinaNet-FPN detector adapters with no implicit download;
+- a frozen VOST consecutive-frame motion screen with range-only acquisition;
+- development-only scheduler selection and paired full-frame/FPN cost evidence;
 - JSON CLI and a local Streamlit presentation;
 - automated B0 tests on Python 3.11–3.14 plus locked B1/demo jobs.
 
@@ -38,6 +40,15 @@ targets occupying 0.1–1% of the frame versus `0/3`. It used about `393.3 MiB` 
 VRAM and `71.7 ms` detector p95, versus `85.7 MiB` and `47.4 ms`. The first frozen
 test improved overall recall from `14.3%` to `39.3%`, but its only small target was
 missed by both models. See the [full evidence limits and gate](docs/evaluation/visor-screen-v1.md).
+
+On a separately downloaded VOST consecutive-frame screen, the frozen
+motion-plus-periodic scheduler reduced validation RetinaNet-FPN calls from `136` to `52`
+(`61.8%`) while selecting `40/41` annotated mask changes within the changed frame or one
+following 5 fps frame (`97.6%`). Detector p95 was `65.15 ms`, scheduler p95 `0.58 ms`,
+and peak VRAM about `352.2 MiB`. Exact-frame coverage was only `43.9%`, and VOST is an
+egocentric camera-motion stress case, so this is scheduling evidence—not proof that the
+system identified or understood a moved object. See the
+[VOST motion gate](docs/evaluation/vost-motion-screen-v1.md).
 
 ## Run the demo
 
@@ -111,12 +122,13 @@ docs/                       architecture, demo, ADR, and technology notes
 
 ## Next evidence gate
 
-The first public indoor screen is frozen and evaluated. A four-tile SSDLite candidate
-was then rejected on validation: recall fell from `14.3%` to `3.6%`, small-target recall
-stayed `0/3`, and p95 rose from `49.0 ms` to `243.5 ms`. The next bounded step is a
-license-compatible consecutive prerecorded clip for testing motion-plus-periodic gating
-with the full-frame FPN candidate. The existing `P14_05` test must not be rerun or used
-for tuning; another untouched source is required before a later final claim. Training
+The first public detector screen and consecutive motion screen are frozen. The tile
+candidate was rejected; the VOST scheduler candidate passed its bounded validation gate.
+The next step is to evaluate whether selected RetinaNet observations can form stable,
+clip-local movement candidates without treating full-frame model output as truth. A
+future product-level or fixed-camera claim still needs a separately frozen source with
+object identity/movement annotations. Do not rerun or tune on VISOR `P14_05`, connect a
+live source, or promote VOST mask coverage into a target-detection claim. Training
 remains capped at 20 epochs with patience 5, and test tuning and automatic submissions
 remain prohibited.
 
@@ -132,4 +144,4 @@ Read [AGENTS.md](AGENTS.md), [PROJECT_STATE.md](PROJECT_STATE.md), and [ACTION_P
 
 ## License
 
-Original repository code and documentation use the [MIT License](LICENSE). The generated replay is marked `CC0-1.0`; optional dependencies, public evaluation data, and model candidates retain the licenses listed in [third-party notices](docs/third-party-notices.md). No VISOR source data or model weights are distributed.
+Original repository code and documentation use the [MIT License](LICENSE). The generated replay is marked `CC0-1.0`; optional dependencies, public evaluation data, and model candidates retain the licenses listed in [third-party notices](docs/third-party-notices.md). No VISOR/VOST source data or model weights are distributed.

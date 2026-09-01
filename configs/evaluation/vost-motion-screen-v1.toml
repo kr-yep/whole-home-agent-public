@@ -1,0 +1,101 @@
+schema_version = 1
+dataset_id = "vost-motion-screen-v1"
+dataset_version = "s3-version-7pdbmOMes16B1h8hfbAswCyfXpBi5KwO"
+origin_url = "https://www.vostdataset.org/data.html"
+repository_url = "https://github.com/TRI-ML/VOST"
+archive_url = "https://tri-ml-public.s3.amazonaws.com/datasets/VOST.zip"
+archive_version_id = "7pdbmOMes16B1h8hfbAswCyfXpBi5KwO"
+archive_etag = "656e2cc81e3dece60378b161992b3f1d-6439"
+archive_bytes = 54012104924
+central_directory_offset = 53991061837
+central_directory_bytes = 21042989
+central_directory_sha256 = "7685955fd97adaade763a9a8f667ab8589b8fd63bac596eb207697ac68ed6d34"
+central_directory_entries = 153136
+license_id = "CC-BY-NC-SA-4.0"
+license_url = "https://creativecommons.org/licenses/by-nc-sa/4.0/"
+license_source_member = "VOST/LICENSE"
+readme_source_member = "VOST/README.md"
+intended_use = "D0_PUBLIC_NONCOMMERCIAL_MOTION_SCREENING"
+redistribution_allowed = false
+local_root = "datasets/vost/vost-motion-screen-v1"
+sample_fps_numerator = 5
+sample_fps_denominator = 1
+target_mask_id = 1
+void_mask_id = 255
+mask_change_iou_threshold = 0.5
+coverage_window_frames = 1
+development_candidate_motion_thresholds = [0.005, 0.01, 0.02, 0.03]
+development_selection_minimum_mask_change_coverage = 0.95
+subset_file_count = 404
+subset_bytes = 52172072
+subset_files_manifest_sha256 = "3a4b440fd2e4d5d45363a9daf2c986799ca14a9bee0578a29f910ae41ec7863f"
+
+[[upstream_artifact]]
+kind = "license"
+member = "VOST/LICENSE"
+path = "upstream/LICENSE"
+bytes = 20848
+sha256 = "9e502ba75fd0fd30cea5497b438a4bc12f07f02bc932a7a6041fd6a18b8f46a0"
+
+[[upstream_artifact]]
+kind = "readme"
+member = "VOST/README.md"
+path = "upstream/README.md"
+bytes = 2619
+sha256 = "2693fca53fc59297602312378a655671065a656a3d4df7c741b34a74b527f7d2"
+
+[[upstream_artifact]]
+kind = "train_split"
+member = "VOST/ImageSets/train.txt"
+path = "upstream/train.txt"
+bytes = 9515
+sha256 = "3f30c775779a30cc239cffbd9b254e083553734862462358e9c356ba94587060"
+
+[[upstream_artifact]]
+kind = "validation_split"
+member = "VOST/ImageSets/val.txt"
+path = "upstream/val.txt"
+bytes = 1175
+sha256 = "5bafd2a4867cdfe8558d3b590e9e8193c7aef0872643db108cf79b74252160b9"
+
+[scheduler]
+# Development candidates 0.005, 0.01, 0.02, and 0.03 selected the same 33/66
+# frames with the same coverage. The most restrictive tied candidate is frozen.
+motion_threshold = 0.03
+min_gap_frames = 2
+anchor_interval_frames = 10
+sample_stride = 8
+
+[gate]
+minimum_validation_mask_change_coverage = 0.95
+minimum_validation_avoided_detector_fraction = 0.30
+maximum_detector_p95_ms = 100.0
+maximum_peak_vram_bytes = 1073741824
+
+[[sequence]]
+sequence_id = "8253_open_bag"
+source_partition = "train"
+split = "development"
+frame_count = 66
+frame_width = 1920
+frame_height = 1080
+source_frame_step = 6
+subset_file_count = 132
+subset_bytes = 18564934
+sequence_files_manifest_sha256 = "9bd21f78803d4ca905222d18cc025cca934b0cd9d5088bc5d61b858ea3b85f93"
+frame_files_manifest_sha256 = "13ee027c627473d8f91e45c260e51d545b180fddfce09bba3f967b1d1a3fceaf"
+annotation_files_manifest_sha256 = "07348b91b7378281c82ad44d65b05f292a024b7674f500fb1c97095cafbadd24"
+
+[[sequence]]
+sequence_id = "5182_open_box"
+source_partition = "val"
+split = "validation"
+frame_count = 136
+frame_width = 1440
+frame_height = 1080
+source_frame_step = 6
+subset_file_count = 272
+subset_bytes = 33607138
+sequence_files_manifest_sha256 = "235164e295f2967673bca44c29b792be28e73654812dd91fef6ec25adeb76795"
+frame_files_manifest_sha256 = "b1bf5c7607dc3cc7e7aed0741249768b29347c75fc15b87bf55b6965eb65787e"
+annotation_files_manifest_sha256 = "43ba524084066df502725fe97f032b45466f68d15b25c60ff968e4b8e76c19ae"
