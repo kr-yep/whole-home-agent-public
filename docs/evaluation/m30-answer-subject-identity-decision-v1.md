@@ -47,3 +47,5 @@ physical truth, governance adoption, or runtime authority. `OPERATE` remains dis
 Python 3.12.13 passed all `324/324` tests, including `10/10` M30 contract and
 result tests. The staged public-release audit scanned 267 files / 534
 index-and-worktree snapshots with zero violations and `operate_enabled: false`.
+[Public CI run 33519027949](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33519027949)
+succeeded for result revision `d346f8b0c76d6335d003ad758488e72a56cf882b`.
