@@ -68,8 +68,15 @@ operate_enabled = false
 python = "3.12.13"
 focused_result_tests_status = "PASS_9_OF_9"
 public_audit_status = "PASS_282_FILES_564_SNAPSHOTS_ZERO_VIOLATIONS"
-public_ci_status = "PENDING"
+public_ci_status = "SUCCESS_RUN_33523965487"
 operate_enabled = false
+
+[public_ci]
+result_revision = "75bc31bf785933fdaa91ab1e3c76636c044c2022"
+run_id = 33523965487
+status = "SUCCESS"
+verification_route = "PUBLIC_ACTIONS_HTML_COMPLETED_SUCCESSFULLY"
+url = "https://github.com/kr-yep/whole-home-agent-public/actions/runs/33523965487"
 
 [next_gate]
 proposal = "M34_SINGLE_INFRASTRUCTURE_RETRY"

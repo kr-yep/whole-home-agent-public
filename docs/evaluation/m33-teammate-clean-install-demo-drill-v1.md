@@ -31,7 +31,8 @@ no retained runtime artifact remains.
 
 Python 3.12.13 passed all `9/9` focused M33 contract/result tests. The staged public
 audit scanned 282 files / 564 index-and-worktree snapshots with zero violations and
-`operate_enabled: false`. Public result CI is pending.
+`operate_enabled: false`. The result revision passed
+[public CI run 33523965487](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33523965487).
 
 ## What is usable and what is missing
 

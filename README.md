@@ -33,7 +33,8 @@ consent, and any operational activation. Live/private sensing and actions remain
 stopped before `uv sync` because its outer preflight compared the full `uv --version`
 string, including Windows build metadata, instead of semantic version `0.11.24`.
 Dependency compatibility and clean-install demo usability remain untested. M34 may make
-one infrastructure-only retry with every product and evidence gate unchanged.
+one infrastructure-only retry with every product and evidence gate unchanged. The M33
+result passed [public CI](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33523965487).
 
 ## What works today
 

@@ -40,7 +40,7 @@ what is still missing without reconstructing the full experiment history.
 These remain blocked by proposed governance, unassigned roles, absent consent and data
 policy, and `OPERATE DISABLED`.
 
-## Latest push: M33 drill result
+## Latest push: M33 CI receipt
 
 The exact public clone succeeded and was clean, but the sole attempt stopped before
 dependency install. The harness compared the full Windows `uv --version` output rather
@@ -51,3 +51,7 @@ The existing demo remains usable in its previously verified environment. Clean-i
 usability is still missing. M34 may retry once with only the uv version parser corrected;
 all revision, lock, fixture, answer/trace, timing, network, cleanup, and safety gates stay
 unchanged.
+
+The M33 result passed
+[public CI run 33523965487](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33523965487).
+This receipt does not change the usable capabilities or the clean-install gap above.
