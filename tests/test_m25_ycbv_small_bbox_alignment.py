@@ -6,6 +6,13 @@ import tomllib
 import unittest
 from pathlib import Path
 
+from whole_home_agent.adapters.bop_d1 import BopFrame, BopFrameAnnotation
+from whole_home_agent.adapters.bop_diagnostic import (
+    SELECT_DUAL_AREA,
+    STOP_SMALL_BBOX_ORACLE,
+    diagnose_ycbv_dual_area,
+)
+
 
 ROOT = Path(__file__).resolve().parents[1]
 M16 = ROOT / "configs" / "evaluation" / "m16-target-label-oracle-v1.toml"
@@ -103,6 +110,114 @@ class M25ContractTests(unittest.TestCase):
                 self.assertFalse(value, key)
         self.assertTrue(all(value is True for value in self.document["claim_limits"].values()))
         self.assertTrue(all(value is False for value in self.document["boundaries"].values()))
+
+
+def _annotation(
+    object_id: int,
+    *,
+    visible_pixels: int = 600,
+    all_pixels: int = 1000,
+    bbox: tuple[int, int, int, int] = (10, 20, 20, 30),
+) -> BopFrameAnnotation:
+    return BopFrameAnnotation(
+        object_id=object_id,
+        bbox_visible_xywh=bbox,
+        pixel_count_all=all_pixels,
+        pixel_count_visible=visible_pixels,
+        visible_fraction=visible_pixels / all_pixels,
+    )
+
+
+def _frame(scene_id: int, image_id: int, *annotations: BopFrameAnnotation) -> BopFrame:
+    return BopFrame(scene_id=scene_id, image_id=image_id, annotations=annotations)
+
+
+class M25SyntheticDiagnosticTests(unittest.TestCase):
+    def test_selects_lowest_object_then_first_positive_and_distinct_scene_negative(self):
+        frames = (
+            _frame(1, 1, _annotation(2)),
+            _frame(2, 1, _annotation(1)),
+            _frame(3, 1, _annotation(3, visible_pixels=5000, bbox=(0, 0, 100, 100))),
+        )
+        result = diagnose_ycbv_dual_area(frames)
+        self.assertEqual(result.decision, SELECT_DUAL_AREA)
+        self.assertEqual(result.selected_pair["object_id"], 1)
+        self.assertEqual(result.selected_pair["positive"]["scene_id"], 2)
+        self.assertEqual(result.selected_pair["negative"]["scene_id"], 1)
+        self.assertGreaterEqual(result.distinct_scene_pair_object_count, 2)
+
+    def test_pixel_small_but_bbox_large_is_not_dual_positive(self):
+        frames = (
+            _frame(1, 1, _annotation(1, visible_pixels=600, bbox=(10, 10, 100, 100))),
+            _frame(2, 1, _annotation(2)),
+        )
+        result = diagnose_ycbv_dual_area(frames)
+        object_one = result.object_rows[0]
+        self.assertEqual(object_one["pixel_positive_frame_count"], 1)
+        self.assertEqual(object_one["bbox_positive_frame_count"], 0)
+        self.assertEqual(object_one["dual_positive_frame_count"], 0)
+
+    def test_bbox_small_but_visible_pixels_tiny_is_not_dual_positive(self):
+        frames = (
+            _frame(1, 1, _annotation(1, visible_pixels=100, all_pixels=200, bbox=(10, 10, 20, 30))),
+            _frame(2, 1, _annotation(2)),
+        )
+        result = diagnose_ycbv_dual_area(frames)
+        object_one = result.object_rows[0]
+        self.assertEqual(object_one["pixel_positive_frame_count"], 0)
+        self.assertEqual(object_one["bbox_positive_frame_count"], 1)
+        self.assertEqual(object_one["dual_positive_frame_count"], 0)
+
+    def test_area_upper_boundary_is_exclusive_like_m16(self):
+        exactly_one_percent = 3072
+        frames = (
+            _frame(
+                1,
+                1,
+                _annotation(
+                    1,
+                    visible_pixels=exactly_one_percent,
+                    all_pixels=exactly_one_percent,
+                    bbox=(0, 0, 48, 64),
+                ),
+            ),
+            _frame(2, 1, _annotation(2)),
+        )
+        result = diagnose_ycbv_dual_area(frames)
+        self.assertEqual(result.object_rows[0]["dual_positive_frame_count"], 0)
+
+    def test_no_dual_pair_is_a_normal_stop_without_threshold_change(self):
+        result = diagnose_ycbv_dual_area(
+            (
+                _frame(1, 1, _annotation(1, visible_pixels=600, bbox=(10, 10, 100, 100))),
+                _frame(2, 1, _annotation(2, visible_pixels=100, all_pixels=200)),
+            )
+        )
+        self.assertEqual(result.decision, STOP_SMALL_BBOX_ORACLE)
+        document = result.as_dict()
+        self.assertIsNone(document["selected_pair"])
+        self.assertFalse(document["threshold_or_predicate_changed_after_observation"])
+
+    def test_same_scene_absence_cannot_form_the_pair(self):
+        result = diagnose_ycbv_dual_area(
+            (
+                _frame(1, 1, _annotation(1)),
+                _frame(1, 2, _annotation(2)),
+            )
+        )
+        self.assertEqual(result.decision, STOP_SMALL_BBOX_ORACLE)
+
+    def test_duplicate_frame_or_object_identity_fails_closed(self):
+        frame = _frame(1, 1, _annotation(1))
+        with self.assertRaisesRegex(ValueError, "frame identities"):
+            diagnose_ycbv_dual_area((frame, frame))
+        with self.assertRaisesRegex(ValueError, "unique within a frame"):
+            diagnose_ycbv_dual_area((_frame(1, 1, _annotation(1), _annotation(1)),))
+
+    def test_tool_has_no_media_network_extraction_or_model_path(self):
+        source = (ROOT / "tools" / "diagnose_ycbv_dual_area.py").read_text(encoding="utf-8")
+        for forbidden in ("rgb/", ".extract(", "extractall", "requests", "urllib", "torch"):
+            self.assertNotIn(forbidden, source)
 
 
 if __name__ == "__main__":
