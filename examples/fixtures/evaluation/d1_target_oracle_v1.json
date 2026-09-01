@@ -1,0 +1,165 @@
+{
+  "schema_version": 1,
+  "fixture_id": "d1-target-oracle-v1",
+  "use_class": "D0_SYNTHETIC",
+  "dataset": {
+    "dataset_id": "synthetic:d1-target-oracle@1",
+    "width": 1000,
+    "height": 1000,
+    "sequences": [
+      {
+        "group": {
+          "source_sequence": 0,
+          "source_sequence_id": "synthetic-sequence-development",
+          "split": "development",
+          "participant_id": "synthetic-participant-development",
+          "house_room_id": "synthetic-room-development",
+          "session_id": "synthetic-session-development",
+          "camera_time_group_id": "synthetic-camera-time-development",
+          "synchronized_view_group_id": "synthetic-sync-development"
+        },
+        "frames": [
+          {
+            "frame_index": 0,
+            "state": "SCORED",
+            "instances": [
+              {
+                "instance_id": "key-1",
+                "label": "key",
+                "visibility": "VISIBLE",
+                "bbox": [100, 100, 150, 150]
+              }
+            ]
+          },
+          {
+            "frame_index": 1,
+            "state": "SCORED",
+            "instances": [
+              {
+                "instance_id": "key-1",
+                "label": "key",
+                "visibility": "ABSENT",
+                "bbox": null
+              }
+            ]
+          },
+          {
+            "frame_index": 2,
+            "state": "UNKNOWN",
+            "instances": [
+              {
+                "instance_id": "key-1",
+                "label": "key",
+                "visibility": "UNKNOWN",
+                "bbox": null
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "transitions": [
+      {
+        "episode_id": "synthetic-location-change-1",
+        "source_sequence": 0,
+        "instance_id": "key-1",
+        "start_frame_index": 0,
+        "end_frame_index": 1,
+        "kind": "LOCATION_CHANGE"
+      }
+    ]
+  },
+  "split_groups": [
+    {
+      "source_sequence": 0,
+      "source_sequence_id": "synthetic-sequence-development",
+      "split": "development",
+      "participant_id": "synthetic-participant-development",
+      "house_room_id": "synthetic-room-development",
+      "session_id": "synthetic-session-development",
+      "camera_time_group_id": "synthetic-camera-time-development",
+      "synchronized_view_group_id": "synthetic-sync-development"
+    },
+    {
+      "source_sequence": 1,
+      "source_sequence_id": "synthetic-sequence-validation",
+      "split": "validation",
+      "participant_id": "synthetic-participant-validation",
+      "house_room_id": "synthetic-room-validation",
+      "session_id": "synthetic-session-validation",
+      "camera_time_group_id": "synthetic-camera-time-validation",
+      "synchronized_view_group_id": "synthetic-sync-validation"
+    }
+  ],
+  "prediction_cases": {
+    "perfect": [
+      {
+        "source_sequence": 0,
+        "frame_index": 0,
+        "label": "key",
+        "confidence": 0.9,
+        "bbox": [100, 100, 150, 150]
+      }
+    ],
+    "empty": [],
+    "duplicate": [
+      {
+        "source_sequence": 0,
+        "frame_index": 0,
+        "label": "key",
+        "confidence": 0.9,
+        "bbox": [100, 100, 150, 150]
+      },
+      {
+        "source_sequence": 0,
+        "frame_index": 0,
+        "label": "key",
+        "confidence": 0.8,
+        "bbox": [100, 100, 150, 150]
+      }
+    ],
+    "wrong_class": [
+      {
+        "source_sequence": 0,
+        "frame_index": 0,
+        "label": "bag",
+        "confidence": 0.9,
+        "bbox": [100, 100, 150, 150]
+      }
+    ],
+    "bad_localization": [
+      {
+        "source_sequence": 0,
+        "frame_index": 0,
+        "label": "key",
+        "confidence": 0.9,
+        "bbox": [700, 700, 750, 750]
+      }
+    ],
+    "negative_frame_false_positive": [
+      {
+        "source_sequence": 0,
+        "frame_index": 0,
+        "label": "key",
+        "confidence": 0.9,
+        "bbox": [100, 100, 150, 150]
+      },
+      {
+        "source_sequence": 0,
+        "frame_index": 1,
+        "label": "key",
+        "confidence": 0.8,
+        "bbox": [700, 700, 750, 750]
+      }
+    ],
+    "prediction_on_unknown_frame": [
+      {
+        "source_sequence": 0,
+        "frame_index": 2,
+        "label": "key",
+        "confidence": 0.9,
+        "bbox": [100, 100, 150, 150]
+      }
+    ]
+  }
+}
