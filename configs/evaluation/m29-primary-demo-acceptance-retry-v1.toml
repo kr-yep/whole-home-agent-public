@@ -1,0 +1,108 @@
+schema_version = 1
+status = "FROZEN_BEFORE_SINGLE_COMMITTED_ACCEPTANCE_RETRY"
+gate_id = "m29-primary-demo-acceptance-retry-v1"
+intended_use = "COMMITTED_D0_SYNTHETIC_PRIMARY_DEMO_ACCEPTANCE_RETRY"
+frozen_at_revision = "6edfa3c12434a33e3faa4592ccac2967932703df"
+m28_result = "configs/evaluation/m28-primary-demo-acceptance-result-v1.toml"
+m28_result_sha256 = "db3c94c4f546ad7a40d84d039fba7032725aa4d3c6925ac9b354515b9a3e41ea"
+source_manifest = "examples/media/generated/key_bag_sofa_v2.manifest.json"
+source_manifest_sha256 = "2e83bbcecbe239b8bb91e503ba753b3de4684297015e703763b1882cd9d4db49"
+source_id = "b1-key-bag-sofa"
+source_revision = "2"
+source_content_sha256 = "b9cc79476d77f8d45acd1803c924de73914ffc4790f4da271f77cc8d4742eb43"
+source_use_class = "D0_SYNTHETIC"
+source_license = "CC0-1.0"
+source_frame_count = 80
+relation_engine = "src/whole_home_agent/relation_inference.py"
+relation_engine_sha256 = "43bcdaa12dcf8d6740d09db378238359cfcf8e6024e88b095ae9a0ad981cb590"
+relation_rules = "configs/perception/relation-rules-v1.toml"
+relation_rules_sha256 = "3508ad8490fb42367140fed632878bc38d23fa7059cb92e4b2d989208ae91b93"
+acceptance_attempt_limit = 1
+acceptance_internal_run_count = 2
+run_ids = ["m29-acceptance-direct", "m29-acceptance-cli"]
+
+[correction]
+changes_runtime_semantics = false
+changes_presentation = false
+changes_source_or_threshold = false
+changes_only_frozen_expected_meaning = true
+source_event_label_frame_meaning = "PROJECT_GENERATED_REFERENCE_EVENT_FRAME_NOT_CLAIM_EVIDENCE_START"
+evidence_window_meaning = "ENGINE_OBSERVATION_INTERVAL_CARRIED_BY_ACCEPTED_CLAIM_EVIDENCE"
+confirmation_frame_meaning = "SOURCE_POSITION_AT_WHICH_THE_ENGINE_EMITS_THE_CLAIM_CANDIDATE"
+
+[execution]
+committed_project_owned_media_allowed = true
+third_party_or_private_media_allowed = false
+network_denied_during_both_runs = true
+first_run_interface = "PUBLIC_DEMO_PYTHON_BOUNDARY"
+second_run_interface = "CLI_DEMO_RECORDED_COMPACT"
+semantic_comparison_excludes_only = ["replay_run_id"]
+checker_must_be_committed_before_retry = true
+arbitrary_contract_path_allowed = false
+post_attempt_expected_value_change_allowed = false
+second_retry_allowed = false
+
+[expected_governance]
+operate = "DISABLED"
+physical_truth_claimed = false
+allowed_data = "D0_SYNTHETIC"
+mode = "OFFLINE_PRERECORDED_REPLAY"
+
+[expected_answer]
+status = "FOUND"
+subject_id = "key"
+location_id = "sofa"
+epistemic_status = "estimated"
+relation_path_length = 2
+source_claim_count = 2
+world_scope = "source:b1-key-bag-sofa@2"
+as_of_source_sequence = 68
+
+[[expected_claim]]
+operation = "assert"
+predicate = "inside"
+subject_id = "key"
+object_id = "bag"
+epistemic_status = "estimated"
+source_event_label_frame = 35
+evidence_start_frame = 33
+evidence_end_frame = 37
+confirmation_frame = 37
+
+[[expected_claim]]
+operation = "assert"
+predicate = "at_zone"
+subject_id = "bag"
+object_id = "sofa"
+epistemic_status = "estimated"
+source_event_label_frame = 65
+evidence_start_frame = 66
+evidence_end_frame = 68
+confirmation_frame = 68
+
+[expected_limits]
+warning_count_minimum = 3
+easy_replay_zero_abstentions_allowed = true
+run_receipt_required = true
+fixture_metrics_collapsed_and_labeled_not_indoor_evidence = true
+general_language_understanding_claim_allowed = false
+real_home_accuracy_or_gain_claim_allowed = false
+
+[decision]
+pass = "PASS_M29_PRIMARY_DEMO_ACCEPTANCE_RETRY"
+normal_stop = "STOP_M29_PRIMARY_DEMO_ACCEPTANCE_RETRY"
+pass_requires_every_assertion = true
+pass_authorizes_only = "M30_TEAMMATE_CLEAN_INSTALL_AND_DEMO_DRILL"
+stop_authorizes_no_second_retry = true
+
+[boundaries]
+third_party_or_private_media_read_allowed = false
+new_model_detector_or_tracker_load_allowed = false
+prediction_experiment_allowed = false
+training_allowed = false
+test_tuning_allowed = false
+presentation_change_allowed = false
+new_candidate_or_claim_semantics_allowed = false
+relation_or_transition_semantics_change_allowed = false
+live_private_cloud_inference_or_action_allowed = false
+operate_enabled = false
