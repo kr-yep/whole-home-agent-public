@@ -228,6 +228,9 @@ sha256 = "{_sha(value)}"
             ),
             encoding="utf-8",
         )
+        label_review_line = (
+            "label_review_source_offsets = [0, 6]" if target_label is not None else ""
+        )
         sequence_blocks = []
         for item in sequence_data:
             sequence_rows = item["rows"]
@@ -240,7 +243,7 @@ frame_count = 2
 frame_width = 8
 frame_height = 8
 source_frame_step = 6
-{f'label_review_source_offsets = [0, 6]' if target_label is not None else ''}
+{label_review_line}
 subset_file_count = 4
 subset_bytes = {sum(row['bytes'] for row in sequence_rows)}
 sequence_files_manifest_sha256 = "{_canonical(sequence_rows)}"
@@ -248,6 +251,19 @@ frame_files_manifest_sha256 = "{item['frame_hash']}"
 annotation_files_manifest_sha256 = "{item['mask_hash']}"
 '''
             )
+        target_label_line = (
+            f'target_label = "{target_label}"' if target_label is not None else ""
+        )
+        target_gate_block = ""
+        if target_label is not None:
+            target_gate_block = '''[target_tracking_gate]
+minimum_full_frame_recall50 = 0.60
+minimum_matched_observation_fraction = 0.60
+maximum_id_switches = 1
+maximum_fragmentations = 2
+minimum_scheduled_target_event_coverage = 0.60
+minimum_scheduled_target_event_retention = 0.90
+'''
         config = f'''schema_version = 1
 dataset_id = "vost-test"
 dataset_version = "test-version"
@@ -272,7 +288,7 @@ sample_fps_numerator = 5
 sample_fps_denominator = 1
 target_mask_id = 1
 void_mask_id = 255
-{f'target_label = "{target_label}"' if target_label is not None else ''}
+{target_label_line}
 mask_change_iou_threshold = 0.5
 coverage_window_frames = 1
 development_candidate_motion_thresholds = [0.0, 0.03]
@@ -294,14 +310,7 @@ minimum_validation_avoided_detector_fraction = 0.30
 maximum_detector_p95_ms = 100.0
 maximum_peak_vram_bytes = 1024
 
-{'''[target_tracking_gate]
-minimum_full_frame_recall50 = 0.60
-minimum_matched_observation_fraction = 0.60
-maximum_id_switches = 1
-maximum_fragmentations = 2
-minimum_scheduled_target_event_coverage = 0.60
-minimum_scheduled_target_event_retention = 0.90
-''' if target_label is not None else ''}
+{target_gate_block}
 
 {''.join(sequence_blocks)}'''
         config_path = config_dir / "vost-test.toml"
