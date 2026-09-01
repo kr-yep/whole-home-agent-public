@@ -97,6 +97,13 @@ source-group leakage behavior. This validates scoring semantics only; no image, 
 training, or transfer result exists. See the
 [M16 evidence report](docs/evaluation/m16-target-label-oracle-feasibility-v1.md).
 
+M17 then compared the existing vector renderer, Blender headless 3D, and Kubric with
+licensed assets against frozen D1, provenance, split, delivery, storage, and dependency
+gates. Only the existing project-owned renderer passed every gate. Blender and Kubric
+remain possible later realism routes, but their bounded exact integrations were not
+established here. M17 installed nothing and generated no media. See the
+[M17 evidence report](docs/evaluation/m17-generation-strategy-reality-gate-v1.md).
+
 ## Run the demo
 
 Requires Python 3.11 or newer. The lockfile was generated with `uv 0.11.24`.
@@ -171,12 +178,12 @@ docs/                       architecture, demo, ADR, and technology notes
 
 The first public detector, consecutive motion, target-tracking, failure-localization,
 RF-DETR replacement, D-FINE synthetic engineering, M14 scientific-priority, M15
-target-substrate, and M16 label-oracle gates are frozen. M16 passed only its synthetic
-measurement contract. The next step is a no-media M17 comparison of exactly the existing
-2D renderer extension, procedural Blender, licensed asset compositing, and `STOP` against
-D1 conformance, deterministic source separation, license/provenance, and three-day/20 GiB
-cost. It may select at most one and cannot install, download, render, or train. Tracker
-replacement remains a separate later co-gate.
+target-substrate, M16 label-oracle, and M17 generation-strategy gates are frozen. M17
+selected only one tiny extension of the existing project-owned vector renderer. M18 will
+freeze and generate exactly three protected source groups and 18 D1 image/annotation
+pairs, verify repeated byte identity, and preserve the old golden replay. It cannot
+acquire external assets, load a model, or train. Tracker replacement remains a separate
+later co-gate.
 The reserved VOST validation source and VISOR `P14_05` must remain untouched. Do not add
 a movement-candidate layer merely because scheduling is inexpensive. Training remains
 capped at 20 epochs with patience 5, and test tuning and automatic submissions remain
@@ -185,8 +192,9 @@ and [M12 detector screen](docs/evaluation/vost-m12-rfdetr-small-v1.md), plus the
 [M13 engineering screen](docs/evaluation/m13-dfine-small-synthetic-v1.md), the
 [M14 priority decision](docs/evaluation/m14-detector-scientific-priority-v1.md), and the
 [M15 result](docs/evaluation/m15-target-domain-substrate-v1.md), plus the
-[M16 result](docs/evaluation/m16-target-label-oracle-feasibility-v1.md) and
-[M17 proposal](docs/evaluation/m17-generation-strategy-reality-gate-proposal.md).
+[M16 result](docs/evaluation/m16-target-label-oracle-feasibility-v1.md), the
+[M17 result](docs/evaluation/m17-generation-strategy-reality-gate-v1.md), and the
+[M18 proposal](docs/evaluation/m18-vector-d1-slice-proposal.md).
 
 ## Safety and data boundary
 

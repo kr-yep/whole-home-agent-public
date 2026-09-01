@@ -1,0 +1,168 @@
+schema_version = 1
+status = "RECORDED_NO_MEDIA_RESULT"
+gate_id = "m17-generation-strategy-v1"
+decision = "SELECT_ONE_TINY_D1_VECTOR_2D_SLICE"
+eligible_candidates = ["existing-project-vector-2d"]
+eligible_count = 1
+selected_candidate = "existing-project-vector-2d"
+selection_rule = "ALL_FATAL_GATES_PASS_THEN_FROZEN_ORDERED_TIEBREAKS"
+unknown_is_selection_ineligible = true
+tie_break_applied = false
+research_cutoff = "2026-09-01"
+
+required_gate_order = [
+  "exact_m16_d1_emission_feasible",
+  "target_and_transition_coverage_feasible",
+  "protected_split_construction_feasible",
+  "deterministic_manifest_and_byte_provenance_feasible",
+  "public_repository_and_intended_use_rights_established",
+  "tool_version_pinnable",
+  "first_slice_within_8_working_hours",
+  "complete_substrate_within_3_calendar_days",
+  "complete_substrate_at_most_20_gib",
+  "no_paid_cloud_or_private_dependency",
+]
+
+[candidates."existing-project-vector-2d"]
+eligible = true
+fatal_reasons = []
+bounded_basis = [
+  "PROJECT_OWNED_GENERATOR_AND_ASSETS_ALREADY_EXIST",
+  "CURRENT_KEY_AREA_IS_336_OF_230400_PIXELS_OR_0_1458_PERCENT",
+  "CURRENT_SCENE_HAS_STABLE_KEY_BAG_SOFA_IDENTITIES_AND_TWO_REFERENCE_TRANSITIONS",
+  "CURRENT_GENERATOR_RECORDS_SEED_CONFIG_GENERATOR_AND_OUTPUT_HASHES",
+  "M16_ORACLE_ALREADY_VALIDATES_D1_AND_PROTECTED_GROUP_CONTRACTS",
+]
+required_m18_delta = [
+  "EMIT_EXACT_M16_D1_RECORDS_ALONGSIDE_IMAGE_ANNOTATION_PAIRS",
+  "ADD_EXPLICIT_NEGATIVE_UNKNOWN_OCCLUDED_AND_TRUNCATED_CASES",
+  "ASSIGN_ASSET_BACKGROUND_LAYOUT_SCENE_CAMERA_AND_VIEW_GROUPS_BEFORE_RENDER",
+  "FREEZE_A_SMALL_OUTPUT_COUNT_AND_VERIFY_REPEATED_BYTE_IDENTITY",
+]
+evidence_limits = [
+  "EIGHT_HOUR_AND_THREE_DAY_RESULTS_ARE_BOUNDED_ENGINEERING_ESTIMATES_NOT_MEASURED DELIVERY TIMES",
+  "VECTOR_ARTWORK_REALISM_AND_SYNTHETIC_TO_REAL_TRANSFER_ARE UNMEASURED",
+]
+official_or_repository_sources = [
+  "tools/generate_synthetic_replay.py",
+  "examples/media/generated/b1_key_bag_sofa_v2.manifest.json",
+  "examples/media/generated/b1_key_bag_sofa_v2.annotations.jsonl",
+  "src/whole_home_agent/target_oracle.py",
+  "LICENSE",
+]
+
+[candidates."existing-project-vector-2d".gates]
+exact_m16_d1_emission_feasible = "PASS"
+target_and_transition_coverage_feasible = "PASS"
+protected_split_construction_feasible = "PASS"
+deterministic_manifest_and_byte_provenance_feasible = "PASS"
+public_repository_and_intended_use_rights_established = "PASS"
+tool_version_pinnable = "PASS"
+first_slice_within_8_working_hours = "PASS"
+complete_substrate_within_3_calendar_days = "PASS"
+complete_substrate_at_most_20_gib = "PASS"
+no_paid_cloud_or_private_dependency = "PASS"
+
+[candidates."blender-python-headless-3d"]
+eligible = false
+fatal_reasons = [
+  "EXACT_D1_ADAPTER_NOT_ESTABLISHED",
+  "PUBLIC_REPOSITORY_SCRIPT_LICENSE_DISPOSITION_NOT_FROZEN",
+  "FIRST_SLICE_AND_COMPLETE_DELIVERY_BOUNDS_NOT_ESTABLISHED",
+]
+nonfatal_strengths = [
+  "OFFICIAL_BACKGROUND_AND_PYTHON_AUTOMATION_SUPPORT",
+  "USER_OWNS_RENDERED_OUTPUT",
+  "PROCEDURAL_SCENES_CAN_IN_PRINCIPLE_CONTROL_IDS_CAMERA_AND_VISIBILITY",
+]
+evidence_limits = [
+  "BLENDER_WAS_NOT_INSTALLED_OR_RUN",
+  "NO_RENDERER_VERSION_ASSET_SET_OR_EXACT_D1_TRANSLATOR_WAS VALIDATED",
+  "NO CLAIM IS MADE THAT BLENDER_CANNOT_SATISFY_A_LATER_GATE",
+]
+official_or_repository_sources = [
+  "https://docs.blender.org/manual/en/4.5/advanced/command_line/index.html",
+  "https://www.blender.org/about/license/",
+]
+
+[candidates."blender-python-headless-3d".gates]
+exact_m16_d1_emission_feasible = "UNKNOWN"
+target_and_transition_coverage_feasible = "PASS"
+protected_split_construction_feasible = "PASS"
+deterministic_manifest_and_byte_provenance_feasible = "PASS"
+public_repository_and_intended_use_rights_established = "UNKNOWN"
+tool_version_pinnable = "PASS"
+first_slice_within_8_working_hours = "UNKNOWN"
+complete_substrate_within_3_calendar_days = "UNKNOWN"
+complete_substrate_at_most_20_gib = "PASS"
+no_paid_cloud_or_private_dependency = "PASS"
+
+[candidates."kubric-licensed-asset-compositing"]
+eligible = false
+fatal_reasons = [
+  "EXACT_D1_ADAPTER_NOT_ESTABLISHED",
+  "CANONICAL_SETUP_AND_ASSET_PATH_DEPEND_ON_NETWORK_CONTAINER_OR_CLOUD_STORAGE",
+  "FIRST_SLICE_COMPLETE_DELIVERY_AND_STORAGE_BOUNDS_NOT_ESTABLISHED",
+]
+nonfatal_strengths = [
+  "OFFICIAL_INSTANCE_SEGMENTATION_DEPTH_FLOW_AND_OBJECT_COORDINATE_OUTPUTS",
+  "DOCUMENTED_SCENE_RANDOMIZATION_AND_SPLIT_CONTROL",
+  "APACHE_2_0_CODE_AND_PER_ASSET_LICENSE_MANIFEST_FIELDS",
+  "GOOGLE_SCANNED_OBJECTS_HAS_1030_HOUSEHOLD_MODELS_UNDER_CC_BY_4_0",
+]
+evidence_limits = [
+  "KUBRIC_DOCKER_DEPENDENCIES_OR_ASSETS_WERE_NOT_DOWNLOADED_OR_RUN",
+  "A_MINIMAL_FULLY_LOCAL_ASSET_ROUTE_WAS_NOT_ESTABLISHED",
+  "NO CLAIM IS MADE THAT_KUBRIC_CANNOT_SATISFY_A_LATER_LESS_CONSTRAINED_GATE",
+]
+official_or_repository_sources = [
+  "https://github.com/google-research/kubric",
+  "https://github.com/google-research/kubric/blob/main/LICENSE",
+  "https://github.com/google-research/kubric/blob/main/requirements.txt",
+  "https://github.com/google-research/kubric/blob/main/setup.py",
+  "https://github.com/google-research/kubric/blob/main/kubric/renderer/blender.py",
+  "https://github.com/google-research/kubric/blob/main/docs/source/X_assets.rst",
+  "https://research.google/pubs/google-scanned-objects-a-high-quality-dataset-of-3d-scanned-household-items/",
+  "https://research.google/blog/scanned-objects-by-google-research-a-dataset-of-3d-scanned-common-household-items/",
+]
+
+[candidates."kubric-licensed-asset-compositing".gates]
+exact_m16_d1_emission_feasible = "UNKNOWN"
+target_and_transition_coverage_feasible = "PASS"
+protected_split_construction_feasible = "PASS"
+deterministic_manifest_and_byte_provenance_feasible = "PASS"
+public_repository_and_intended_use_rights_established = "PASS"
+tool_version_pinnable = "PASS"
+first_slice_within_8_working_hours = "UNKNOWN"
+complete_substrate_within_3_calendar_days = "UNKNOWN"
+complete_substrate_at_most_20_gib = "UNKNOWN"
+no_paid_cloud_or_private_dependency = "FAIL"
+
+[selection]
+eligible_candidate_count = 1
+unique_eligible_candidate = "existing-project-vector-2d"
+ordered_tiebreak_needed = false
+next_authority = "ONE_TINY_D1_CONFORMANT_IMPLEMENTATION_SLICE"
+blender_revisit_trigger = "VECTOR_SLICE_PASSES_ORACLE_BUT_FAILS_FROZEN_REALISM_TRANSFER_GATE"
+kubric_revisit_trigger = "A_PINNED_FULLY_LOCAL_MINIMAL_ASSET_AND_RUNTIME_ROUTE_IS_PRIMARY_EVIDENCE"
+
+[interpretation]
+unknown_means = "NOT_ESTABLISHED_BY_REPOSITORY_OR_ACCESSIBLE_OFFICIAL_SOURCES_CHECKED"
+fail_means = "ACCESSIBLE_EVIDENCE_CONTRADICTS_A_FROZEN_REQUIREMENT_FOR_THIS_GATE"
+pass_means = "EVIDENCE_SUPPORTS_ONLY_THE_NAMED_FEASIBILITY_GATE"
+selection_means = "AUTHORIZE_ONLY_ONE_TINY_PROJECT_OWNED_VECTOR_2D_D1_SLICE"
+not_established = "IMAGE_REALISM_DETECTOR_GAIN_SYNTHETIC_TO_REAL_TRANSFER_OR_HOUSEHOLD_OPERATION"
+
+[boundaries]
+tool_or_dependency_installed = false
+asset_or_media_downloaded = false
+image_or_video_generated = false
+recording_performed = false
+vost_or_visor_bytes_read = false
+reserved_source_read = false
+detector_or_tracker_loaded = false
+training_run = false
+movement_candidate_created = false
+accepted_claim_created = false
+live_private_cloud_or_action_connected = false
+operate_enabled = false
