@@ -20,7 +20,7 @@ The answer is an `estimated` result scoped to that replay. It is not a claim abo
 - hash-pinned, project-generated 80-frame MP4 replay with exact annotations;
 - PTS-aware PyAV decoding and optional motion-plus-periodic scheduling;
 - a deterministic RGB smoke detector for the generated artwork;
-- a hash-pinned RF-DETR Nano adapter boundary for a future real model artifact;
+- a hash-pinned RF-DETR Nano/Small offline adapter with sparse COCO-ID validation;
 - clip-local IoU tracking and one-instance manifest binding;
 - conservative containment/location rules with explicit abstention behavior;
 - the unchanged B0 claim committer, relation projection, and scoped query path;
@@ -60,6 +60,13 @@ of full-frame target-event coverage while avoiding `49.0%` of calls. The candida
 rejected on development, so the reserved validation sequence was not run and no
 movement-candidate layer was added. See the
 [target-tracking gate](docs/evaluation/vost-target-track-screen-v1.md).
+
+One later RF-DETR Small development screen raised same-frame target matches from
+`10/51` to `25/51`, measured `49.78 ms` detector p95 and about `143.0 MiB` peak
+allocated VRAM, but still missed the frozen `0.60` recall gate (`25/51 = 0.4902`). It
+was stopped without a retry or reserved validation. These are finite egocentric VOST
+results, not a general small-object, indoor, fixed-camera, or real-time claim. See the
+[M12 evidence report](docs/evaluation/vost-m12-rfdetr-small-v1.md).
 
 ## Run the demo
 
@@ -133,18 +140,17 @@ docs/                       architecture, demo, ADR, and technology notes
 
 ## Next evidence gate
 
-The first public detector, consecutive motion, target-tracking, and development-only
-failure-localization screens are frozen. M11 found 30 confidence-filtered frames, 11
-localization misses, and 10 matches among 51 visible bottle targets. Threshold-only
-inclusion down to the existing model floor can match at most 26/51 (`0.5098`), below the
-unchanged `0.60` gate; the oracle-box tracker also produced 16 ID switches. The next step
-is to freeze one detector replacement with a reason to improve both score and
-localization, then screen development before any reserved validation. Tracker
-replacement remains a separate later co-gate. The reserved VOST validation source and
-VISOR `P14_05` must remain untouched. Do not add a movement-candidate layer merely
-because scheduling is inexpensive. Training remains capped at 20 epochs with patience
-5, and test tuning and automatic submissions remain prohibited. See the
-[M11 evidence report](docs/evaluation/vost-m11-failure-localization-v1.md).
+The first public detector, consecutive motion, target-tracking, failure-localization,
+and RF-DETR replacement screens are frozen. M12 improved the finite development count
+but failed the unchanged recall gate and recovered none of M11's 11 prior localization-
+miss frames. The next step is a synthetic-only D-FINE Small artifact, safe-loader, and
+adapter compatibility gate; it must not read VOST images or masks or assume another
+development run is warranted. Tracker replacement remains a separate later co-gate.
+The reserved VOST validation source and VISOR `P14_05` must remain untouched. Do not add
+a movement-candidate layer merely because scheduling is inexpensive. Training remains
+capped at 20 epochs with patience 5, and test tuning and automatic submissions remain
+prohibited. See the [M11 diagnostic](docs/evaluation/vost-m11-failure-localization-v1.md)
+and [M12 detector screen](docs/evaluation/vost-m12-rfdetr-small-v1.md).
 
 ## Safety and data boundary
 

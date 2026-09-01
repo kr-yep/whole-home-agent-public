@@ -36,13 +36,13 @@ uv sync --frozen --extra video
 
 Add `--scheduled` to expose the compute/coverage trade-off. Add `--detector annotation-oracle --test-only-oracle` only for plumbing diagnostics.
 
-## RF-DETR Nano candidate
+## RF-DETR Nano/Small evaluation adapter
 
-The optional `rfdetr==1.9.4` dependency is resolved in `uv.lock`. The adapter accepts only a local RF-DETR Nano artifact whose SHA-256 and class map are supplied before model construction; mutable aliases and implicit model downloads are not accepted. Contract tests use a fake SDK result to verify clipping, label mapping, confidence handling, and that SDK-native objects do not escape. No real checkpoint has been downloaded or benchmarked in this repository, so RF-DETR is a candidate, not a selected runtime.
+The optional `rfdetr==1.9.4` dependency is resolved in `uv.lock`, although the M12 CUDA environment used a separately recorded PyTorch stack that the current lock does not reproduce. The adapter accepts only a local reviewed Nano or Small artifact whose byte size, MD5, SHA-256, sparse COCO ID map, and scored-label allowlist are supplied before model construction. Contract tests verify clipping, sparse `44 -> bottle` mapping, SDK-name cross-checks, normalized `>=` confidence behavior, and that SDK-native objects do not escape. Model weights remain ignored and are never bundled.
 
-RF-DETR is worth testing after a frozen indoor set exists because the official Nano model uses a DINOv2-based detection transformer, is intended for fine-tuning, and its Nano through Large code/weights are Apache 2.0. The public project excludes the Plus XL/2XL components with a different license. Official sources: [RF-DETR repository](https://github.com/roboflow/rf-detr), [installation guide](https://rfdetr.roboflow.com/latest/getting-started/install/), and [PyPI 1.9.4 provenance](https://pypi.org/project/rfdetr/1.9.4/).
+The M12 screen selected Small rather than Nano because its 512-pixel input and published small-object/AP75 results were a stronger pre-result rationale for M11's failure mix. On the frozen VOST development sequence, the complete Small adapter path matched 25/51 frames, passed the p95 and VRAM gates, but failed the required 0.60 recall and recovered none of the 11 prior localization-miss frames. It is rejected without retry or reserved validation; this does not establish that RF-DETR generally fails. Official sources: [RF-DETR repository](https://github.com/roboflow/rf-detr), [1.9.4 registry](https://github.com/roboflow/rf-detr/blob/1.9.4/src/rfdetr/assets/model_weights.py), and [PyPI 1.9.4 provenance](https://pypi.org/project/rfdetr/1.9.4/).
 
-The candidate limits and adoption threshold are versioned in `configs/perception/rfdetr-nano-training-gate-v1.toml`. Any specialist training experiment remains capped at 20 epochs with early-stopping patience 5. It must use video/scene-separated training and validation data, must not tune on test, and must beat the same fixed quality/cost gate. No such training has been run here.
+The rejected inference screen is frozen in `configs/evaluation/vost-m12-rfdetr-small-v1.toml`; the older training proposal remains separately versioned in `configs/perception/rfdetr-nano-training-gate-v1.toml`. Any future specialist training experiment remains capped at 20 epochs with early-stopping patience 5, must use video/scene-separated training and validation data, must not tune on test, and must beat the same fixed quality/cost gate. No RF-DETR training has been run here.
 
 ## Deferred alternatives
 

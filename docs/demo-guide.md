@@ -18,7 +18,7 @@ Use the macOS/Linux `.venv/bin/` equivalents where appropriate. The demo needs n
 3. Show the question “Where is the key?” and the answer: “It may be in the bag at the sofa.” Emphasize `estimated`, replay scope, run ID, and as-of frontier.
 4. Show the two evidence rows: estimated `inside(key, bag)` at confirmation frame 37 and `at_zone(bag, sofa)` at frame 68.
 5. Open “Evidence limits”: no abstention was needed on this easy generated replay, while ambiguous, unsupported, and interrupted cases are tested to fail closed.
-6. Close with the limit: “This proves our traceable architecture on one generated clip. The next gate is a licensed frozen indoor dataset and real detector comparison.”
+6. Close with the limit: “This demonstrates the traceable architecture on one generated clip. Separate public-data screens test detector and scheduler candidates, but none turns this demo into a real-home result.”
 
 ## Three-minute version
 
@@ -29,7 +29,7 @@ Add these points to the short flow:
 - The query connects `key → bag → sofa` without fabricating a direct key movement when only the bag moved.
 - Event precision/recall/F1 is `1.0` on this fixture with confirmation lags of two and three frames; the perfect clip-local tracking result is only an easy-fixture ceiling, not indoor evidence.
 - If the detector fails after producing the first candidate, the run becomes `INCOMPLETE` and exposes no session or partial answer.
-- RF-DETR Nano is only a pinned adapter candidate. No real model weight is bundled or silently downloaded.
+- RF-DETR Nano/Small remain evaluation adapters. The Small candidate failed its development recall gate; no real model weight is bundled or silently downloaded.
 
 ## Useful CLI evidence
 

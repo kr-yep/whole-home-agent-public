@@ -138,7 +138,7 @@ NTU aerial small-object 作業可以做方法預篩，但不能直接支持「�
 
 1. **B1-0 — contract seam：完成。** 最窄 candidate-source port、fake source、typed run receipt 與 partial-failure tests 已存在；B0 golden hash 未改變。
 2. **B1-1 — recorded source：完成於一段 synthetic D0。** Allowlisted local reader、manifest/hash/license validation、PTS decode 與 motion-plus-periodic schedule 已存在；raw frames 不持久化。
-3. **B1-2 — baseline perception：完成 synthetic smoke 與 bounded public detector screen。** RGB detector、clip-local IoU tracker、binding 與 conservative relation rules 已接通；VISOR paired baseline 選出 full-frame RetinaNet-FPN 候選，RF-DETR Nano 仍只有 hash-pinned SDK translation seam。
+3. **B1-2 — baseline perception：完成 synthetic smoke 與 bounded public detector screen。** RGB detector、clip-local IoU tracker、binding 與 conservative relation rules 已接通；VISOR paired baseline 選出 full-frame RetinaNet-FPN 候選；後續 RF-DETR Small development screen 雖提高有限序列匹配數但未達 recall gate，已停止且未進入 claim path。
 4. **B1-3 — evaluation and presentation：完成固定 synthetic envelope 與兩個分離的 public screens。** AP/recall/tracking/event/answer/latency/FPS/dropped-frame/VRAM evaluation 與 closed CLI/Streamlit demo 已存在；VISOR 只做 sparse detector evaluation，VOST 只做 consecutive scheduler/cost evaluation。兩者都不會進入 claim commit path，因此仍沒有 fixed-camera、real-home 或 object-movement product claim。
 
 任何步驟若需要 live/private sensing、cloud egress、credential、account/device mutation 或 physical action，必須停止並走 `ACTION_POLICY.md` 的角色、同意、風險與 activation gate。
