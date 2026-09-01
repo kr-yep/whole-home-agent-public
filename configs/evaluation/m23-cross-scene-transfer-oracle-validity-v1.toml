@@ -1,0 +1,100 @@
+schema_version = 1
+status = "FROZEN_BEFORE_WEB_RESEARCH"
+gate_id = "m23-cross-scene-transfer-oracle-validity-v1"
+intended_use = "NO_DATA_NO_MODEL_EVALUATION_PROTOCOL_DECISION"
+question = "CAN_ONE_MODELED_CLASS_USE_POSITIVE_AND_COMPLETE_ABSENT_FRAMES_FROM_DIFFERENT_YCBV_SCENES_WITHIN_ONE_TEST_ONLY_M16_ORACLE"
+maximum_research_hours = 4
+
+[frozen_input_facts]
+source_result = "configs/evaluation/m22-ycbv-annotation-failure-localization-result-v1.toml"
+dataset_id = "BOP_YCBV_TEST_BOP19"
+source_revision = "5c2c4aa229800355648cd268040aa814f8dc94f0"
+target_frame_count = 900
+positive_frame_count = 81
+negative_frame_count = 14775
+paired_object_scene_count = 0
+positive_object_ids = [4, 17, 18]
+
+[proposed_contract]
+project_split = "test"
+same_modeled_class_required = true
+positive_and_negative_may_use_distinct_scenes = true
+source_scene_and_image_ids_preserved = true
+source_sequence_and_protected_group_ids_preserved = true
+adjacent_frames_randomly_split = false
+frame_duplicated_across_project_splits = false
+complete_frame_denominator_required = true
+unmodeled_objects_are_negative = false
+unknown_occluded_or_under_ten_percent_visible_are_negative = false
+minimum_visible_area_fraction = 0.001
+maximum_visible_area_fraction = 0.01
+maximum_slice_frames = 18
+smallest_source_ordered_proving_set = true
+same_frames_for_every_candidate = true
+same_hardware_and_measurement_protocol = true
+relation_movement_or_whole_home_claim_allowed = false
+
+[evidence_requirements]
+official_bop_task_or_format_source_required = true
+official_coco_evaluator_or_primary_detection_protocol_required = true
+local_m16_executable_contract_required = true
+current_source_access_date_required = true
+primary_sources_only_for_technical_claims = true
+inference_must_be_labeled = true
+unknown_is_selection_ineligible = true
+
+[[fatal_gate]]
+id = "G1_CROSS_IMAGE_CLASS_AGGREGATION"
+requirement = "AUTHORITATIVE_DETECTION_EVALUATION_AGGREGATES_MATCHES_OR_SCORES_FOR_A_CATEGORY_ACROSS_MULTIPLE_IMAGE_IDENTITIES_WITHOUT_REQUIRING_ONE_SCENE"
+
+[[fatal_gate]]
+id = "G2_NEGATIVE_DENOMINATOR"
+requirement = "AN_IMAGE_WITH_NO_GROUND_TRUTH_INSTANCE_FOR_THE_MODELED_CLASS_CAN_CONTRIBUTE_FALSE_POSITIVE_EVIDENCE_WHILE_UNKNOWN_OR_UNMODELED_CONTENT_IS_NOT_RELABELLED_NEGATIVE"
+
+[[fatal_gate]]
+id = "G3_PROTECTED_GROUP_NO_LEAKAGE"
+requirement = "LOCAL_M16_CONTRACT_CAN_KEEP_ALL_SELECTED_SCENES_TEST_ONLY_PRESERVE_SOURCE_GROUP_IDENTITIES_AND_REJECT_CROSS_SPLIT_GROUP_LEAKAGE"
+
+[[fatal_gate]]
+id = "G4_PAIRED_COMPARABILITY"
+requirement = "EVERY_CANDIDATE_CAN_BE_EVALUATED_ON_THE_EXACT_SAME_FROZEN_FRAME_SET_LABELS_HARDWARE_WARMUP_AND_MEASUREMENT_METHOD"
+
+[[fatal_gate]]
+id = "G5_SMALL_SLICE_UNCERTAINTY"
+requirement = "THE_PROTOCOL_REQUIRES_EXACT_COUNTS_PER_CLASS_AND_LIMITS_ANY_RESULT_TO_THIS_BOUNDED_ORACLE_WITH_NO_REAL_HOME_MOVEMENT_OR_RELATION_GENERALIZATION"
+
+[hostile_review]
+objections = [
+  "CROSS_SCENE_NEGATIVES_MAY_MAKE_SCENE_APPEARANCE_A_SHORTCUT",
+  "EIGHTEEN_OR_FEWER_FRAMES_CANNOT_ESTIMATE_BROAD_GENERALIZATION",
+  "BOP_POSE_TARGETS_DO_NOT_BY_THEMSELVES_DEFINE_THE_PROJECTS_BINARY_RECALL_AND_FALSE_POSITIVE_METRICS",
+  "A_TEST_ONLY_ORACLE_CANNOT_BE_USED_FOR_TRAINING_OR_TEST_TUNING",
+  "PUBLIC_ANNOTATIONS_ARE_REFERENCE_LABELS_NOT_PHYSICAL_TRUTH",
+]
+every_objection_requires_explicit_disposition = true
+unresolved_material_objection_is_fatal = true
+
+[decision]
+selection = "SELECT_CROSS_SCENE_TEST_ONLY_ORACLE_CONTRACT"
+normal_stop = "STOP_CROSS_SCENE_TRANSFER_ORACLE_VALIDITY_GATE"
+selection_requires_all_fatal_gates_pass = true
+selection_authorizes_only = "ONE_MAXIMUM_18_FRAME_D1_MATERIALIZATION_PROPOSAL"
+selection_is_not_materialization = true
+selection_is_not_model_or_transfer_evidence = true
+
+[boundaries]
+source_or_media_read_allowed = false
+dataset_or_model_download_allowed = false
+d1_materialization_allowed = false
+model_detector_or_tracker_load_allowed = false
+prediction_allowed = false
+training_allowed = false
+test_tuning_allowed = false
+local_vost_or_visor_read_allowed = false
+reserved_source_allowed = false
+movement_candidate_allowed = false
+claim_candidate_allowed = false
+accepted_claim_allowed = false
+relation_or_transition_emission_allowed = false
+live_private_cloud_inference_or_action_allowed = false
+operate_enabled = false
