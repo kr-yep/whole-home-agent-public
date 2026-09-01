@@ -10,6 +10,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / "configs" / "evaluation" / "m30-answer-subject-identity-decision-v1.toml"
+RESULT = ROOT / "configs" / "evaluation" / "m30-answer-subject-identity-decision-result-v1.toml"
 
 
 class M30ContractTests(unittest.TestCase):
@@ -55,6 +56,53 @@ class M30ContractTests(unittest.TestCase):
 
     def test_every_runtime_and_change_boundary_is_closed(self):
         self.assertTrue(all(value is False for value in self.document["boundaries"].values()))
+
+
+class M30ResultTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.contract = tomllib.loads(CONTRACT.read_text(encoding="utf-8"))
+        cls.result = tomllib.loads(RESULT.read_text(encoding="utf-8"))
+
+    def test_exactly_one_candidate_passes_every_gate(self):
+        matrix = {item["id"]: item for item in self.result["candidate_result"]}
+        self.assertEqual(self.result["eligible_candidate_count"], 1)
+        self.assertTrue(matrix["A_CANONICAL_ANSWER_TRACE_SUBJECT"]["eligible"])
+        self.assertEqual(matrix["A_CANONICAL_ANSWER_TRACE_SUBJECT"]["gate_results"], ["PASS"] * 8)
+        self.assertFalse(matrix["B_PUBLIC_DTO_ONLY_SUBJECT"]["eligible"])
+        self.assertFalse(matrix["C_KEEP_CURRENT_TRACE_CONTEXT"]["eligible"])
+        self.assertEqual(self.result["selected_candidate"], "A_CANONICAL_ANSWER_TRACE_SUBJECT")
+
+    def test_repository_facts_support_canonical_boundary(self):
+        facts = {item["id"]: item["status"] for item in self.result["observed_fact"]}
+        self.assertEqual(set(facts.values()), {"PASS"})
+        model = (ROOT / "src/whole_home_agent/model.py").read_text(encoding="utf-8")
+        relations = (ROOT / "src/whole_home_agent/relations.py").read_text(encoding="utf-8")
+        self.assertIn("class QueryRequest:", model)
+        self.assertIn("class AnswerTrace:", model)
+        self.assertEqual(relations.count("AnswerTrace("), 1)
+
+    def test_selected_scope_is_exact_and_does_not_retry_m29(self):
+        scope = self.result["selected_scope"]
+        self.assertEqual(scope["next_gate"], "M31_BOUNDED_ANSWER_TRACE_SUBJECT_IMPLEMENTATION")
+        self.assertTrue(scope["add_required_subject_id_to_answer_trace"])
+        self.assertTrue(scope["copy_only_from_query_request_in_trace_constructor"])
+        self.assertTrue(scope["serialize_in_b0_cli_answer"])
+        self.assertTrue(scope["serialize_in_b1_public_demo_answer"])
+        self.assertFalse(scope["change_query_resolution_or_epistemic_semantics"])
+        self.assertFalse(scope["m29_acceptance_retry"])
+
+    def test_compatibility_risk_is_visible_not_rewritten_as_zero(self):
+        compatibility = self.result["compatibility"]
+        self.assertEqual(compatibility["serialized_change"], "ADDITIVE_FIELD")
+        self.assertEqual(compatibility["manual_or_positional_answer_trace_constructor_risk"], "POSSIBLE")
+        self.assertTrue(compatibility["strict_external_consumer_additive_field_tolerance_unknown"])
+
+    def test_no_media_code_or_runtime_boundary_was_crossed(self):
+        self.assertTrue(self.result["repository_evidence_only"])
+        self.assertFalse(self.result["media_or_model_read"])
+        self.assertFalse(self.result["code_schema_or_presentation_changed"])
+        self.assertTrue(all(value is False for value in self.result["boundaries"].values()))
 
 
 if __name__ == "__main__":

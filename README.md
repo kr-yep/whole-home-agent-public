@@ -186,6 +186,12 @@ retry normally stopped only because the public answer object does not expose its
 is allowed. See the
 [M29 evidence report](docs/evaluation/m29-primary-demo-acceptance-retry-v1.md).
 
+M30 used repository evidence only to decide where query-subject identity belongs.
+Adding it to canonical `AnswerTrace` is the sole 8/8-gate selection; a public-DTO-only
+field would drift from B0, while current path/UI context fails for empty-path non-FOUND
+answers. M31 may implement only that additive field across both serializers. See the
+[M30 evidence report](docs/evaluation/m30-answer-subject-identity-decision-v1.md).
+
 ## Run the demo
 
 Requires Python 3.11 or newer. The lockfile was generated with `uv 0.11.24`.
@@ -261,13 +267,13 @@ docs/                       architecture, demo, ADR, and technology notes
 The first public detector, consecutive motion, target-tracking, failure-localization,
 RF-DETR replacement, D-FINE synthetic engineering, M14 scientific-priority, M15
 target-substrate, M16 label-oracle, M17 generation-strategy, M18 vector-substrate, and
-M19 real-oracle through M29 demo-acceptance-retry gates are frozen. M27 selects the existing
+M19 real-oracle through M30 answer-identity-decision gates are frozen. M27 selects the existing
 synthetic end-to-end replay as the primary demo, keeps M26 as optional smoke, and defers
 scientific gain to a separately contracted protected-group development/untouched-test
-lane. M29's sole retry validates the corrected timing distinction and normally stops
-only on the absent top-level query-subject identity. M30 may make a repository-only,
-no-media decision about that answer-schema requirement; it has no code-change or retry
-authority. It cannot read third-party/private media, load another model, tune, or train.
+lane. M30 selects a required canonical `AnswerTrace.subject_id` as the sole coherent
+answer-schema fix. M31 may implement only that additive query-scope field, both existing
+serializers, all status coverage, and unchanged session semantic hashes. It cannot rerun
+M29, read media, load another model, tune, or train.
 Tracker replacement remains a separate later co-gate.
 The reserved VOST validation source and VISOR `P14_05` must remain untouched. Do not add
 a movement-candidate layer merely because scheduling is inexpensive. Training remains
@@ -293,6 +299,8 @@ The [M28 result](docs/evaluation/m28-primary-demo-acceptance-v1.md) records the
 normal stop, exact trace mismatch, and bounded presentation hardening.
 The [M29 result](docs/evaluation/m29-primary-demo-acceptance-retry-v1.md) records the
 single retry, corrected time semantics, and remaining answer-subject mismatch.
+The [M30 result](docs/evaluation/m30-answer-subject-identity-decision-v1.md) selects the
+canonical boundary for one separately frozen implementation.
 
 ## Safety and data boundary
 

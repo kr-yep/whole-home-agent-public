@@ -1,0 +1,107 @@
+schema_version = 1
+status = "RECORDED_SINGLE_ELIGIBLE_SELECTION"
+gate_id = "m30-answer-subject-identity-decision-v1"
+decision = "SELECT_ONE_M31_BOUNDED_IMPLEMENTATION"
+contract_revision = "631ec6056153bd6cb6dbe96a099aece5bbb62b35"
+selected_candidate = "A_CANONICAL_ANSWER_TRACE_SUBJECT"
+eligible_candidate_count = 1
+repository_evidence_only = true
+media_or_model_read = false
+demo_or_checker_executed = false
+code_schema_or_presentation_changed = false
+
+[[observed_fact]]
+id = "F1_QUERY_HAS_SUBJECT"
+status = "PASS"
+evidence = "QUERY_REQUEST_HAS_REQUIRED_SUBJECT_ID"
+
+[[observed_fact]]
+id = "F2_ANSWER_LACKS_SUBJECT"
+status = "PASS"
+evidence = "ANSWER_TRACE_HAS_NO_SUBJECT_ID_FIELD"
+
+[[observed_fact]]
+id = "F3_ONE_CONSTRUCTOR"
+status = "PASS"
+evidence = "RELATIONS_TRACE_IS_THE_ONLY_ANSWER_TRACE_CONSTRUCTION_SITE"
+
+[[observed_fact]]
+id = "F4_CONSTRUCTOR_HAS_REQUEST"
+status = "PASS"
+evidence = "TRACE_RECEIVES_QUERY_REQUEST_FOR_EVERY_STATUS_BRANCH"
+
+[[observed_fact]]
+id = "F5_TWO_SERIALIZERS_OMIT_SUBJECT"
+status = "PASS"
+evidence = "B0_CLI_AND_B1_PUBLIC_DEMO_ANSWER_DICTIONARIES_BOTH_OMIT_SUBJECT_ID"
+
+[[observed_fact]]
+id = "F6_NON_FOUND_PATH_CAN_BE_EMPTY"
+status = "PASS"
+evidence = "SCOPE_UNKNOWN_AND_CONFLICT_BRANCHES_USE_DEFAULT_EMPTY_RELATION_PATH"
+
+[[candidate_result]]
+id = "A_CANONICAL_ANSWER_TRACE_SUBJECT"
+eligible = true
+pass_count = 8
+fail_count = 0
+gate_results = ["PASS", "PASS", "PASS", "PASS", "PASS", "PASS", "PASS", "PASS"]
+
+[[candidate_result]]
+id = "B_PUBLIC_DTO_ONLY_SUBJECT"
+eligible = false
+pass_count = 4
+fail_count = 4
+gate_results = ["FAIL", "PASS", "FAIL", "FAIL", "FAIL", "PASS", "PASS", "PASS"]
+
+[[candidate_result]]
+id = "C_KEEP_CURRENT_TRACE_CONTEXT"
+eligible = false
+pass_count = 3
+fail_count = 5
+gate_results = ["FAIL", "FAIL", "FAIL", "FAIL", "PASS", "PASS", "FAIL", "PASS"]
+
+[selected_scope]
+next_gate = "M31_BOUNDED_ANSWER_TRACE_SUBJECT_IMPLEMENTATION"
+add_required_subject_id_to_answer_trace = true
+copy_only_from_query_request_in_trace_constructor = true
+serialize_in_b0_cli_answer = true
+serialize_in_b1_public_demo_answer = true
+cover_found_unknown_conflict_scope_required_out_of_scope_frontier_mismatch = true
+preserve_claim_projection_and_session_canonical_hashes = true
+remove_or_rename_existing_answer_fields = false
+change_query_resolution_or_epistemic_semantics = false
+m29_acceptance_retry = false
+
+[compatibility]
+serialized_change = "ADDITIVE_FIELD"
+manual_or_positional_answer_trace_constructor_risk = "POSSIBLE"
+promised_stable_answer_schema_found = false
+strict_external_consumer_additive_field_tolerance_unknown = true
+package_version = "0.1.0"
+
+[claim_limits]
+selection_establishes_product_or_runtime_gain = false
+selection_establishes_real_home_or_cv_quality = false
+selection_adopts_governance_or_operation = false
+selection_authorizes_only_separately_frozen_m31 = true
+
+[verification]
+python = "3.12.13"
+focused_tests_passed = 10
+full_tests_passed = 324
+public_audit_scanned_files = 267
+public_audit_scanned_snapshots = 534
+public_audit_violations = 0
+operate_enabled = false
+
+[boundaries]
+media_or_model_read = false
+demo_or_checker_executed = false
+code_schema_or_presentation_changed = false
+new_dependency_or_storage_added = false
+prediction_training_or_tuning_run = false
+claim_relation_or_query_resolution_changed = false
+m29_acceptance_retry_run = false
+live_private_cloud_inference_or_action_connected = false
+operate_enabled = false
