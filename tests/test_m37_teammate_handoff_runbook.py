@@ -32,8 +32,11 @@ class M37ContractTests(unittest.TestCase):
             hashlib.sha256(checker.read_bytes()).hexdigest(),
             self.contract["checker_sha256"],
         )
+        # GitHub Actions intentionally uses a depth-1 checkout. The handoff revision is
+        # frozen above; verify that the retained lock identity is still the current
+        # committed blob without requiring unrelated historical objects locally.
         lock_blob = subprocess.run(
-            ["git", "show", f'{self.contract["handoff_revision"]}:uv.lock'],
+            ["git", "show", "HEAD:uv.lock"],
             cwd=ROOT,
             check=True,
             capture_output=True,
