@@ -113,3 +113,12 @@ frame in a different scene. The deterministic replacement pair is object 4 at sc
 50/image 722 plus scene 48/image 1. This authorizes only one exact replacement
 materialization contract. The tiny, label-selected test oracle cannot establish a
 detector gain, transfer, natural prevalence, movement, relation, or product value.
+
+## M26 metric-aligned materialization evidence
+
+The exact object-4 replacement pair materialized deterministically in ignored local
+storage. M16 counts its sole reference target in the 0.1–1% bbox bucket, with one
+complete class-absent negative and no transition. This closes the M24 metric mismatch
+for fixture mechanics only. One positive cannot support a stable gain estimate, and the
+test-only pair cannot be used for training or tuning. A next gate must separate this
+smoke fixture from any future development selection and untouched evaluation evidence.

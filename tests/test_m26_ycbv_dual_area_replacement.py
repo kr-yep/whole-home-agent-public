@@ -24,6 +24,7 @@ ROOT = Path(__file__).resolve().parents[1]
 M21 = ROOT / "configs" / "evaluation" / "m21-ycbv-per-archive-root-repair-v1.toml"
 M25 = ROOT / "configs" / "evaluation" / "m25-ycbv-small-bbox-alignment-result-v1.toml"
 CONTRACT = ROOT / "configs" / "evaluation" / "m26-ycbv-dual-area-replacement-d1-v1.toml"
+RESULT = ROOT / "configs" / "evaluation" / "m26-ycbv-dual-area-replacement-d1-result-v1.toml"
 
 
 class M26ContractTests(unittest.TestCase):
@@ -203,6 +204,55 @@ class M26SyntheticMaterializationTests(unittest.TestCase):
             text=True,
         )
         self.assertEqual(completed.returncode, 0, completed.stderr)
+
+
+class M26ResultTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.contract = tomllib.loads(CONTRACT.read_text(encoding="utf-8"))
+        cls.result = tomllib.loads(RESULT.read_text(encoding="utf-8"))
+
+    def test_result_passes_exact_frozen_branch_and_records_pre_source_fix(self):
+        self.assertEqual(self.result["decision"], self.contract["decision"]["pass"])
+        self.assertFalse(self.result["pre_source_fix"]["real_source_read_before_fix"])
+        self.assertFalse(self.result["pre_source_fix"]["frame_selection_or_threshold_changed"])
+        self.assertEqual(
+            self.result["pre_source_fix"]["resolution"],
+            "REUSE_EXISTING_TEST_ONLY_MINIMAL_DETECTOR_TRANSFER_ORACLE",
+        )
+
+    def test_exact_pair_and_two_rgb_hashes_are_recorded(self):
+        selection = self.result["selection"]
+        self.assertEqual(selection["selected_object_id"], 4)
+        self.assertEqual([selection["positive"]["source_scene_id"], selection["positive"]["source_image_id"]], [50, 722])
+        self.assertEqual([selection["negative"]["source_scene_id"], selection["negative"]["source_image_id"]], [48, 1])
+        self.assertEqual(len(self.result["output_file"]), 4)
+        self.assertEqual(self.result["unique_rgb_member_read_count"], 2)
+
+    def test_m16_metric_alignment_is_now_exact_but_not_a_gain(self):
+        metric = self.result["metric_alignment"]
+        self.assertEqual(metric["m16_tiny_bbox_target_count"], 0)
+        self.assertEqual(metric["m16_small_bbox_target_count"], 1)
+        self.assertEqual(metric["m16_large_bbox_target_count"], 0)
+        self.assertTrue(metric["small_bbox_detector_oracle_established"])
+        self.assertFalse(metric["detector_gain_established"])
+        self.assertFalse(metric["transfer_gain_experiment_authorized"])
+
+    def test_output_is_deterministic_ignored_and_has_no_staging(self):
+        output = self.result["output"]
+        self.assertTrue(self.result["byte_identical_outputs"])
+        self.assertEqual(output["file_count"], 4)
+        self.assertEqual(output["total_bytes"], 1066049)
+        self.assertTrue(output["all_files_git_ignored"])
+        self.assertFalse(output["raw_annotation_rows_persisted"])
+        self.assertFalse(output["staging_remaining"])
+
+    def test_next_gate_and_all_boundaries_remain_closed(self):
+        next_gate = self.result["next_gate"]
+        self.assertEqual(next_gate["proposal"], "M27_NO_MODEL_DEMO_AND_EVALUATION_CONTRACT_DESIGN")
+        self.assertFalse(next_gate["source_or_media_read_allowed"])
+        self.assertFalse(next_gate["model_prediction_training_or_test_tuning_allowed"])
+        self.assertTrue(all(value is False for value in self.result["boundaries"].values()))
 
 
 if __name__ == "__main__":

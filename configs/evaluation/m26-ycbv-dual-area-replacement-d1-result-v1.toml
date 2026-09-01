@@ -1,0 +1,161 @@
+schema_version = 1
+status = "RECORDED_LOCAL_METRIC_ALIGNED_MATERIALIZATION_PASS"
+gate_id = "m26-ycbv-dual-area-replacement-d1-v1"
+decision = "PASS_M26_DUAL_AREA_REPLACEMENT_D1"
+initial_contract_revision = "f475ad0b077d8838ad0bab4680ad72b2a0010ffc"
+pre_source_vocabulary_fix_revision = "ac4b0a649179a4cbc721d61439e11f486a058d6f"
+implementation_revision = "75db4457bcd466f5d41dc3cbffeb727e035888d7"
+clean_source_pass_revision = "75db4457bcd466f5d41dc3cbffeb727e035888d7"
+source_revision = "5c2c4aa229800355648cd268040aa814f8dc94f0"
+license_id = "MIT"
+project_split = "test"
+target_frame_count = 900
+scene_count = 12
+annotation_member_count = 37
+unique_rgb_member_read_count = 2
+real_source_passes = 1
+clean_materialization_runs = 2
+byte_identical_outputs = true
+third_party_output_location = "GIT_IGNORED_DATA_EXTERNAL"
+
+[[archive]]
+name = "ycbv_base.zip"
+bytes = 15805
+sha256 = "98440f8bd403100b21cf11a6729fabe8b3d5ce714472edc57a18b7f1fcd4bb18"
+member_count = 5
+uncompressed_bytes = 271812
+
+[[archive]]
+name = "ycbv_test_bop19.zip"
+bytes = 660198701
+sha256 = "c0c11251849877e7b2f373f6c7acf54739dc69d0fb2649c20050ca977bf5513d"
+member_count = 10087
+uncompressed_bytes = 670834929
+
+[preflight]
+archive_identity_passed = true
+full_header_preflight_passed = true
+mapped_namespace_preflight_passed = true
+combined_member_count = 10092
+combined_uncompressed_bytes = 671106741
+target_and_annotation_completeness_passed = true
+
+[pre_source_fix]
+trigger = "NEW_USE_CLASS_WAS_OUTSIDE_M16_CLOSED_ALLOWLIST"
+resolution = "REUSE_EXISTING_TEST_ONLY_MINIMAL_DETECTOR_TRANSFER_ORACLE"
+real_source_read_before_fix = false
+frame_selection_or_threshold_changed = false
+
+[selection]
+selected_object_id = 4
+selected_label = "005_tomato_soup_can"
+source_sequence_count = 2
+reference_transition_count = 0
+
+[selection.positive]
+role = "POSITIVE"
+source_scene_id = 50
+source_image_id = 722
+bbox_xyxy = [473.0, 161.0, 495.0, 290.0]
+visible_pixel_area_fraction = 0.005660807291666667
+bbox_area_fraction = 0.00923828125
+visible_fraction = 0.17551473556721842
+source_rgb_sha256 = "6bd47f202771e7fc4f2879f2a2e9c63f8ffcead08f937f7ed930c3766174b64b"
+
+[selection.negative]
+role = "COMPLETE_CLASS_ABSENT_NEGATIVE"
+source_scene_id = 48
+source_image_id = 1
+scorable_instance_count = 0
+source_rgb_sha256 = "5a97d73a934afc62324662d3a6224f1d4783cbb0b4d7965cb4d3ed50f26c2a79"
+
+[oracle]
+dataset_id = "bop-ycbv-bop19-cross-scene-test-oracle-v1"
+evaluated_frame_count = 2
+negative_frame_count = 1
+scorable_target_count = 1
+source_sequence_count = 2
+reference_transition_count = 0
+empty_prediction_recall50 = 0.0
+empty_prediction_false_positives50 = 0
+
+[metric_alignment]
+status = "M16_SMALL_BBOX_BUCKET_ESTABLISHED"
+visible_pixel_area_fraction = 0.005660807291666667
+bbox_area_fraction = 0.00923828125
+m16_tiny_bbox_target_count = 0
+m16_small_bbox_target_count = 1
+m16_large_bbox_target_count = 0
+materialization_contract_passed = true
+small_bbox_detector_oracle_established = true
+detector_gain_established = false
+transfer_gain_experiment_authorized = false
+
+[[output_file]]
+path = "manifest.json"
+bytes = 2691
+sha256 = "afe89472f71ddd47a9cf534df0b2aa7356dc308a452883cf44318fc201eebff8"
+
+[[output_file]]
+path = "oracle.json"
+bytes = 2827
+sha256 = "4f64aa3d18451ac99fdecb0e8adeea3599c20a8b2300d9b8c4711e55023add1b"
+
+[[output_file]]
+path = "rgb/000000.png"
+bytes = 508847
+sha256 = "6bd47f202771e7fc4f2879f2a2e9c63f8ffcead08f937f7ed930c3766174b64b"
+
+[[output_file]]
+path = "rgb/000001.png"
+bytes = 551684
+sha256 = "5a97d73a934afc62324662d3a6224f1d4783cbb0b4d7965cb4d3ed50f26c2a79"
+
+[output]
+relative_file_manifest_sha256 = "c76a2fa41e71a40af09c58a148b527a3af03f612bddca14ca57c6d58fe437c3e"
+file_count = 4
+total_bytes = 1066049
+all_files_git_ignored = true
+raw_annotation_rows_persisted = false
+staging_remaining = false
+
+[claim_limits]
+established = "THE_EXACT_M25_PAIR_MATERIALIZES_DETERMINISTICALLY_AND_CONTAINS_ONE_M16_SMALL_BBOX_REFERENCE_TARGET"
+not_established = "MODEL_RECALL_AP_GAIN_TRANSFER_STATISTICAL_POWER_NATURAL_HOME_PREVALENCE_MOVEMENT_RELATION_OR_PRODUCT_VALUE"
+one_positive_is_stable_gain_evidence = false
+cross_scene_pair_is_physical_identity_or_transition = false
+test_only_fixture_can_train_or_tune = false
+
+[next_gate]
+proposal = "M27_NO_MODEL_DEMO_AND_EVALUATION_CONTRACT_DESIGN"
+allowed_work = "DECIDE_THE_MINIMUM_DEMO_STORY_AND_SEPARATE_MECHANICAL_SMOKE_FROM_ANY_FUTURE_DEVELOPMENT_AND_FROZEN_TEST_EVALUATION_WITHOUT_LOADING_A_MODEL_OR_READING_MEDIA"
+source_or_media_read_allowed = false
+model_prediction_training_or_test_tuning_allowed = false
+movement_relation_claim_or_operation_allowed = false
+
+[verification]
+python = "3.12.13"
+focused_tests_passed = 14
+full_tests_passed = 276
+public_audit_scanned_files = 247
+public_audit_scanned_snapshots = 494
+public_audit_violations = 0
+operate_enabled = false
+
+[boundaries]
+archive_or_dataset_downloaded = false
+source_bytes_in_git = false
+real_annotations_in_git = false
+depth_or_mask_read = false
+model_detector_or_tracker_loaded = false
+prediction_run = false
+training_run = false
+test_tuning = false
+local_vost_or_visor_read = false
+reserved_source_read = false
+movement_candidate_created = false
+claim_candidate_created = false
+accepted_claim_created = false
+relation_or_transition_emitted = false
+live_private_cloud_inference_or_action_connected = false
+operate_enabled = false
