@@ -15,6 +15,10 @@ from .perception import BoundingBox, Detection, GroundTruthObject
 
 ORACLE_VERSION = "d1-target-label-oracle/1"
 _ALLOWED_SPLITS = {"development", "validation", "test"}
+_KNOWN_FIXTURE_USE_CLASSES = {
+    "D0_SYNTHETIC",
+    "TEST_ONLY_MINIMAL_DETECTOR_TRANSFER_ORACLE",
+}
 
 
 class TargetOracleError(ValueError):
@@ -457,17 +461,27 @@ def evaluate_target_oracle(
     )
 
 
-def load_target_oracle_fixture(path: str | Path) -> LoadedTargetOracleFixture:
-    """Load the bounded synthetic JSON fixture without media or hidden I/O."""
+def load_target_oracle_fixture(
+    path: str | Path,
+    *,
+    allowed_use_classes: frozenset[str] = frozenset({"D0_SYNTHETIC"}),
+) -> LoadedTargetOracleFixture:
+    """Load a bounded fixture only for an explicit closed use-class allowlist."""
+
+    if not allowed_use_classes or not allowed_use_classes <= _KNOWN_FIXTURE_USE_CLASSES:
+        raise TargetOracleError(
+            "INVALID_ALLOWED_USE_CLASSES",
+            "fixture use-class allowlist is empty or outside the closed known set",
+        )
 
     document = json.loads(Path(path).read_text(encoding="utf-8"))
     if document.get("schema_version") != 1:
         raise TargetOracleError("INVALID_FIXTURE_SCHEMA", "schema_version must be one")
     fixture_id = _strict_string(document, "fixture_id")
     use_class = _strict_string(document, "use_class")
-    if use_class != "D0_SYNTHETIC":
+    if use_class not in allowed_use_classes:
         raise TargetOracleError(
-            "INVALID_FIXTURE_USE_CLASS", "D1 oracle fixtures must be synthetic"
+            "INVALID_FIXTURE_USE_CLASS", "D1 oracle fixture use class is not allowed"
         )
     dataset_document = document.get("dataset")
     if not isinstance(dataset_document, dict):

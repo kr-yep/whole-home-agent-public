@@ -100,6 +100,33 @@ class BopD1Slice:
         }
 
 
+@dataclass(frozen=True, slots=True)
+class BopCrossSceneD1Slice:
+    """Two-frame detector oracle whose scenes remain separate source sequences."""
+
+    dataset: TargetOracleDataset
+    selected_object_id: int
+    selected_label: str
+    source_frames: tuple[dict[str, object], ...]
+
+    def as_dict(self) -> dict[str, object]:
+        return {
+            "schema_version": 1,
+            "dataset_id": self.dataset.dataset_id,
+            "dimensions": [self.dataset.width, self.dataset.height],
+            "project_split": "test",
+            "selected_object_id": self.selected_object_id,
+            "selected_label": self.selected_label,
+            "selected_scene_ids": [
+                int(item["source_scene_id"]) for item in self.source_frames
+            ],
+            "source_frames": list(self.source_frames),
+            "source_sequence_count": len(self.dataset.sequences),
+            "reference_transition_count": len(self.dataset.transitions),
+            "relation_truth_emitted": False,
+        }
+
+
 def load_and_translate_ycbv_bop19(dataset_root: str | Path) -> BopD1Slice:
     """Apply the frozen selection rule and verify only the selected RGB headers."""
 
@@ -167,6 +194,210 @@ def parse_ycbv_bop19_frames(
             raise BopD1Error("SOURCE_FILE_MISSING", "target scene documents are absent")
         frames.append(_parse_frame(scene_id, image_id, *documents))
     return tuple(frames)
+
+
+def select_cross_scene_ycbv_bop19_slice(
+    frames: tuple[BopFrame, ...],
+) -> BopCrossSceneD1Slice:
+    """Select one source-ordered positive/absent pair without merging scene identity."""
+
+    ordered = tuple(sorted(frames, key=lambda item: (item.scene_id, item.image_id)))
+    if not ordered:
+        raise BopD1Error("NO_TARGET_FRAMES", "cross-scene selection requires target frames")
+
+    selected: tuple[int, BopFrame, BopFrameAnnotation, BopFrame] | None = None
+    for object_id in range(1, len(YCB_VIDEO_CLASS_NAMES) + 1):
+        positives: list[tuple[BopFrame, BopFrameAnnotation]] = []
+        for frame in ordered:
+            matches = [item for item in frame.annotations if item.object_id == object_id]
+            if not matches:
+                continue
+            annotation = matches[0]
+            if (
+                annotation.visible_fraction >= 0.10
+                and 0.001 <= annotation.area_fraction <= 0.01
+                and annotation.bbox_visible_xywh[2] > 0
+                and annotation.bbox_visible_xywh[3] > 0
+            ):
+                positives.append((frame, annotation))
+        if not positives:
+            continue
+        positive_frame, positive_annotation = positives[0]
+        negative_frame = next(
+            (
+                frame
+                for frame in ordered
+                if frame.scene_id != positive_frame.scene_id
+                and all(item.object_id != object_id for item in frame.annotations)
+            ),
+            None,
+        )
+        if negative_frame is not None:
+            selected = (
+                object_id,
+                positive_frame,
+                positive_annotation,
+                negative_frame,
+            )
+            break
+    if selected is None:
+        raise BopD1Error(
+            "NO_CROSS_SCENE_SLICE",
+            "no modeled class has a frozen positive and distinct-scene complete absence",
+        )
+
+    object_id, positive_frame, positive_annotation, negative_frame = selected
+    label = YCB_VIDEO_CLASS_NAMES[object_id - 1]
+    x, y, width, height = positive_annotation.bbox_visible_xywh
+    bbox = BoundingBox(float(x), float(y), float(x + width), float(y + height))
+    if not bbox.within(width=FRAME_WIDTH, height=FRAME_HEIGHT):
+        raise BopD1Error("BOX_OUT_OF_BOUNDS", "selected visible box is invalid")
+    touches_edge = (
+        x == 0
+        or y == 0
+        or x + width == FRAME_WIDTH
+        or y + height == FRAME_HEIGHT
+    )
+    visibility = VisibilityState.TRUNCATED if touches_edge else VisibilityState.VISIBLE
+
+    source_frames = (
+        {
+            "d1_frame_index": 0,
+            "local_frame_index": 0,
+            "role": "POSITIVE",
+            "source_scene_id": positive_frame.scene_id,
+            "source_image_id": positive_frame.image_id,
+            "selected_object_id": object_id,
+            "selected_class_present": True,
+            "visibility": visibility.value,
+            "bbox_xyxy": list(bbox.as_xyxy()),
+            "visible_area_fraction": positive_annotation.area_fraction,
+            "visible_fraction": positive_annotation.visible_fraction,
+        },
+        {
+            "d1_frame_index": 1,
+            "local_frame_index": 0,
+            "role": "COMPLETE_CLASS_ABSENT_NEGATIVE",
+            "source_scene_id": negative_frame.scene_id,
+            "source_image_id": negative_frame.image_id,
+            "selected_object_id": object_id,
+            "selected_class_present": False,
+            "visibility": "ABSENT",
+            "bbox_xyxy": None,
+            "visible_area_fraction": None,
+            "visible_fraction": None,
+        },
+    )
+    sequences = (
+        _cross_scene_sequence(
+            frame=positive_frame,
+            frame_instances=(
+                ReferenceInstance(
+                    instance_id=(
+                        f"bop-ycbv-scene-{positive_frame.scene_id:06d}-"
+                        f"obj-{object_id:06d}"
+                    ),
+                    label=label,
+                    visibility=visibility,
+                    bbox=bbox,
+                ),
+            ),
+        ),
+        _cross_scene_sequence(frame=negative_frame, frame_instances=()),
+    )
+    return BopCrossSceneD1Slice(
+        dataset=TargetOracleDataset(
+            dataset_id="bop-ycbv-bop19-cross-scene-test-oracle-v1",
+            width=FRAME_WIDTH,
+            height=FRAME_HEIGHT,
+            sequences=sequences,
+            transitions=(),
+        ),
+        selected_object_id=object_id,
+        selected_label=label,
+        source_frames=source_frames,
+    )
+
+
+def cross_scene_slice_oracle_document(
+    result: BopCrossSceneD1Slice,
+) -> dict[str, object]:
+    """Serialize the bounded cross-scene slice into the exact M16 fixture schema."""
+
+    groups: list[dict[str, object]] = []
+    sequences: list[dict[str, object]] = []
+    for sequence in result.dataset.sequences:
+        group = {
+            "source_sequence": sequence.group.source_sequence,
+            "source_sequence_id": sequence.group.source_sequence_id,
+            "split": sequence.group.split,
+            "participant_id": sequence.group.participant_id,
+            "house_room_id": sequence.group.house_room_id,
+            "session_id": sequence.group.session_id,
+            "camera_time_group_id": sequence.group.camera_time_group_id,
+            "synchronized_view_group_id": sequence.group.synchronized_view_group_id,
+        }
+        groups.append(group)
+        frames: list[dict[str, object]] = []
+        for frame in sequence.frames:
+            frames.append(
+                {
+                    "frame_index": frame.frame_index,
+                    "state": frame.state.value,
+                    "instances": [
+                        {
+                            "instance_id": item.instance_id,
+                            "label": item.label,
+                            "visibility": item.visibility.value,
+                            "bbox": (
+                                None if item.bbox is None else list(item.bbox.as_xyxy())
+                            ),
+                        }
+                        for item in frame.instances
+                    ],
+                }
+            )
+        sequences.append({"group": group, "frames": frames})
+    return {
+        "schema_version": 1,
+        "fixture_id": "ycbv-cross-scene-d1-v1",
+        "use_class": "TEST_ONLY_MINIMAL_DETECTOR_TRANSFER_ORACLE",
+        "dataset": {
+            "dataset_id": result.dataset.dataset_id,
+            "width": result.dataset.width,
+            "height": result.dataset.height,
+            "sequences": sequences,
+            "transitions": [],
+        },
+        "split_groups": groups,
+        "prediction_cases": {"empty": []},
+    }
+
+
+def _cross_scene_sequence(
+    *, frame: BopFrame, frame_instances: tuple[ReferenceInstance, ...]
+) -> OracleSequence:
+    scene_id = frame.scene_id
+    group = SourceGroup(
+        source_sequence=scene_id,
+        source_sequence_id=f"bop-ycbv-scene-{scene_id:06d}",
+        split="test",
+        participant_id="not_applicable:ycbv-public-dataset",
+        house_room_id=f"bop-ycbv-arranged-indoor-scene-{scene_id:06d}",
+        session_id=f"bop-ycbv-video-{scene_id:06d}",
+        camera_time_group_id=f"bop-ycbv-uw-camera-{scene_id:06d}",
+        synchronized_view_group_id=f"not_applicable:ycbv-single-view-{scene_id:06d}",
+    )
+    return OracleSequence(
+        group=group,
+        frames=(
+            OracleFrame(
+                frame_index=0,
+                state=FrameEvaluationState.SCORED,
+                instances=frame_instances,
+            ),
+        ),
+    )
 
 
 def _parse_frame(
