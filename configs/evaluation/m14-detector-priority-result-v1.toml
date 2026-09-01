@@ -1,0 +1,48 @@
+schema_version = 1
+gate_id = "m14-detector-priority-v1"
+decision = "STOP_MODEL_SWAPPING"
+normal_completion = true
+eligible_candidates = []
+rejected_candidates = ["dfine-medium-coco", "rt-detrv2-small-coco"]
+next_gate = "TARGET_DOMAIN_DATA_TRAINING_REALITY_GATE"
+
+[contract_coverage]
+status = "FAIL_CLOSED_SCOPE_GAP"
+frozen_thresholds_changed = false
+result_tuning_used = false
+gap = "THE_CONFIG_ENCODED_DFINE_SMALL_BUT_OMITTED_THE_ALREADY_FAILED_RFDETR_SMALL_COMPARATOR_REQUIRED_BY_THE_GOAL_AND_PROJECT_STATE"
+effect = "A_DFINE_SMALL_ONLY_PASS_CANNOT_ESTABLISH_SCIENTIFIC_PRIORITY"
+
+[dfine_medium_coco]
+same_table_dfine_small_ap75_gain = 3.8
+same_table_dfine_small_ap_small_gain = 4.1
+same_table_cost_gate_passed = true
+author_immutable_artifact_identified = true
+safe_offline_loader_verified = false
+same_protocol_material_advantage_over_failed_target_screen = false
+selected = false
+decision_code = "REJECT_DFINE_M_PRIORITY"
+
+[rt_detrv2_small_coco]
+author_release_ap75 = 52.1
+author_release_ap_small = 30.2
+dfine_small_ap75_gain = -0.5
+dfine_small_ap_small_gain = 1.1
+same_table_cost_gate_passed = true
+author_immutable_artifact_identified = false
+safe_offline_loader_verified = false
+same_protocol_material_advantage_over_failed_target_screen = false
+selected = false
+decision_code = "REJECT_RTDETRV2_S_PRIORITY"
+
+[boundaries]
+new_model_downloads = 0
+new_model_loads = 0
+vost_bytes_read = 0
+visor_bytes_read = 0
+development_screens = 0
+reserved_or_test_screens = 0
+training_runs = 0
+movement_candidates = 0
+claim_commits = 0
+operate_enabled = false

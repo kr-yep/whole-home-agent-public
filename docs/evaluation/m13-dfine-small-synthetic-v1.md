@@ -110,10 +110,12 @@ truth and therefore supplies no accuracy, recall, localization, or semantic evid
 
 The [official D-FINE paper](https://proceedings.iclr.cc/paper_files/paper/2025/file/6cf58a87e3097e7d1f9be3e8693a93de-Paper-Conference.pdf)
 reports D-FINE-S at COCO AP `48.5`, AP50 `65.6`, AP75 `52.6`, and AP-small `29.1` at
-640-pixel input. In the same comparison, similarly sized RT-DETRv2-S has comparable
-overall AP but higher AP75 and AP-small. This supports a falsifiable
-localization-oriented mechanism hypothesis, not evidence that D-FINE-S will recover
-M11's misses or beat the already rejected RF-DETR Small path.
+640-pixel input. An earlier revision of this report incorrectly said RT-DETRv2-S was
+higher on both AP75 and AP-small. The RT-DETR authors' release log reports AP75 `52.1`
+and AP-small `30.2`: lower by `0.5` on AP75 and higher by only `1.1` on AP-small. That
+correction further weakens, rather than creates, a localization-oriented priority
+claim. None of these generic COCO figures show that D-FINE-S will recover M11's misses
+or beat the already rejected RF-DETR Small path.
 
 M11's categories were conditional diagnostics from the incumbent RetinaNet path: 30
 confidence-filtered frames and 11 localization-miss frames. They are not intrinsic

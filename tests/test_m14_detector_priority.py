@@ -9,6 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / "configs" / "evaluation" / "m14-detector-priority-v1.toml"
+RESULT = ROOT / "configs" / "evaluation" / "m14-detector-priority-result-v1.toml"
 
 
 class M14PriorityContractTests(unittest.TestCase):
@@ -45,6 +46,32 @@ class M14PriorityContractTests(unittest.TestCase):
         self.assertTrue(
             all(value is False for value in self.document["boundaries"].values())
         )
+
+
+class M14PriorityResultTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.document = tomllib.loads(RESULT.read_text(encoding="utf-8"))
+
+    def test_scope_gap_fails_closed_without_changing_thresholds(self):
+        coverage = self.document["contract_coverage"]
+        self.assertEqual(coverage["status"], "FAIL_CLOSED_SCOPE_GAP")
+        self.assertFalse(coverage["frozen_thresholds_changed"])
+        self.assertFalse(coverage["result_tuning_used"])
+
+    def test_no_candidate_is_selected(self):
+        self.assertEqual(self.document["decision"], "STOP_MODEL_SWAPPING")
+        self.assertEqual(self.document["eligible_candidates"], [])
+        self.assertFalse(self.document["dfine_medium_coco"]["selected"])
+        self.assertFalse(self.document["rt_detrv2_small_coco"]["selected"])
+
+    def test_no_operation_or_media_budget_was_spent(self):
+        boundaries = self.document["boundaries"]
+        self.assertEqual(boundaries["new_model_downloads"], 0)
+        self.assertEqual(boundaries["new_model_loads"], 0)
+        self.assertEqual(boundaries["vost_bytes_read"], 0)
+        self.assertEqual(boundaries["visor_bytes_read"], 0)
+        self.assertFalse(boundaries["operate_enabled"])
 
 
 if __name__ == "__main__":
