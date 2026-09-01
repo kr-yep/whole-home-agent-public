@@ -61,6 +61,38 @@ def _git(*arguments: str) -> str:
     return result.stdout.strip()
 
 
+def _git_bytes(*arguments: str, cwd: Path = ROOT) -> bytes:
+    result = subprocess.run(
+        ["git", *arguments],
+        cwd=cwd,
+        check=True,
+        capture_output=True,
+        shell=False,
+    )
+    return result.stdout
+
+
+def _versioned_text_hashes(
+    path: Path, *, repository_root: Path = ROOT, revision: str = "HEAD"
+) -> tuple[str, str, bool]:
+    relative_path = path.relative_to(repository_root).as_posix()
+    git_blob = _git_bytes("show", f"{revision}:{relative_path}", cwd=repository_root)
+    git_blob_sha256 = hashlib.sha256(git_blob).hexdigest()
+    worktree_sha256 = _sha256(path)
+    return git_blob_sha256, worktree_sha256, git_blob_sha256 == worktree_sha256
+
+
+def _validate_artifact_identity(
+    *, lock_git_blob_sha256: str, manifest_sha256: str, contract: Mapping[str, object]
+) -> list[str]:
+    if (
+        lock_git_blob_sha256 != contract["frozen_text_input"][1]["sha256"]
+        or manifest_sha256 != contract["expected_source"]["manifest_sha256"]
+    ):
+        return ["LOCK_OR_MANIFEST"]
+    return []
+
+
 def _semantic_document(payload: Mapping[str, object]) -> dict[str, object]:
     answer = dict(payload.get("answer", {}))
     answer.pop("replay_run_id", None)
@@ -176,13 +208,17 @@ def check(arguments: argparse.Namespace) -> dict[str, object]:
         failures.append("REVISION")
 
     manifest_path = ROOT / contract["expected_source"]["manifest_path"]
-    lock_hash = _sha256(ROOT / "uv.lock")
+    lock_git_blob_hash, lock_worktree_hash, lock_representation_matches = (
+        _versioned_text_hashes(ROOT / "uv.lock")
+    )
     manifest_hash = _sha256(manifest_path)
-    if (
-        lock_hash != contract["frozen_text_input"][1]["sha256"]
-        or manifest_hash != contract["expected_source"]["manifest_sha256"]
-    ):
-        failures.append("LOCK_OR_MANIFEST")
+    failures.extend(
+        _validate_artifact_identity(
+            lock_git_blob_sha256=lock_git_blob_hash,
+            manifest_sha256=manifest_hash,
+            contract=contract,
+        )
+    )
 
     counter = {"attempts": 0}
     stdout = io.StringIO()
@@ -231,7 +267,9 @@ def check(arguments: argparse.Namespace) -> dict[str, object]:
         "python": platform.python_version(),
         "platform": platform.platform(),
         "resolved_versions": _resolved_versions(),
-        "uv_lock_sha256": lock_hash,
+        "uv_lock_git_blob_sha256": lock_git_blob_hash,
+        "uv_lock_worktree_sha256": lock_worktree_hash,
+        "uv_lock_worktree_representation_matches_git_blob": lock_representation_matches,
         "manifest_sha256": manifest_hash,
         "source_content_sha256": contract["expected_source"]["source_content_sha256"],
         "network_attempt_count": counter["attempts"],
