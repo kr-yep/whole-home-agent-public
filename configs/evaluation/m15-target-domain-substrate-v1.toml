@@ -1,0 +1,73 @@
+schema_version = 1
+status = "FROZEN_BEFORE_CANDIDATE_RESEARCH"
+gate_id = "m15-target-domain-substrate-v1"
+intended_use = "NO_MEDIA_TARGET_DOMAIN_DATASET_REALITY_GATE"
+candidates = ["home-action-genome", "cad-120", "watch-n-patch"]
+stop_baseline = "STOP_OR_PIVOT"
+
+[estimand]
+viewpoint = "FIXED_OR_EXPLICIT_EXOCENTRIC_INDOOR"
+target = "SMALL_MOVABLE_HOUSEHOLD_OBJECT_LOCALIZATION_WITH_TEMPORAL_INTERACTION_CONTEXT"
+required_quality_measures = ["RECALL_IOU_0_50", "MAP_50_95", "RECALL_AREA_0_1_TO_1_PERCENT", "FALSE_POSITIVES_PER_EVALUATED_FRAME"]
+required_cost_measures = ["P50_MS", "P95_MS", "PEAK_VRAM_BYTES", "COMPLETE_FRAME_ACCOUNTING"]
+tracker_is_separate_co_gate = true
+exact_containment_or_zone_truth_required_for_detector_training = false
+
+[eligibility]
+author_or_institution_primary_sources_required = true
+official_terms_for_evaluation_or_training_required = true
+fixed_or_explicit_exocentric_indoor_view_required = true
+temporally_ordered_source_video_required = true
+frame_dimensions_available_required = true
+per_frame_instance_localization_required = true
+movable_household_object_labels_required = true
+interaction_or_affordance_signal_required = true
+source_group_split_metadata_required = true
+stable_official_acquisition_path_required = true
+post_acquisition_byte_manifest_possible_required = true
+manual_access_approval_longer_than_one_day_allowed = false
+maximum_minimal_eligible_subset_gib = 20.0
+
+[important_non_blocking_gaps]
+cross_frame_instance_identity = "REPORT_SEPARATELY"
+container_relation_truth = "REPORT_SEPARATELY"
+zone_relation_truth = "REPORT_SEPARATELY"
+fixed_camera_household_diversity = "REPORT_SEPARATELY"
+commercial_use = "REPORT_SEPARATELY"
+
+[evidence_rules]
+missing_required_evidence_is_failure = true
+third_party_dataset_summaries_allowed = false
+paper_claim_without_accessible_terms_is_sufficient = false
+action_labels_without_instance_localization_are_sufficient = false
+skeletons_without_object_localization_are_sufficient = false
+egocentric_only_is_sufficient = false
+random_adjacent_frame_split_allowed = false
+cross_dataset_metric_transfer_allowed = false
+media_or_annotation_archive_download_allowed = false
+
+[selection]
+exactly_one_candidate_required = true
+first_tiebreak = "STRONGER_ESTIMAND_AND_LABEL_ALIGNMENT"
+second_tiebreak = "STRONGER_SOURCE_GROUP_INDEPENDENCE"
+third_tiebreak = "CLEARER_USE_TERMS_AND_PROVENANCE"
+fourth_tiebreak = "SMALLER_MINIMAL_ELIGIBLE_SUBSET"
+unresolved_multiple_decision = "STOP_OR_PIVOT"
+zero_eligible_decision = "PIVOT_TO_SYNTHETIC_OR_PROJECT_GENERATED_TARGET_DATA_DESIGN"
+selected_candidate_next_authority = "METADATA_AND_HEADER_ONLY_ACQUISITION_DRY_RUN"
+
+[boundaries]
+media_download_allowed = false
+annotation_archive_download_allowed = false
+vost_bytes_allowed = false
+visor_bytes_allowed = false
+training_allowed = false
+new_detector_allowed = false
+recording_allowed = false
+movement_candidate_allowed = false
+claim_commit_allowed = false
+live_camera_allowed = false
+private_data_allowed = false
+cloud_allowed = false
+action_allowed = false
+operate_enabled = false
