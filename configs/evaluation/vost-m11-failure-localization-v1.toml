@@ -1,0 +1,44 @@
+schema_version = 1
+status = "FROZEN_BEFORE_DIAGNOSTIC_RUN"
+diagnostic_id = "vost-m11-failure-localization-v1"
+intended_use = "DEVELOPMENT_ONLY_FAILURE_LOCALIZATION"
+source_config_path = "configs/evaluation/vost-target-track-screen-v1.toml"
+source_config_sha256 = "8156dec1cdd659869d9d359ad2f0a0e1e75f6e46996b505903a617c7f005b31d"
+source_sequence_id = "3518_unscrew_bottle"
+source_split = "development"
+reserved_sequence_id = "3510_unscrew_bottle"
+reserved_split_allowed = false
+model_config_path = "configs/perception/torchvision-coco-baselines-v1.toml"
+model_config_sha256 = "c245b37b256f5055af3552fbcf342c992d2d3181976b7e3d4ae4314809d829c0"
+model_id = "retinanet-resnet50-fpn-v2-coco-v1"
+target_label = "bottle"
+model_postprocess_score_floor = 0.05
+diagnostic_score_floor = 0.05
+frozen_product_confidence_threshold = 0.25
+match_iou_threshold = 0.50
+
+[conformance]
+expected_frame_count = 51
+expected_visible_target_frames = 51
+expected_m10_matched_frames = 10
+
+[target_size]
+tiny_upper_area_fraction = 0.001
+small_upper_area_fraction = 0.01
+
+[oracle_tracker]
+match_iou_threshold = 0.25
+max_missed_updates = 2
+maximum_id_switches = 1
+maximum_fragmentations = 2
+
+[decision]
+minimum_matched_target_fraction = 0.60
+dominance_minimum_miss_fraction = 0.50
+detector_priority_when_below_match_gate = true
+no_proposal_candidate = "SCREEN_BOTTLE_SPECIALIST_DETECTOR_ON_DEVELOPMENT"
+confidence_filtered_candidate = "SCREEN_FROZEN_THRESHOLD_CALIBRATION_ON_DEVELOPMENT"
+localization_miss_candidate = "SCREEN_LOCALIZATION_AWARE_DETECTOR_ON_DEVELOPMENT"
+mixed_detector_candidate = "SCREEN_BOTTLE_SPECIALIST_DETECTOR_ON_DEVELOPMENT"
+oracle_tracker_candidate = "SCREEN_TRACKER_REPLACEMENT_WITH_ORACLE_BOXES"
+pass_candidate = "STOP_NO_LOCALIZED_FAILURE"

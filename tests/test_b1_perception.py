@@ -431,6 +431,61 @@ class TorchvisionAdapterContractTests(unittest.TestCase):
         self.assertEqual(detections[0].bbox.as_xyxy(), (0.0, 2.0, 12.0, 16.0))
         self.assertEqual(detections[0].producer_ref.component, "torchvision-ssdlite320_mobilenet_v3_large")
 
+    def test_diagnostic_view_keeps_low_score_proposals_out_of_product_output(self):
+        import numpy as np
+
+        class FakeModel:
+            score_thresh = 0.05
+
+            def predict(self, image):
+                return {
+                    "boxes": [[0, 0, 8, 8], [2, 2, 10, 10], [1, 1, 4, 4]],
+                    "labels": [1, 1, 2],
+                    "scores": [0.8, 0.1, 0.9],
+                }
+
+        with tempfile.TemporaryDirectory() as directory:
+            weights = Path(directory) / "fake.pth"
+            payload = b"test-only-fake-torchvision-weights"
+            weights.write_bytes(payload)
+            config = TorchvisionCocoConfig(
+                model_id="fake-retinanet",
+                variant="retinanet_resnet50_fpn_v2",
+                weights_path=weights,
+                weights_sha256=hashlib.sha256(payload).hexdigest(),
+                weights_bytes=len(payload),
+                scored_labels=("bottle",),
+                confidence_threshold=0.25,
+                device="cpu",
+            )
+            detector = TorchvisionCocoDetector(
+                config,
+                model_object=FakeModel(),
+                test_class_names=("__background__", "bottle", "person"),
+            )
+            position = SourcePosition(
+                source_sequence=0,
+                source_offset=10,
+                timestamp_basis=TimestampBasis.SOURCE_FRAME_INDEX,
+                frame_index=0,
+            )
+            frame = DecodedVideoFrame(
+                position=position,
+                rgb=np.zeros((16, 16, 3), dtype=np.uint8),
+            )
+            batch = detector.detect_with_diagnostics(
+                frame, diagnostic_score_floor=0.05
+            )
+            with self.assertRaisesRegex(ValueError, "post-process floor"):
+                detector.detect_with_diagnostics(frame, diagnostic_score_floor=0.04)
+        self.assertEqual(
+            [item.confidence for item in batch.diagnostic_proposals], [0.8, 0.1]
+        )
+        self.assertEqual(
+            [item.confidence for item in batch.product_detections], [0.8]
+        )
+        self.assertEqual(batch.model_postprocess_score_floor, 0.05)
+
     def test_weight_hash_mismatch_fails_before_model_loading(self):
         with tempfile.TemporaryDirectory() as directory:
             weights = Path(directory) / "fake.pth"

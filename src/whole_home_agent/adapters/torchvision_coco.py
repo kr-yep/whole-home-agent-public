@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
 
-from ..model import ProducerRef
+from ..model import ProducerRef, SourcePosition
 from ..perception import BoundingBox, Detection, VideoFrame
 
 
@@ -64,6 +64,36 @@ class TorchvisionCocoConfig:
             raise ValueError("torchvision confidence threshold must be between zero and one")
         if self.device not in {"cpu", "cuda"}:
             raise ValueError("torchvision device must be 'cpu' or 'cuda'")
+
+
+@dataclass(frozen=True, slots=True)
+class TorchvisionDiagnosticProposal:
+    """Evaluation-only post-processed model output below the product gate.
+
+    This type is deliberately distinct from :class:`Detection`: a low-confidence
+    proposal is diagnostic evidence and cannot enter the product detector port.
+    """
+
+    label: str
+    confidence: float
+    bbox: BoundingBox
+    position: SourcePosition
+
+    def __post_init__(self) -> None:
+        if not self.label or self.label != self.label.strip():
+            raise ValueError("diagnostic proposal label must be a non-empty string")
+        if not math.isfinite(self.confidence) or not 0.0 <= self.confidence <= 1.0:
+            raise ValueError("diagnostic proposal confidence must be between zero and one")
+
+
+@dataclass(frozen=True, slots=True)
+class TorchvisionDiagnosticBatch:
+    """One inference result split into frozen product and diagnostic views."""
+
+    product_detections: tuple[Detection, ...]
+    diagnostic_proposals: tuple[TorchvisionDiagnosticProposal, ...]
+    diagnostic_score_floor: float
+    model_postprocess_score_floor: float | None
 
 
 def load_torchvision_coco_configs(
@@ -198,6 +228,10 @@ class TorchvisionCocoDetector:
             self._model = model_object
             self._class_names = test_class_names
             self._torch = None
+            model_floor = getattr(model_object, "score_thresh", None)
+            self._model_postprocess_score_floor = (
+                None if model_floor is None else float(model_floor)
+            )
             return
         installed = importlib.metadata.version("torchvision")
         if installed.split("+", 1)[0] != config.package_base_version:
@@ -241,6 +275,7 @@ class TorchvisionCocoDetector:
         self._model = model
         self._class_names = tuple(categories)
         self._torch = torch
+        self._model_postprocess_score_floor = float(model.score_thresh)
 
     @property
     def producer_ref(self) -> ProducerRef:
@@ -262,7 +297,7 @@ class TorchvisionCocoDetector:
             raise RuntimeError("torchvision adapter requires NumPy") from error
         return np.asarray(value)
 
-    def detect(self, frame: VideoFrame) -> tuple[Detection, ...]:
+    def _infer(self, frame: VideoFrame) -> tuple[object, int, int]:
         try:
             import numpy as np
         except ImportError as error:  # pragma: no cover - supplied by the video extra.
@@ -284,6 +319,32 @@ class TorchvisionCocoDetector:
                 result = self._model([tensor])[0]
         if not isinstance(result, dict) or set(result) < {"boxes", "labels", "scores"}:
             raise ValueError("torchvision detector returned an invalid result")
+        return result, width, height
+
+    def _translate(
+        self,
+        frame: VideoFrame,
+        result: object,
+        *,
+        width: int,
+        height: int,
+        diagnostic_score_floor: float,
+    ) -> TorchvisionDiagnosticBatch:
+        if (
+            not math.isfinite(diagnostic_score_floor)
+            or diagnostic_score_floor < 0.0
+            or diagnostic_score_floor > self._config.confidence_threshold
+        ):
+            raise ValueError(
+                "diagnostic score floor must be between zero and the product threshold"
+            )
+        model_floor = self._model_postprocess_score_floor
+        if model_floor is not None and diagnostic_score_floor < model_floor:
+            raise ValueError(
+                "diagnostic score floor cannot be below the model post-process floor"
+            )
+        if not isinstance(result, dict):
+            raise ValueError("torchvision detector returned an invalid result")
         boxes = self._array(result["boxes"])
         labels = self._array(result["labels"])
         scores = self._array(result["scores"])
@@ -297,6 +358,7 @@ class TorchvisionCocoDetector:
         ):
             raise ValueError("torchvision detector returned invalid result shapes")
         allowed = set(self._config.scored_labels)
+        proposals: list[TorchvisionDiagnosticProposal] = []
         detections: list[Detection] = []
         for box_values, class_id_value, confidence_value in zip(boxes, labels, scores):
             class_id = int(class_id_value)
@@ -304,7 +366,7 @@ class TorchvisionCocoDetector:
             if class_id < 0 or class_id >= len(self._class_names):
                 raise ValueError("torchvision detector returned an unknown class ID")
             label = self._class_names[class_id]
-            if label not in allowed or confidence < self._config.confidence_threshold:
+            if label not in allowed or confidence < diagnostic_score_floor:
                 continue
             x_min, y_min, x_max, y_max = (float(value) for value in box_values)
             x_min = min(max(0.0, x_min), float(width))
@@ -313,20 +375,63 @@ class TorchvisionCocoDetector:
             y_max = min(max(0.0, y_max), float(height))
             if x_max <= x_min or y_max <= y_min:
                 continue
+            bbox = BoundingBox(x_min, y_min, x_max, y_max)
+            proposals.append(
+                TorchvisionDiagnosticProposal(
+                    label=label,
+                    confidence=confidence,
+                    bbox=bbox,
+                    position=frame.position,
+                )
+            )
+            if confidence < self._config.confidence_threshold:
+                continue
             detections.append(
                 Detection(
                     label=label,
                     confidence=confidence,
-                    bbox=BoundingBox(x_min, y_min, x_max, y_max),
+                    bbox=bbox,
                     position=frame.position,
                     producer_ref=self._producer_ref,
                 )
             )
-        return tuple(
-            sorted(
-                detections,
-                key=lambda item: (item.label, -item.confidence, item.bbox.as_xyxy()),
-            )
+        proposal_order = lambda item: (
+            item.label,
+            -item.confidence,
+            item.bbox.as_xyxy(),
+        )
+        return TorchvisionDiagnosticBatch(
+            product_detections=tuple(sorted(detections, key=proposal_order)),
+            diagnostic_proposals=tuple(sorted(proposals, key=proposal_order)),
+            diagnostic_score_floor=diagnostic_score_floor,
+            model_postprocess_score_floor=model_floor,
+        )
+
+    def detect(self, frame: VideoFrame) -> tuple[Detection, ...]:
+        result, width, height = self._infer(frame)
+        return self._translate(
+            frame,
+            result,
+            width=width,
+            height=height,
+            diagnostic_score_floor=self._config.confidence_threshold,
+        ).product_detections
+
+    def detect_with_diagnostics(
+        self,
+        frame: VideoFrame,
+        *,
+        diagnostic_score_floor: float,
+    ) -> TorchvisionDiagnosticBatch:
+        """Run once and expose a non-product diagnostic view for offline evaluation."""
+
+        result, width, height = self._infer(frame)
+        return self._translate(
+            frame,
+            result,
+            width=width,
+            height=height,
+            diagnostic_score_floor=diagnostic_score_floor,
         )
 
     def peak_vram_bytes(self) -> int | None:
