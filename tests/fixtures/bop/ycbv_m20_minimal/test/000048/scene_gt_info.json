@@ -1,0 +1,5 @@
+{
+  "1": [{"bbox_obj": [10, 20, 25, 20], "bbox_visib": [10, 20, 25, 20], "px_count_all": 625, "px_count_valid": 625, "px_count_visib": 500, "visib_fract": 0.8}],
+  "2": [{"bbox_obj": [100, 100, 80, 80], "bbox_visib": [100, 100, 80, 80], "px_count_all": 6400, "px_count_valid": 6400, "px_count_visib": 6400, "visib_fract": 1.0}],
+  "3": [{"bbox_obj": [200, 200, 20, 20], "bbox_visib": [200, 200, 5, 4], "px_count_all": 400, "px_count_valid": 400, "px_count_visib": 20, "visib_fract": 0.05}]
+}

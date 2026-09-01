@@ -2,15 +2,49 @@
 
 from __future__ import annotations
 
+import importlib.util
+import json
+import shutil
+import stat
+import struct
 import subprocess
+import tempfile
 import tomllib
 import unittest
 from pathlib import Path
 from urllib.parse import urlparse
+import zipfile
+
+from whole_home_agent.adapters.bop_d1 import (
+    BopD1Error,
+    YCB_VIDEO_CLASS_NAMES,
+    load_and_translate_ycbv_bop19,
+)
+from whole_home_agent.target_oracle import evaluate_target_oracle
 
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / "configs" / "evaluation" / "m20-ycbv-bop19-acquisition-v1.toml"
+FIXTURE = ROOT / "tests" / "fixtures" / "bop" / "ycbv_m20_minimal"
+TOOL_PATH = ROOT / "tools" / "materialize_ycbv_bop19.py"
+TOOL_SPEC = importlib.util.spec_from_file_location("materialize_ycbv_bop19", TOOL_PATH)
+assert TOOL_SPEC is not None and TOOL_SPEC.loader is not None
+TOOL = importlib.util.module_from_spec(TOOL_SPEC)
+TOOL_SPEC.loader.exec_module(TOOL)
+
+
+def _png_header(width: int = 640, height: int = 480) -> bytes:
+    return b"\x89PNG\r\n\x1a\n" + struct.pack(">I4sII", 13, b"IHDR", width, height)
+
+
+def _materialize_synthetic_tree(root: Path) -> Path:
+    dataset = root / "ycbv"
+    shutil.copytree(FIXTURE, dataset)
+    rgb = dataset / "test" / "000048" / "rgb"
+    rgb.mkdir()
+    for image_id in (1, 2, 3):
+        (rgb / f"{image_id:06d}.png").write_bytes(_png_header())
+    return dataset
 
 
 class M20YcbvAcquisitionContractTests(unittest.TestCase):
@@ -75,6 +109,112 @@ class M20YcbvAcquisitionContractTests(unittest.TestCase):
         self.assertTrue(all(value is False for value in self.document["boundaries"].values()))
         gate = self.document["gate"]
         self.assertTrue(all(value is True for key, value in gate.items() if key.startswith("stop_on_")))
+
+
+class M20BopD1SyntheticContractTests(unittest.TestCase):
+    def test_author_class_map_and_frozen_source_order_selection_are_exact(self):
+        self.assertEqual(len(YCB_VIDEO_CLASS_NAMES), 21)
+        self.assertEqual(YCB_VIDEO_CLASS_NAMES[0], "002_master_chef_can")
+        self.assertEqual(YCB_VIDEO_CLASS_NAMES[-1], "061_foam_brick")
+        with tempfile.TemporaryDirectory() as directory:
+            dataset_root = _materialize_synthetic_tree(Path(directory))
+            result = load_and_translate_ycbv_bop19(dataset_root)
+        self.assertEqual(result.selected_object_id, 1)
+        self.assertEqual(result.selected_scene_id, 48)
+        self.assertEqual(
+            [item["source_image_id"] for item in result.source_frames],
+            [1, 2],
+        )
+        self.assertEqual(
+            [item["visibility"] for item in result.source_frames],
+            ["VISIBLE", "ABSENT"],
+        )
+        self.assertNotIn(3, [item["source_image_id"] for item in result.source_frames])
+
+    def test_exact_d1_slice_scores_positive_and_negative_without_relations(self):
+        with tempfile.TemporaryDirectory() as directory:
+            dataset_root = _materialize_synthetic_tree(Path(directory))
+            result = load_and_translate_ycbv_bop19(dataset_root)
+            repeated = load_and_translate_ycbv_bop19(dataset_root)
+        self.assertEqual(result.as_dict(), repeated.as_dict())
+        self.assertEqual(result.dataset.transitions, ())
+        report = evaluate_target_oracle(result.dataset, ())
+        self.assertEqual(report.evaluated_frame_count, 2)
+        self.assertEqual(report.negative_frame_count, 1)
+        self.assertEqual(report.unknown_frame_count, 0)
+        self.assertEqual(report.reference_transition_count, 0)
+
+    def test_dimension_and_complete_absence_fail_closed(self):
+        with tempfile.TemporaryDirectory() as directory:
+            dataset_root = _materialize_synthetic_tree(Path(directory))
+            frame = dataset_root / "test" / "000048" / "rgb" / "000001.png"
+            frame.write_bytes(_png_header(width=320))
+            with self.assertRaisesRegex(BopD1Error, "FRAME_DIMENSION_MISMATCH"):
+                load_and_translate_ycbv_bop19(dataset_root)
+        with tempfile.TemporaryDirectory() as directory:
+            dataset_root = _materialize_synthetic_tree(Path(directory))
+            gt_path = dataset_root / "test" / "000048" / "scene_gt.json"
+            info_path = dataset_root / "test" / "000048" / "scene_gt_info.json"
+            gt = json.loads(gt_path.read_text(encoding="utf-8"))
+            info = json.loads(info_path.read_text(encoding="utf-8"))
+            gt["2"] = gt["3"]
+            info["2"] = info["3"]
+            gt_path.write_text(json.dumps(gt), encoding="utf-8")
+            info_path.write_text(json.dumps(info), encoding="utf-8")
+            with self.assertRaisesRegex(BopD1Error, "NO_FROZEN_SLICE"):
+                load_and_translate_ycbv_bop19(dataset_root)
+
+
+class M20ZipSafetyTests(unittest.TestCase):
+    def _inspect(self, path: Path):
+        return TOOL.inspect_archive(
+            path,
+            expected_root="ycbv",
+            maximum_member_count=10,
+            maximum_total_uncompressed_bytes=1024,
+            maximum_single_member_bytes=512,
+            maximum_compression_ratio=20.0,
+        )
+
+    def test_safe_archive_headers_pass_without_extraction(self):
+        with tempfile.TemporaryDirectory() as directory:
+            archive_path = Path(directory) / "safe.zip"
+            with zipfile.ZipFile(archive_path, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+                archive.writestr("ycbv/test_targets_bop19.json", b"[]")
+            inspection = self._inspect(archive_path)
+            self.assertEqual(inspection["member_count"], 1)
+            self.assertEqual(inspection["members"][0]["name"], "ycbv/test_targets_bop19.json")
+
+    def test_traversal_duplicate_symlink_and_ratio_archives_are_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            traversal = root / "traversal.zip"
+            with zipfile.ZipFile(traversal, "w") as archive:
+                archive.writestr("ycbv/../escape.txt", b"x")
+            with self.assertRaisesRegex(TOOL.MaterializationError, "traversal"):
+                self._inspect(traversal)
+
+            duplicate = root / "duplicate.zip"
+            with zipfile.ZipFile(duplicate, "w") as archive:
+                archive.writestr("ycbv/A.txt", b"a")
+                archive.writestr("ycbv/a.txt", b"b")
+            with self.assertRaisesRegex(TOOL.MaterializationError, "duplicate"):
+                self._inspect(duplicate)
+
+            symlink = root / "symlink.zip"
+            link = zipfile.ZipInfo("ycbv/link")
+            link.create_system = 3
+            link.external_attr = (stat.S_IFLNK | 0o777) << 16
+            with zipfile.ZipFile(symlink, "w") as archive:
+                archive.writestr(link, "target")
+            with self.assertRaisesRegex(TOOL.MaterializationError, "symbolic"):
+                self._inspect(symlink)
+
+            ratio = root / "ratio.zip"
+            with zipfile.ZipFile(ratio, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+                archive.writestr("ycbv/bomb.txt", b"0" * 500)
+            with self.assertRaisesRegex(TOOL.MaterializationError, "compression-ratio"):
+                self._inspect(ratio)
 
 
 if __name__ == "__main__":
