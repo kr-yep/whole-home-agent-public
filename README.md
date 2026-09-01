@@ -35,8 +35,10 @@ consent, and any operational activation. Live/private sensing and actions remain
 cleanup, 90-second presentation, CLI fallback, and a sanitized teammate result template
 for Windows PowerShell and macOS/Linux shells. All 393 regression tests and the 300-file
 public audit pass. The first CI run exposed a depth-1-checkout-only M37 test assumption;
-the smallest test-only fix is committed and follow-up CI is pending. No teammate drill
-was run, so independent teammate/platform success is still missing.
+the smallest test-only fix is committed and all six jobs in
+[follow-up CI run 33530452074](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33530452074)
+pass. No teammate drill was run, so independent teammate/platform success is still
+missing.
 
 ## What works today
 

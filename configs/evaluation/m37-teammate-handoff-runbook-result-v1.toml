@@ -33,7 +33,8 @@ public_audit_status = "PASS_300_FILES_600_SNAPSHOTS_ZERO_VIOLATIONS"
 first_public_ci_run_id = 33529559775
 first_public_ci_status = "FAIL_4_PYTHON_MATRIX_JOBS_2_SPECIALIZED_JOBS_PASS"
 first_public_ci_failure_scope = "M37_TEST_REQUIRED_HISTORICAL_COMMIT_MISSING_FROM_DEPTH_1_CHECKOUT"
-public_ci_status = "FOLLOW_UP_PENDING"
+public_ci_status = "PASS_RUN_33530452074_ALL_6_JOBS"
+public_ci_run_id = 33530452074
 operate_enabled = false
 
 [claim_limits]

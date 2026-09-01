@@ -29,7 +29,9 @@ single-commit checkout; the historical object was therefore unavailable. Revisio
 `554757de905bae1a492a47f87b13e1827ae1e2d6` keeps the exact handoff revision assertion
 but checks the retained lock identity at `HEAD`, avoiding an unnecessary full-history
 CI checkout. This is verification-harness portability only; the runbook, lock, fixture,
-product, and acceptance boundaries are unchanged. Follow-up CI is pending.
+product, and acceptance boundaries are unchanged. Follow-up public CI run
+[33530452074](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33530452074)
+completed successfully across all six jobs.
 
 ## Evidence boundary
 

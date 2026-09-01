@@ -56,7 +56,9 @@ fallback, and a sanitized result template. All 393 regression tests and the 300-
 public audit pass. The first public CI run passed both specialized jobs but failed the
 four Python jobs because a new static test required history absent from the default
 depth-1 checkout. The test-only fix now validates the same lock identity at `HEAD`;
-follow-up CI is pending.
+all six jobs in
+[follow-up CI run 33530452074](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33530452074)
+pass.
 
 No clone, install, demo, or checker acceptance was run in M37. A real teammate receipt
 and independent platform evidence are still missing; `OPERATE` remains disabled.
