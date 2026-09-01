@@ -124,6 +124,23 @@ def select_ycbv_bop19_slice_from_metadata(dataset_root: str | Path) -> BopD1Slic
     if not isinstance(targets, list) or not targets:
         raise BopD1Error("TARGET_LIST_INVALID", "BOP'19 target list must be non-empty")
 
+    target_frames = ycbv_bop19_target_frame_keys(targets)
+    scene_documents: dict[int, tuple[object, object, object]] = {}
+    for scene_id in sorted({scene_id for scene_id, _ in target_frames}):
+        scene_root = root / "test" / f"{scene_id:06d}"
+        scene_documents[scene_id] = (
+            _load_json(scene_root / "scene_gt.json"),
+            _load_json(scene_root / "scene_gt_info.json"),
+            _load_json(scene_root / "scene_camera.json"),
+        )
+    return _select_and_translate(
+        parse_ycbv_bop19_frames(targets, scene_documents)
+    )
+
+
+def ycbv_bop19_target_frame_keys(targets: object) -> tuple[tuple[int, int], ...]:
+    if not isinstance(targets, list) or not targets:
+        raise BopD1Error("TARGET_LIST_INVALID", "BOP'19 target list must be non-empty")
     target_frames: set[tuple[int, int]] = set()
     for item in targets:
         if not isinstance(item, dict):
@@ -134,19 +151,31 @@ def select_ycbv_bop19_slice_from_metadata(dataset_root: str | Path) -> BopD1Slic
         if object_id not in range(1, len(YCB_VIDEO_CLASS_NAMES) + 1):
             raise BopD1Error("OBJECT_ID_INVALID", "target object is outside YCB-V")
         target_frames.add((scene_id, image_id))
-
-    frames = tuple(
-        _load_frame(root, scene_id, image_id)
-        for scene_id, image_id in sorted(target_frames)
-    )
-    return _select_and_translate(frames)
+    return tuple(sorted(target_frames))
 
 
-def _load_frame(root: Path, scene_id: int, image_id: int) -> BopFrame:
-    scene_root = root / "test" / f"{scene_id:06d}"
-    ground_truth = _load_json(scene_root / "scene_gt.json")
-    ground_truth_info = _load_json(scene_root / "scene_gt_info.json")
-    scene_camera = _load_json(scene_root / "scene_camera.json")
+def parse_ycbv_bop19_frames(
+    targets: object,
+    scene_documents: dict[int, tuple[object, object, object]],
+) -> tuple[BopFrame, ...]:
+    """Validate parsed BOP documents with the exact selector input contract."""
+
+    frames: list[BopFrame] = []
+    for scene_id, image_id in ycbv_bop19_target_frame_keys(targets):
+        documents = scene_documents.get(scene_id)
+        if documents is None or len(documents) != 3:
+            raise BopD1Error("SOURCE_FILE_MISSING", "target scene documents are absent")
+        frames.append(_parse_frame(scene_id, image_id, *documents))
+    return tuple(frames)
+
+
+def _parse_frame(
+    scene_id: int,
+    image_id: int,
+    ground_truth: object,
+    ground_truth_info: object,
+    scene_camera: object,
+) -> BopFrame:
     for name, document in (
         ("scene_gt", ground_truth),
         ("scene_gt_info", ground_truth_info),

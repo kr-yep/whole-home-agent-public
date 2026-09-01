@@ -2,15 +2,54 @@
 
 from __future__ import annotations
 
+import importlib.util
+import json
 import subprocess
+import tempfile
 import tomllib
 import unittest
 from pathlib import Path
+import zipfile
+
+from whole_home_agent.adapters.bop_d1 import (
+    BopFrame,
+    BopFrameAnnotation,
+    parse_ycbv_bop19_frames,
+)
+from whole_home_agent.adapters.bop_diagnostic import (
+    CONFORMANCE_CONFLICT,
+    NO_SAFE_NEGATIVE,
+    NO_SMALL_TARGET,
+    PAIRING_SCOPE,
+    diagnose_ycbv_m21_predicates,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
 M21 = ROOT / "configs" / "evaluation" / "m21-ycbv-per-archive-root-repair-v1.toml"
 CONTRACT = ROOT / "configs" / "evaluation" / "m22-ycbv-annotation-failure-localization-v1.toml"
+FIXTURE = ROOT / "tests" / "fixtures" / "bop" / "ycbv_m20_minimal"
+TOOL_PATH = ROOT / "tools" / "diagnose_ycbv_annotations.py"
+TOOL_SPEC = importlib.util.spec_from_file_location("diagnose_ycbv_annotations", TOOL_PATH)
+assert TOOL_SPEC is not None and TOOL_SPEC.loader is not None
+TOOL = importlib.util.module_from_spec(TOOL_SPEC)
+TOOL_SPEC.loader.exec_module(TOOL)
+
+
+def _annotation(object_id: int, *, small: bool = False) -> BopFrameAnnotation:
+    pixel_count_visible = 1000 if small else 50000
+    pixel_count_all = 2000 if small else 100000
+    return BopFrameAnnotation(
+        object_id=object_id,
+        bbox_visible_xywh=(10, 10, 20, 20),
+        pixel_count_all=pixel_count_all,
+        pixel_count_visible=pixel_count_visible,
+        visible_fraction=0.5,
+    )
+
+
+def _frame(scene_id: int, image_id: int, *annotations: BopFrameAnnotation) -> BopFrame:
+    return BopFrame(scene_id=scene_id, image_id=image_id, annotations=annotations)
 
 
 class M22ContractTests(unittest.TestCase):
@@ -93,6 +132,83 @@ class M22ContractTests(unittest.TestCase):
                 self.assertFalse(value, key)
         self.assertTrue(all(value is False for value in self.document["boundaries"].values()))
         self.assertFalse(self.document["aggregation"]["raw_annotations_in_result_allowed"])
+
+
+class M22SyntheticDiagnosticTests(unittest.TestCase):
+    def test_conformance_conflict_branch_has_highest_priority(self):
+        result = diagnose_ycbv_m21_predicates(
+            (
+                _frame(1, 1, _annotation(1, small=True)),
+                _frame(1, 2, _annotation(2)),
+            )
+        )
+        self.assertEqual(result.decision, CONFORMANCE_CONFLICT)
+        self.assertGreater(result.positive_frame_count, 0)
+        self.assertGreater(result.negative_frame_count, 0)
+        self.assertGreater(result.paired_object_scene_count, 0)
+
+    def test_no_small_target_branch_precedes_zero_negative(self):
+        result = diagnose_ycbv_m21_predicates(
+            (_frame(1, 1, *(_annotation(object_id) for object_id in range(1, 22))),)
+        )
+        self.assertEqual(result.decision, NO_SMALL_TARGET)
+        self.assertEqual(result.positive_frame_count, 0)
+        self.assertEqual(result.negative_frame_count, 0)
+
+    def test_no_safe_negative_branch_requires_a_positive(self):
+        annotations = tuple(
+            _annotation(object_id, small=object_id == 1) for object_id in range(1, 22)
+        )
+        result = diagnose_ycbv_m21_predicates((_frame(1, 1, *annotations),))
+        self.assertEqual(result.decision, NO_SAFE_NEGATIVE)
+        self.assertEqual(result.positive_frame_count, 1)
+        self.assertEqual(result.negative_frame_count, 0)
+        self.assertEqual(result.paired_object_scene_count, 0)
+
+    def test_pairing_scope_branch_has_terms_only_in_different_scenes(self):
+        result = diagnose_ycbv_m21_predicates(
+            (
+                _frame(1, 1, _annotation(1, small=True)),
+                _frame(2, 1, _annotation(2)),
+            )
+        )
+        self.assertEqual(result.decision, PAIRING_SCOPE)
+        self.assertGreater(result.positive_frame_count, 0)
+        self.assertGreater(result.negative_frame_count, 0)
+        self.assertEqual(result.paired_object_scene_count, 0)
+
+    def test_duplicate_frame_identity_fails_closed(self):
+        frame = _frame(1, 1, _annotation(1, small=True))
+        with self.assertRaisesRegex(ValueError, "identities"):
+            diagnose_ycbv_m21_predicates((frame, frame))
+
+    def test_existing_synthetic_selector_fixture_is_detected_as_a_pair(self):
+        targets = json.loads((FIXTURE / "test_targets_bop19.json").read_text(encoding="utf-8"))
+        scene = FIXTURE / "test" / "000048"
+        documents = {
+            48: (
+                json.loads((scene / "scene_gt.json").read_text(encoding="utf-8")),
+                json.loads((scene / "scene_gt_info.json").read_text(encoding="utf-8")),
+                json.loads((scene / "scene_camera.json").read_text(encoding="utf-8")),
+            )
+        }
+        frames = parse_ycbv_bop19_frames(targets, documents)
+        result = diagnose_ycbv_m21_predicates(frames)
+        self.assertEqual(result.decision, CONFORMANCE_CONFLICT)
+        self.assertEqual(result.paired_object_scene_count, 1)
+
+    def test_zip_reader_rejects_duplicate_json_and_tool_has_no_extraction_path(self):
+        with tempfile.TemporaryDirectory() as directory:
+            archive_path = Path(directory) / "fixture.zip"
+            with zipfile.ZipFile(archive_path, "w") as output:
+                output.writestr("test/duplicate.json", b'{"a":1,"a":2}')
+            with zipfile.ZipFile(archive_path) as archive:
+                with self.assertRaisesRegex(TOOL.DiagnosticSourceError, "duplicate JSON"):
+                    TOOL._read_json_member(archive, "test/duplicate.json")
+        source = TOOL_PATH.read_text(encoding="utf-8")
+        self.assertNotIn(".extract(", source)
+        self.assertNotIn("extractall", source)
+        self.assertNotIn("rgb/", source)
 
 
 if __name__ == "__main__":
