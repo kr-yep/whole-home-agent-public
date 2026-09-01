@@ -1,0 +1,111 @@
+schema_version = 1
+status = "FROZEN_BEFORE_PUBLIC_CLONE"
+gate_id = "m33-teammate-clean-install-demo-drill-v1"
+intended_use = "ONE_DISPOSABLE_PUBLIC_REPOSITORY_TEAMMATE_HANDOFF_DRILL"
+source_repository = "https://github.com/kr-yep/whole-home-agent-public.git"
+revision_resolution = "CONTRACT_AND_CHECKER_COMMIT_HEAD_RECORDED_BEFORE_CLONE"
+python_requirement = ">=3.11"
+drill_python = "3.12"
+uv_version = "0.11.24"
+install_command = "uv sync --frozen --extra demo --python <resolved-python-3.12>"
+demo_command = ".venv-python tools/check_teammate_drill.py --expected-revision <revision> --clone-elapsed-ms <ms> --install-elapsed-ms <ms>"
+attempt_limit = 1
+
+[[frozen_text_input]]
+path = "README.md"
+sha256 = "24d3efa8b0ed960b7c27409392778cfb0e7a77669ed711db6ef4871499fffece"
+role = "PUBLIC_WINDOWS_MACOS_LINUX_INSTALL_AND_DEMO_COMMANDS"
+
+[[frozen_text_input]]
+path = "uv.lock"
+sha256 = "f2d3639c4b34b9c8a05381baec95cd178d39e056d81bbb7bc028eaeba1c94c3e"
+role = "FROZEN_DEPENDENCY_RESOLUTION"
+
+[[frozen_text_input]]
+path = "examples/media/generated/key_bag_sofa_v2.manifest.json"
+sha256 = "2e83bbcecbe239b8bb91e503ba753b3de4684297015e703763b1882cd9d4db49"
+role = "EXACT_PROJECT_OWNED_D0_SYNTHETIC_FIXTURE_IDENTITY"
+
+[[frozen_text_input]]
+path = "configs/evaluation/m32-verification-fixture-boundary-decision-result-v1.toml"
+sha256 = "fda2bbcd43cdec76dce36557ef0cfefbc8025eab5530f150947408f87ef5314c"
+role = "COMPLETE_REGRESSION_FIXTURE_AUTHORITY"
+
+[environment]
+disposable_clone_must_be_outside_source_checkout = true
+existing_source_venv_or_editable_install_allowed = false
+checkout_exact_revision = true
+worktree_clean_before_demo = true
+cleanup_required = true
+
+[network]
+public_git_clone_allowed = true
+public_python_package_install_allowed = true
+demo_network_allowed = false
+private_registry_or_credential_allowed = false
+cloud_inference_or_external_source_allowed = false
+
+[time_budget_ms]
+clone_maximum = 120000
+install_maximum = 600000
+demo_maximum = 120000
+total_maximum = 840000
+
+[expected_source]
+manifest_path = "examples/media/generated/key_bag_sofa_v2.manifest.json"
+manifest_sha256 = "2e83bbcecbe239b8bb91e503ba753b3de4684297015e703763b1882cd9d4db49"
+source_id = "b1-key-bag-sofa"
+source_revision = "2"
+source_content_sha256 = "b9cc79476d77f8d45acd1803c924de73914ffc4790f4da271f77cc8d4742eb43"
+source_license = "CC0-1.0"
+source_use_class = "D0_SYNTHETIC"
+source_provenance = "project_generated_synthetic"
+source_frame_count = 80
+
+[expected_answer]
+status = "FOUND"
+subject_id = "key"
+location_id = "sofa"
+epistemic_status = "estimated"
+world_scope = "source:b1-key-bag-sofa@2"
+as_of_source_sequence = 68
+relation_path = ["key|inside|bag", "bag|at_zone|sofa"]
+source_claim_count = 2
+
+[expected_output]
+claim_count = 2
+each_claim_has_evidence = true
+run_receipt_status = "COMPLETE"
+frames_in_compact_output = 0
+governance_mode = "OFFLINE_PRERECORDED_REPLAY"
+governance_operate = "DISABLED"
+physical_truth_claimed = false
+network_attempt_count = 0
+
+[receipt]
+record_revision = true
+record_worktree_clean = true
+record_clone_install_demo_and_total_elapsed_ms = true
+record_python_and_resolved_versions = true
+record_lock_and_manifest_hashes = true
+record_semantic_sha256 = true
+record_failure_classes = true
+record_cleanup = true
+
+[decision]
+pass = "PASS_M33_TEAMMATE_HANDOFF_DRILL"
+normal_stop = "STOP_M33_TEAMMATE_HANDOFF_DRILL"
+pass_authorizes_only = "ONE_HACKATHON_HANDOFF_RUNBOOK_HARDENING_GATE"
+failure_does_not_authorize_threshold_or_semantic_change = true
+
+[failure_class]
+allowed = ["CLONE", "REVISION", "INSTALL", "LOCK_OR_MANIFEST", "NETWORK", "TIME_BUDGET", "CLI", "OUTPUT_PARSE", "SOURCE", "GOVERNANCE", "SCOPED_ANSWER", "RELATION_TRACE", "CLAIMS", "RUN_RECEIPT", "CLEANUP", "UNEXPECTED"]
+
+[boundaries]
+external_private_or_live_media_allowed = false
+model_load_prediction_training_or_tuning_allowed = false
+m29_checker_or_retry_allowed = false
+production_schema_semantics_or_presentation_change_allowed = false
+new_storage_or_runtime_dependency_allowed = false
+private_registry_credential_cloud_or_action_allowed = false
+operate_enabled = false

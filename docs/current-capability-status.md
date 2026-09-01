@@ -1,6 +1,6 @@
 # Current capability status
 
-**Checkpoint:** M32 · **Runtime:** `OPERATE DISABLED` · **Production ready:** no
+**Checkpoint:** M33 contract · **Runtime:** `OPERATE DISABLED` · **Production ready:** no
 
 This page is updated with every milestone push so a teammate can see what is usable and
 what is still missing without reconstructing the full experiment history.
@@ -40,17 +40,12 @@ what is still missing without reconstructing the full experiment history.
 These remain blocked by proposed governance, unassigned roles, absent consent and data
 policy, and `OPERATE DISABLED`.
 
-## Latest push: M32 CI receipt
+## Latest push: M33 drill contract
 
-Added three explicit verification profiles. Static work cannot read media or execute
-the demo; complete regression may read only the exact manifest-backed project-owned D0
-synthetic fixture and cannot count as a new acceptance/model experiment; ad-hoc work
-still requires a separate gate. M31 remains a normal STOP.
+Added a frozen one-attempt clean-clone contract and a small offline checker. They define
+exact install commands, time budgets, expected answer/trace, resolved-version and hash
+receipts, failure classes, and cleanup.
 
-The usable product behavior is unchanged. The next missing delivery proof is one
-teammate-style clean install and closed-demo drill in a disposable environment.
-
-All six complete-regression jobs passed in
-[public CI run 33521751091](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33521751091).
-This push adds that receipt only; the usable capabilities and missing work above do not
-change.
+The existing demo remains usable in the previously verified environment. A new teammate
+environment has not yet passed the drill, so the clean-install item above remains
+missing until the next result push.

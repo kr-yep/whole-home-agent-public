@@ -29,13 +29,11 @@ indoor small-object gain; robust tracking under occlusion/camera motion; live ca
 multi-camera support; durable household memory/retention; assigned policy/data roles,
 consent, and any operational activation. Live/private sensing and actions remain blocked.
 
-**Latest milestone (M32):** verification is now split into static-contract,
-complete-regression, and ad-hoc acceptance/experiment profiles. Only complete
-regression may read the exact manifest-backed project-owned D0 synthetic fixture, and
-only as regression evidence. All six jobs passed in
-[public CI](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33521751091).
-M31 remains a historical normal STOP. M33 is the bounded teammate clean-install and
-closed-demo drill.
+**Latest milestone (M33 contract):** one public clean-clone teammate drill is frozen.
+It will install the locked demo environment in a disposable clone, deny network during
+the compact demo, validate the scoped key→bag→sofa trace, record timing/version/hash
+receipts, and clean up. The drill has not run yet, so clean-install usability is still
+unverified.
 
 ## What works today
 
