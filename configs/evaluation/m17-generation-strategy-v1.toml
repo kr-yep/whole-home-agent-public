@@ -1,0 +1,94 @@
+schema_version = 1
+status = "FROZEN_BEFORE_CANDIDATE_RESEARCH"
+gate_id = "m17-generation-strategy-v1"
+intended_use = "NO_MEDIA_D1_CONFORMANT_GENERATION_STRATEGY_REALITY_GATE"
+candidates = [
+  "existing-project-vector-2d",
+  "blender-python-headless-3d",
+  "kubric-licensed-asset-compositing",
+]
+stop_baseline = "STOP_NO_FEASIBLE_GENERATION_STRATEGY"
+
+[required_output]
+m16_d1_schema_exact = true
+small_object_area_fraction_range = [0.001, 0.01]
+negative_frames = true
+unknown_frames = true
+occlusion = true
+truncation = true
+persistent_instance_ids = true
+location_reference_transitions = true
+containment_reference_transitions = true
+image_and_annotation_pairing = true
+
+[split_integrity]
+protected_factors = [
+  "asset_identity",
+  "background_identity",
+  "layout_seed_family",
+  "scene_or_room_identity",
+  "camera_time_group",
+  "synchronized_view_group",
+]
+protected_factor_cross_split_allowed = false
+split_assignment_before_render_or_result = true
+adjacent_frame_random_split_allowed = false
+
+[provenance]
+official_capability_and_license_sources_required = true
+tool_version_pinnable_required = true
+asset_origin_license_and_hash_manifest_required = true
+config_seed_and_output_byte_manifest_required = true
+public_repository_compatibility_required = true
+noncommercial_hackathon_evaluation_and_training_use_required = true
+derived_weight_rights_must_be_reported = true
+
+[cost]
+first_d1_conformant_slice_max_working_hours = 8
+complete_frozen_substrate_max_calendar_days = 3
+maximum_complete_substrate_gib = 20.0
+paid_service_allowed = false
+cloud_service_allowed = false
+private_data_dependency_allowed = false
+existing_laptop_target = "RTX_4070_LAPTOP"
+
+[evidence_rules]
+missing_required_evidence_is_selection_ineligible = true
+unknown_is_factual_fail = false
+repository_evidence_allowed = true
+official_tool_and_asset_sources_required = true
+third_party_summary_allowed = false
+candidate_installation_allowed = false
+asset_or_media_download_allowed = false
+image_or_video_generation_allowed = false
+unmeasured_realism_claim_allowed = false
+exactly_one_candidate_must_be_selected = false
+
+[selection]
+all_fatal_gates_must_pass = true
+select_at_most_one = true
+first_tiebreak = "MAXIMUM_EXISTING_REUSE_AND_SMALLEST_COHERENT_DIFF"
+second_tiebreak = "STRONGEST_D1_ORACLE_FIDELITY"
+third_tiebreak = "CLEAREST_LICENSE_AND_PROVENANCE"
+fourth_tiebreak = "LOWEST_TIME_AND_STORAGE_COST"
+fifth_tiebreak = "STRONGEST_DOCUMENTED_REALISM_PRIOR"
+zero_eligible_decision = "STOP_NO_FEASIBLE_GENERATION_STRATEGY"
+unresolved_multiple_decision = "STOP_OR_PIVOT_NO_MULTI_GENERATOR_BUILD"
+selected_candidate_next_authority = "ONE_TINY_D1_CONFORMANT_IMPLEMENTATION_SLICE"
+
+[boundaries]
+tool_or_dependency_install_allowed = false
+asset_or_media_download_allowed = false
+image_or_video_generation_allowed = false
+recording_allowed = false
+vost_or_visor_bytes_allowed = false
+reserved_source_allowed = false
+detector_or_tracker_load_allowed = false
+training_allowed = false
+movement_candidate_allowed = false
+accepted_claim_allowed = false
+live_camera_allowed = false
+private_data_allowed = false
+cloud_allowed = false
+action_allowed = false
+operate_enabled = false
