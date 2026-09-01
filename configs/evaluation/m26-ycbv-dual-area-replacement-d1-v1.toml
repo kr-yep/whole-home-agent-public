@@ -1,0 +1,131 @@
+schema_version = 1
+status = "FROZEN_BEFORE_SOURCE_ARCHIVE_ANNOTATION_OR_MEDIA_REREAD"
+gate_id = "m26-ycbv-dual-area-replacement-d1-v1"
+intended_use = "TEST_ONLY_MINIMAL_SMALL_BBOX_DETECTOR_ORACLE"
+dataset_id = "BOP_YCBV_TEST_BOP19"
+license_id = "MIT"
+source_revision = "5c2c4aa229800355648cd268040aa814f8dc94f0"
+source_contract = "configs/evaluation/m21-ycbv-per-archive-root-repair-v1.toml"
+selection_result = "configs/evaluation/m25-ycbv-small-bbox-alignment-result-v1.toml"
+source_archive_root = "data/external/ycbv-bop19-m20/archives"
+local_root = "data/external/ycbv-bop19-m26"
+local_d1_root = "data/external/ycbv-bop19-m26/d1"
+local_receipt = "data/external/ycbv-bop19-m26/m26-local-receipt.json"
+expected_target_frame_count = 900
+expected_scene_ids = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59]
+expected_annotation_member_count = 37
+target_frame_count = 2
+
+[contract_identity]
+m21_contract_sha256 = "e10bee030cf0469bedf71f1e562d40624984d7bc66fbfaf210faf6d8ba6bc0a6"
+m25_result_sha256 = "d8bb66487197c9847b93705533503bd8fc52b890c856a092e75bb33bbff740a7"
+m25_clean_result_revision = "e9185da4132265e2bccba8fd4c67cdd965b5e6bb"
+exact_m21_archive_table_required = true
+exact_m25_selection_required = true
+
+[archive_reuse]
+download_allowed = false
+archive_identity_reverified_before_any_member_read = true
+full_header_and_mapped_namespace_preflight_required = true
+expected_combined_member_count = 10092
+expected_combined_uncompressed_bytes = 671106741
+annotation_members_may_be_read = true
+annotation_member_read_count = 37
+rgb_unique_member_read_count = 2
+depth_or_mask_member_read_allowed = false
+filesystem_bulk_extraction_allowed = false
+
+[selection]
+project_split = "test"
+selected_object_id = 4
+selected_label = "005_tomato_soup_can"
+adaptive_candidate_or_fallback_allowed = false
+threshold_change_allowed = false
+
+[selection.positive]
+role = "POSITIVE"
+source_scene_id = 50
+source_image_id = 722
+bbox_visible_xywh = [473, 161, 22, 129]
+visible_pixel_area_fraction = 0.005660807291666667
+bbox_area_fraction = 0.00923828125
+visible_fraction = 0.17551473556721842
+minimum_area_fraction_inclusive = 0.001
+maximum_area_fraction_exclusive = 0.01
+minimum_visibility_fraction_inclusive = 0.10
+
+[selection.negative]
+role = "COMPLETE_CLASS_ABSENT_NEGATIVE"
+source_scene_id = 48
+source_image_id = 1
+selected_class_present = false
+complete_ground_truth_required = true
+scene_must_differ_from_positive = true
+
+[d1_mapping]
+frame_width = 640
+frame_height = 480
+one_source_sequence_per_scene = true
+each_sequence_local_frame_index = 0
+source_sequence_mapping = "BOP_SCENE_ID"
+original_scene_and_image_id_in_manifest = true
+positive_instance_identity = "SCENE_SCOPED_BOP_OBJECT_ID"
+negative_physical_instance_fabricated = false
+negative_sequence_has_zero_scorable_instances = true
+complete_scored_frame_denominator = true
+reference_transition_count = 0
+relation_or_movement_truth_emitted = false
+
+[output]
+real_source_passes = 1
+clean_materialization_runs = 2
+unique_archive_rgb_reads = 2
+byte_identical_relative_file_manifest_required = true
+canonical_json_lf_required = true
+final_files = ["manifest.json", "oracle.json", "rgb/000000.png", "rgb/000001.png"]
+third_party_bytes_in_git_allowed = false
+raw_annotation_rows_in_git_allowed = false
+staging_removed_on_success_or_failure = true
+overwrite_existing_output_allowed = false
+
+[oracle_gate]
+evaluated_frame_count = 2
+negative_frame_count = 1
+scorable_target_count = 1
+source_sequence_count = 2
+reference_transition_count = 0
+small_bbox_target_count = 1
+tiny_bbox_target_count = 0
+large_bbox_target_count = 0
+empty_prediction_false_positives = 0
+empty_prediction_recall = 0.0
+
+[decision]
+pass = "PASS_M26_DUAL_AREA_REPLACEMENT_D1"
+normal_stop = "STOP_M26_DUAL_AREA_REPLACEMENT_D1"
+pass_authorizes_only = "M27_NO_MODEL_DEMO_AND_EVALUATION_CONTRACT_DESIGN"
+pass_is_not_prediction_training_or_transfer_gain = true
+stop_on_any_source_identity_header_namespace_completeness_selection_mapping_metric_or_determinism_failure = true
+
+[claim_limits]
+mechanical_materialization_is_not_detector_performance = true
+one_positive_is_not_stable_gain_evidence = true
+cross_scene_pair_is_not_movement_or_physical_identity = true
+test_only_source_cannot_train_or_tune = true
+
+[boundaries]
+archive_or_dataset_download_allowed = false
+source_bytes_in_git_allowed = false
+real_annotations_in_git_allowed = false
+model_detector_or_tracker_load_allowed = false
+prediction_allowed = false
+training_allowed = false
+test_tuning_allowed = false
+local_vost_or_visor_read_allowed = false
+reserved_source_allowed = false
+movement_candidate_allowed = false
+claim_candidate_allowed = false
+accepted_claim_allowed = false
+relation_or_transition_emission_allowed = false
+live_private_cloud_inference_or_action_allowed = false
+operate_enabled = false
