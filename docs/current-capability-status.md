@@ -1,6 +1,6 @@
 # Current capability status
 
-**Checkpoint:** M33 normal STOP · **Runtime:** `OPERATE DISABLED` · **Production ready:** no
+**Checkpoint:** M34 contract · **Runtime:** `OPERATE DISABLED` · **Production ready:** no
 
 This page is updated with every milestone push so a teammate can see what is usable and
 what is still missing without reconstructing the full experiment history.
@@ -40,18 +40,11 @@ what is still missing without reconstructing the full experiment history.
 These remain blocked by proposed governance, unassigned roles, absent consent and data
 policy, and `OPERATE DISABLED`.
 
-## Latest push: M33 CI receipt
+## Latest push: M34 retry contract
 
-The exact public clone succeeded and was clean, but the sole attempt stopped before
-dependency install. The harness compared the full Windows `uv --version` output rather
-than semantic version `0.11.24`; `uv sync` and the demo never ran. The clone and empty
-cache were safely removed.
+Added a one-attempt M34 contract. Only the outer uv semantic-version parser changes;
+the exact M33 revision, checker, lock, fixture, expected output, budgets, socket guard,
+and cleanup remain unchanged, and no further retry is allowed.
 
 The existing demo remains usable in its previously verified environment. Clean-install
-usability is still missing. M34 may retry once with only the uv version parser corrected;
-all revision, lock, fixture, answer/trace, timing, network, cleanup, and safety gates stay
-unchanged.
-
-The M33 result passed
-[public CI run 33523965487](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33523965487).
-This receipt does not change the usable capabilities or the clean-install gap above.
+usability is still missing until the M34 result is recorded.

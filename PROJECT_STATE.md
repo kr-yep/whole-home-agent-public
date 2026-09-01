@@ -1,6 +1,6 @@
 # Whole Home Agent — Public Repository State
 
-**Checkpoint:** `PUBLIC-B1-M33-STOP-001`
+**Checkpoint:** `PUBLIC-B1-M34-CONTRACT-001`
 
 **As of:** `2026-09-01 Asia/Taipei`
 
@@ -70,6 +70,7 @@ This file is the live checkpoint for the clean public repository. It records cur
 | M31 answer-subject implementation | `IMPLEMENTED / SEMANTIC CHECKS PASS / CONTRACT NORMAL STOP` | Required immutable `subject_id`, sole-constructor copy, and B0/B1 serialization pass all six statuses with unchanged B0 semantic hash. The Goal stops because full regression reads the pinned synthetic clip while the contract also forbade all media reads |
 | M32 verification-fixture boundary | `IMPLEMENTED / EXPLICIT PROFILES SELECTED` | Repository-only scoring selects static-contract, complete-regression, and ad-hoc profiles. Only complete regression may read the exact manifest-backed project-owned D0 synthetic fixture, as regression evidence only; M31 remains a normal stop |
 | M33 teammate clean-install drill | `IMPLEMENTED / NORMAL STOP BEFORE INSTALL` | Exact public clone succeeded in 1.608 s, but the outer preflight rejected uv 0.11.24 because Windows build metadata followed the semantic version. No sync/demo ran; cleanup passed; clean-install usability remains unverified |
+| M34 teammate drill infrastructure retry | `FROZEN / NOT YET RUN` | Exactly one retry may parse uv semantic version 0.11.24 in outer orchestration. M33 revision/checker/lock/fixture/answer/trace/budgets/boundaries remain unchanged; no further retry is allowed |
 | B1 binding/relation/query slice | `IMPLEMENTED / VERIFIED ON ONE SYNTHETIC REPLAY` | One-instance binding, conservative containment/zone assertion and retraction rules, typed abstentions, estimated candidates through the unchanged committer, relation evaluation, and evidence-traceable `key → bag → sofa` query exist; no real indoor transfer evidence exists |
 | B1 CLI and Streamlit presentation | `IMPLEMENTED / VERIFIED ON ONE SYNTHETIC REPLAY` | A closed composition/presentation boundary exposes the fixed clip, scoped answer, evidence, abstentions, metrics, diagnostics, and receipt; it accepts no upload, camera, arbitrary path, free-form query, credential, or action handle |
 | Python package distribution | `IMPLEMENTED / VERIFIED BY LOCAL CLEAN INSTALL` | The wheel contains only the fixed D0 replay, its configs, and generator provenance; a fresh Python 3.12 environment ran the CLI from outside the checkout |
@@ -169,7 +170,7 @@ This file is the live checkpoint for the clean public repository. It records cur
 | `PUB-DIR-030` | Implement query-subject identity once at canonical `AnswerTrace` and project it through both serializers without changing session semantics | Implemented mechanically in M31; all semantic gates pass, but M31 normally stops on a contradictory full-suite/no-media verification boundary |
 | `PUB-DIR-032` | Give static contracts, complete regression, and ad-hoc acceptance/experiment distinct fixture authority | Implemented in M32 for the exact committed D0 synthetic demo; it changes no M31 history or operational authority |
 | `PUB-DIR-033` | Before claiming teammate usability, require one disposable public clone, locked install, offline exact-answer/trace drill, bounded receipt, and cleanup | Implemented as an M33 normal stop before install; exact clone and cleanup passed, but clean-install usability remains unverified |
-| `PUB-DIR-034` | Treat M33's full-string uv version comparison as infrastructure only; permit at most one separately frozen semantic-version parser retry with all product gates unchanged | Proposed for M34; no M33 retry or threshold change is allowed |
+| `PUB-DIR-034` | Treat M33's full-string uv version comparison as infrastructure only; permit at most one separately frozen semantic-version parser retry with all product gates unchanged | Frozen in M34; the retry has not run and no later retry is allowed |
 | `PUB-DIR-031` | Every milestone push must visibly state what is usable now, what is still missing, and what changed in that push | Active; README handoff block and `docs/current-capability-status.md` are the public handoff surface |
 
 ## Open gates and blockers
@@ -182,4 +183,4 @@ This file is the live checkpoint for the clean public repository. It records cur
 
 ## Next safe action
 
-Freeze M34 as exactly one infrastructure retry of M33. Change only the outer uv-version comparison to accept semantic token `0.11.24`; reuse exact revision `dc2b6fd2a51e8ea09ef199d7f4076ac74c9183b2`, lock, fixture, expected answer/trace, budgets, checker, cleanup, and boundaries. No additional retry is allowed.
+Commit and push the M34 single-retry contract. After its CI passes, make exactly one new disposable clone of revision `dc2b6fd2a51e8ea09ef199d7f4076ac74c9183b2`, accept only semantic uv token `0.11.24`, install from the unchanged lock into a new empty cache, run the unchanged offline checker, clean up, and record PASS or normal STOP. No additional retry is allowed.

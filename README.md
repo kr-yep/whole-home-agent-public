@@ -29,12 +29,10 @@ indoor small-object gain; robust tracking under occlusion/camera motion; live ca
 multi-camera support; durable household memory/retention; assigned policy/data roles,
 consent, and any operational activation. Live/private sensing and actions remain blocked.
 
-**Latest milestone (M33 STOP):** the exact public clone succeeded, but the sole attempt
-stopped before `uv sync` because its outer preflight compared the full `uv --version`
-string, including Windows build metadata, instead of semantic version `0.11.24`.
-Dependency compatibility and clean-install demo usability remain untested. M34 may make
-one infrastructure-only retry with every product and evidence gate unchanged. The M33
-result passed [public CI](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33523965487).
+**Latest milestone (M34 contract):** exactly one infrastructure retry is frozen. Its
+only change is parsing semantic uv version `0.11.24` from the preflight output; the M33
+revision, checker, lock, fixture, expected answer/trace, time budgets, network boundary,
+and cleanup are byte-for-byte or contractually unchanged. The retry has not run yet.
 
 ## What works today
 

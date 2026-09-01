@@ -1,0 +1,66 @@
+schema_version = 1
+status = "FROZEN_BEFORE_SINGLE_INFRASTRUCTURE_RETRY"
+gate_id = "m34-teammate-drill-infrastructure-retry-v1"
+intended_use = "ONE_M33_OUTER_UV_VERSION_PARSER_RETRY"
+m33_contract = "configs/evaluation/m33-teammate-clean-install-demo-drill-v1.toml"
+m33_contract_sha256 = "39c3d82af2b3227c207a18d14bc7b8cb3642d9fe1de034a8b1cd00404e1bc596"
+m33_result = "configs/evaluation/m33-teammate-clean-install-demo-drill-result-v1.toml"
+m33_result_sha256 = "a4a98c03ef53e529700174c9faf6f546d208db50f7c3b09bd04f719c14abf11b"
+exact_drill_revision = "dc2b6fd2a51e8ea09ef199d7f4076ac74c9183b2"
+retry_attempt_limit = 1
+additional_retry_allowed = false
+
+[sole_infrastructure_change]
+component = "OUTER_POWERSHELL_PREFLIGHT_ONLY"
+old_comparison = "ENTIRE_UV_VERSION_OUTPUT_EQUALS_UV_SPACE_0_11_24"
+new_parse_rule = "MATCH_START_UV_SPACE_SEMVER_AND_COMPARE_CAPTURED_SEMVER"
+accepted_regex = "^uv ([0-9]+\\.[0-9]+\\.[0-9]+)(?:\\s|$)"
+required_semantic_version = "0.11.24"
+trailing_build_metadata_affects_acceptance = false
+repository_file_change_required = false
+
+[[unchanged_input]]
+path = "tools/check_teammate_drill.py"
+sha256 = "cd285badb9e4ccd6b5ab8e94a657cdfa814294ceffc9d72468875ea977118c5f"
+role = "OFFLINE_DEMO_AND_RECEIPT_CHECKER"
+
+[[unchanged_input]]
+path = "uv.lock"
+sha256 = "f2d3639c4b34b9c8a05381baec95cd178d39e056d81bbb7bc028eaeba1c94c3e"
+role = "FROZEN_DEPENDENCY_RESOLUTION"
+
+[[unchanged_input]]
+path = "examples/media/generated/key_bag_sofa_v2.manifest.json"
+sha256 = "2e83bbcecbe239b8bb91e503ba753b3de4684297015e703763b1882cd9d4db49"
+role = "EXACT_D0_SYNTHETIC_FIXTURE"
+
+[inherited_gate]
+source_expected_answer_relation_trace_and_receipt = "M33_UNCHANGED"
+clone_install_demo_total_time_budgets = "M33_UNCHANGED"
+public_clone_and_package_install_network_only = "M33_UNCHANGED"
+demo_socket_guard_zero_attempts = "M33_UNCHANGED"
+failure_classes_and_cleanup = "M33_UNCHANGED"
+
+[execution]
+new_disposable_clone_required = true
+new_empty_uv_cache_required = true
+python = "3.12"
+uv_sync_command = "uv sync --frozen --extra demo --python <resolved-python-3.12>"
+checker_command = ".venv-python tools/check_teammate_drill.py --expected-revision dc2b6fd2a51e8ea09ef199d7f4076ac74c9183b2 --clone-elapsed-ms <ms> --install-elapsed-ms <ms>"
+cleanup_required = true
+
+[decision]
+pass = "PASS_M34_TEAMMATE_HANDOFF_DRILL"
+normal_stop = "STOP_M34_TEAMMATE_HANDOFF_DRILL"
+pass_authorizes_only = "DOCUMENTED_TEAMMATE_HANDOFF_RUNBOOK"
+stop_authorizes_retry = false
+
+[boundaries]
+checker_change_allowed = false
+production_code_schema_semantics_or_presentation_change_allowed = false
+threshold_fixture_lock_or_dependency_change_allowed = false
+external_private_or_live_media_allowed = false
+model_load_prediction_training_or_tuning_allowed = false
+m29_checker_or_retry_allowed = false
+private_registry_credential_cloud_or_action_allowed = false
+operate_enabled = false
