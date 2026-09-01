@@ -1,0 +1,55 @@
+schema_version = 1
+status = "RECORDED_DOCUMENT_PASS"
+gate_id = "m37-teammate-handoff-runbook-v1"
+decision = "PASS_M37_TEAMMATE_HANDOFF_RUNBOOK"
+contract_revision = "3310e3ab05a51acab6a791a9a718f7bdc507eca2"
+formatting_revision = "9c5caddcec8310ddb485f9edcfa87f7e8387131c"
+implementation_revision = "aaa48549eea700a4fdf215b76fec8342e55043af"
+handoff_revision = "f16a0a4f99ac97dce16430b70568a3f47613cc0d"
+runbook_path = "docs/teammate-handoff-runbook.md"
+runbook_sha256 = "4ff613baffef5ec36a82b66b09a729abd0c7f09542d1b34dfc4d7572369dc7d0"
+operate_enabled = false
+
+[deliverable]
+windows_powershell_commands = true
+macos_linux_shell_commands = true
+exact_revision_and_locked_install = true
+offline_checker_and_exit_interpretation = true
+git_blob_and_worktree_receipt_meanings = true
+failure_class_actions = true
+git_uv_windows_acl_troubleshooting = true
+guarded_cleanup = true
+ninety_second_demo_and_cli_fallback = true
+sanitized_teammate_result_template = true
+
+[verification]
+python = "3.12.13"
+focused_tests_passed = 11
+full_tests_passed = 393
+full_regression_profile = "M32_COMPLETE_REGRESSION"
+full_regression_is_teammate_acceptance = false
+public_audit_status = "PASS_300_FILES_600_SNAPSHOTS_ZERO_VIOLATIONS"
+public_ci_status = "PENDING"
+operate_enabled = false
+
+[claim_limits]
+real_teammate_receipt_received = false
+independent_teammate_success_established = false
+cross_platform_success_established = false
+clean_install_or_demo_rerun_by_agent = false
+product_or_cv_gain_established = false
+real_home_transfer_established = false
+
+[boundaries]
+clone_install_demo_or_checker_acceptance_executed = false
+external_private_or_live_media_used = false
+model_loaded_trained_or_tuned = false
+product_code_schema_semantics_or_presentation_changed = false
+private_registry_credential_cloud_or_action_connected = false
+operate_enabled = false
+
+[next_gate]
+status = "PAUSED_AWAITING_USER_DIRECTION"
+proposal = "M38_REAL_TEAMMATE_RECEIPT_INTAKE_OR_OBJECT_MEMORY_POSITIONING_DECISION"
+auto_start = false
+real_teammate_receipt_required_for_handoff_claim = true

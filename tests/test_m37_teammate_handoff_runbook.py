@@ -10,6 +10,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / "configs" / "evaluation" / "m37-teammate-handoff-runbook-v1.toml"
 RUNBOOK = ROOT / "docs" / "teammate-handoff-runbook.md"
+RESULT = ROOT / "configs" / "evaluation" / "m37-teammate-handoff-runbook-result-v1.toml"
 
 
 class M37ContractTests(unittest.TestCase):
@@ -118,6 +119,34 @@ class M37RunbookTests(unittest.TestCase):
         self.assertIn("does not establish another unreported platform", self.runbook)
         self.assertIn("`OPERATE` must remain `DISABLED`", self.runbook)
         self.assertNotIn("independent teammate verified", self.runbook.lower())
+
+
+class M37ResultTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.result = tomllib.loads(RESULT.read_text(encoding="utf-8"))
+
+    def test_document_gate_passes_with_every_deliverable(self):
+        self.assertEqual(self.result["decision"], "PASS_M37_TEAMMATE_HANDOFF_RUNBOOK")
+        self.assertTrue(all(self.result["deliverable"].values()))
+        self.assertEqual(
+            hashlib.sha256(RUNBOOK.read_bytes()).hexdigest(),
+            self.result["runbook_sha256"],
+        )
+
+    def test_external_success_and_runtime_claims_remain_closed(self):
+        self.assertTrue(all(value is False for value in self.result["claim_limits"].values()))
+        self.assertTrue(all(value is False for value in self.result["boundaries"].values()))
+        self.assertFalse(self.result["verification"]["full_regression_is_teammate_acceptance"])
+
+    def test_next_gate_is_paused_instead_of_auto_started(self):
+        self.assertEqual(
+            self.result["next_gate"]["status"], "PAUSED_AWAITING_USER_DIRECTION"
+        )
+        self.assertFalse(self.result["next_gate"]["auto_start"])
+        self.assertTrue(
+            self.result["next_gate"]["real_teammate_receipt_required_for_handoff_claim"]
+        )
 
 
 if __name__ == "__main__":

@@ -22,20 +22,20 @@ Updated with every milestone push. See the detailed
 
 **Usable now:** clean local Python install; deterministic B0 semantic replay; one closed,
 project-owned prerecorded synthetic key→bag→sofa demo through JSON CLI or Streamlit;
-traceable scoped answers with explicit top-level query `subject_id`; automated public CI.
+traceable scoped answers with explicit top-level query `subject_id`; automated public CI;
+an exact cross-platform [teammate handoff runbook](docs/teammate-handoff-runbook.md).
 
-**Still missing:** a teammate clean-install/demo drill; convincing protected-group real
+**Still missing:** an actual teammate clean-install/demo receipt; convincing protected-group real
 indoor small-object gain; robust tracking under occlusion/camera motion; live camera and
 multi-camera support; durable household memory/retention; assigned policy/data roles,
 consent, and any operational activation. Live/private sensing and actions remain blocked.
 
-**Latest milestone (M36):** the teammate checker now uses exact Git-blob SHA-256 plus
-exact revision and clean-worktree checks for `uv.lock`. Raw checkout hash is diagnostic,
-so Git-filtered LF/CRLF representations no longer create false identity failures. All
-382 regression tests and the 295-file public audit pass. M34 remains a normal STOP; an
-actual independent teammate or other-platform handoff is still missing. All six jobs in
-[public CI run 33527744800](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33527744800)
-passed.
+**Latest milestone (M37):** the runbook pins revision `f16a0a4…`, Python 3.12, uv
+0.11.24, locked install, offline checker, receipt meanings, failure handling, guarded
+cleanup, 90-second presentation, CLI fallback, and a sanitized teammate result template
+for Windows PowerShell and macOS/Linux shells. All 393 regression tests and the 300-file
+public audit pass; CI is pending. No teammate drill was run, so independent
+teammate/platform success is still missing.
 
 ## What works today
 
@@ -345,6 +345,8 @@ The [M35 result](docs/evaluation/m35-versioned-text-identity-portability-decisio
 selects Git-blob identity for the separately bounded non-acceptance checker hardening.
 The [M36 result](docs/evaluation/m36-checker-git-blob-identity-hardening-v1.md) implements
 that checker-only hardening without rerunning acceptance.
+The [M37 result](docs/evaluation/m37-teammate-handoff-runbook-v1.md) packages the exact
+real-teammate procedure without claiming that a teammate has executed it.
 
 ## Safety and data boundary
 

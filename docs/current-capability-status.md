@@ -1,6 +1,6 @@
 # Current capability status
 
-**Checkpoint:** M36 checker hardening · **Runtime:** `OPERATE DISABLED` · **Production ready:** no
+**Checkpoint:** M37 teammate handoff runbook · **Runtime:** `OPERATE DISABLED` · **Production ready:** no
 
 This page is updated with every milestone push so a teammate can see what is usable and
 what is still missing without reconstructing the full experiment history.
@@ -20,6 +20,9 @@ what is still missing without reconstructing the full experiment history.
 - Use the teammate checker without false `uv.lock` failures from Git LF/CRLF checkout
   representation; exact revision, clean worktree, and committed blob identity remain
   fail-closed.
+- Follow one exact Windows PowerShell or macOS/Linux teammate procedure for clone,
+  locked install, offline receipt, 90-second presentation or CLI fallback, and guarded
+  cleanup.
 
 ## Still missing before a credible hackathon handoff
 
@@ -44,14 +47,13 @@ what is still missing without reconstructing the full experiment history.
 These remain blocked by proposed governance, unassigned roles, absent consent and data
 policy, and `OPERATE DISABLED`.
 
-## Latest push: M36 checker hardening
+## Latest push: M37 teammate handoff runbook
 
-Implemented Git-blob identity in the teammate checker and separated committed versus
-worktree receipt hashes. Synthetic Git tests cover LF/CRLF checkout, content tampering,
-wrong identity, and non-Git failure. All 382 complete-regression tests and the 295-file
-public audit pass.
+Added the exact [teammate handoff runbook](teammate-handoff-runbook.md), including the
+pinned revision/toolchain, both shell families, complete receipt interpretation,
+failure-class actions, Git/uv/Windows ACL troubleshooting, guarded cleanup, presentation
+fallback, and a sanitized result template. All 393 regression tests and the 300-file
+public audit pass; CI is pending.
 
-The agent-run Windows path remains mechanically usable; independent teammate/platform
-evidence is still missing. M34 remains STOP and was not rerun. All six jobs in
-[public CI run 33527744800](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33527744800)
-passed.
+No clone, install, demo, or checker acceptance was run in M37. A real teammate receipt
+and independent platform evidence are still missing; `OPERATE` remains disabled.
