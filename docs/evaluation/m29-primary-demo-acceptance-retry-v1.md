@@ -33,6 +33,8 @@ connection, or operation occurred.
 Python 3.12.13 passed all `314/314` tests, including `15/15` M29 contract,
 checker, and result tests. The staged public-release audit scanned 262 files / 524
 index-and-worktree snapshots with zero violations and `operate_enabled: false`.
+[Public CI run 33518077833](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33518077833)
+succeeded for result revision `e68f1cbe6667c49ad85c6040787f31f134288ff0`.
 
 M29 authorizes no second acceptance retry. M30 may perform only a repository-based,
 no-media decision on whether the public answer schema must expose query-subject
