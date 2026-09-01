@@ -75,4 +75,3 @@ operate_enabled = false
 proposal = "M38_REAL_TEAMMATE_RECEIPT_INTAKE_DECISION"
 requires_real_teammate_receipt = true
 agent_generated_receipt_is_ineligible = true
-
