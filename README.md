@@ -112,6 +112,13 @@ matched every committed byte, the output stayed at 103,957 bytes, and the old go
 replay was unchanged. This proves data mechanics, not detector transfer. See the
 [M18 evidence report](docs/evaluation/m18-vector-d1-slice-v1.md).
 
+M19 then compared GMU Kitchens, HomebrewedDB, and YCB-Video without downloading data.
+GMU's official dataset route is no longer available. HB and YCB-V both pass through the
+current BOP distribution; the final frozen cost tie-break selects only YCB-V's 660 MB
+BOP'19 subset for one acquisition and D1 translation slice. No small target or detector
+gain has yet been observed. See the
+[M19 evidence report](docs/evaluation/m19-real-transfer-oracle-reality-gate-v1.md).
+
 ## Run the demo
 
 Requires Python 3.11 or newer. The lockfile was generated with `uv 0.11.24`.
@@ -186,11 +193,11 @@ docs/                       architecture, demo, ADR, and technology notes
 
 The first public detector, consecutive motion, target-tracking, failure-localization,
 RF-DETR replacement, D-FINE synthetic engineering, M14 scientific-priority, M15
-target-substrate, M16 label-oracle, M17 generation-strategy, and M18 vector-substrate
-gates are frozen. M18 passed only mechanics and reproducibility. M19 will compare exactly
-GMU Kitchens, HomebrewedDB, YCB-Video, and STOP using official sources to find at most one
-real transfer oracle before any synthetic scaling or training. It cannot download data,
-load a model, or train. Tracker replacement remains a separate later co-gate.
+target-substrate, M16 label-oracle, M17 generation-strategy, M18 vector-substrate, and
+M19 real-oracle gates are frozen. M19 selected only BOP YCB-V BOP'19. M20 may acquire
+and translate that exact bounded route, hash and safely inspect it, and stop unless an
+exact D1 slice contains the frozen small-target and safe-negative cases. It cannot load
+a model or train. Tracker replacement remains a separate later co-gate.
 The reserved VOST validation source and VISOR `P14_05` must remain untouched. Do not add
 a movement-candidate layer merely because scheduling is inexpensive. Training remains
 capped at 20 epochs with patience 5, and test tuning and automatic submissions remain
@@ -202,7 +209,8 @@ and [M12 detector screen](docs/evaluation/vost-m12-rfdetr-small-v1.md), plus the
 [M16 result](docs/evaluation/m16-target-label-oracle-feasibility-v1.md), the
 [M17 result](docs/evaluation/m17-generation-strategy-reality-gate-v1.md), the
 [M18 result](docs/evaluation/m18-vector-d1-slice-v1.md), and the
-[M19 proposal](docs/evaluation/m19-real-transfer-oracle-reality-gate-proposal.md).
+[M19 result](docs/evaluation/m19-real-transfer-oracle-reality-gate-v1.md), plus the
+[M20 proposal](docs/evaluation/m20-ycbv-bop19-acquisition-translation-proposal.md).
 
 ## Safety and data boundary
 

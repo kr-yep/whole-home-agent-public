@@ -1,0 +1,231 @@
+schema_version = 1
+status = "RECORDED_NO_DOWNLOAD_RESULT"
+gate_id = "m19-real-transfer-oracle-v1"
+decision = "SELECT_YCB_VIDEO_BOP19_ACQUISITION_SLICE"
+eligible_candidates = ["homebreweddb", "ycb-video"]
+eligible_count = 2
+selected_candidate = "ycb-video"
+selection_rule = "ALL_FATAL_GATES_PASS_THEN_FROZEN_ORDERED_TIEBREAKS"
+unknown_is_selection_ineligible = true
+tie_break_applied = true
+tie_break_decisive_stage = 3
+research_cutoff = "2026-09-01"
+
+required_gate_order = [
+  "official_author_or_institution_primary_source",
+  "official_terms_cover_noncommercial_evaluation_and_training",
+  "stable_official_acquisition_route",
+  "no_manual_approval_over_one_day",
+  "real_rgb_indoor_frames",
+  "frame_dimensions_established",
+  "per_frame_instance_boxes_or_masks",
+  "movable_household_object_labels",
+  "stable_instance_identity",
+  "annotation_completeness_or_safe_scoring_rule",
+  "protected_scene_video_object_camera_groups",
+  "small_target_0_1_to_1_percent_verification_path",
+  "negative_and_unknown_semantics_translatable",
+  "minimal_evaluation_subset_at_most_5_gib",
+  "exact_m16_d1_translation_feasible",
+  "first_slice_within_8_working_hours",
+]
+
+[candidates."gmu-kitchens"]
+eligible = false
+fatal_reasons = [
+  "CURRENT_OFFICIAL_DATASET_PAGE_REDIRECTS_TO_THE_GMU_CS_HOME_PAGE",
+  "CURRENT_DATASET_TERMS_AND_DOWNLOAD_ROUTE_NOT_ESTABLISHED",
+  "COMPLETE_NEGATIVE_UNKNOWN_AND_SMALL_TARGET_TRANSLATION_NOT_ESTABLISHED",
+]
+nonfatal_strengths = [
+  "AUTHOR_INSTITUTION_PAPER_DOCUMENTS_NINE_REAL_RGBD_KITCHEN_VIDEOS",
+  "PAPER_DOCUMENTS_ELEVEN_BIGBIRD_OBJECT_INSTANCES_AND_2D_BOXES",
+  "PAPER_DOCUMENTS_SCENE_LEVEL_THREE_FOLD_EVALUATION",
+]
+evidence_limits = [
+  "THE_2016_PAPER_ESTABLISHES_HISTORICAL_CAPABILITY_NOT_CURRENT_TERMS_OR_ACQUISITION",
+  "NO_ARCHIVE_MEDIA_OR_ANNOTATION_BYTES_WERE_DOWNLOADED",
+]
+official_sources = [
+  "https://arxiv.org/abs/1609.07826",
+  "https://cs.gmu.edu/~robot/gmu-kitchens.html",
+]
+
+[candidates."gmu-kitchens".gates]
+official_author_or_institution_primary_source = "PASS"
+official_terms_cover_noncommercial_evaluation_and_training = "UNKNOWN"
+stable_official_acquisition_route = "FAIL"
+no_manual_approval_over_one_day = "UNKNOWN"
+real_rgb_indoor_frames = "PASS"
+frame_dimensions_established = "UNKNOWN"
+per_frame_instance_boxes_or_masks = "PASS"
+movable_household_object_labels = "PASS"
+stable_instance_identity = "PASS"
+annotation_completeness_or_safe_scoring_rule = "UNKNOWN"
+protected_scene_video_object_camera_groups = "PASS"
+small_target_0_1_to_1_percent_verification_path = "UNKNOWN"
+negative_and_unknown_semantics_translatable = "UNKNOWN"
+minimal_evaluation_subset_at_most_5_gib = "UNKNOWN"
+exact_m16_d1_translation_feasible = "UNKNOWN"
+first_slice_within_8_working_hours = "UNKNOWN"
+
+[candidates."homebreweddb"]
+eligible = true
+fatal_reasons = []
+bounded_basis = [
+  "BOP_IS_A_CURRENT_INSTITUTIONAL_SOURCE_AND_PUBLISHES_HB_AS_CC0_1_0",
+  "BOP_HUGGING_FACE_EXPOSES_A_PUBLIC_2_35_GB_PRIMESENSE_VALIDATION_ARCHIVE",
+  "BOP_FORMAT_PROVIDES_OBJECT_IDS_2D_BOXES_MODAL_MASKS_AND_PIXEL_COUNTS",
+  "BOP_TOOLKIT_ESTABLISHES_640_BY_480_PRIMESENSE_DIMENSIONS_AND_THIRTEEN_SCENES",
+  "BOP_DETECTION_PROTOCOL_SUPPORTS_ARBITRARY_PRESENT_OR_ABSENT_MODELED_INSTANCES",
+]
+evidence_limits = [
+  "THE_0_1_TO_1_PERCENT_GATE_HAS_AN_EXECUTABLE_PIXEL_COUNT_CHECK_NOT_A_PREVERIFIED_MATCH",
+  "THE_EIGHT_HOUR_RESULT_IS_A_BOUNDED_ENGINEERING_ESTIMATE_NOT_A_MEASURED_DELIVERY_TIME",
+  "THE_VALIDATION_SEQUENCE_IS_A_POSE_BENCHMARK_NOT_A_HOUSEHOLD_MOVEMENT_OR_RELATION_ORACLE",
+]
+official_sources = [
+  "https://bop.felk.cvut.cz/datasets/",
+  "https://bop.felk.cvut.cz/tasks/",
+  "https://github.com/thodan/bop_toolkit/blob/master/docs/bop_datasets_format.md",
+  "https://github.com/thodan/bop_toolkit/blob/master/bop_toolkit_lib/dataset_params.py",
+  "https://huggingface.co/datasets/bop-benchmark/hb/tree/main",
+  "https://openaccess.thecvf.com/content_ICCVW_2019/papers/R6D/Kaskman_HomebrewedDB_RGB-D_Dataset_for_6D_Pose_Estimation_of_3D_Objects_ICCVW_2019_paper.pdf",
+]
+
+[candidates."homebreweddb".minimal_subset]
+variant = "BOP_HB_VALIDATION_PRIMESENSE"
+base_archive = "hb_base.zip"
+base_archive_display_size = "6.05 kB"
+media_annotation_archive = "hb_val_primesense.zip"
+media_annotation_archive_display_size = "2.35 GB"
+ground_truth_public = true
+under_5_gib = true
+
+[candidates."homebreweddb".gates]
+official_author_or_institution_primary_source = "PASS"
+official_terms_cover_noncommercial_evaluation_and_training = "PASS"
+stable_official_acquisition_route = "PASS"
+no_manual_approval_over_one_day = "PASS"
+real_rgb_indoor_frames = "PASS"
+frame_dimensions_established = "PASS"
+per_frame_instance_boxes_or_masks = "PASS"
+movable_household_object_labels = "PASS"
+stable_instance_identity = "PASS"
+annotation_completeness_or_safe_scoring_rule = "PASS"
+protected_scene_video_object_camera_groups = "PASS"
+small_target_0_1_to_1_percent_verification_path = "PASS"
+negative_and_unknown_semantics_translatable = "PASS"
+minimal_evaluation_subset_at_most_5_gib = "PASS"
+exact_m16_d1_translation_feasible = "PASS"
+first_slice_within_8_working_hours = "PASS"
+
+[candidates."ycb-video"]
+eligible = true
+fatal_reasons = []
+bounded_basis = [
+  "UW_AND_THE_AUTHOR_TOOLBOX_DOCUMENT_21_NAMED_YCB_OBJECTS_IN_92_REAL_RGBD_VIDEOS",
+  "THE_AUTHOR_TOOLBOX_RELEASES_THE_DATASET_UNDER_MIT",
+  "BOP_HUGGING_FACE_EXPOSES_A_PUBLIC_660_MB_BOP19_TEST_SUBSET",
+  "BOP_FORMAT_PROVIDES_OBJECT_IDS_2D_BOXES_MODAL_MASKS_AND_PIXEL_COUNTS",
+  "THE_AUTHOR_PAPER_AND_BOP_TOOLKIT_ESTABLISH_640_BY_480_DIMENSIONS_AND_VIDEO_SPLITS",
+]
+evidence_limits = [
+  "THE_0_1_TO_1_PERCENT_GATE_HAS_AN_EXECUTABLE_PIXEL_COUNT_CHECK_NOT_A_PREVERIFIED_MATCH",
+  "THE_EIGHT_HOUR_RESULT_IS_A_BOUNDED_ENGINEERING_ESTIMATE_NOT_A_MEASURED_DELIVERY_TIME",
+  "THE_SEQUENCE_IS_A_POSE_BENCHMARK_NOT_A_HOUSEHOLD_MOVEMENT_OR_RELATION_ORACLE",
+]
+official_sources = [
+  "https://rse-lab.cs.washington.edu/projects/posecnn/",
+  "https://rse-lab.cs.washington.edu/papers/posecnn_rss18.pdf",
+  "https://github.com/yuxng/YCB_Video_toolbox",
+  "https://github.com/yuxng/YCB_Video_toolbox/blob/master/LICENSE",
+  "https://github.com/yuxng/YCB_Video_toolbox/blob/master/classes.txt",
+  "https://bop.felk.cvut.cz/datasets/",
+  "https://bop.felk.cvut.cz/tasks/",
+  "https://github.com/thodan/bop_toolkit/blob/master/docs/bop_datasets_format.md",
+  "https://github.com/thodan/bop_toolkit/blob/master/bop_toolkit_lib/dataset_params.py",
+  "https://huggingface.co/datasets/bop-benchmark/ycbv/tree/main",
+]
+
+[candidates."ycb-video".minimal_subset]
+variant = "BOP_YCBV_TEST_BOP19"
+base_archive = "ycbv_base.zip"
+base_archive_display_size = "15.8 kB"
+media_annotation_archive = "ycbv_test_bop19.zip"
+media_annotation_archive_display_size = "660 MB"
+ground_truth_public = true
+under_5_gib = true
+
+[candidates."ycb-video".gates]
+official_author_or_institution_primary_source = "PASS"
+official_terms_cover_noncommercial_evaluation_and_training = "PASS"
+stable_official_acquisition_route = "PASS"
+no_manual_approval_over_one_day = "PASS"
+real_rgb_indoor_frames = "PASS"
+frame_dimensions_established = "PASS"
+per_frame_instance_boxes_or_masks = "PASS"
+movable_household_object_labels = "PASS"
+stable_instance_identity = "PASS"
+annotation_completeness_or_safe_scoring_rule = "PASS"
+protected_scene_video_object_camera_groups = "PASS"
+small_target_0_1_to_1_percent_verification_path = "PASS"
+negative_and_unknown_semantics_translatable = "PASS"
+minimal_evaluation_subset_at_most_5_gib = "PASS"
+exact_m16_d1_translation_feasible = "PASS"
+first_slice_within_8_working_hours = "PASS"
+
+[translation]
+source_variant = "BOP_YCBV_TEST_BOP19"
+frame_dimensions = [640, 480]
+project_split = "test"
+source_sequence = "BOP_SCENE_ID"
+source_frame_identity = "BOP_IMAGE_ID_PRESERVED_IN_MANIFEST_AND_RENUMBERED_CONTIGUOUSLY_FOR_D1"
+instance_identity = "BOP_OBJECT_ID_WITHIN_SOURCE_SEQUENCE"
+label = "AUTHOR_CLASSES_TXT_NAME_FOR_BOP_OBJECT_ID"
+visible_box = "BOP_BBOX_VISIB_OR_BBOX_OBJ_AFTER_BOUND_CHECK"
+unknown_policy = "UNPARSEABLE_OR_UNSCOPED_FRAMES_AND_INSTANCES_UNDER_TEN_PERCENT_VISIBLE_ARE_NOT_SCORED_NEGATIVES"
+negative_policy = "ABSENCE_IS_NEGATIVE_ONLY_FOR_THE_21_MODELED_YCB_CLASSES_IN_A_COMPLETE_BOP_SCORING_FRAME"
+unmodeled_object_policy = "IGNORE_AS_OUT_OF_VOCABULARY_NOT_NEGATIVE"
+relation_policy = "NO_REFERENCE_TRANSITION_OR_RELATION_IS_EMITTED"
+small_target_check = "0_001_LE_PX_COUNT_VISIB_DIV_307200_LE_0_01"
+
+[selection]
+eligible_candidate_count = 2
+first_tiebreak_result = "TIE_BOP_FORMAT_AND_SAFE_MODELED_OBJECT_SCORING"
+second_tiebreak_result = "TIE_EXPLICIT_CAPTURE_GROUPS_BUT_NEITHER_IS_FIXED_CAMERA_MOVEMENT_EVIDENCE"
+third_tiebreak_result = "YCB_VIDEO_660_MB_IS_LOWER_THAN_HB_2_35_GB_FOR_THE_MINIMAL_ANNOTATED_ROUTE"
+unique_selected_candidate = "ycb-video"
+next_authority = "ONE_BOUNDED_ACQUISITION_AND_M16_TRANSLATION_SLICE"
+stop_if_archive_or_license_differs = true
+stop_if_no_small_target_in_bucket = true
+stop_if_annotation_completeness_cannot_be_CONFIRMED = true
+
+[interpretation]
+unknown_means = "NOT_ESTABLISHED_BY_ACCESSIBLE_OFFICIAL_SOURCES_CHECKED"
+fail_means = "ACCESSIBLE_EVIDENCE_CONTRADICTS_A_FROZEN_REQUIREMENT_FOR_THIS_GATE"
+pass_means = "OFFICIAL_EVIDENCE_SUPPORTS_ONLY_THE_NAMED_FEASIBILITY_GATE"
+selection_means = "AUTHORIZE_ONLY_ONE_HASH_PINNED_BOP_YCBV_BOP19_ACQUISITION_AND_D1_TRANSLATION_SLICE"
+not_established = "SMALL_TARGET_PRESENCE_DETECTOR_GAIN_SYNTHETIC_TO_REAL_TRANSFER_MOVEMENT_RELATION_OR_HOUSEHOLD_OPERATION"
+
+[verification]
+contract_revision = "443184f"
+official_sources_checked_at = "2026-09-01"
+archive_media_or_annotation_download_count = 0
+account_login_or_application_count = 0
+model_detector_or_tracker_load_count = 0
+training_run_count = 0
+
+[boundaries]
+archive_media_or_annotation_downloaded = false
+account_login_or_application_used = false
+local_vost_or_visor_read = false
+reserved_source_read = false
+model_detector_or_tracker_loaded = false
+training_run = false
+test_tuning = false
+movement_candidate_created = false
+claim_candidate_created = false
+accepted_claim_created = false
+live_private_cloud_or_action_connected = false
+operate_enabled = false
