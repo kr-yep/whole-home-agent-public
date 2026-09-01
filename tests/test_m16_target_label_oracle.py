@@ -22,6 +22,7 @@ from whole_home_agent.target_oracle import (
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / "configs" / "evaluation" / "m16-target-label-oracle-v1.toml"
+RESULT = ROOT / "configs" / "evaluation" / "m16-target-label-oracle-result-v1.toml"
 FIXTURE = ROOT / "examples" / "fixtures" / "evaluation" / "d1_target_oracle_v1.json"
 
 
@@ -235,6 +236,35 @@ class M16TargetLabelOracleConformanceTests(unittest.TestCase):
                 self.assertEqual(
                     caught.exception.code, "PROTECTED_GROUP_SPLIT_LEAKAGE"
                 )
+
+
+class M16TargetLabelOracleResultTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.contract = tomllib.loads(CONTRACT.read_text(encoding="utf-8"))
+        cls.result = tomllib.loads(RESULT.read_text(encoding="utf-8"))
+
+    def test_pass_decision_matches_the_frozen_branch(self):
+        self.assertEqual(self.result["decision"], self.contract["pass_decision"])
+        self.assertTrue(
+            self.result["metric_conformance"]["all_exact_expected_results_passed"]
+        )
+        self.assertTrue(
+            self.result["rejection_conformance"]["all_expected_codes_passed"]
+        )
+
+    def test_result_is_hash_pinned_and_preserves_boundaries(self):
+        import hashlib
+
+        self.assertEqual(
+            hashlib.sha256(FIXTURE.read_bytes()).hexdigest(),
+            self.result["fixture_sha256"],
+        )
+        self.assertTrue(
+            all(value is False for value in self.result["boundaries"].values())
+        )
+        self.assertFalse(self.result["evidence_limits"]["training_authorized"])
+        self.assertFalse(self.result["evidence_limits"]["operation_authorized"])
 
 
 if __name__ == "__main__":

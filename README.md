@@ -90,6 +90,13 @@ gate. The project therefore selected none and pivoted to proving a no-media targ
 oracle before generating or acquiring data. See the
 [M15 evidence report](docs/evaluation/m15-target-domain-substrate-v1.md).
 
+M16 implemented that no-media oracle as a thin scope/validation layer around the existing
+quality evaluator. A synthetic semantic fixture now proves exact perfect, empty,
+duplicate, wrong-class, bad-localization, negative-frame, unknown, identity-conflict, and
+source-group leakage behavior. This validates scoring semantics only; no image, model,
+training, or transfer result exists. See the
+[M16 evidence report](docs/evaluation/m16-target-label-oracle-feasibility-v1.md).
+
 ## Run the demo
 
 Requires Python 3.11 or newer. The lockfile was generated with `uv 0.11.24`.
@@ -163,13 +170,13 @@ docs/                       architecture, demo, ADR, and technology notes
 ## Next evidence gate
 
 The first public detector, consecutive motion, target-tracking, failure-localization,
-RF-DETR replacement, D-FINE synthetic engineering, M14 scientific-priority, and M15
-target-substrate gates are frozen. M15 selected none of HOMAGE, CAD-120, or
-Watch-n-Patch because none passed every required gate. The next step is the no-media M16
-target-label-oracle feasibility gate: prove exhaustive frame accounting, instance and
-visibility semantics, target metrics, and source-group split rejection using tiny
-semantic fixtures and fake predictions before choosing a data-generation strategy.
-Tracker replacement remains a separate later co-gate.
+RF-DETR replacement, D-FINE synthetic engineering, M14 scientific-priority, M15
+target-substrate, and M16 label-oracle gates are frozen. M16 passed only its synthetic
+measurement contract. The next step is a no-media M17 comparison of exactly the existing
+2D renderer extension, procedural Blender, licensed asset compositing, and `STOP` against
+D1 conformance, deterministic source separation, license/provenance, and three-day/20 GiB
+cost. It may select at most one and cannot install, download, render, or train. Tracker
+replacement remains a separate later co-gate.
 The reserved VOST validation source and VISOR `P14_05` must remain untouched. Do not add
 a movement-candidate layer merely because scheduling is inexpensive. Training remains
 capped at 20 epochs with patience 5, and test tuning and automatic submissions remain
@@ -178,7 +185,8 @@ and [M12 detector screen](docs/evaluation/vost-m12-rfdetr-small-v1.md), plus the
 [M13 engineering screen](docs/evaluation/m13-dfine-small-synthetic-v1.md), the
 [M14 priority decision](docs/evaluation/m14-detector-scientific-priority-v1.md), and the
 [M15 result](docs/evaluation/m15-target-domain-substrate-v1.md), plus the
-[M16 proposal](docs/evaluation/m16-target-label-oracle-feasibility-proposal.md).
+[M16 result](docs/evaluation/m16-target-label-oracle-feasibility-v1.md) and
+[M17 proposal](docs/evaluation/m17-generation-strategy-reality-gate-proposal.md).
 
 ## Safety and data boundary
 
