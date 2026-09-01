@@ -220,6 +220,9 @@ model_prediction_training_or_test_tuning_allowed = false
 live_cloud_action_allowed = false
 
 [verification]
+clean_result_revision = "052079d10fb69a35f7b8ddf8771e152ce684aafe"
+ci_run_url = "https://github.com/kr-yep/whole-home-agent-public/actions/runs/33515503351"
+ci_conclusion = "success"
 python = "3.12.13"
 focused_tests_passed = 10
 full_tests_passed = 286

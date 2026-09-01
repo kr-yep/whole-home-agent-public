@@ -72,3 +72,5 @@ Python 3.12.13 passed all `286/286` tests, including 10 M27 contract, complete-m
 lane-separation, hostile-disposition, and result-boundary checks. The staged public
 audit scanned 252 files / 504 index-and-worktree snapshots with zero violations and
 `operate_enabled: false`. No source, media, network, model, or prediction was used.
+Public [CI run 33515503351](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33515503351)
+also passed on clean result revision `052079d10fb69a35f7b8ddf8771e152ce684aafe`.
