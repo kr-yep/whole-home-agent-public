@@ -32,7 +32,9 @@ consent, and any operational activation. Live/private sensing and actions remain
 **Latest milestone (M31):** the additive `AnswerTrace.subject_id` implementation passes
 all semantic tests, but M31 is recorded as a normal contract STOP because its required
 full suite reads the pinned synthetic clip while the same contract forbade every media
-read. M32 must clarify that verification classification without changing code.
+read. The M31 result/handoff revision passed
+[public CI](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33520669687).
+M32 must clarify that verification classification without changing code.
 
 ## What works today
 

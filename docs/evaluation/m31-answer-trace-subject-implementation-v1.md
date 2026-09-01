@@ -35,6 +35,9 @@ implementation, and result tests. This supports the additive field and frozen
 regression envelope, not compliance with the contradictory no-media clause.
 The staged public-release audit scanned 272 files / 544 index-and-worktree snapshots
 with zero violations and `operate_enabled: false`.
+Public CI run
+[`33520669687`](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33520669687)
+succeeded for result/handoff revision `ad8e78dbbb24315ecf16926b2dec2209343881c4`.
 
 ## Next bounded decision
 

@@ -40,7 +40,7 @@ what is still missing without reconstructing the full experiment history.
 These remain blocked by proposed governance, unassigned roles, absent consent and data
 policy, and `OPERATE DISABLED`.
 
-## Latest push: M31
+## Latest push: M31 CI receipt
 
 Added required immutable query-scope `subject_id` to canonical `AnswerTrace`, populated
 it at the sole constructor, and exposed it in both B0 and B1 answer serializers. All six
@@ -50,3 +50,8 @@ The implementation is usable, but the M31 Goal is a normal contract STOP: mandat
 full regression reads the repository's pinned D0 synthetic clip, while the frozen M31
 contract also forbade every media read. M32 must classify that verification boundary
 using repository evidence only; it may not silently rewrite M31 as PASS.
+
+The latest push records that the M31 result/handoff revision passed
+[public CI run 33520669687](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33520669687).
+This adds verification evidence only: the usable capabilities and missing work listed
+above are unchanged.
