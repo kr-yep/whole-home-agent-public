@@ -1,0 +1,174 @@
+schema_version = 1
+status = "FROZEN_BEFORE_IMPLEMENTATION"
+gate_id = "m16-target-label-oracle-v1"
+intended_use = "NO_MEDIA_D1_TARGET_LABEL_ORACLE_FEASIBILITY"
+pass_decision = "PASS_TO_NO_MEDIA_GENERATION_STRATEGY_GATE"
+fail_decision = "STOP_AND_REVISE_ORACLE_BOUNDARY"
+
+[units]
+detection = "FRAME_BY_PERSISTENT_OBJECT_INSTANCE"
+temporal = "SOURCE_SEQUENCE_BY_REFERENCE_TRANSITION_EPISODE"
+false_positive_denominator = "ALL_AND_ONLY_SCORED_FRAMES"
+coordinate_space = "PIXEL_XYXY_EXCLUSIVE_ORIGINAL_FRAME"
+frame_index_basis = "ZERO_BASED_SOURCE_FRAME_INDEX"
+
+[frame_contract]
+states = ["SCORED", "UNKNOWN"]
+complete_unique_frame_records_required = true
+ordered_input_required = false
+prediction_on_unknown_frame = "REJECT"
+missing_scored_frame_prediction_list = "INTERPRET_AS_EMPTY"
+negative_frame = "SCORED_FRAME_WITH_ZERO_SCORABLE_TARGETS"
+
+[instance_contract]
+visibility_states = ["VISIBLE", "TRUNCATED", "OCCLUDED", "ABSENT", "UNKNOWN"]
+scored_visibility_states = ["VISIBLE", "TRUNCATED"]
+bbox_required_states = ["VISIBLE", "TRUNCATED"]
+bbox_prohibited_states = ["OCCLUDED", "ABSENT", "UNKNOWN"]
+stable_instance_id_required = true
+same_identity_different_payload = "REJECT_CONFLICT"
+duplicate_identity_same_payload = "REJECT_DUPLICATE_INPUT"
+class_label_change_within_sequence = "REJECT_CONFLICT"
+
+[transition_contract]
+reference_only = true
+episode_id_required = true
+persistent_instance_id_required = true
+strictly_increasing_frame_bounds_required = true
+allowed_kinds = ["LOCATION_CHANGE", "CONTAINMENT_CHANGE"]
+product_movement_candidate = false
+claim_authority = false
+
+[metrics]
+iou_thresholds = [0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95]
+required = [
+  "AP50",
+  "MAP50_95",
+  "RECALL50",
+  "RECALL50_AREA_0_1_TO_1_PERCENT",
+  "FALSE_POSITIVES50",
+  "FALSE_POSITIVES50_PER_EVALUATED_FRAME",
+  "EVALUATED_FRAME_COUNT",
+]
+small_area_lower_fraction_inclusive = 0.001
+small_area_upper_fraction_exclusive = 0.01
+ap_interpolation_points = 101
+
+[split_contract]
+allowed_splits = ["development", "validation", "test"]
+protected_group_fields = [
+  "participant_id",
+  "house_room_id",
+  "session_id",
+  "source_sequence_id",
+  "camera_time_group_id",
+  "synchronized_view_group_id",
+]
+each_protected_value_must_map_to_exactly_one_split = true
+adjacent_frame_random_split_allowed = false
+unknown_or_missing_group_value_allowed = false
+
+[[metric_cases]]
+case_id = "perfect"
+expected_ap50 = 1.0
+expected_map50_95 = 1.0
+expected_recall50 = 1.0
+expected_small_recall50 = 1.0
+expected_false_positives50 = 0
+expected_evaluated_frames = 2
+expected_false_positives_per_frame = 0.0
+
+[[metric_cases]]
+case_id = "empty"
+expected_ap50 = 0.0
+expected_map50_95 = 0.0
+expected_recall50 = 0.0
+expected_small_recall50 = 0.0
+expected_false_positives50 = 0
+expected_evaluated_frames = 2
+expected_false_positives_per_frame = 0.0
+
+[[metric_cases]]
+case_id = "duplicate"
+expected_ap50 = 1.0
+expected_map50_95 = 1.0
+expected_recall50 = 1.0
+expected_small_recall50 = 1.0
+expected_false_positives50 = 1
+expected_evaluated_frames = 2
+expected_false_positives_per_frame = 0.5
+
+[[metric_cases]]
+case_id = "wrong_class"
+expected_ap50 = 0.0
+expected_map50_95 = 0.0
+expected_recall50 = 0.0
+expected_small_recall50 = 0.0
+expected_false_positives50 = 1
+expected_evaluated_frames = 2
+expected_false_positives_per_frame = 0.5
+
+[[metric_cases]]
+case_id = "bad_localization"
+expected_ap50 = 0.0
+expected_map50_95 = 0.0
+expected_recall50 = 0.0
+expected_small_recall50 = 0.0
+expected_false_positives50 = 1
+expected_evaluated_frames = 2
+expected_false_positives_per_frame = 0.5
+
+[[metric_cases]]
+case_id = "negative_frame_false_positive"
+expected_ap50 = 1.0
+expected_map50_95 = 1.0
+expected_recall50 = 1.0
+expected_small_recall50 = 1.0
+expected_false_positives50 = 1
+expected_evaluated_frames = 2
+expected_false_positives_per_frame = 0.5
+
+[[rejection_cases]]
+case_id = "prediction_on_unknown_frame"
+expected_code = "PREDICTION_ON_UNSCORED_FRAME"
+
+[[rejection_cases]]
+case_id = "duplicate_frame_identity"
+expected_code = "DUPLICATE_FRAME_IDENTITY"
+
+[[rejection_cases]]
+case_id = "same_instance_different_label"
+expected_code = "INSTANCE_LABEL_CONFLICT"
+
+[[rejection_cases]]
+case_id = "split_group_leakage"
+expected_code = "PROTECTED_GROUP_SPLIT_LEAKAGE"
+
+[determinism]
+input_order_invariant = true
+exact_fixture_results_required = true
+all_frames_accounted_required = true
+missing_or_conflicting_identity_fails_closed = true
+
+[reuse]
+canonical_box_type = "whole_home_agent.perception.BoundingBox"
+canonical_prediction_type = "whole_home_agent.perception.Detection"
+quality_calculator = "whole_home_agent.evaluation.evaluate_detection_quality"
+new_cv_or_ml_dependency_allowed = false
+durable_storage_required = false
+
+[boundaries]
+image_or_video_generation_allowed = false
+media_or_annotation_archive_download_allowed = false
+recording_allowed = false
+vost_or_visor_bytes_allowed = false
+reserved_source_allowed = false
+detector_or_tracker_load_allowed = false
+training_allowed = false
+movement_candidate_allowed = false
+accepted_claim_allowed = false
+live_camera_allowed = false
+private_data_allowed = false
+cloud_allowed = false
+action_allowed = false
+operate_enabled = false
