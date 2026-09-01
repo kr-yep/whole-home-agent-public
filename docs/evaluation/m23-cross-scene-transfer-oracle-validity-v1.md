@@ -87,6 +87,13 @@ did not reread source archives or media, download data or models, materialize D1
 prediction, train, tune, emit a movement candidate/claim/relation, connect a camera,
 cloud, account, or device, or enable `OPERATE`.
 
+On clean result revision `799af167c9568d1293e149368f7831a745ad947a`, Python
+3.12.13 passed all `228/228` tests. The M23 module contributed eight passing frozen-
+contract, AND-gate, hostile-limit, result, boundary, and next-authority tests. The public
+release audit scanned 232 tracked files and 464 index/worktree snapshots with zero
+violations and `operate_enabled: false`. These checks support only the recorded decision
+and mechanical repository boundary.
+
 ## Claim ledger
 
 | Claim | Evidence | Permissible wording | Unsupported extension |

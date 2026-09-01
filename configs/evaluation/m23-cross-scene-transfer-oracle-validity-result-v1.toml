@@ -116,6 +116,16 @@ allowed_work = "FREEZE_THEN_MATERIALIZE_THE_SMALLEST_SOURCE_ORDERED_ONE_CLASS_PO
 maximum_frames = 18
 training_prediction_or_test_tuning_allowed = false
 
+[verification]
+clean_result_revision = "799af167c9568d1293e149368f7831a745ad947a"
+python = "3.12.13"
+focused_tests_passed = 8
+full_tests_passed = 228
+public_audit_scanned_files = 232
+public_audit_scanned_snapshots = 464
+public_audit_violations = 0
+operate_enabled = false
+
 [boundaries]
 source_or_media_read = false
 dataset_or_model_downloaded = false
