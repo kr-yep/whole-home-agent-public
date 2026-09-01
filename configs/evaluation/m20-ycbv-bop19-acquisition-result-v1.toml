@@ -7,6 +7,7 @@ failure_code = "UNEXPECTED_TOP_LEVEL_ROOT"
 failure_summary = "THE_TEST_ARCHIVE_ROOT_IS_TEST_WHILE_THE_FROZEN_CONTRACT_REQUIRES_YCBV_FOR_EVERY_ARCHIVE"
 contract_revision = "2a69db3"
 implementation_revision = "769c2ae"
+clean_result_revision = "ff4368eba2651f1a7aa182039c40197b1bbdf738"
 source_revision = "5c2c4aa229800355648cd268040aa814f8dc94f0"
 source_identity_passed = true
 archive_safety_contract_passed = false
@@ -54,8 +55,14 @@ unchanged = [
 ]
 
 [verification]
+python = "3.12.13"
 contract_tests_before_download_passed = 5
 synthetic_translation_and_zip_tests_before_real_annotation_passed = 10
+focused_tests_on_clean_result_revision_passed = 15
+full_tests_on_clean_result_revision_passed = 188
+public_audit_scanned_files = 218
+public_audit_scanned_snapshots = 436
+public_audit_violations = 0
 archive_download_attempts = 1
 archive_downloaded_count = 2
 downloaded_bytes = 660214506
@@ -80,4 +87,3 @@ accepted_claim_created = false
 relation_or_transition_emitted = false
 live_private_cloud_inference_or_action_connected = false
 operate_enabled = false
-

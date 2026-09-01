@@ -64,6 +64,15 @@ selection, scoring, and safety threshold remains unchanged.
 The two verified local archives remain ignored and uncommitted so a separately frozen
 repair can reuse them without a second download.
 
+## Verification
+
+On clean result revision `ff4368eba2651f1a7aa182039c40197b1bbdf738`, Python
+3.12.13 passed all `188/188` tests. The public-release audit scanned 218 tracked files
+and 436 index/worktree snapshots with zero violations and `operate_enabled: false`.
+The M20-focused module contributed 15 passing contract, synthetic-translation,
+archive-safety, and stopped-result tests. These checks support only the bounded software
+and release claims above; they do not validate unexamined dataset contents.
+
 ## Claim ledger
 
 | Claim | Evidence | Permissible wording | Unsupported extension |
@@ -83,4 +92,3 @@ and escape behavior synthetically before reusing the already verified archives. 
 source identities, cost limits, selection rules, small-target range, negative/unknown
 semantics, zero-relation rule, and model/training/claim/operation prohibitions remain
 unchanged.
-
