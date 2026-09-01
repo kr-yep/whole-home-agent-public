@@ -104,6 +104,17 @@ Official sources checked:
 - Blender/Kubric richness is not a reason to carry their integration cost before the
   smallest project-owned route has been falsified.
 
+## Verification
+
+- Frozen M17 contract commit: `da9b6a2`.
+- Recorded-result commit: `1e3e4a1ae12e9f8f2156148620d6b889770a2842`.
+- Focused M17 tests: `9/9` passed.
+- Clean result-revision suite: `149/149` passed under Python 3.12.13.
+- Clean result-revision public audit: 157 files / 314 index-and-worktree snapshots,
+  zero violations, `operate_enabled: false`.
+- No external asset/media byte, candidate installation, render, model load, training,
+  private/reserved source read, claim path, or operation was used.
+
 ## Claim ledger
 
 | Claim | Evidence | Permissible wording | Unsupported extension |
@@ -119,4 +130,3 @@ M18 freezes and implements exactly one tiny project-owned vector dataset: three 
 source groups with 18 image/annotation pairs, exact M16 D1 semantics, required visibility
 and transition cases, and deterministic byte manifests. It must preserve the old golden
 replay unchanged and stop before any detector load or training.
-

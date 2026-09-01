@@ -153,6 +153,16 @@ pass_means = "EVIDENCE_SUPPORTS_ONLY_THE_NAMED_FEASIBILITY_GATE"
 selection_means = "AUTHORIZE_ONLY_ONE_TINY_PROJECT_OWNED_VECTOR_2D_D1_SLICE"
 not_established = "IMAGE_REALISM_DETECTOR_GAIN_SYNTHETIC_TO_REAL_TRANSFER_OR_HOUSEHOLD_OPERATION"
 
+[verification]
+result_revision = "1e3e4a1ae12e9f8f2156148620d6b889770a2842"
+python = "3.12.13"
+focused_tests_passed = 9
+clean_revision_full_tests_passed = 149
+clean_revision_public_audit_files = 157
+clean_revision_public_audit_snapshots = 314
+clean_revision_public_audit_violations = 0
+official_sources_checked_at = "2026-09-01"
+
 [boundaries]
 tool_or_dependency_installed = false
 asset_or_media_downloaded = false
