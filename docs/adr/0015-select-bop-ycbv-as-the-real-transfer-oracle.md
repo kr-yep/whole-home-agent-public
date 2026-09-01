@@ -57,3 +57,11 @@ Negative:
 - the paired transfer experiment shows the selected slice cannot distinguish candidate
   behavior.
 
+## M20 pre-extraction evidence
+
+M20 verified both selected immutable archive identities, then stopped before extraction:
+the base archive is rooted at `ycbv/`, while the test archive is rooted at `test/` for
+extraction into an existing dataset directory. The frozen single-root contract therefore
+failed as designed. This does not change the dataset selection or its thresholds. A
+separate M21 proposal may repair only the per-archive source-to-destination mapping and
+must prove collision safety before reusing the ignored local archives.

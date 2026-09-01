@@ -1,0 +1,83 @@
+schema_version = 1
+status = "RECORDED_NORMAL_STOP"
+gate_id = "m20-ycbv-bop19-acquisition-v1"
+decision = "STOP_YCBV_REAL_TRANSFER_ORACLE_MATERIALIZATION"
+failure_stage = "PRE_EXTRACTION_ARCHIVE_HEADER_PREFLIGHT"
+failure_code = "UNEXPECTED_TOP_LEVEL_ROOT"
+failure_summary = "THE_TEST_ARCHIVE_ROOT_IS_TEST_WHILE_THE_FROZEN_CONTRACT_REQUIRES_YCBV_FOR_EVERY_ARCHIVE"
+contract_revision = "2a69db3"
+implementation_revision = "769c2ae"
+source_revision = "5c2c4aa229800355648cd268040aa814f8dc94f0"
+source_identity_passed = true
+archive_safety_contract_passed = false
+extraction_started = false
+real_annotation_read = false
+d1_translation_run = false
+normal_stop = true
+
+[[archive]]
+name = "ycbv_base.zip"
+bytes = 15805
+sha256 = "98440f8bd403100b21cf11a6729fabe8b3d5ce714472edc57a18b7f1fcd4bb18"
+identity = "PASS"
+header_preflight = "PASS"
+observed_top_level_root = "ycbv"
+
+[[archive]]
+name = "ycbv_test_bop19.zip"
+bytes = 660198701
+sha256 = "c0c11251849877e7b2f373f6c7acf54739dc69d0fb2649c20050ca977bf5513d"
+identity = "PASS"
+header_preflight = "FAIL"
+observed_top_level_root = "test"
+
+[interpretation]
+established = "BOTH_SELECTED_ARCHIVES_MATCH_THE_FROZEN_IMMUTABLE_REVISION_SIZE_AND_SHA256"
+not_established = "LICENSE_BYTES_GROUND_TRUTH_COMPLETENESS_SMALL_TARGET_NEGATIVE_SEMANTICS_D1_SLICE_OR_TRANSFER_GAIN"
+failure_means = "THE_FROZEN_SINGLE_ROOT_EXTRACTION_CONTRACT_DOES_NOT_MATCH_THE_OFFICIAL_TWO_ARCHIVE_PACKAGING"
+failure_does_not_mean = "THE_ARCHIVES_ARE_CORRUPT_OR_YCB_VIDEO_IS_INELIGIBLE"
+
+[next_gate]
+proposal = "M21_PER_ARCHIVE_ROOT_MAPPING_INFRASTRUCTURE_REPAIR"
+allowed_change = "FREEZE_BASE_ROOT_YCBV_AND_TEST_ROOT_TEST_THEN_PREPEND_YCBV_ONLY_AT_THE_EXTRACTION_DESTINATION"
+unchanged = [
+  "SOURCE_REVISION",
+  "ARCHIVE_NAMES_URLS_SIZES_AND_SHA256",
+  "LICENSE_EXPECTATION",
+  "FIVE_GIB_AND_EIGHT_HOUR_LIMITS",
+  "ZIP_SAFETY_RULES_OTHER_THAN_PER_ARCHIVE_ROOT",
+  "ANNOTATION_ONLY_OBJECT_SCENE_FRAME_SELECTION",
+  "SMALL_TARGET_RANGE",
+  "NEGATIVE_AND_UNKNOWN_SEMANTICS",
+  "ZERO_RELATION_OR_TRANSITION_RULE",
+  "ALL_MODEL_TRAINING_CLAIM_AND_OPERATION_PROHIBITIONS",
+]
+
+[verification]
+contract_tests_before_download_passed = 5
+synthetic_translation_and_zip_tests_before_real_annotation_passed = 10
+archive_download_attempts = 1
+archive_downloaded_count = 2
+downloaded_bytes = 660214506
+source_bytes_committed = 0
+extracted_file_count = 0
+real_annotation_files_read = 0
+model_or_prediction_runs = 0
+
+[boundaries]
+account_login_or_application_used = false
+source_bytes_in_git = false
+real_annotations_in_git = false
+local_vost_or_visor_read = false
+reserved_source_read = false
+model_detector_or_tracker_loaded = false
+prediction_run = false
+training_run = false
+test_tuning = false
+movement_candidate_created = false
+claim_candidate_created = false
+accepted_claim_created = false
+relation_or_transition_emitted = false
+live_private_cloud_inference_or_action_connected = false
+operate_enabled = false
+

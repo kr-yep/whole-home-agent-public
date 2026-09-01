@@ -119,6 +119,12 @@ BOP'19 subset for one acquisition and D1 translation slice. No small target or d
 gain has yet been observed. See the
 [M19 evidence report](docs/evaluation/m19-real-transfer-oracle-reality-gate-v1.md).
 
+M20 downloaded those two exact archives into ignored local storage and verified their
+immutable sizes and SHA-256 values. It then stopped before extraction: the base archive
+uses `ycbv/`, while the test archive uses `test/`, contradicting M20's frozen single-root
+assumption. No real annotation or image was read. See the
+[M20 evidence report](docs/evaluation/m20-ycbv-bop19-acquisition-translation-v1.md).
+
 ## Run the demo
 
 Requires Python 3.11 or newer. The lockfile was generated with `uv 0.11.24`.
@@ -194,10 +200,11 @@ docs/                       architecture, demo, ADR, and technology notes
 The first public detector, consecutive motion, target-tracking, failure-localization,
 RF-DETR replacement, D-FINE synthetic engineering, M14 scientific-priority, M15
 target-substrate, M16 label-oracle, M17 generation-strategy, M18 vector-substrate, and
-M19 real-oracle gates are frozen. M19 selected only BOP YCB-V BOP'19. M20 may acquire
-and translate that exact bounded route, hash and safely inspect it, and stop unless an
-exact D1 slice contains the frozen small-target and safe-negative cases. It cannot load
-a model or train. Tracker replacement remains a separate later co-gate.
+M19 real-oracle and M20 materialization gates are frozen. M20 stopped before extraction
+on a packaging-contract mismatch. M21 may repair only the per-archive source-root to
+destination mapping, then retry the same bounded translation with every scientific and
+safety threshold unchanged. It cannot load a model or train. Tracker replacement
+remains a separate later co-gate.
 The reserved VOST validation source and VISOR `P14_05` must remain untouched. Do not add
 a movement-candidate layer merely because scheduling is inexpensive. Training remains
 capped at 20 epochs with patience 5, and test tuning and automatic submissions remain
@@ -209,8 +216,9 @@ and [M12 detector screen](docs/evaluation/vost-m12-rfdetr-small-v1.md), plus the
 [M16 result](docs/evaluation/m16-target-label-oracle-feasibility-v1.md), the
 [M17 result](docs/evaluation/m17-generation-strategy-reality-gate-v1.md), the
 [M18 result](docs/evaluation/m18-vector-d1-slice-v1.md), and the
-[M19 result](docs/evaluation/m19-real-transfer-oracle-reality-gate-v1.md), plus the
-[M20 proposal](docs/evaluation/m20-ycbv-bop19-acquisition-translation-proposal.md).
+[M19 result](docs/evaluation/m19-real-transfer-oracle-reality-gate-v1.md), the
+[M20 result](docs/evaluation/m20-ycbv-bop19-acquisition-translation-v1.md), and the
+[M21 proposal](docs/evaluation/m21-ycbv-per-archive-root-repair-proposal.md).
 
 ## Safety and data boundary
 

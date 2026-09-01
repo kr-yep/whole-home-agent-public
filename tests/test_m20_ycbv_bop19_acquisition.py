@@ -25,6 +25,7 @@ from whole_home_agent.target_oracle import evaluate_target_oracle
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / "configs" / "evaluation" / "m20-ycbv-bop19-acquisition-v1.toml"
+RESULT = ROOT / "configs" / "evaluation" / "m20-ycbv-bop19-acquisition-result-v1.toml"
 FIXTURE = ROOT / "tests" / "fixtures" / "bop" / "ycbv_m20_minimal"
 TOOL_PATH = ROOT / "tools" / "materialize_ycbv_bop19.py"
 TOOL_SPEC = importlib.util.spec_from_file_location("materialize_ycbv_bop19", TOOL_PATH)
@@ -215,6 +216,53 @@ class M20ZipSafetyTests(unittest.TestCase):
                 archive.writestr("ycbv/bomb.txt", b"0" * 500)
             with self.assertRaisesRegex(TOOL.MaterializationError, "compression-ratio"):
                 self._inspect(ratio)
+
+    def test_official_test_archive_style_root_fails_the_frozen_single_root_rule(self):
+        with tempfile.TemporaryDirectory() as directory:
+            archive_path = Path(directory) / "test-root.zip"
+            with zipfile.ZipFile(archive_path, "w") as archive:
+                archive.writestr("test/000048/scene_gt.json", b"{}")
+            with self.assertRaisesRegex(TOOL.MaterializationError, "top-level root"):
+                self._inspect(archive_path)
+
+
+class M20StoppedResultTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.contract = tomllib.loads(CONTRACT.read_text(encoding="utf-8"))
+        cls.result = tomllib.loads(RESULT.read_text(encoding="utf-8"))
+
+    def test_stop_matches_the_frozen_fail_closed_branch(self):
+        self.assertEqual(cls_value := self.result["decision"], self.contract["gate"]["normal_stop_decision"])
+        self.assertEqual(cls_value, "STOP_YCBV_REAL_TRANSFER_ORACLE_MATERIALIZATION")
+        self.assertTrue(self.result["normal_stop"])
+        self.assertEqual(self.result["failure_stage"], "PRE_EXTRACTION_ARCHIVE_HEADER_PREFLIGHT")
+        self.assertFalse(self.result["extraction_started"])
+        self.assertFalse(self.result["real_annotation_read"])
+
+    def test_archive_identity_passes_but_single_root_contract_does_not(self):
+        self.assertTrue(self.result["source_identity_passed"])
+        archives = {item["name"]: item for item in self.result["archive"]}
+        self.assertEqual(archives["ycbv_base.zip"]["observed_top_level_root"], "ycbv")
+        self.assertEqual(archives["ycbv_test_bop19.zip"]["observed_top_level_root"], "test")
+        self.assertEqual(archives["ycbv_test_bop19.zip"]["header_preflight"], "FAIL")
+        for expected in self.contract["archive"]:
+            actual = archives[expected["name"]]
+            self.assertEqual((actual["bytes"], actual["sha256"]), (expected["bytes"], expected["sha256"]))
+
+    def test_next_gate_changes_only_per_archive_root_mapping(self):
+        next_gate = self.result["next_gate"]
+        self.assertEqual(next_gate["proposal"], "M21_PER_ARCHIVE_ROOT_MAPPING_INFRASTRUCTURE_REPAIR")
+        self.assertIn("SOURCE_REVISION", next_gate["unchanged"])
+        self.assertIn("SMALL_TARGET_RANGE", next_gate["unchanged"])
+        self.assertIn("ALL_MODEL_TRAINING_CLAIM_AND_OPERATION_PROHIBITIONS", next_gate["unchanged"])
+
+    def test_stop_preserves_every_model_claim_and_operation_boundary(self):
+        self.assertTrue(all(value is False for value in self.result["boundaries"].values()))
+        verification = self.result["verification"]
+        self.assertEqual(verification["source_bytes_committed"], 0)
+        self.assertEqual(verification["extracted_file_count"], 0)
+        self.assertEqual(verification["real_annotation_files_read"], 0)
 
 
 if __name__ == "__main__":
