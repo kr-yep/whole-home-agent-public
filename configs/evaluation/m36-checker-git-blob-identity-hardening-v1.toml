@@ -1,0 +1,56 @@
+schema_version = 1
+status = "FROZEN_BEFORE_BOUNDED_IMPLEMENTATION"
+gate_id = "m36-checker-git-blob-identity-hardening-v1"
+intended_use = "NON_ACCEPTANCE_CHECKER_VERSIONED_TEXT_PORTABILITY_HARDENING"
+m35_result = "configs/evaluation/m35-versioned-text-identity-portability-decision-result-v1.toml"
+m35_result_sha256 = "9095e90f77adfbe1594183852254ca1a2718d51285b564fd0da9eb1278bf9d74"
+selected_candidate = "A_GIT_BLOB_SHA256_PLUS_CLEAN_WORKTREE"
+prechange_checker = "tools/check_teammate_drill.py"
+prechange_checker_sha256 = "cd285badb9e4ccd6b5ab8e94a657cdfa814294ceffc9d72468875ea977118c5f"
+unchanged_gitattributes_sha256 = "6f2574090431ba5803fc10a9c68345bd5d2bba17c100018b68b02f817eb185ce"
+unchanged_uv_lock_sha256 = "f2d3639c4b34b9c8a05381baec95cd178d39e056d81bbb7bc028eaeba1c94c3e"
+
+[implementation]
+production_file_change_count = 0
+tool_file_change_count = 1
+tool_file = "tools/check_teammate_drill.py"
+add_git_blob_byte_helper = true
+fatal_lock_identity = "SHA256_OF_EXACT_HEAD_UV_LOCK_GIT_BLOB_BYTES"
+require_expected_head_revision_unchanged = true
+require_clean_worktree_unchanged = true
+non_git_fallback_allowed = false
+raw_worktree_hash_fatal = false
+receipt_add_git_blob_sha256 = true
+receipt_add_worktree_sha256 = true
+receipt_add_representation_match = true
+remove_ambiguous_uv_lock_sha256 = true
+
+[focused_verification]
+synthetic_temporary_git_repository_only = true
+lf_and_crlf_worktree_same_blob_identity = true
+content_change_is_dirty = true
+wrong_blob_hash_is_rejected = true
+non_git_environment_fails = true
+receipt_fields_are_distinct = true
+application_demo_checker_acceptance_execution_allowed = false
+
+[compatibility]
+checker_receipt_schema_change = "REPLACE_AMBIGUOUS_UV_LOCK_SHA256_WITH_THREE_EXPLICIT_IDENTITY_AND_REPRESENTATION_FIELDS"
+stable_external_checker_receipt_schema_promised = false
+product_or_public_demo_schema_changed = false
+
+[decision]
+pass = "PASS_M36_GIT_BLOB_IDENTITY_HARDENING"
+normal_stop = "STOP_M36_GIT_BLOB_IDENTITY_HARDENING"
+pass_authorizes_only = "DOCUMENTED_TEAMMATE_RUNBOOK_AND_INDEPENDENT_HANDOFF_REQUEST"
+m34_retry_or_status_rewrite_allowed = false
+
+[boundaries]
+clone_install_demo_checker_or_acceptance_execution_allowed = false
+gitattributes_lock_fixture_dependency_or_threshold_change_allowed = false
+production_code_schema_semantics_or_presentation_change_allowed = false
+external_private_or_live_media_allowed = false
+model_load_prediction_training_or_tuning_allowed = false
+m29_or_m34_retry_allowed = false
+private_registry_credential_cloud_or_action_allowed = false
+operate_enabled = false
