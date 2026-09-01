@@ -9,6 +9,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / "configs" / "evaluation" / "m37-teammate-handoff-runbook-v1.toml"
+RUNBOOK = ROOT / "docs" / "teammate-handoff-runbook.md"
 
 
 class M37ContractTests(unittest.TestCase):
@@ -72,6 +73,51 @@ class M37ContractTests(unittest.TestCase):
         )
         self.assertTrue(self.contract["next_gate"]["requires_real_teammate_receipt"])
         self.assertTrue(self.contract["next_gate"]["agent_generated_receipt_is_ineligible"])
+
+
+class M37RunbookTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.contract = tomllib.loads(CONTRACT.read_text(encoding="utf-8"))
+        cls.runbook = RUNBOOK.read_text(encoding="utf-8")
+
+    def test_exact_revision_and_both_shell_workflows_are_present(self):
+        self.assertIn(self.contract["handoff_revision"], self.runbook)
+        self.assertIn("## Windows PowerShell procedure", self.runbook)
+        self.assertIn("## macOS/Linux Bash or Zsh procedure", self.runbook)
+        self.assertIn("git -C $DrillRoot checkout --detach $ApprovedRevision", self.runbook)
+        self.assertIn('git -C "$DRILL_ROOT" checkout --detach "$APPROVED_REVISION"', self.runbook)
+        self.assertIn("uv sync --frozen --extra demo", self.runbook)
+        self.assertIn("tools\\check_teammate_drill.py", self.runbook)
+        self.assertIn("tools/check_teammate_drill.py", self.runbook)
+
+    def test_receipt_interpretation_keeps_all_required_fields_visible(self):
+        for fields in self.contract["required_receipt"].values():
+            for field in fields:
+                self.assertIn(field, self.runbook)
+        self.assertIn("Exit `2` means a bounded `STOP`", self.runbook)
+        self.assertIn("may be `false` on a clean CRLF", self.runbook)
+
+    def test_troubleshooting_cleanup_demo_and_result_template_are_explicit(self):
+        for heading in (
+            "## Failure classes and next action",
+            "## Git, uv, and Windows ACL troubleshooting",
+            "## 90-second presentation and CLI fallback",
+            "## Safe cleanup",
+            "## Teammate result template",
+            "## Claim limits",
+        ):
+            self.assertIn(heading, self.runbook)
+        self.assertIn("Remove-Item -LiteralPath $ResolvedDrillRoot", self.runbook)
+        self.assertIn('rm -rf -- "$DRILL_ROOT"', self.runbook)
+        self.assertNotIn("rm -rf /", self.runbook)
+        self.assertNotIn("safe.directory '*'", self.runbook)
+
+    def test_runbook_does_not_promote_missing_external_evidence(self):
+        self.assertIn("one real teammate", self.runbook)
+        self.assertIn("does not establish another unreported platform", self.runbook)
+        self.assertIn("`OPERATE` must remain `DISABLED`", self.runbook)
+        self.assertNotIn("independent teammate verified", self.runbook.lower())
 
 
 if __name__ == "__main__":
