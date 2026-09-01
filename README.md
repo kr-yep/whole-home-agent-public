@@ -1,6 +1,6 @@
 # Whole Home Agent
 
-> **Current milestone:** `B1 — offline replay + public perception and motion screens`
+> **Current milestone:** `B1 — offline replay + bounded public perception gates`
 >
 > **Status:** `NOT PRODUCTION` · `OPERATE DISABLED`
 > **Allowed data:** included generated fixtures plus separately downloaded, licensed D0 public data
@@ -29,6 +29,8 @@ The answer is an `estimated` result scoped to that replay. It is not a claim abo
 - paired SSDLite320 and RetinaNet-FPN detector adapters with no implicit download;
 - a frozen VOST consecutive-frame motion screen with range-only acquisition;
 - development-only scheduler selection and paired full-frame/FPN cost evidence;
+- an explicit VOST bottle mask-to-box target/tracking gate that stops before movement
+  candidates when the observation path is too weak;
 - JSON CLI and a local Streamlit presentation;
 - automated B0 tests on Python 3.11–3.14 plus locked B1/demo jobs.
 
@@ -49,6 +51,15 @@ and peak VRAM about `352.2 MiB`. Exact-frame coverage was only `43.9%`, and VOST
 egocentric camera-motion stress case, so this is scheduling evidence—not proof that the
 system identified or understood a moved object. See the
 [VOST motion gate](docs/evaluation/vost-motion-screen-v1.md).
+
+A separate target-aware development gate then tested whether those scheduled calls
+contained usable observations. On 51 frames of `3518_unscrew_bottle`, full-frame
+RetinaNet recall@0.5 was only `19.6%`; the clip-local tracker recorded five ID switches
+and four fragmentations. Scheduled target-event coverage was `20.5%`, retaining `72.7%`
+of full-frame target-event coverage while avoiding `49.0%` of calls. The candidate was
+rejected on development, so the reserved validation sequence was not run and no
+movement-candidate layer was added. See the
+[target-tracking gate](docs/evaluation/vost-target-track-screen-v1.md).
 
 ## Run the demo
 
@@ -122,13 +133,13 @@ docs/                       architecture, demo, ADR, and technology notes
 
 ## Next evidence gate
 
-The first public detector screen and consecutive motion screen are frozen. The tile
-candidate was rejected; the VOST scheduler candidate passed its bounded validation gate.
-The next step is to evaluate whether selected RetinaNet observations can form stable,
-clip-local movement candidates without treating full-frame model output as truth. A
-future product-level or fixed-camera claim still needs a separately frozen source with
-object identity/movement annotations. Do not rerun or tune on VISOR `P14_05`, connect a
-live source, or promote VOST mask coverage into a target-detection claim. Training
+The first public detector, consecutive motion, and target-tracking screens are frozen.
+The tile candidate and the current RetinaNet target-observation path were rejected; the
+earlier scheduler-only candidate passed its narrower cost/selection gate. The next step
+is development-only failure localization: distinguish confidence, localization IoU,
+target size/absence, and track-association failures before choosing another model or
+tracker. The reserved VOST validation source and VISOR `P14_05` must remain untouched.
+Do not add a movement-candidate layer merely because scheduling is inexpensive. Training
 remains capped at 20 epochs with patience 5, and test tuning and automatic submissions
 remain prohibited.
 
