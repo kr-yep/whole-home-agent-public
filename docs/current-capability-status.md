@@ -1,6 +1,6 @@
 # Current capability status
 
-**Checkpoint:** M34 normal STOP · **Runtime:** `OPERATE DISABLED` · **Production ready:** no
+**Checkpoint:** M35 decision · **Runtime:** `OPERATE DISABLED` · **Production ready:** no
 
 This page is updated with every milestone push so a teammate can see what is usable and
 what is still missing without reconstructing the full experiment history.
@@ -41,18 +41,12 @@ what is still missing without reconstructing the full experiment history.
 These remain blocked by proposed governance, unassigned roles, absent consent and data
 policy, and `OPERATE DISABLED`.
 
-## Latest push: M34 CI receipt
+## Latest push: M35 text-identity decision
 
-The one allowed retry parsed uv correctly, made a new public clone, installed 40 locked
-packages from an empty cache, and ran the unchanged demo offline. It returned the exact
-scoped key→bag→sofa result in 30.427 seconds total with zero demo network attempts.
+Selected Git-blob SHA-256 plus exact revision and clean worktree as the authoritative
+identity for versioned text in clone drills. Raw checkout hash will be diagnostic only;
+canonical-LF fallback is not allowed. This decision ran no clone, install, checker,
+demo, or acceptance and leaves M34 as a normal STOP.
 
-The contract still stopped: Windows `core.autocrlf` converted the text lock from LF to
-CRLF, so its raw working-tree hash differed while the Git blob and `uv sync --frozen`
-remained exact. The agent-run Windows path is mechanically usable; independent teammate
-and other-platform evidence is still missing. M35 may fix text identity only and cannot
-rerun M34.
-
-The M34 result passed
-[public CI run 33525316891](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33525316891).
-This adds verification evidence only; the usable and missing claims above are unchanged.
+The agent-run Windows path remains mechanically usable; independent teammate/platform
+evidence is still missing. M36 may harden only the checker and tests.

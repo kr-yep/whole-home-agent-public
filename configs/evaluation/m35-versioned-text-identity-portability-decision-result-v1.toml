@@ -1,0 +1,97 @@
+schema_version = 1
+status = "RECORDED_SINGLE_ELIGIBLE_SELECTION"
+gate_id = "m35-versioned-text-identity-portability-decision-v1"
+decision = "SELECT_ONE_M36_NON_ACCEPTANCE_PORTABILITY_HARDENING"
+contract_revision = "cf90586078012930c5683f3ec1b6f4adb8d62aa0"
+selected_candidate = "A_GIT_BLOB_SHA256_PLUS_CLEAN_WORKTREE"
+eligible_candidate_count = 1
+repository_evidence_only = true
+clone_install_demo_checker_or_acceptance_executed = false
+m34_status_after_m35 = "CONTRACT_NORMAL_STOP"
+
+[[observed_fact]]
+id = "F1_BLOB_IS_STABLE"
+status = "PASS"
+evidence = "THE_EXACT_UV_LOCK_GIT_BLOB_SHA256_MATCHES_THE_FROZEN_CONTRACT"
+
+[[observed_fact]]
+id = "F2_CHECKOUT_REPRESENTATION_DIFFERS"
+status = "PASS"
+evidence = "CORE_AUTOCRLF_TRUE_CHANGED_2755_LF_LINES_TO_CRLF_AND_CHANGED_RAW_SHA256"
+
+[[observed_fact]]
+id = "F3_RESOLUTION_DID_NOT_CHANGE"
+status = "PASS"
+evidence = "UV_SYNC_FROZEN_SUCCEEDED_FROM_THE_CRLF_CHECKOUT"
+
+[[observed_fact]]
+id = "F4_ATTRIBUTES_GAP_IS_EXACT"
+status = "PASS"
+evidence = "GITATTRIBUTES_FORCES_LF_FOR_TOML_JSON_PY_MD_YAML_BUT_HAS_NO_UV_LOCK_RULE"
+
+[[observed_fact]]
+id = "F5_DRILL_ALREADY_REQUIRES_GIT"
+status = "PASS"
+evidence = "CHECKER_REQUIRES_EXACT_GIT_HEAD_AND_CLEAN_WORKTREE_BEFORE_DEMO"
+
+[[candidate_result]]
+id = "A_GIT_BLOB_SHA256_PLUS_CLEAN_WORKTREE"
+eligible = true
+pass_count = 8
+fail_count = 0
+gate_results = ["PASS", "PASS", "PASS", "PASS", "PASS", "PASS", "PASS", "PASS"]
+
+[[candidate_result]]
+id = "B_CANONICAL_LF_WORKTREE_SHA256"
+eligible = false
+pass_count = 6
+fail_count = 2
+gate_results = ["PASS", "FAIL", "PASS", "FAIL", "PASS", "PASS", "PASS", "PASS"]
+failure = "DERIVED_NORMALIZED_BYTES_ARE_NOT_THE_EXACT_COMMITTED_VERSION_AND_CREATE_A_SECOND_IDENTITY_MODE"
+
+[[candidate_result]]
+id = "C_RAW_WORKTREE_SHA256"
+eligible = false
+pass_count = 5
+fail_count = 3
+gate_results = ["FAIL", "FAIL", "PASS", "PASS", "PASS", "PASS", "FAIL", "PASS"]
+failure = "M34_DIRECTLY_FALSIFIED_CHECKOUT_STABILITY_AND_VERSION_REPRESENTATION_CLARITY"
+
+[selected_scope]
+next_gate = "M36_CHECKER_GIT_BLOB_IDENTITY_HARDENING"
+hash_exact_head_uv_lock_git_blob = true
+require_expected_head_revision = true
+require_clean_worktree = true
+non_git_fallback_allowed = false
+retain_worktree_raw_sha256_as_diagnostic_only = true
+receipt_distinguishes_git_blob_and_worktree_hash = true
+change_gitattributes_or_uv_lock = false
+run_clone_install_demo_or_acceptance = false
+m34_retry_or_status_rewrite = false
+
+[archive_limit]
+checker_supported_environment = "EXACT_GIT_CLONE_ONLY"
+source_archive_or_wheel_without_git_supported = false
+reason = "M33_M34_TEAMMATE_DRILL_ALREADY_REQUIRES_EXACT_GIT_REVISION_AND_CLEAN_WORKTREE"
+
+[claim_limits]
+selection_establishes_m34_pass = false
+selection_establishes_cross_platform_demo_success = false
+selection_establishes_product_or_cv_gain = false
+selection_authorizes_only_separately_frozen_m36 = true
+
+[verification]
+focused_tests_status = "PASS_7_OF_7"
+public_audit_status = "PASS_291_FILES_582_SNAPSHOTS_ZERO_VIOLATIONS"
+public_ci_status = "PENDING"
+operate_enabled = false
+[boundaries]
+clone_install_demo_checker_or_acceptance_executed = false
+checker_or_gitattributes_changed = false
+production_code_schema_semantics_or_presentation_changed = false
+threshold_fixture_lock_or_dependency_changed = false
+external_private_or_live_media_used = false
+model_loaded_or_trained = false
+m29_or_m34_retry_run = false
+private_registry_credential_cloud_or_action_connected = false
+operate_enabled = false

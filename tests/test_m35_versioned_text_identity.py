@@ -10,6 +10,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / "configs" / "evaluation" / "m35-versioned-text-identity-portability-decision-v1.toml"
+RESULT = ROOT / "configs" / "evaluation" / "m35-versioned-text-identity-portability-decision-result-v1.toml"
 
 
 class M35ContractTests(unittest.TestCase):
@@ -52,6 +53,40 @@ class M35ContractTests(unittest.TestCase):
     def test_decision_and_runtime_boundaries_are_closed(self):
         self.assertFalse(self.document["decision"]["m34_status_rewrite_or_retry_allowed"])
         self.assertTrue(all(value is False for value in self.document["boundaries"].values()))
+
+
+class M35ResultTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.result = tomllib.loads(RESULT.read_text(encoding="utf-8"))
+
+    def test_git_blob_identity_is_the_only_eligible_candidate(self):
+        matrix = {item["id"]: item for item in self.result["candidate_result"]}
+        self.assertEqual(self.result["eligible_candidate_count"], 1)
+        self.assertEqual(self.result["selected_candidate"], "A_GIT_BLOB_SHA256_PLUS_CLEAN_WORKTREE")
+        self.assertEqual(matrix["A_GIT_BLOB_SHA256_PLUS_CLEAN_WORKTREE"]["gate_results"], ["PASS"] * 8)
+        self.assertFalse(matrix["B_CANONICAL_LF_WORKTREE_SHA256"]["eligible"])
+        self.assertFalse(matrix["C_RAW_WORKTREE_SHA256"]["eligible"])
+
+    def test_selected_scope_keeps_identity_and_representation_distinct(self):
+        scope = self.result["selected_scope"]
+        self.assertTrue(scope["hash_exact_head_uv_lock_git_blob"])
+        self.assertTrue(scope["require_expected_head_revision"])
+        self.assertTrue(scope["require_clean_worktree"])
+        self.assertFalse(scope["non_git_fallback_allowed"])
+        self.assertTrue(scope["retain_worktree_raw_sha256_as_diagnostic_only"])
+        self.assertTrue(scope["receipt_distinguishes_git_blob_and_worktree_hash"])
+
+    def test_archive_limit_and_m34_history_are_explicit(self):
+        self.assertFalse(self.result["archive_limit"]["source_archive_or_wheel_without_git_supported"])
+        self.assertFalse(self.result["selected_scope"]["m34_retry_or_status_rewrite"])
+        self.assertEqual(self.result["m34_status_after_m35"], "CONTRACT_NORMAL_STOP")
+        self.assertFalse(self.result["claim_limits"]["selection_establishes_m34_pass"])
+        self.assertTrue(all(value is False for value in self.result["boundaries"].values()))
+
+
+if __name__ == "__main__":
+    unittest.main()
 
 
 if __name__ == "__main__":

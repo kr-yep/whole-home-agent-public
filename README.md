@@ -29,13 +29,10 @@ indoor small-object gain; robust tracking under occlusion/camera motion; live ca
 multi-camera support; durable household memory/retention; assigned policy/data roles,
 consent, and any operational activation. Live/private sensing and actions remain blocked.
 
-**Latest milestone (M34 STOP):** a Windows clean clone with an empty dependency cache
-installed and ran the offline demo correctly in 30.427 seconds total, with zero network
-attempts during demo and the exact key→bag→sofa answer/trace. The frozen checker still
-stopped because Git converted `uv.lock` LF bytes to CRLF at checkout, changing its raw
-SHA-256 without changing the Git blob or frozen dependency resolution. M34 cannot retry;
-M35 may harden versioned-text identity without rerunning acceptance. The M34 result
-passed [public CI](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33525316891).
+**Latest milestone (M35):** repository-only scoring selects exact Git-blob SHA-256 plus
+exact revision and clean-worktree checks as the stable identity for versioned text. Raw
+checkout hash becomes diagnostic only; canonical-LF fallback is rejected. M34 remains a
+normal STOP and was not rerun. M36 may harden only the checker and focused tests.
 
 ## What works today
 
@@ -341,6 +338,8 @@ clean-clone success and exact pre-install harness stop without mislabeling it as
 or dependency failure.
 The [M34 result](docs/evaluation/m34-teammate-drill-infrastructure-retry-v1.md) records
 the successful clean install/offline semantics and the distinct CRLF lock-identity STOP.
+The [M35 result](docs/evaluation/m35-versioned-text-identity-portability-decision-v1.md)
+selects Git-blob identity for the separately bounded non-acceptance checker hardening.
 
 ## Safety and data boundary
 
