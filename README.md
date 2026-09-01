@@ -131,6 +131,11 @@ same-object/same-scene pair satisfying both the 0.1–1% visible-positive and co
 class-absent requirements, so it stopped before RGB or D1 output. See the
 [M21 evidence report](docs/evaluation/m21-ycbv-per-archive-root-repair-v1.md).
 
+M22 localized that failure without reading media: the same public annotations contain
+81 qualifying small-positive frames and 14,775 safe negatives, but zero positive/negative
+pairs within one object/scene key. Cross-scene pairing is not yet adopted. See the
+[M22 evidence report](docs/evaluation/m22-ycbv-annotation-failure-localization-v1.md).
+
 ## Run the demo
 
 Requires Python 3.11 or newer. The lockfile was generated with `uv 0.11.24`.
@@ -206,11 +211,11 @@ docs/                       architecture, demo, ADR, and technology notes
 The first public detector, consecutive motion, target-tracking, failure-localization,
 RF-DETR replacement, D-FINE synthetic engineering, M14 scientific-priority, M15
 target-substrate, M16 label-oracle, M17 generation-strategy, M18 vector-substrate, and
-M19 real-oracle, M20 materialization, and M21 single-repair gates are frozen. M21 proved
-the archive mapping but stopped at the unchanged combined annotation predicate. M22 may
-only localize which predicate term failed on the same pinned metadata; it cannot retry,
-loosen the rule, load a model, or train. Tracker replacement remains a separate later
-co-gate.
+M19 real-oracle through M22 failure-localization gates are frozen. M22 found that the
+positive and negative terms both exist but are separated by scene. M23 may only decide
+whether cross-scene detector evaluation is valid under authoritative protocols; it
+cannot reread data, loosen a threshold, load a model, or train. Tracker replacement
+remains a separate later co-gate.
 The reserved VOST validation source and VISOR `P14_05` must remain untouched. Do not add
 a movement-candidate layer merely because scheduling is inexpensive. Training remains
 capped at 20 epochs with patience 5, and test tuning and automatic submissions remain
@@ -224,7 +229,8 @@ and [M12 detector screen](docs/evaluation/vost-m12-rfdetr-small-v1.md), plus the
 [M18 result](docs/evaluation/m18-vector-d1-slice-v1.md), and the
 [M19 result](docs/evaluation/m19-real-transfer-oracle-reality-gate-v1.md), the
 [M20 result](docs/evaluation/m20-ycbv-bop19-acquisition-translation-v1.md), and the
-[M21 result](docs/evaluation/m21-ycbv-per-archive-root-repair-v1.md).
+[M21 result](docs/evaluation/m21-ycbv-per-archive-root-repair-v1.md), and the
+[M22 result](docs/evaluation/m22-ycbv-annotation-failure-localization-v1.md).
 
 ## Safety and data boundary
 

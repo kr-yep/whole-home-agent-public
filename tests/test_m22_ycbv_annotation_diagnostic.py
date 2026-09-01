@@ -28,6 +28,7 @@ from whole_home_agent.adapters.bop_diagnostic import (
 ROOT = Path(__file__).resolve().parents[1]
 M21 = ROOT / "configs" / "evaluation" / "m21-ycbv-per-archive-root-repair-v1.toml"
 CONTRACT = ROOT / "configs" / "evaluation" / "m22-ycbv-annotation-failure-localization-v1.toml"
+RESULT = ROOT / "configs" / "evaluation" / "m22-ycbv-annotation-failure-localization-result-v1.toml"
 FIXTURE = ROOT / "tests" / "fixtures" / "bop" / "ycbv_m20_minimal"
 TOOL_PATH = ROOT / "tools" / "diagnose_ycbv_annotations.py"
 TOOL_SPEC = importlib.util.spec_from_file_location("diagnose_ycbv_annotations", TOOL_PATH)
@@ -233,6 +234,48 @@ class M22SyntheticDiagnosticTests(unittest.TestCase):
             frames = parse_ycbv_bop19_frames(targets, documents)
         self.assertEqual(len(frames), 3)
         self.assertEqual(diagnose_ycbv_m21_predicates(frames).decision, CONFORMANCE_CONFLICT)
+
+
+class M22ResultTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.contract = tomllib.loads(CONTRACT.read_text(encoding="utf-8"))
+        cls.result = tomllib.loads(RESULT.read_text(encoding="utf-8"))
+
+    def test_result_selects_only_the_pairing_scope_branch(self):
+        self.assertEqual(
+            self.result["decision"],
+            self.contract["decision"]["pairing_scope"],
+        )
+        self.assertGreater(self.result["positive_frame_count"], 0)
+        self.assertGreater(self.result["negative_frame_count"], 0)
+        self.assertEqual(self.result["paired_object_scene_count"], 0)
+        self.assertFalse(self.result["threshold_or_predicate_changed"])
+
+    def test_exact_aggregate_counts_and_positive_objects_are_recorded(self):
+        self.assertEqual(self.result["positive_frame_count"], 81)
+        self.assertEqual(self.result["negative_frame_count"], 14775)
+        self.assertEqual(self.result["negative_object_scene_count"], 197)
+        rows = self.result["positive_object"]
+        self.assertEqual(
+            [(row["object_id"], row["positive_frame_count"], row["scene_counts"]) for row in rows],
+            [(4, 21, ["50:21"]), (17, 2, ["51:2"]), (18, 58, ["57:40", "59:18"])],
+        )
+        self.assertEqual(sum(row["positive_frame_count"] for row in rows), 81)
+
+    def test_first_attempt_is_not_misreported_as_source_failure(self):
+        attempts = self.result["attempt"]
+        self.assertEqual(attempts[0]["status"], "IMPLEMENTATION_WIRING_FAILURE")
+        self.assertFalse(attempts[0]["source_invalid_established"])
+        self.assertEqual(attempts[1]["status"], "DIAGNOSIS_COMPLETED")
+        self.assertEqual(self.result["verification"]["real_diagnostic_attempts"], 2)
+
+    def test_cross_scene_rule_remains_unadopted_and_boundaries_closed(self):
+        next_gate = self.result["next_gate"]
+        self.assertFalse(next_gate["cross_scene_rule_adopted"])
+        self.assertFalse(next_gate["source_or_media_read_allowed"])
+        self.assertFalse(next_gate["model_prediction_or_training_allowed"])
+        self.assertTrue(all(value is False for value in self.result["boundaries"].values()))
 
 
 if __name__ == "__main__":

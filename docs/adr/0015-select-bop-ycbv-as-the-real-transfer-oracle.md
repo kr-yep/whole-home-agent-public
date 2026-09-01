@@ -74,3 +74,11 @@ positive and complete class-absent frame, so M21 stopped before RGB or D1 comple
 This closes the one materialization-repair authority. A bounded annotation-only
 diagnostic may distinguish the two failed conjuncts, but it cannot make M21 pass or
 authorize a changed source, threshold, or negative definition.
+
+## M22 failure-localization evidence
+
+The exact M21 target-frame scope contains 81 frozen-bucket positives and 14,775 safe
+class-absent object/frame cases, but zero object/scene cells contain both. The failed M21
+term is therefore same-scene pairing. Cross-scene pairing is not adopted by this finding:
+its validity and comparability require a separate no-data/no-model decision gate before
+any further materialization or detector experiment.
