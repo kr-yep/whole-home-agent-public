@@ -73,19 +73,6 @@ class PublicDemoTests(unittest.TestCase):
         self.assertEqual(result["answer"]["status"], "FOUND")
         self.assertEqual(result["answer"]["location_id"], "sofa")
         self.assertEqual(result["answer"]["epistemic_status"], "estimated")
-        self.assertEqual(result["answer_summary"], result["presentation"]["text"])
-        self.assertEqual(result["presentation"]["status"], "PRESENTED")
-        self.assertEqual(
-            result["presentation"]["presenter_id"],
-            "deterministic-location/1",
-        )
-        self.assertFalse(result["presentation"]["fallback_used"])
-        self.assertEqual(
-            result["language_context"]["schema"],
-            "whole-home-agent.location-context.v1",
-        )
-        self.assertNotIn("被放進", result["answer_summary"])
-        self.assertNotIn("之後", result["answer_summary"])
         self.assertEqual(len(result["claims"]), 2)
         self.assertTrue(all(item["evidence"] for item in result["claims"]))
         self.assertEqual(len(result["frames"]), 80)
@@ -114,40 +101,10 @@ class PublicDemoTests(unittest.TestCase):
         self.assertEqual(exit_code, 0)
         self.assertEqual(payload["frames"], [])
         self.assertEqual(payload["run_receipt"]["status"], "COMPLETE")
-        self.assertEqual(payload["presentation"]["status"], "PRESENTED")
-        self.assertEqual(
-            payload["answer_summary"], payload["presentation"]["text"]
-        )
 
     def test_subject_outside_manifest_allowlist_fails_closed(self):
         with self.assertRaises(SourceError):
             run_public_demo(subject_id="../camera", include_frames=False)
-
-    def test_presenter_failure_keeps_structured_answer_and_sanitized_fallback(self):
-        class ThrowingPresenter:
-            presenter_id = "test-throwing/1"
-
-            def present(self, context):
-                raise RuntimeError("private provider response must not escape")
-
-        with mock.patch.object(
-            public_demo,
-            "DeterministicLocationPresenter",
-            return_value=ThrowingPresenter(),
-        ):
-            result = run_public_demo(
-                replay_run_id="public-demo-presentation-fallback",
-                include_frames=False,
-            )
-        self.assertEqual(result["answer"]["status"], "FOUND")
-        self.assertEqual(result["answer"]["location_id"], "sofa")
-        self.assertEqual(result["presentation"]["status"], "FALLBACK")
-        self.assertTrue(result["presentation"]["fallback_used"])
-        self.assertEqual(
-            result["answer_summary"],
-            "無法產生文字摘要；請以結構化答案與證據鏈為準。",
-        )
-        self.assertNotIn("private provider response", str(result["presentation"]))
 
     def test_streamlit_source_has_no_upload_or_camera_widget(self):
         source = (

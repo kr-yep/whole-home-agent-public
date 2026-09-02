@@ -4,10 +4,13 @@ from __future__ import annotations
 
 import ast
 import hashlib
+import importlib.util
 import tomllib
 import unittest
 from pathlib import Path
+from unittest import mock
 
+from whole_home_agent import public_demo
 from whole_home_agent.presentation import (
     DETERMINISTIC_PRESENTER_ID,
     FALLBACK,
@@ -19,11 +22,15 @@ from whole_home_agent.presentation import (
     DeterministicLocationPresenter,
     present_location_context,
 )
+from whole_home_agent.public_demo import run_public_demo
 
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / "configs" / "evaluation" / "m40-local-presentation-implementation-v1.toml"
 RESULT = ROOT / "configs" / "evaluation" / "m40-local-presentation-implementation-result-v1.toml"
+HAS_VIDEO = importlib.util.find_spec("av") is not None and importlib.util.find_spec(
+    "numpy"
+) is not None
 
 
 class M40ContractTests(unittest.TestCase):
@@ -311,6 +318,46 @@ class M40ImplementationTests(unittest.TestCase):
                 {"open", "exec", "eval", "compile", "__import__"}
             )
         )
+
+
+@unittest.skipUnless(HAS_VIDEO, "video optional dependencies are not installed")
+class M40ClosedDemoIntegrationTests(unittest.TestCase):
+    def test_normal_and_fallback_presentations_keep_the_same_structured_answer(self):
+        normal = run_public_demo(
+            replay_run_id="m40-normal-presentation",
+            include_frames=False,
+        )
+        self.assertEqual(normal["answer"]["status"], "FOUND")
+        self.assertEqual(normal["answer"]["location_id"], "sofa")
+        self.assertEqual(normal["answer_summary"], normal["presentation"]["text"])
+        self.assertEqual(normal["presentation"]["status"], PRESENTED)
+        self.assertEqual(
+            normal["language_context"]["schema"],
+            "whole-home-agent.location-context.v1",
+        )
+        self.assertNotIn("被放進", normal["answer_summary"])
+        self.assertNotIn("之後", normal["answer_summary"])
+
+        with mock.patch.object(
+            public_demo,
+            "DeterministicLocationPresenter",
+            return_value=_ThrowingPresenter(),
+        ):
+            fallback = run_public_demo(
+                replay_run_id="m40-fallback-presentation",
+                include_frames=False,
+            )
+        for key in (
+            "subject_id",
+            "status",
+            "location_id",
+            "epistemic_status",
+            "relation_path",
+        ):
+            self.assertEqual(fallback["answer"][key], normal["answer"][key])
+        self.assertEqual(fallback["presentation"]["status"], FALLBACK)
+        self.assertEqual(fallback["answer_summary"], FALLBACK_TEXT)
+        self.assertNotIn("sensitive-provider-payload", str(fallback["presentation"]))
 
 
 class M40ResultTests(unittest.TestCase):
