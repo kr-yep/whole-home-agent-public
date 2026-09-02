@@ -1,0 +1,195 @@
+schema_version = 1
+status = "FROZEN_BEFORE_REPOSITORY_EVIDENCE_SCORING"
+gate_id = "m39-language-presentation-boundary-v1"
+intended_use = "REPOSITORY_ONLY_LANGUAGE_PRESENTATION_BOUNDARY_DECISION"
+evidence_date = "2026-09-02"
+candidate_count = 3
+fatal_gate_count = 10
+selection_rule = "SELECT_AT_MOST_ONE_CANDIDATE_THAT_PASSES_EVERY_FATAL_GATE"
+tie_break_order = ["least_authority_coupling", "least_data_disclosure", "smallest_coherent_runtime"]
+m38_context_schema = "whole-home-agent.location-context.v1"
+m38_revision = "915da5958470631ac574ebc124451eefa779fb2c"
+
+[[evidence_file]]
+path = "src/whole_home_agent/llm_context.py"
+sha256 = "4baf318f32066c9b1e87b0b7abb45578ff46a434d54df6b735cc87cc9a0fcf5b"
+role = "EXACT_MINIMIZED_TEXT_ALLOWLIST"
+
+[[evidence_file]]
+path = "docs/adr/0020-preview-minimized-text-before-language-provider.md"
+sha256 = "3960bda19ea5c1d0a84e3ce41924f8fa4b8acb3ed0368b64f7e3352974d46bae"
+role = "M38_NO_PROVIDER_BASELINE"
+
+[[evidence_file]]
+path = "ACTION_POLICY.md"
+sha256 = "9ad8b9e5c659535be0176451c5615e1b7db15418193af9fc021c8af4b29c97f3"
+role = "CURRENT_CREDENTIAL_EGRESS_AND_OPERATION_BOUNDARY"
+
+[[evidence_file]]
+path = "PROJECT_STATE.md"
+sha256 = "bdcd59f8913054c8777c71e55522cac969496c1c8a5a07a9a3fbe9cf3548e963"
+role = "M38_CHECKPOINT_AND_M39_NEXT_SAFE_ACTION"
+
+[[official_source]]
+id = "OPENAI_DATA_CONTROLS"
+url = "https://developers.openai.com/api/docs/guides/your-data"
+retrieved_date = "2026-09-02"
+bounded_fact = "API_DATA_IS_NOT_USED_FOR_TRAINING_BY_DEFAULT_BUT_DEFAULT_ABUSE_MONITORING_MAY_RETAIN_CUSTOMER_CONTENT_UP_TO_30_DAYS_AND_RESPONSES_APPLICATION_STATE_HAS_SEPARATE_RETENTION_RULES"
+
+[[official_source]]
+id = "OPENAI_API_AUTHENTICATION"
+url = "https://developers.openai.com/api/reference/overview"
+retrieved_date = "2026-09-02"
+bounded_fact = "API_KEYS_ARE_SECRETS_AND_SHOULD_BE_LOADED_SERVER_SIDE_FROM_AN_ENVIRONMENT_VARIABLE_OR_KEY_MANAGEMENT_SERVICE"
+
+[[candidate]]
+id = "A_LOCAL_DEFAULT_SEPARATE_CLOUD_AUTHORITY"
+proposal = "KEEP_A_DETERMINISTIC_NO_MODEL_FALLBACK_AS_DEFAULT_ALLOW_A_SEPARATELY_VALIDATED_LOCAL_PRESENTER_AND_KEEP_ANY_CLOUD_TEXT_PRESENTER_BLOCKED_UNTIL_EXPLICIT_DATA_EGRESS_AND_RUNTIME_AUTHORITY"
+
+[[candidate]]
+id = "B_API_KEY_AUTOSTART_CLOUD"
+proposal = "ENABLE_A_CLOUD_PRESENTER_WHEN_A_PROVIDER_API_KEY_OR_CONFIGURATION_VALUE_IS_PRESENT"
+
+[[candidate]]
+id = "C_PERMANENT_LOCAL_ONLY"
+proposal = "PERMANENTLY_FORBID_ALL_CLOUD_PRESENTERS_AND_ALLOW_ONLY_DETERMINISTIC_OR_LOCAL_MODEL_PRESENTATION"
+
+[[fatal_gate]]
+id = "G1_DETERMINISTIC_FALLBACK"
+requirement = "EVERY_QUERY_CAN_RETURN_THE_EXISTING_EVIDENCE_BOUND_ANSWER_WITHOUT_A_MODEL_NETWORK_CREDENTIAL_OR_PROVIDER"
+
+[[fatal_gate]]
+id = "G2_AUTHORITY_SEPARATION"
+requirement = "A_KEY_CONFIGURATION_FLAG_OR_MODEL_OUTPUT_NEVER_COUNTS_AS_DATA_SUBJECT_CONSENT_EGRESS_APPROVAL_OR_RUNTIME_ACTIVATION"
+
+[[fatal_gate]]
+id = "G3_EXACT_DATA_ALLOWLIST"
+requirement = "ONLY_THE_VERSIONED_M38_CONTEXT_FIELDS_CAN_REACH_A_PRESENTER_AND_FIELD_NAMES_DO_NOT_HIDE_UNBOUNDED_OR_SENSITIVE_VALUES"
+
+[[fatal_gate]]
+id = "G4_PRESENTER_ONLY"
+requirement = "MODEL_OUTPUT_IS_UNTRUSTED_PRESENTATION_AND_CANNOT_COMMIT_CLAIMS_MUTATE_STATE_AUTHORIZE_TOOLS_OR_CAUSE_ACTIONS"
+
+[[fatal_gate]]
+id = "G5_LOCAL_CLOUD_TRUTH_PARITY"
+requirement = "DETERMINISTIC_LOCAL_AND_FUTURE_CLOUD_PRESENTERS_RECEIVE_THE_SAME_ACCEPTED_SCOPED_CONTEXT_AND_CANNOT_CHANGE_QUERY_SEMANTICS"
+
+[[fatal_gate]]
+id = "G6_CLOUD_RETENTION_MINIMIZATION"
+requirement = "ANY_FUTURE_CLOUD_PROFILE_IS_STATELESS_TEXT_ONLY_NO_TOOLS_NO_FILES_NO_CONVERSATION_NO_BACKGROUND_AND_EXPLICITLY_MINIMIZES_PROVIDER_APPLICATION_STATE_WITHOUT_CLAIMING_ZERO_RETENTION"
+
+[[fatal_gate]]
+id = "G7_CREDENTIAL_BOUNDARY"
+requirement = "A_FUTURE_PROJECT_SCOPED_LEAST_PRIVILEGE_SECRET_IS_NEVER_STORED_IN_GIT_UI_INPUT_PROMPT_EVENT_MODEL_MEMORY_OR_ORDINARY_LOGS"
+
+[[fatal_gate]]
+id = "G8_BOUNDED_NETWORK_AND_FAILURE"
+requirement = "A_FUTURE_CLOUD_PROFILE_HAS_EXACT_ALLOWLISTED_DESTINATION_BOUNDED_TIMEOUT_NO_UNBOUNDED_RETRY_AND_FALLS_BACK_LOCALLY_WITHOUT_OVERSTATING_SUCCESS"
+
+[[fatal_gate]]
+id = "G9_MINIMAL_TELEMETRY"
+requirement = "LOGS_EXCLUDE_CONTEXT_RESPONSE_QUERY_AND_SECRET_CONTENT_AND_RETAIN_ONLY_BOUNDED_NON_PERSONAL_OPERATIONAL_FIELDS_UNDER_AN_ADOPTED_POLICY"
+
+[[fatal_gate]]
+id = "G10_CURRENT_GATE_STAYS_CLOSED"
+requirement = "M39_ADDS_NO_PROVIDER_CLIENT_DEPENDENCY_CREDENTIAL_NETWORK_REQUEST_LIVE_OR_PRIVATE_DATA_PROCESSING_ACTION_OR_OPERATE_ACTIVATION"
+
+[[field_classification]]
+path = "schema"
+semantic_class = "PUBLIC_PROTOCOL_METADATA"
+synthetic_d0_egress_now = "PROHIBITED_NO_EGRESS_PROFILE_EXISTS"
+future_household_value = "FIXED_NON_HOUSEHOLD_CONSTANT"
+
+[[field_classification]]
+path = "purpose"
+semantic_class = "PUBLIC_PROTOCOL_METADATA"
+synthetic_d0_egress_now = "PROHIBITED_NO_EGRESS_PROFILE_EXISTS"
+future_household_value = "FIXED_NON_HOUSEHOLD_CONSTANT"
+
+[[field_classification]]
+path = "answer.subject_id"
+semantic_class = "HOUSEHOLD_OBJECT_LABEL_OR_IDENTIFIER"
+synthetic_d0_egress_now = "PROHIBITED_NO_EGRESS_PROFILE_EXISTS"
+future_household_value = "PRIVATE_DERIVED_STATE_REQUIRES_VALUE_CONSTRAINT_AND_AUTHORITY"
+
+[[field_classification]]
+path = "answer.status"
+semantic_class = "DERIVED_QUERY_RESULT"
+synthetic_d0_egress_now = "PROHIBITED_NO_EGRESS_PROFILE_EXISTS"
+future_household_value = "PRIVATE_DERIVED_STATE_REQUIRES_AUTHORITY"
+
+[[field_classification]]
+path = "answer.location_id"
+semantic_class = "HOUSEHOLD_ZONE_LABEL_OR_IDENTIFIER"
+synthetic_d0_egress_now = "PROHIBITED_NO_EGRESS_PROFILE_EXISTS"
+future_household_value = "PRIVATE_DERIVED_STATE_REQUIRES_VALUE_CONSTRAINT_AND_AUTHORITY"
+
+[[field_classification]]
+path = "answer.epistemic_status"
+semantic_class = "INFERENCE_QUALIFIER"
+synthetic_d0_egress_now = "PROHIBITED_NO_EGRESS_PROFILE_EXISTS"
+future_household_value = "PRIVATE_DERIVED_METADATA_WHEN_BOUND_TO_AN_ANSWER"
+
+[[field_classification]]
+path = "relation_facts[].subject_id"
+semantic_class = "HOUSEHOLD_OBJECT_LABEL_OR_IDENTIFIER"
+synthetic_d0_egress_now = "PROHIBITED_NO_EGRESS_PROFILE_EXISTS"
+future_household_value = "PRIVATE_DERIVED_STATE_REQUIRES_VALUE_CONSTRAINT_AND_AUTHORITY"
+
+[[field_classification]]
+path = "relation_facts[].predicate"
+semantic_class = "TYPED_RELATION"
+synthetic_d0_egress_now = "PROHIBITED_NO_EGRESS_PROFILE_EXISTS"
+future_household_value = "PRIVATE_DERIVED_STATE_WHEN_BOUND_TO_ENTITIES"
+
+[[field_classification]]
+path = "relation_facts[].object_id"
+semantic_class = "HOUSEHOLD_OBJECT_OR_ZONE_LABEL_OR_IDENTIFIER"
+synthetic_d0_egress_now = "PROHIBITED_NO_EGRESS_PROFILE_EXISTS"
+future_household_value = "PRIVATE_DERIVED_STATE_REQUIRES_VALUE_CONSTRAINT_AND_AUTHORITY"
+
+[[field_classification]]
+path = "relation_facts[].epistemic_status"
+semantic_class = "INFERENCE_QUALIFIER"
+synthetic_d0_egress_now = "PROHIBITED_NO_EGRESS_PROFILE_EXISTS"
+future_household_value = "PRIVATE_DERIVED_METADATA_WHEN_BOUND_TO_A_RELATION"
+
+[cloud_minimum_contract]
+status = "PROPOSED_BLOCKED_NOT_IMPLEMENTED"
+transport = "HTTPS"
+payload_media_allowed = false
+payload_files_allowed = false
+tools_allowed = false
+conversation_state_allowed = false
+background_mode_allowed = false
+provider_storage_request_must_be_disabled = true
+claim_of_zero_provider_retention_allowed = false
+automatic_retry_allowed = false
+fallback = "EXISTING_DETERMINISTIC_EVIDENCE_BOUND_ANSWER"
+exact_host_path_model_and_timeout_must_be_frozen_before_implementation = true
+
+[local_model_minimum_contract]
+status = "PROPOSED_NOT_IMPLEMENTED"
+loopback_or_unix_socket_only = true
+internet_egress_allowed = false
+weights_must_have_manifest_license_version_and_hash = true
+output_is_untrusted_presentation = true
+fallback = "EXISTING_DETERMINISTIC_EVIDENCE_BOUND_ANSWER"
+
+[decision]
+single_pass = "SELECT_ONE_SEPARATELY_FROZEN_M40_IMPLEMENTATION_PROPOSAL"
+zero_pass = "STOP_M39_NO_ELIGIBLE_LANGUAGE_BOUNDARY"
+multiple_pass = "STOP_M39_AMBIGUOUS_LANGUAGE_BOUNDARY"
+selected_work_must_be_separately_frozen = true
+policy_adoption_or_operate_activation_allowed = false
+
+[boundaries]
+provider_client_or_dependency_allowed = false
+credential_or_endpoint_configuration_allowed = false
+network_request_allowed = false
+model_loading_or_inference_allowed = false
+media_or_private_household_data_read_allowed = false
+claim_state_query_or_evidence_semantics_change_allowed = false
+action_tool_or_generic_command_interface_allowed = false
+action_policy_adoption_allowed = false
+operate_enabled = false
