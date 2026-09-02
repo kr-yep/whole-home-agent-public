@@ -1,0 +1,68 @@
+schema_version = 1
+status = "IMPLEMENTED_NORMAL_STOP_BEFORE_WRITE_PROBE"
+gate_id = "m42-uv-cache-path-preflight-v1"
+decision = "STOP_M42_EXPLICIT_DISPOSABLE_CACHE_PREFLIGHT"
+contract_revision = "ba3ab63f1a83630d86a7c45b741a0a1d8e4ad0c3"
+attempts_started = 1
+attempt_limit = 1
+additional_retry_used = false
+additional_retry_authorized = false
+
+[prior_evidence]
+m41_result_sha256 = "8971b43622f91351168e1cafc8feeb8561e53f2f07ffb88741130562e1030208"
+default_cache_root_cause_established = false
+default_cache_mutated_or_repaired = false
+
+[precondition]
+target_relative_path = ".tmp/m42-uv-cache"
+target_absent = true
+parent_resolved_below_repository = true
+parent_was_not_symlink = true
+target_gitignored = true
+
+[uv]
+semantic_version = "0.11.24"
+version_parse_passed = true
+cache_command_exit_code = 0
+cache_command_elapsed_ms = 33.830
+stdout_matched_exact_target = true
+stderr_present = false
+offline_flag_set = true
+configuration_discovery_disabled = true
+python_downloads_disabled = true
+
+[result]
+failure_class = "CACHE_NOT_INITIALIZED"
+target_directory_created_by_uv = false
+write_probe_started = false
+write_probe_sha256 = ""
+build_install_or_demo_started = false
+product_code_reached = false
+
+[network]
+proxy_index_token_or_credential_forwarded = false
+os_level_network_instrumented = false
+network_attempt_count = -1
+
+[cleanup]
+target_absent_after_attempt = true
+empty_temp_parent_removed = true
+cache_or_probe_retained = false
+
+[claim_limits]
+establishes_explicit_cache_path_is_accepted_and_reported = true
+establishes_cache_directory_initialization = false
+establishes_cache_writability = false
+establishes_default_cache_root_cause = false
+establishes_package_build_install_or_demo = false
+establishes_zero_os_network_attempts = false
+authorizes_m41_retry = false
+authorizes_packaging_attempt = false
+authorizes_push = false
+
+[boundaries]
+product_behavior_or_dependency_changed = false
+provider_model_key_endpoint_or_network_added = false
+private_live_or_additional_media_read = false
+action_policy_adopted = false
+operate_enabled = false

@@ -37,13 +37,11 @@ consent, an adopted language-provider/egress policy, a provider implementation, 
 operational activation.
 Live/private sensing, cloud calls, and actions remain blocked.
 
-**Latest milestone (M41):** the [release-candidate packaging gate](docs/evaluation/m41-release-candidate-packaging-v1.md)
-records a normal pre-artifact stop. The sole exact-revision offline build attempt ended
-while `uv` initialized its default Windows cache path; no sdist, wheel, environment,
-install, or installed demo was produced. The disposable paths were cleaned and the
-result authorizes neither a retry nor a push. M40 product behavior is unchanged, and
-all 445 local regression tests plus the 321-file / 642-snapshot Git audit pass. This
-local branch has not been pushed or run in public CI.
+**Latest milestone (M42):** the [explicit cache-path preflight](docs/evaluation/m42-uv-cache-path-preflight-v1.md)
+records a normal pre-probe stop. The sole no-build command accepted and reported the
+exact ignored repository-local cache path but did not create it, so writability was not
+inferred and no packaging retry was authorized. No cache, artifact, install, demo, or
+product change remains. This local branch has not been pushed or run in public CI.
 
 ## What works today
 
@@ -379,6 +377,8 @@ default without adding a model and keep the structured answer through presenter 
 The [M41 result](docs/evaluation/m41-release-candidate-packaging-v1.md) preserves the
 single offline cache-initialization failure without turning it into package evidence or
 silently retrying under different infrastructure.
+The [M42 result](docs/evaluation/m42-uv-cache-path-preflight-v1.md) separates uv's
+acceptance of an explicit cache path from actual creation and writability evidence.
 
 ## Safety and data boundary
 

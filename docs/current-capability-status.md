@@ -1,6 +1,6 @@
 # Current capability status
 
-**Checkpoint:** M41 packaging pre-artifact stop · **Runtime:** `OPERATE DISABLED` · **Production ready:** no
+**Checkpoint:** M42 cache pre-probe stop · **Runtime:** `OPERATE DISABLED` · **Production ready:** no
 
 This page is updated with every milestone push so a teammate can see what is usable and
 what is still missing without reconstructing the full experiment history.
@@ -47,7 +47,8 @@ what is still missing without reconstructing the full experiment history.
   provider or local-model implementation, and runtime verification of failure fallback.
 - A clean installed-wheel receipt proving the new M40 presentation module and compact
   demo work outside the checkout. M41 stopped before artifact creation during default
-  `uv` cache initialization, so this remains unverified.
+  `uv` cache initialization; M42 only proved that uv accepts an explicit path, not that
+  it creates or can use it. Packaging therefore remains unverified.
 
 ## Deliberately not available
 
@@ -61,16 +62,13 @@ what is still missing without reconstructing the full experiment history.
 These remain blocked by proposed governance, unassigned roles, absent consent and data
 policy, and `OPERATE DISABLED`.
 
-## Latest local milestone: M41 packaging pre-artifact stop
+## Latest local milestone: M42 explicit cache-path preflight
 
-The [M41 result](evaluation/m41-release-candidate-packaging-v1.md) records the sole
-exact-revision attempt. Source identity passed, but `uv build --offline` returned Windows
-error 183 while initializing its default cache path. The path was observed as a directory
-afterward, so the exact root cause is not claimed. Zero package artifacts were produced;
-installation and the installed demo never started.
+The [M42 result](evaluation/m42-uv-cache-path-preflight-v1.md) records one no-build
+attempt. uv 0.11.24 accepted and reported the exact ignored `.tmp/m42-uv-cache` path
+under offline, no-config, and no-Python-download flags, but did not create the directory.
+The frozen gate therefore stopped before its write probe.
 
-The disposable worktree and empty output/run directories were removed. No retry,
-alternate cache, dependency change, provider, key, model, endpoint, request, or product
-change was introduced. Public CI was not run, nothing was pushed, and `OPERATE` remains
-disabled. The stopped result and unchanged code pass all 445 local regression tests;
-the 321-file / 642-snapshot Git audit reports zero violations.
+The target never existed and the empty parent was removed. No retry, build, install,
+demo, dependency change, provider, key, model, endpoint, request, or product change was
+introduced. Public CI was not run, nothing was pushed, and `OPERATE` remains disabled.
