@@ -1,0 +1,133 @@
+schema_version = 1
+status = "FROZEN_BEFORE_SINGLE_LOCAL_PACKAGING_RUN"
+gate_id = "m41-release-candidate-packaging-v1"
+intended_use = "NO_PUSH_EXACT_REVISION_SDIST_WHEEL_AND_INSTALLED_DEMO_GATE"
+product_revision = "ba0954650586471a737efd9eb829d65e48eea73b"
+execution_revision_rule = "FIRST_CLEAN_DESCENDANT_CONTAINING_ONLY_M41_CONTRACT_CHECKER_AND_TESTS"
+attempt_limit = 1
+additional_retry_allowed = false
+m40_result = "configs/evaluation/m40-local-presentation-implementation-result-v1.toml"
+m40_result_sha256 = "46ed18891fcce951fd9bbdb9b0939140b54c38ab8c78b380ad1bdfb567bf13a6"
+pyproject_sha256 = "bb70f2f967938a93d7599ce7b2fe08c3be797316b4426f66914529b2cf65b7da"
+uv_lock_git_blob_sha256 = "f2d3639c4b34b9c8a05381baec95cd178d39e056d81bbb7bc028eaeba1c94c3e"
+presentation_module_sha256 = "26e625e763575a2b873978f8d930128be624c23433eb2fb72cfa3b65ee596a55"
+
+[environment]
+python = "3.12"
+uv_semantic_version = "0.11.24"
+source_worktree_must_be_clean = true
+build_install_and_run_roots_must_be_disposable_and_outside_source = true
+checkout_text_basis = "GIT_BLOB_LF"
+network_mode = "OFFLINE_BUILD_INSTALL_AND_DEMO"
+preexisting_project_venv_reuse_allowed = false
+
+[build]
+command = "uv build --offline --out-dir <disposable-dist>"
+sdist_count = 1
+wheel_count = 1
+maximum_artifact_bytes_each = 10485760
+maximum_archive_members_each = 1000
+maximum_uncompressed_bytes_each = 20971520
+artifact_hashes_required = true
+
+[wheel_contract]
+required_suffixes = [
+  "whole_home_agent/presentation.py",
+  "whole_home_agent/public_demo.py",
+  "whole_home_agent/llm_context.py",
+  "whole_home_agent/cli.py",
+  "key_bag_sofa_v2.mp4",
+  "key_bag_sofa_v2.manifest.json",
+  "relation-rules-v1.toml",
+]
+forbidden_prefix_fragments = ["tests/", "configs/evaluation/", "docs/"]
+forbidden_suffixes = [".env", ".pem", ".key", ".sqlite", ".sqlite3", ".pt", ".pth", ".onnx", ".safetensors"]
+
+[sdist_contract]
+required_suffixes = [
+  "pyproject.toml",
+  "uv.lock",
+  "src/whole_home_agent/presentation.py",
+  "tests/test_m40_local_presentation.py",
+  "examples/media/generated/key_bag_sofa_v2.mp4",
+]
+forbidden_path_fragments = ["/.git/", "/.venv/", "/__pycache__/"]
+forbidden_suffixes = [".env", ".pem", ".key", ".sqlite", ".sqlite3", ".pt", ".pth", ".onnx", ".safetensors"]
+
+[install]
+command = "uv pip install --offline --python <fresh-venv-python> <wheel>[demo]"
+fresh_virtual_environment_required = true
+wheel_is_only_project_package_source = true
+public_dependency_cache_only = true
+editable_or_source_path_install_allowed = false
+
+[installed_environment]
+package_version = "0.1.0"
+import_must_resolve_inside_fresh_venv = true
+import_must_not_resolve_inside_source_worktree = true
+installed_presentation_sha256_must_match_source = true
+working_directory_must_be_outside_source_worktree = true
+
+[expected_answer]
+status = "FOUND"
+subject_id = "key"
+location_id = "sofa"
+epistemic_status = "estimated"
+relation_path = ["key|inside|bag", "bag|at_zone|sofa"]
+run_receipt_status = "COMPLETE"
+frames_in_compact_output = 0
+operate = "DISABLED"
+physical_truth_claimed = false
+
+[expected_presentation]
+context_schema = "whole-home-agent.location-context.v1"
+result_schema = "whole-home-agent.presentation-result.v1"
+presenter_id = "deterministic-location/1"
+status = "PRESENTED"
+fallback_used = false
+failure_code = "NONE"
+text = "在這段固定重播中，系統估計鑰匙在包包裡，且包包位於沙發；所以鑰匙可能在沙發上的包包裡。"
+forbidden_text_fragments = ["被放進", "之後", "停在"]
+
+[expected_fallback]
+status = "FALLBACK"
+failure_code = "PRESENTER_FAILURE"
+text = "無法產生文字摘要；請以結構化答案與證據鏈為準。"
+structured_answer_matches_normal_semantics = true
+exception_content_exposed = false
+
+[network]
+build_network_allowed = false
+install_network_allowed = false
+demo_network_allowed = false
+demo_python_socket_attempt_count = 0
+private_registry_credential_or_provider_allowed = false
+
+[time_budget_ms]
+build_maximum = 120000.0
+install_maximum = 120000.0
+demo_maximum = 60000.0
+total_maximum = 300000.0
+
+[cleanup]
+worktree_removed = true
+dist_removed = true
+venv_removed = true
+run_root_removed = true
+cache_or_wheel_artifact_retained = false
+
+[decision]
+pass = "PASS_M41_LOCAL_RELEASE_CANDIDATE_PACKAGING"
+normal_stop = "STOP_M41_LOCAL_RELEASE_CANDIDATE_PACKAGING"
+pass_authorizes_only = "PREPARE_SEPARATE_PUBLICATION_DECISION_WITH_PUBLIC_CI_STILL_REQUIRED"
+normal_stop_authorizes_retry = false
+
+[boundaries]
+product_code_schema_semantics_or_presentation_change_allowed = false
+dependency_or_lock_change_allowed = false
+external_private_or_live_media_allowed = false
+model_load_prediction_training_or_tuning_allowed = false
+provider_api_key_credential_or_cloud_allowed = false
+public_push_or_ci_claim_allowed = false
+action_policy_adoption_or_operation_allowed = false
+operate_enabled = false
