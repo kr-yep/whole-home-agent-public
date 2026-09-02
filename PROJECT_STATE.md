@@ -1,6 +1,6 @@
 # Whole Home Agent — Public Repository State
 
-**Checkpoint:** `PUBLIC-B1-M43-001`
+**Checkpoint:** `PUBLIC-B1-M44-001`
 
 **As of:** `2026-09-02 Asia/Taipei`
 
@@ -90,6 +90,7 @@ This file is the live checkpoint for the clean public repository. It records cur
 | M41 release-candidate packaging | `IMPLEMENTED / NORMAL PRE-ARTIFACT STOP` | The sole exact-revision offline build attempt stopped during default `uv` cache initialization with Windows error 183. No sdist, wheel, environment, install, or demo was produced; cleanup passed and no retry or push is authorized |
 | M42 explicit uv cache preflight | `IMPLEMENTED / NORMAL PRE-PROBE STOP` | The exact repository-local path was accepted and reported by `uv cache dir`, but uv did not create it. The frozen uv-initialization condition failed before the write probe; no build, cache, retry, or push is authorized |
 | M43 caller-created uv cache | `IMPLEMENTED / BOUNDED NO-BUILD PASS` | A closed preflight created and probed the exact ignored cache, uv confirmed that existing path, and non-recursive cleanup proved it stayed empty. This authorizes only a separate explicit-cache packaging gate, not a build or push |
+| M44 explicit-cache release-candidate packaging | `IMPLEMENTED / NORMAL STOP AFTER SDIST, BEFORE WHEEL` | The sole offline attempt seeded the exact cache and started the build, but implicit CP950 decoding broke runner receipt assembly. Read-only forensics found one partial sdist, no wheel, and a missing required `uv.lock`; install/demo never started and no retry or push is authorized |
 | B1 binding/relation/query slice | `IMPLEMENTED / VERIFIED ON ONE SYNTHETIC REPLAY` | One-instance binding, conservative containment/zone assertion and retraction rules, typed abstentions, estimated candidates through the unchanged committer, relation evaluation, and evidence-traceable `key → bag → sofa` query exist; no real indoor transfer evidence exists |
 | B1 CLI and Streamlit presentation | `IMPLEMENTED / VERIFIED ON ONE SYNTHETIC REPLAY` | A closed composition/presentation boundary exposes the fixed clip, scoped answer, evidence, abstentions, metrics, diagnostics, and receipt; it accepts no upload, camera, arbitrary path, free-form query, credential, or action handle |
 | Python package distribution | `IMPLEMENTED / VERIFIED BY LOCAL CLEAN INSTALL` | The wheel contains only the fixed D0 replay, its configs, and generator provenance; a fresh Python 3.12 environment ran the CLI from outside the checkout |
@@ -194,6 +195,16 @@ This file is the live checkpoint for the clean public repository. It records cur
   `94edd34cf05314d3515b27d3c33a8c6d91c2e8d1` passed all 471 local regression tests
   with 39 existing optional-dependency skips; the Git-mode public audit scanned 333
   files / 666 snapshots with zero violations.
+- M44 froze its exact-revision explicit-cache packaging contract at
+  `a4a98cd68900215c21f14aed1e38b0190eae9a5e`. Its sole attempt copied the frozen
+  14,049-file / 627,590,722-byte cache subset with exact tree identity and started the
+  offline build. A CP950 `UnicodeDecodeError` in subprocess output handling left
+  `stderr` as `None`; runner receipt assembly then raised `AttributeError`. Read-only
+  forensics found one 209,221-byte sdist with matching M40 presentation code, no unsafe
+  or forbidden member, no wheel, and one inherited content failure: required `uv.lock`
+  was absent. No fresh environment, install, installed demo, socket guard, retry, or
+  push occurred. All disposable inputs and outputs were removed. Final regression and
+  audit evidence is recorded in the M44 result after verification.
 - GitHub Actions run [33486414127](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33486414127) passed every job except Python 3.11 because one test fixture used Python 3.12's generalized nested f-string grammar. The fixture now builds its TOML blocks before interpolation; local `ast` parsing under the 3.11 grammar and the focused tests passed. Follow-up run [33486674987](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33486674987) completed successfully across Python 3.11–3.14, the prerecorded-video contract, and the closed public demo.
 - An isolated offline M9 package build produced the source archive and universal wheel and included the new Python adapter/evaluator modules without including VOST/VISOR data, model weights, local receipts, or evaluation configs/tools in the installed runtime data bundle.
 - Source revision 2 is an 80-frame H.264/yuv420p generated replay with SHA-256 `b9cc79476d77f8d45acd1803c924de73914ffc4790f4da271f77cc8d4742eb43`. It was versioned because revision 1's encoding failed Chromium playback. Two consecutive local generations matched; browser QA then showed duration 8 seconds, ready state 4, scoped revision-2 content, and zero console errors.
@@ -264,6 +275,7 @@ This file is the live checkpoint for the clean public repository. It records cur
 | `PUB-DIR-041` | Verify the exact M40 package and installed demo once, offline and outside the checkout, before any publication decision | Implemented as an M41 normal pre-artifact stop. The single build attempt hit an unresolved default-cache initialization error; no retry, alternate cache, package claim, public-CI claim, or push is authorized |
 | `PUB-DIR-042` | Before any new packaging gate, test one exact ignored repository-local uv cache path without building or repairing the default cache | Implemented as an M42 normal pre-probe stop. uv accepted and reported the explicit path but did not create it; caller-created cache semantics require a separate decision |
 | `PUB-DIR-043` | Prove caller-created, confined, writable, empty, uv-selected, and non-recursively cleanable cache semantics before packaging | Implemented as an M43 bounded no-build pass. Only a separately frozen M44 explicit-cache packaging gate may follow |
+| `PUB-DIR-044` | Attempt the exact M40 package once with the M43 explicit-cache semantics, and fail closed before install or publication on any runner/artifact mismatch | Implemented as an M44 normal stop. Preserve the decode failure, missing-wheel state, and missing `uv.lock`; no retry or push follows from this gate |
 | `PUB-DIR-031` | Every milestone push must visibly state what is usable now, what is still missing, and what changed in that push | Active; README handoff block and `docs/current-capability-status.md` are the public handoff surface |
 
 ## Open gates and blockers
@@ -285,12 +297,14 @@ This file is the live checkpoint for the clean public repository. It records cur
 - M43 establishes caller-created cache mechanics only. It does not establish dependency
   availability, artifact contents, clean install, demo behavior, teammate success, or
   public CI.
+- M44 does not establish packaging recovery. Its runner retained no build return code,
+  the only sdist fails the inherited `uv.lock` content requirement, no wheel exists, and
+  installed M40 presentation/demo behavior remains unverified.
 
 ## Next safe action
 
-Prepare M44 as a separately frozen explicit-cache release-candidate packaging gate.
-Reuse the M41 exact source/artifact/install/demo contracts, but make a caller-created,
-confined disposable cache an explicit precondition and preserve M41/M42/M43 history.
-Permit one build/install/demo attempt only after checker/source/lock/package identities
-are frozen. Do not change product behavior or dependencies, use a provider/private data,
-claim public-CI/teammate success, or push.
+Stop after M44. If work resumes, prepare a repository-only M45 decision that preserves
+the failed attempt while hardening subprocess output capture against non-CP950 bytes and
+deciding how the required `uv.lock` enters an sdist. Add a non-ASCII output regression
+without rebuilding. Any new package execution must be separately frozen; do not infer a
+retry or push from M44, use a provider/private data, or change runtime authority.

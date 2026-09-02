@@ -37,13 +37,13 @@ consent, an adopted language-provider/egress policy, a provider implementation, 
 operational activation.
 Live/private sensing, cloud calls, and actions remain blocked.
 
-**Latest milestone (M43):** the [caller-created cache gate](docs/evaluation/m43-caller-created-uv-cache-v1.md)
-passes its bounded no-build check. A closed preflight created and fsync-probed the exact
-ignored cache, uv confirmed that existing path, and non-recursive cleanup proved it
-stayed empty. This authorizes only preparation of a separate packaging gate—not a build
-or push. No cache, artifact, install, demo, or product change remains. All 471 local
-regression tests and the 333-file / 666-snapshot Git audit pass. This local branch has
-not been pushed or run in public CI.
+**Latest milestone (M44):** the [explicit-cache packaging gate](docs/evaluation/m44-explicit-cache-packaging-v1.md)
+normally stopped after its sole build subprocess and before the artifact gate. Implicit
+CP950 output decoding broke receipt assembly. Read-only forensics found a partial sdist
+with the correct M40 module but no wheel and no required `uv.lock`; install and demo did
+not start. All disposable cache/artifacts were removed, and no retry or push is
+authorized. Final local regression/audit counts are recorded after verification; this
+branch has not been pushed or run in public CI.
 
 ## What works today
 
@@ -383,6 +383,9 @@ The [M42 result](docs/evaluation/m42-uv-cache-path-preflight-v1.md) separates uv
 acceptance of an explicit cache path from actual creation and writability evidence.
 The [M43 result](docs/evaluation/m43-caller-created-uv-cache-v1.md) proves the bounded
 caller-created alternative and preserves its pre-attempt direct-launch failure.
+The [M44 result](docs/evaluation/m44-explicit-cache-packaging-v1.md) preserves the sole
+partial-build stop, CP950 runner failure, missing wheel, and missing sdist `uv.lock`
+without manufacturing package, install, demo, public-CI, or teammate evidence.
 
 ## Safety and data boundary
 

@@ -1,0 +1,118 @@
+schema_version = 1
+status = "IMPLEMENTED_NORMAL_STOP_AFTER_SDIST_BEFORE_WHEEL"
+gate_id = "m44-explicit-cache-packaging-v1"
+decision = "STOP_M44_EXPLICIT_CACHE_PACKAGING"
+contract_revision = "a4a98cd68900215c21f14aed1e38b0190eae9a5e"
+package_attempts_started = 1
+attempt_limit = 1
+additional_retry_used = false
+additional_retry_authorized = false
+
+[precondition]
+source_revision = "a4a98cd68900215c21f14aed1e38b0190eae9a5e"
+source_tracked_and_untracked_clean = true
+build_python = "3.12.13"
+setuptools = "84.0.0"
+wheel = "0.48.0"
+uv = "0.11.24"
+cache_target_absent_before_seed = true
+cache_target_gitignored = true
+
+[cache_seed]
+source_role = "LOCAL_IGNORED_PRIOR_PUBLIC_DEMO_UV_CACHE"
+included_file_count = 14049
+included_bytes = 627590722
+included_tree_sha256 = "5f5101e6fe74e847d0bb9d0a3e9e06398e00a85917106ada647f3225072812fc"
+excluded_file_count = 13
+source_and_target_tree_identity_matched = true
+source_mutated = false
+upstream_provenance_independently_authenticated = false
+
+[stop]
+failure_class = "BUILD_OUTPUT_DECODE_AND_RUNNER_RECEIPT_ASSEMBLY"
+stage = "AFTER_BUILD_SUBPROCESS_BEFORE_ARTIFACT_GATE"
+background_decode_exception = "UnicodeDecodeError"
+implicit_text_encoding = "cp950"
+offending_byte_hex = "c3"
+offending_byte_position = 18831
+runner_exception = "AttributeError"
+runner_expression = "process.stderr.strip()"
+stderr_value_was_none = true
+runner_receipt_emitted = false
+build_process_return_code_retained = false
+build_elapsed_ms_retained = false
+
+[stage_reachability]
+build_process_started = true
+post_crash_read_only_artifact_forensics_completed = true
+full_m41_artifact_gate_completed = false
+fresh_venv_started = false
+wheel_install_started = false
+installed_version_check_started = false
+installed_demo_started = false
+python_socket_guard_started = false
+
+[sdist_forensics]
+created = true
+name = "whole_home_agent-0.1.0.tar.gz"
+bytes = 209221
+sha256 = "44e16a69d1fcd72aa3492306db9ba4d9a4b1d4d3d423c62627b27faf3433dd91"
+member_count = 116
+file_count = 104
+uncompressed_bytes = 928564
+unsafe_member_type_count = 0
+forbidden_archive_member_count = 0
+presentation_member_count = 1
+presentation_sha256 = "26e625e763575a2b873978f8d930128be624c23433eb2fb72cfa3b65ee596a55"
+m41_sdist_content_contract_passed = false
+content_failure_classes = ["MISSING_REQUIRED_MEMBER"]
+missing_required_members = ["uv.lock"]
+
+[wheel_forensics]
+created = false
+count = 0
+
+[network]
+uv_offline_flag_set = true
+configuration_discovery_disabled = true
+python_downloads_disabled = true
+proxy_index_token_or_credential_forwarded = false
+os_level_network_instrumented = false
+network_attempt_count = -1
+
+[cleanup]
+source_worktree_removed = true
+cache_target_removed = true
+dist_removed = true
+venv_absent = true
+run_root_removed = true
+generated_artifact_or_cache_retained = false
+
+[verification]
+result_revision = "PENDING"
+focused_contract_checker_and_result_tests_passed = 0
+full_tests_passed = 0
+full_tests_skipped = 0
+public_git_audit_scanned_files = 0
+public_git_audit_scanned_snapshots = 0
+public_git_audit_violations = 0
+public_ci_run_id = 0
+public_ci_conclusion = "NOT_RUN_LOCAL_BRANCH_ONLY"
+
+[claim_limits]
+establishes_explicit_cache_build_or_packaging_pass = false
+establishes_valid_complete_sdist = false
+establishes_wheel = false
+establishes_fresh_install_or_installed_demo = false
+establishes_m40_installed_presentation = false
+establishes_zero_os_network_attempts = false
+establishes_teammate_or_public_ci_success = false
+authorizes_retry = false
+authorizes_push = false
+
+[boundaries]
+product_behavior_schema_or_dependency_changed = false
+provider_model_key_endpoint_or_network_added = false
+private_live_or_additional_media_read = false
+action_policy_adopted = false
+operate_enabled = false

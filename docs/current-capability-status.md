@@ -1,6 +1,6 @@
 # Current capability status
 
-**Checkpoint:** M43 caller-created cache pass · **Runtime:** `OPERATE DISABLED` · **Production ready:** no
+**Checkpoint:** M44 packaging normal stop · **Runtime:** `OPERATE DISABLED` · **Production ready:** no
 
 This page is updated with every milestone push so a teammate can see what is usable and
 what is still missing without reconstructing the full experiment history.
@@ -49,7 +49,8 @@ what is still missing without reconstructing the full experiment history.
   demo work outside the checkout. M41 stopped before artifact creation during default
   `uv` cache initialization; M42 only proved that uv accepts an explicit path, not that
   it creates or can use it. M43 proves a caller-created empty cache is locally writable
-  and selected by uv, but packaging itself remains unverified.
+  and selected by uv. M44 reached a partial sdist, but output decoding broke the runner,
+  no wheel existed, and the sdist lacked required `uv.lock`; packaging remains unverified.
 
 ## Deliberately not available
 
@@ -63,15 +64,16 @@ what is still missing without reconstructing the full experiment history.
 These remain blocked by proposed governance, unassigned roles, absent consent and data
 policy, and `OPERATE DISABLED`.
 
-## Latest local milestone: M43 caller-created cache semantics
+## Latest local milestone: M44 explicit-cache packaging stop
 
-The [M43 result](evaluation/m43-caller-created-uv-cache-v1.md) proves the smallest
-working responsibility split: the preflight creates and probes a new exact ignored
-directory, uv confirms the existing path under sanitized offline settings, and the
-checker removes the still-empty target non-recursively.
+The [M44 result](evaluation/m44-explicit-cache-packaging-v1.md) preserves its sole
+package attempt exactly. The build subprocess started with the frozen caller-created
+cache, but implicit CP950 decoding failed before the runner could retain a receipt.
+Read-only inspection found one partial source archive containing the correct M40 module,
+no wheel, and no required `uv.lock`. Install and demo never started.
 
-The target and empty parent were removed. No build, install, demo, dependency change,
-provider, key, model, endpoint, request, or product change was introduced. Public CI was
-not run, nothing was pushed, and `OPERATE` remains disabled. Packaging evidence still
-requires a separate frozen gate. All 471 local regression tests and the 333-file /
-666-snapshot Git audit pass.
+The 628 MB copied cache, detached worktree, partial archive, and output directories were
+removed. No dependency change, provider, key, model, endpoint, request, private media,
+or product change was introduced. Public CI was not run, nothing was pushed, and
+`OPERATE` remains disabled. A future runner/content repair and any new package attempt
+must be separately frozen.
