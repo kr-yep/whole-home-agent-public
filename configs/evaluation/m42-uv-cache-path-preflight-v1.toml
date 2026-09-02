@@ -1,0 +1,72 @@
+schema_version = 1
+status = "FROZEN_BEFORE_SINGLE_NO_BUILD_PREFLIGHT"
+gate_id = "m42-uv-cache-path-preflight-v1"
+intended_use = "DECIDE_EXPLICIT_DISPOSABLE_CACHE_PATH_BEFORE_ANY_NEW_PACKAGING_GATE"
+m41_result = "configs/evaluation/m41-release-candidate-packaging-result-v1.toml"
+m41_result_sha256 = "8971b43622f91351168e1cafc8feeb8561e53f2f07ffb88741130562e1030208"
+m41_result_revision = "b87aac5d9e2a5c73748b8bbd599661e0295e3c66"
+attempt_limit = 1
+additional_retry_allowed = false
+
+[prior_observation]
+stage = "UV_CACHE_INITIALIZATION"
+default_cache_path = "%LOCALAPPDATA%/uv/cache"
+tool_error = "OS_ERROR_183_PATH_ALREADY_EXISTS"
+path_observed_after_failure = "DIRECTORY"
+root_cause_established = false
+default_cache_mutation_or_repair_allowed = false
+
+[target]
+path_basis = "REPOSITORY_ROOT/.tmp/m42-uv-cache"
+must_be_exact_path = true
+must_not_exist_before_run = true
+parent_must_resolve_below_repository_root = true
+parent_must_not_be_symlink = true
+gitignored_required = true
+outside_workspace_allowed = false
+
+[uv]
+semantic_version = "0.11.24"
+version_parse_regex = "^uv ([0-9]+\\.[0-9]+\\.[0-9]+)(?:\\s|$)"
+command = "uv --offline --no-config --no-python-downloads --cache-dir <exact-target> cache dir"
+initialization_attempts = 1
+maximum_elapsed_ms = 10000.0
+stdout_must_equal_exact_target = true
+directory_must_exist_after_command = true
+
+[environment]
+allowlisted_names = ["PATH", "SYSTEMROOT", "WINDIR", "TEMP", "TMP"]
+forced_uv_offline = "1"
+forced_uv_no_config = "1"
+forced_uv_python_downloads = "never"
+proxy_index_token_or_credential_forwarding_allowed = false
+os_level_network_instrumented = false
+
+[writability_probe]
+relative_path = ".m42-write-probe"
+payload = "M42_DISPOSABLE_CACHE_WRITE_PROBE_V1"
+fsync_required = true
+readback_sha256_required = true
+probe_removed_before_receipt = true
+
+[cleanup]
+cache_root_removed_after_receipt = true
+cleanup_failure_is_fatal = true
+retained_cache_or_probe_allowed = false
+
+[decision]
+pass = "PASS_M42_EXPLICIT_DISPOSABLE_CACHE_PREFLIGHT"
+normal_stop = "STOP_M42_EXPLICIT_DISPOSABLE_CACHE_PREFLIGHT"
+pass_authorizes_only = "PREPARE_SEPARATELY_FROZEN_M43_PACKAGING_GATE_WITH_EXPLICIT_CACHE"
+normal_stop_authorizes_retry = false
+
+[boundaries]
+m41_retry_or_history_change_allowed = false
+package_build_install_or_demo_allowed = false
+dependency_lock_product_code_or_behavior_change_allowed = false
+network_download_registry_or_credential_allowed = false
+external_private_live_or_additional_media_allowed = false
+provider_model_key_endpoint_or_action_allowed = false
+public_push_or_ci_claim_allowed = false
+action_policy_adopted = false
+operate_enabled = false
