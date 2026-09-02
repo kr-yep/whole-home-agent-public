@@ -1,0 +1,75 @@
+schema_version = 1
+status = "FROZEN_BEFORE_SINGLE_NO_BUILD_PREFLIGHT"
+gate_id = "m43-caller-created-uv-cache-v1"
+intended_use = "PROVE_CALLER_CREATED_DISPOSABLE_CACHE_SEMANTICS_BEFORE_PACKAGING"
+m42_result = "configs/evaluation/m42-uv-cache-path-preflight-result-v1.toml"
+m42_result_sha256 = "d3925f2193fdfda7206141ff05c36e533c32d212719d84fb5e2712d40d86b257"
+m42_result_revision = "e9f4bde295b6611670a333888b7695f974843b7d"
+attempt_limit = 1
+additional_retry_allowed = false
+
+[responsibility]
+caller_creates_new_empty_cache = true
+caller_proves_local_writability_before_uv = true
+uv_only_confirms_selected_path = true
+uv_expected_to_create_directory = false
+default_cache_root_cause_established = false
+default_cache_mutation_or_repair_allowed = false
+
+[target]
+path_basis = "REPOSITORY_ROOT/.tmp/m43-uv-cache"
+must_be_exact_path = true
+must_not_exist_before_run = true
+parent_must_resolve_below_repository_root = true
+parent_must_not_be_symlink = true
+gitignored_required = true
+recursive_cleanup_inside_checker_allowed = false
+
+[probe]
+relative_path = ".m43-write-probe"
+payload = "M43_CALLER_CREATED_CACHE_WRITE_PROBE_V1"
+exclusive_create_required = true
+fsync_required = true
+readback_sha256_required = true
+probe_removed_before_uv = true
+
+[uv]
+semantic_version = "0.11.24"
+version_parse_regex = "^uv ([0-9]+\\.[0-9]+\\.[0-9]+)(?:\\s|$)"
+command = "uv --offline --no-config --no-python-downloads --cache-dir <exact-existing-target> cache dir"
+commands_using_cache = 1
+maximum_elapsed_ms = 10000.0
+stdout_must_equal_exact_target = true
+directory_must_remain_non_symlink = true
+
+[environment]
+allowlisted_names = ["PATH", "SYSTEMROOT", "WINDIR", "TEMP", "TMP"]
+forced_uv_offline = "1"
+forced_uv_no_config = "1"
+forced_uv_python_downloads = "never"
+proxy_index_token_or_credential_forwarding_allowed = false
+os_level_network_instrumented = false
+
+[cleanup]
+non_recursive_target_removal_required = true
+cache_root_must_be_empty_and_removed = true
+empty_parent_removed_by_outer_harness = true
+cleanup_failure_is_fatal = true
+retained_cache_probe_or_artifact_allowed = false
+
+[decision]
+pass = "PASS_M43_CALLER_CREATED_UV_CACHE"
+normal_stop = "STOP_M43_CALLER_CREATED_UV_CACHE"
+pass_authorizes_only = "PREPARE_SEPARATELY_FROZEN_M44_EXPLICIT_CACHE_PACKAGING_GATE"
+normal_stop_authorizes_retry = false
+
+[boundaries]
+m41_or_m42_retry_or_history_change_allowed = false
+package_build_install_or_demo_allowed = false
+dependency_lock_product_code_or_behavior_change_allowed = false
+network_download_registry_or_credential_allowed = false
+external_private_live_or_additional_media_allowed = false
+provider_model_key_endpoint_or_action_allowed = false
+public_push_or_ci_claim_allowed = false
+action_policy_adopted = false
+operate_enabled = false
