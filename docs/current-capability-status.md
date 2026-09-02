@@ -76,4 +76,5 @@ The 628 MB copied cache, detached worktree, partial archive, and output director
 removed. No dependency change, provider, key, model, endpoint, request, private media,
 or product change was introduced. Public CI was not run, nothing was pushed, and
 `OPERATE` remains disabled. A future runner/content repair and any new package attempt
-must be separately frozen.
+must be separately frozen. All 485 local regression tests pass with 30 optional skips;
+the 340-file / 680-snapshot Git audit reports zero violations.

@@ -50,6 +50,14 @@ real-home performance. It changes no product behavior, schema, or dependency, ma
 provider request, reads no private/live/additional media, performs no push, and keeps
 `OPERATE` disabled.
 
+On result revision `5101feeeb9032f619142f28e45d57670b16538f7`, all 14 focused
+M44 contract/result tests and all 485 complete-regression tests passed in the explicit
+Git-blob/LF verification environment; 30 optional-dependency tests were skipped. The
+Git-mode public audit scanned 340 files / 680 index-and-worktree snapshots with zero
+violations. The first full-suite invocation omitted `PYTHONPATH=src` and retained a CRLF
+working copy of `uv.lock`; its import/hash failures were verification-harness evidence,
+not a package retry or product result. The corrected invocation is the reported one.
+
 If work resumes, the next repository-only decision should preserve this stop while
 hardening subprocess output capture against non-CP950 bytes and deciding how `uv.lock`
 enters the source distribution. A new build would require a separately frozen attempt;

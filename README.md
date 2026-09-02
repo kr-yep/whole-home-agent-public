@@ -42,8 +42,9 @@ normally stopped after its sole build subprocess and before the artifact gate. I
 CP950 output decoding broke receipt assembly. Read-only forensics found a partial sdist
 with the correct M40 module but no wheel and no required `uv.lock`; install and demo did
 not start. All disposable cache/artifacts were removed, and no retry or push is
-authorized. Final local regression/audit counts are recorded after verification; this
-branch has not been pushed or run in public CI.
+authorized. All 485 local regression tests pass with 30 optional-dependency skips; the
+340-file / 680-snapshot Git audit reports zero violations. This branch has not been
+pushed or run in public CI.
 
 ## What works today
 

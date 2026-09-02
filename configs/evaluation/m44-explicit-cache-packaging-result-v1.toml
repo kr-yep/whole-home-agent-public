@@ -89,12 +89,12 @@ run_root_removed = true
 generated_artifact_or_cache_retained = false
 
 [verification]
-result_revision = "PENDING"
-focused_contract_checker_and_result_tests_passed = 0
-full_tests_passed = 0
-full_tests_skipped = 0
-public_git_audit_scanned_files = 0
-public_git_audit_scanned_snapshots = 0
+result_revision = "5101feeeb9032f619142f28e45d57670b16538f7"
+focused_contract_checker_and_result_tests_passed = 14
+full_tests_passed = 485
+full_tests_skipped = 30
+public_git_audit_scanned_files = 340
+public_git_audit_scanned_snapshots = 680
 public_git_audit_violations = 0
 public_ci_run_id = 0
 public_ci_conclusion = "NOT_RUN_LOCAL_BRANCH_ONLY"

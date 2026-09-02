@@ -203,8 +203,11 @@ This file is the live checkpoint for the clean public repository. It records cur
   forensics found one 209,221-byte sdist with matching M40 presentation code, no unsafe
   or forbidden member, no wheel, and one inherited content failure: required `uv.lock`
   was absent. No fresh environment, install, installed demo, socket guard, retry, or
-  push occurred. All disposable inputs and outputs were removed. Final regression and
-  audit evidence is recorded in the M44 result after verification.
+  push occurred. All disposable inputs and outputs were removed. Result revision
+  `5101feeeb9032f619142f28e45d57670b16538f7` passed 485 complete-regression tests
+  with 30 optional-dependency skips; the Git-mode public audit scanned 340 files / 680
+  snapshots with zero violations. The first full-suite command's missing `PYTHONPATH`
+  and CRLF lock copy are retained as verification-harness evidence, not product failure.
 - GitHub Actions run [33486414127](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33486414127) passed every job except Python 3.11 because one test fixture used Python 3.12's generalized nested f-string grammar. The fixture now builds its TOML blocks before interpolation; local `ast` parsing under the 3.11 grammar and the focused tests passed. Follow-up run [33486674987](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33486674987) completed successfully across Python 3.11–3.14, the prerecorded-video contract, and the closed public demo.
 - An isolated offline M9 package build produced the source archive and universal wheel and included the new Python adapter/evaluator modules without including VOST/VISOR data, model weights, local receipts, or evaluation configs/tools in the installed runtime data bundle.
 - Source revision 2 is an 80-frame H.264/yuv420p generated replay with SHA-256 `b9cc79476d77f8d45acd1803c924de73914ffc4790f4da271f77cc8d4742eb43`. It was versioned because revision 1's encoding failed Chromium playback. Two consecutive local generations matched; browser QA then showed duration 8 seconds, ready state 4, scoped revision-2 content, and zero console errors.
