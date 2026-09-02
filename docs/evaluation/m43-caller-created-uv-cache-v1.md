@@ -39,5 +39,11 @@ and it does not establish dependency-cache completeness, package build/install/d
 teammate usability, or public CI. No product, dependency, provider, media, device,
 action, or push occurred; `OPERATE` stayed disabled.
 
+On result revision `94edd34cf05314d3515b27d3c33a8c6d91c2e8d1`, all 13 M43
+contract/checker/result tests and all 471 complete-regression tests passed in a Git-blob/
+LF worktree; 39 existing optional-dependency tests were skipped. The Git-mode public
+audit scanned 333 files / 666 index-and-worktree snapshots with zero violations. Public
+CI was not run.
+
 M43 authorizes only preparation of a separately frozen M44 packaging gate that uses an
 explicit caller-created cache. It does not itself authorize a package attempt or push.

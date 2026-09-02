@@ -73,4 +73,5 @@ checker removes the still-empty target non-recursively.
 The target and empty parent were removed. No build, install, demo, dependency change,
 provider, key, model, endpoint, request, or product change was introduced. Public CI was
 not run, nothing was pushed, and `OPERATE` remains disabled. Packaging evidence still
-requires a separate frozen gate.
+requires a separate frozen gate. All 471 local regression tests and the 333-file /
+666-snapshot Git audit pass.

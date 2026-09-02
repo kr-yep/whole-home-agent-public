@@ -41,8 +41,9 @@ Live/private sensing, cloud calls, and actions remain blocked.
 passes its bounded no-build check. A closed preflight created and fsync-probed the exact
 ignored cache, uv confirmed that existing path, and non-recursive cleanup proved it
 stayed empty. This authorizes only preparation of a separate packaging gate—not a build
-or push. No cache, artifact, install, demo, or product change remains. This local branch
-has not been pushed or run in public CI.
+or push. No cache, artifact, install, demo, or product change remains. All 471 local
+regression tests and the 333-file / 666-snapshot Git audit pass. This local branch has
+not been pushed or run in public CI.
 
 ## What works today
 
