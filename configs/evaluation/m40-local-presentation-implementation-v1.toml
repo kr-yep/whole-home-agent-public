@@ -1,0 +1,114 @@
+schema_version = 1
+status = "FROZEN_BEFORE_IMPLEMENTATION"
+gate_id = "m40-local-presentation-implementation-v1"
+intended_use = "BOUNDED_LOCAL_PRESENTATION_PORT_AND_DETERMINISTIC_FALLBACK"
+m39_result = "configs/evaluation/m39-language-presentation-boundary-result-v1.toml"
+m39_result_sha256 = "bb4342a4714bf4d45b9fe39b54f361ec19dc0e72d13967c919385f204f936ce7"
+m39_revision = "38e9118f4812072d2a66831c552f951d7e93b282"
+context_schema = "whole-home-agent.location-context.v1"
+result_schema = "whole-home-agent.presentation-result.v1"
+presenter_id = "deterministic-location/1"
+max_output_characters = 500
+fallback_text = "無法產生文字摘要；請以結構化答案與證據鏈為準。"
+failure_code = "PRESENTER_FAILURE"
+
+[[evidence_file]]
+path = "src/whole_home_agent/llm_context.py"
+sha256 = "4baf318f32066c9b1e87b0b7abb45578ff46a434d54df6b735cc87cc9a0fcf5b"
+role = "EXACT_INPUT_CONTEXT"
+
+[[evidence_file]]
+path = "src/whole_home_agent/public_demo.py"
+sha256 = "2834620ea31e8690d7acc87c8d0ba572f2cdd9536dcb860887fbd1910f88826a"
+role = "CURRENT_COMPOSITION_ROOT_AND_HAND_WRITTEN_SUMMARY"
+
+[[evidence_file]]
+path = "src/whole_home_agent/streamlit_app.py"
+sha256 = "dbb8e38ec3e7b283497a29e647576a8180b522338074bf5ecd4fad1c93e916d3"
+role = "CLOSED_PRESENTATION_UI"
+
+[[evidence_file]]
+path = "tests/test_llm_text_context.py"
+sha256 = "7a7dcae22426bc36a84185d97f077153f8f68a03b3fe67356429a2c4d1d39ee1"
+role = "M38_CONTEXT_REGRESSION"
+
+[[evidence_file]]
+path = "tests/test_public_demo.py"
+sha256 = "395a60171b45bd6639afa730159dcbef7abdd7352839bfc2c19b2ca46c056e24"
+role = "CLOSED_DEMO_REGRESSION"
+
+[implementation]
+new_module = "src/whole_home_agent/presentation.py"
+port = "LocationPresenter"
+concrete_presenter = "DeterministicLocationPresenter"
+use_case = "present_location_context"
+result_type = "PresentationResult"
+composition_root = "src/whole_home_agent/public_demo.py"
+ui = "src/whole_home_agent/streamlit_app.py"
+new_runtime_dependency_allowed = false
+
+[input_contract]
+source = "build_llm_text_context"
+exact_top_level_fields = ["schema", "purpose", "answer", "relation_facts"]
+exact_answer_fields = ["subject_id", "status", "location_id", "epistemic_status"]
+exact_relation_fields = ["subject_id", "predicate", "object_id", "epistemic_status"]
+allowed_predicates = ["inside", "at_zone"]
+allowed_epistemic_statuses = ["reported", "estimated"]
+identifier_pattern = "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+extra_or_malformed_fields_fail_to_fallback = true
+
+[output_contract]
+exact_fields = ["schema", "status", "presenter_id", "context_schema", "text", "fallback_used", "failure_code"]
+presented_status = "PRESENTED"
+fallback_status = "FALLBACK"
+empty_non_string_overlong_or_control_output_fails_to_fallback = true
+exception_text_may_leave_boundary = false
+model_or_presenter_output_is_authority = false
+
+[wording_contract]
+found_chain_uses_only_active_inside_and_at_zone_relations = true
+temporal_put_move_or_sequence_claim_allowed = false
+unknown_conflict_or_scope_failure_names_status_and_abstains = true
+raw_evidence_claim_run_or_source_identifiers_allowed = false
+
+[public_demo_contract]
+add_language_context_field = true
+add_presentation_field = true
+retain_answer_field = true
+retain_answer_summary_field = true
+answer_summary_equals_presentation_text = true
+structured_answer_survives_fallback = true
+streamlit_displays_the_exact_returned_language_context = true
+composition_root_selects_only_deterministic_presenter = true
+
+[verification]
+found_chain_exact_text = true
+found_direct_text = true
+all_non_found_statuses = true
+malformed_extra_and_hostile_identifiers = true
+throwing_empty_overlong_and_control_presenters = true
+no_io_provider_network_or_dynamic_import = true
+old_m38_context_contract = true
+closed_demo_and_cli_regression = true
+full_regression_and_public_audit = true
+
+[compatibility]
+serialized_change = "ADDITIVE_LANGUAGE_CONTEXT_AND_PRESENTATION_FIELDS"
+answer_summary_key_retained = true
+answer_summary_text_changes_to_remove_unrepresented_temporal_claim = true
+claim_query_relation_evidence_and_context_schema_unchanged = true
+
+[result_rules]
+pass = "ALL_FOCUSED_FULL_REGRESSION_AND_PUBLIC_AUDIT_CHECKS_PASS"
+fail = "STOP_M40_WITH_NO_PROVIDER_OR_RUNTIME_SCOPE_EXPANSION"
+
+[boundaries]
+provider_or_local_model_adapter_allowed = false
+provider_sdk_or_dependency_allowed = false
+credential_env_ui_or_secret_allowed = false
+endpoint_network_or_retry_allowed = false
+live_private_or_additional_media_allowed = false
+claim_query_relation_evidence_or_context_change_allowed = false
+action_tool_policy_broker_or_generic_command_allowed = false
+action_policy_adoption_allowed = false
+operate_enabled = false
