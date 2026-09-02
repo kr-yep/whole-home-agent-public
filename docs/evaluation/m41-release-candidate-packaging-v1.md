@@ -31,6 +31,13 @@ The disposable worktree, empty distribution directory, and run directory were re
 No virtual environment or artifact was created or retained. `OPERATE` stayed disabled;
 no provider, credential, model, household media, device, or action surface was touched.
 
+On post-result revision `f514de3a358fe2fa7c7a4a927c1e9fe39be901a2`, the 12
+M41 contract/checker/result tests and all 445 complete-regression tests passed in a
+Git-blob/LF worktree; 39 existing optional-dependency tests were skipped. The Git-mode
+public audit scanned 321 files / 642 index-and-worktree snapshots with zero violations.
+These checks validate the stopped result and unchanged repository behavior, not the
+package path that the build never reached.
+
 This result does not establish package buildability, wheel contents, clean-install demo
 behavior, teammate usability, or public-CI success. It also does not authorize a retry
 or a push. A later gate may diagnose cache-path selection and add a read-only preflight,

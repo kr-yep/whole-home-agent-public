@@ -53,8 +53,15 @@ artifact_retained = false
 
 [verification]
 focused_contract_and_checker_tests_passed_before_attempt = 8
+post_result_verification_revision = "f514de3a358fe2fa7c7a4a927c1e9fe39be901a2"
+focused_contract_checker_and_result_tests_passed = 12
+full_tests_passed = 445
+full_tests_skipped = 39
 public_audit_scanned_files_before_result = 318
 public_audit_violations_before_result = 0
+post_result_git_audit_scanned_files = 321
+post_result_git_audit_scanned_snapshots = 642
+post_result_git_audit_violations = 0
 operate_enabled = false
 public_ci_run_id = 0
 public_ci_conclusion = "NOT_RUN_LOCAL_BRANCH_ONLY"

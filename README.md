@@ -42,7 +42,8 @@ records a normal pre-artifact stop. The sole exact-revision offline build attemp
 while `uv` initialized its default Windows cache path; no sdist, wheel, environment,
 install, or installed demo was produced. The disposable paths were cleaned and the
 result authorizes neither a retry nor a push. M40 product behavior is unchanged, and
-this local branch has not been pushed or run in public CI.
+all 445 local regression tests plus the 321-file / 642-snapshot Git audit pass. This
+local branch has not been pushed or run in public CI.
 
 ## What works today
 

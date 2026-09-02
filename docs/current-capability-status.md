@@ -72,4 +72,5 @@ installation and the installed demo never started.
 The disposable worktree and empty output/run directories were removed. No retry,
 alternate cache, dependency change, provider, key, model, endpoint, request, or product
 change was introduced. Public CI was not run, nothing was pushed, and `OPERATE` remains
-disabled.
+disabled. The stopped result and unchanged code pass all 445 local regression tests;
+the 321-file / 642-snapshot Git audit reports zero violations.
