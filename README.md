@@ -1,403 +1,184 @@
 # Whole Home Agent
 
-> **Current milestone:** `B1 — offline replay + deterministic local presentation`
->
-> **Status:** `NOT PRODUCTION` · `OPERATE DISABLED`
-> **Allowed data:** included generated fixtures plus separately downloaded, licensed D0 public data
+> **Hackathon demo:** prerecorded object-location memory
+> **Status:** `NOT PRODUCTION` · `OPERATE DISABLED` · no camera or API key required
 
-Whole Home Agent is an evidence-bound prototype for remembering how small objects and containers move through a space. The current public demo analyzes one generated video and answers:
+Whole Home Agent demonstrates one useful idea: remember how a small object moves through
+containers and locations, then answer with a traceable evidence chain.
 
 ```text
-key approaches bag → key disappears with supporting context
-bag moves → bag settles at sofa
-query(key) → “the key may be in the bag at the sofa”
+key enters bag → bag moves to sofa
+query(key) → “the key may be in the bag on the sofa”
 ```
 
-The answer is an `estimated` result scoped to that replay. It is not a claim about a real home.
+The current demo analyzes one included, project-generated eight-second video. Its answer
+is an `estimated` result scoped to that replay, not a claim about a real home.
 
-## Current handoff status
+## Run the demo in five minutes
 
-Updated with every milestone push. See the detailed
-[capability status](docs/current-capability-status.md).
-
-**Usable now:** clean local Python install; deterministic B0 semantic replay; one closed,
-project-owned prerecorded synthetic key→bag→sofa demo through JSON CLI or Streamlit;
-traceable scoped answers with explicit top-level query `subject_id`; automated public CI;
-an exact cross-platform [teammate handoff runbook](docs/teammate-handoff-runbook.md);
-a Streamlit preview of the exact minimized text context an optional language presenter
-could receive, with no provider or network request; and a machine-checked M39 decision
-that keeps deterministic local output available while separating any future cloud
-presenter from credential and egress authority; and an M40 local presentation port with
-sanitized fallback that never removes the structured answer.
-
-**Still missing:** an actual teammate clean-install/demo receipt; convincing protected-group real
-indoor small-object gain; robust tracking under occlusion/camera motion; live camera and
-multi-camera support; durable household memory/retention; assigned policy/data roles,
-consent, an adopted language-provider/egress policy, a provider implementation, and any
-operational activation.
-Live/private sensing, cloud calls, and actions remain blocked.
-
-**Latest milestone (M44):** the [explicit-cache packaging gate](docs/evaluation/m44-explicit-cache-packaging-v1.md)
-normally stopped after its sole build subprocess and before the artifact gate. Implicit
-CP950 output decoding broke receipt assembly. Read-only forensics found a partial sdist
-with the correct M40 module but no wheel and no required `uv.lock`; install and demo did
-not start. All disposable cache/artifacts were removed, and no retry or push is
-authorized. All 485 local regression tests pass with 30 optional-dependency skips; the
-340-file / 680-snapshot Git audit reports zero violations. This branch has not been
-pushed or run in public CI.
-
-## What works today
-
-- hash-pinned, project-generated 80-frame MP4 replay with exact annotations;
-- a separate three-group, 18-image project-generated D1 oracle substrate;
-- PTS-aware PyAV decoding and optional motion-plus-periodic scheduling;
-- a deterministic RGB smoke detector for the generated artwork;
-- a hash-pinned RF-DETR Nano/Small offline adapter with sparse COCO-ID validation;
-- a Safetensors-only D-FINE Small qualification adapter with dense COCO-ID validation;
-- clip-local IoU tracking and one-instance manifest binding;
-- conservative containment/location rules with explicit abstention behavior;
-- the unchanged B0 claim committer, relation projection, and scoped query path;
-- fixed AP, event, answer, latency, FPS, dropped-frame, and VRAM reporting;
-- a frozen, source-video-split VISOR indoor screen with hash-pinned local assets;
-- paired SSDLite320 and RetinaNet-FPN detector adapters with no implicit download;
-- a frozen VOST consecutive-frame motion screen with range-only acquisition;
-- development-only scheduler selection and paired full-frame/FPN cost evidence;
-- an explicit VOST bottle mask-to-box target/tracking gate that stops before movement
-  candidates when the observation path is too weak;
-- JSON CLI and a local Streamlit presentation;
-- an exact, provider-neutral minimized text-context preview derived from the public
-  answer presentation with no I/O;
-- a machine-checked local-first language boundary in which an API key is a credential,
-  never consent or egress authority, and cloud use would make the deployment hybrid;
-- one deterministic local presentation port with exact input/output validation,
-  sanitized failure receipt, and no dependency or I/O;
-- automated B0 tests on Python 3.11–3.14 plus locked B1/demo jobs.
-
-On the included browser-compatible H.264 synthetic clip, the current RGB baseline measures AP50 `1.0`, mAP50:95 about `0.7293`, key recall `1.0`, zero false positives, event F1 `1.0`, and the final expected answer. The clip-local tracker records zero ID switches and zero fragmentations on this one easy fixture. These numbers apply only to this generated artwork and do not establish indoor accuracy, real-time operation, or 24/7 readiness.
-
-On the separately downloaded VISOR screen, RetinaNet-FPN improved validation
-recall@0.5 from `14.3%` to `25.0%` over SSDLite320 and found `1/3` validation
-targets occupying 0.1–1% of the frame versus `0/3`. It used about `393.3 MiB` peak
-VRAM and `71.7 ms` detector p95, versus `85.7 MiB` and `47.4 ms`. The first frozen
-test improved overall recall from `14.3%` to `39.3%`, but its only small target was
-missed by both models. See the [full evidence limits and gate](docs/evaluation/visor-screen-v1.md).
-
-On a separately downloaded VOST consecutive-frame screen, the frozen
-motion-plus-periodic scheduler reduced validation RetinaNet-FPN calls from `136` to `52`
-(`61.8%`) while selecting `40/41` annotated mask changes within the changed frame or one
-following 5 fps frame (`97.6%`). Detector p95 was `65.15 ms`, scheduler p95 `0.58 ms`,
-and peak VRAM about `352.2 MiB`. Exact-frame coverage was only `43.9%`, and VOST is an
-egocentric camera-motion stress case, so this is scheduling evidence—not proof that the
-system identified or understood a moved object. See the
-[VOST motion gate](docs/evaluation/vost-motion-screen-v1.md).
-
-A separate target-aware development gate then tested whether those scheduled calls
-contained usable observations. On 51 frames of `3518_unscrew_bottle`, full-frame
-RetinaNet recall@0.5 was only `19.6%`; the clip-local tracker recorded five ID switches
-and four fragmentations. Scheduled target-event coverage was `20.5%`, retaining `72.7%`
-of full-frame target-event coverage while avoiding `49.0%` of calls. The candidate was
-rejected on development, so the reserved validation sequence was not run and no
-movement-candidate layer was added. See the
-[target-tracking gate](docs/evaluation/vost-target-track-screen-v1.md).
-
-One later RF-DETR Small development screen raised same-frame target matches from
-`10/51` to `25/51`, measured `49.78 ms` detector p95 and about `143.0 MiB` peak
-allocated VRAM, but still missed the frozen `0.60` recall gate (`25/51 = 0.4902`). It
-was stopped without a retry or reserved validation. These are finite egocentric VOST
-results, not a general small-object, indoor, fixed-camera, or real-time claim. See the
-[M12 evidence report](docs/evaluation/vost-m12-rfdetr-small-v1.md).
-
-A subsequent D-FINE Small engineering preflight used only one generated in-memory RGB
-input. Its 51-call p95 was `58.81 ms`, peak allocated VRAM was about `99.7 MiB`, and the
-canonical output was deterministic, but the checkpoint is a community conversion with
-no verified parity to the author artifact. It therefore passed engineering compatibility
-and was stopped before VOST rather than treated as accuracy evidence. See the
-[M13 evidence report](docs/evaluation/m13-dfine-small-synthetic-v1.md).
-
-A no-media M14 review then compared exactly D-FINE Medium and RT-DETRv2 Small using
-official primary evidence. D-FINE Medium improves over D-FINE Small on generic COCO,
-but neither candidate supplies a material same-protocol prior over the RF-DETR Small
-path that already failed the target development gate. The current off-the-shelf model
-tournament is therefore stopped; no new model or media was loaded. See the
-[M14 evidence report](docs/evaluation/m14-detector-scientific-priority-v1.md).
-
-M15 then checked exactly Home Action Genome, CAD-120, and Watch-n-Patch using official
-pages, papers, terms, and endpoint metadata without downloading media. No candidate
-passed every frozen localization, rights, acquisition, split, manifest, and bounded-cost
-gate. The project therefore selected none and pivoted to proving a no-media target-label
-oracle before generating or acquiring data. See the
-[M15 evidence report](docs/evaluation/m15-target-domain-substrate-v1.md).
-
-M16 implemented that no-media oracle as a thin scope/validation layer around the existing
-quality evaluator. A synthetic semantic fixture now proves exact perfect, empty,
-duplicate, wrong-class, bad-localization, negative-frame, unknown, identity-conflict, and
-source-group leakage behavior. This validates scoring semantics only; no image, model,
-training, or transfer result exists. See the
-[M16 evidence report](docs/evaluation/m16-target-label-oracle-feasibility-v1.md).
-
-M17 then compared the existing vector renderer, Blender headless 3D, and Kubric with
-licensed assets against frozen D1, provenance, split, delivery, storage, and dependency
-gates. Only the existing project-owned renderer passed every gate. Blender and Kubric
-remain possible later realism routes, but their bounded exact integrations were not
-established here. M17 installed nothing and generated no media. See the
-[M17 evidence report](docs/evaluation/m17-generation-strategy-reality-gate-v1.md).
-
-M18 used that route to generate a deliberately tiny D1 substrate: three protected
-development/validation/test groups, 18 PNG/annotation pairs, six reference transitions,
-and explicit visible/truncated/occluded/absent/unknown cases. Two clean generations
-matched every committed byte, the output stayed at 103,957 bytes, and the old golden
-replay was unchanged. This proves data mechanics, not detector transfer. See the
-[M18 evidence report](docs/evaluation/m18-vector-d1-slice-v1.md).
-
-M19 then compared GMU Kitchens, HomebrewedDB, and YCB-Video without downloading data.
-GMU's official dataset route is no longer available. HB and YCB-V both pass through the
-current BOP distribution; the final frozen cost tie-break selects only YCB-V's 660 MB
-BOP'19 subset for one acquisition and D1 translation slice. No small target or detector
-gain has yet been observed. See the
-[M19 evidence report](docs/evaluation/m19-real-transfer-oracle-reality-gate-v1.md).
-
-M20 downloaded those two exact archives into ignored local storage and verified their
-immutable sizes and SHA-256 values. It then stopped before extraction: the base archive
-uses `ycbv/`, while the test archive uses `test/`, contradicting M20's frozen single-root
-assumption. No real annotation or image was read. See the
-[M20 evidence report](docs/evaluation/m20-ycbv-bop19-acquisition-translation-v1.md).
-
-M21 repaired only that mapping and passed archive identity, complete ZIP-header safety,
-and destination-collision checks. The unchanged real annotation selector then found no
-same-object/same-scene pair satisfying both the 0.1–1% visible-positive and complete
-class-absent requirements, so it stopped before RGB or D1 output. See the
-[M21 evidence report](docs/evaluation/m21-ycbv-per-archive-root-repair-v1.md).
-
-M22 localized that failure without reading media: the same public annotations contain
-81 qualifying small-positive frames and 14,775 safe negatives, but zero positive/negative
-pairs within one object/scene key. M22 alone did not adopt cross-scene pairing. See the
-[M22 evidence report](docs/evaluation/m22-ycbv-annotation-failure-localization-v1.md).
-
-M23 checked that proposed repair against current official BOP/COCO evaluator code and
-the executable M16 metric/split contract. All five frozen gates pass: one modeled class
-may aggregate a positive and complete class-absent negative from different scenes while
-remaining in the same test-only oracle. The selection is capped at 18 frames and does
-not authorize data/model work or a movement, relation, or whole-home claim. See the
-[M23 evidence report](docs/evaluation/m23-cross-scene-transfer-oracle-validity-v1.md).
-
-M24 materialized the smallest pair into ignored local storage: one object-4 positive
-from scene 50/image 620 and one complete class-absent negative from scene 48/image 1.
-Archive safety, two-run determinism, separate scene identities, and M16 fixture loading
-passed. The run also exposed a metric mismatch: visible pixels occupy 0.5107% of the
-image, but the bbox occupies 3.043%, so M16 does not count it as a small-bbox target.
-No detector run is authorized until that mismatch is resolved. See the
-[M24 evidence report](docs/evaluation/m24-ycbv-cross-scene-d1-materialization-v1.md).
-
-M25 repaired the evaluation definition before touching media: the same annotation must
-occupy 0.1–1% under both visible pixels and the M16 visible-bbox area. Only 2 of 900
-target frames pass. The fixed source-order replacement is object 4 at scene 50/image
-722 with the complete class-absent scene 48/image 1 frame. This selects one exact
-two-frame replacement materialization only; it is too small to support a detector-gain
-or household-transfer claim. See the
-[M25 evidence report](docs/evaluation/m25-ycbv-small-bbox-alignment-v1.md).
-
-M26 materialized that exact replacement pair into ignored local storage and loaded it
-through M16. The sole target is now correctly counted in `small_0.1_to_1pct` (tiny 0,
-small 1, large 0); the two clean outputs are byte-identical and the scenes remain
-separate with zero transitions. This is a fixture-mechanics pass, not model evidence.
-See the [M26 evidence report](docs/evaluation/m26-ycbv-dual-area-replacement-d1-v1.md).
-
-M27 selects the already packaged project-owned key→bag→sofa replay as the primary
-90-second hackathon demo. It alone passes all seven clarity, reproducibility, end-to-end
-value, trace, dependency, claim, and safety gates. M26 stays optional mechanical CV
-evidence; future model gain requires a separate protected-group development plus
-untouched-test contract. See the
-[M27 evidence report](docs/evaluation/m27-demo-evaluation-contract-v1.md).
-
-M28 ran the direct and compact-CLI demo paths offline. They agreed on the scoped
-`FOUND sofa` answer and semantic output, with zero socket attempts. The frozen check
-stopped because it incorrectly equated source event-label frames with inference
-evidence-window starts; two separate presentation gaps were hardened by collapsing and
-strongly labeling perfect synthetic fixture metrics. See the
-[M28 evidence report](docs/evaluation/m28-primary-demo-acceptance-v1.md).
-
-M29 corrected that timing meaning before one committed retry. Both interfaces again
-agreed offline, and the event-label/evidence-window/confirmation triples now pass. The
-retry normally stopped only because the public answer object does not expose its queried
-`subject_id`, although `key` remains traceable in the relation path. No second M29 retry
-is allowed. See the
-[M29 evidence report](docs/evaluation/m29-primary-demo-acceptance-retry-v1.md).
-
-M30 used repository evidence only to decide where query-subject identity belongs.
-Adding it to canonical `AnswerTrace` is the sole 8/8-gate selection; a public-DTO-only
-field would drift from B0, while current path/UI context fails for empty-path non-FOUND
-answers. M31 may implement only that additive field across both serializers. See the
-[M30 evidence report](docs/evaluation/m30-answer-subject-identity-decision-v1.md).
-
-M31 implements that additive field across canonical `AnswerTrace` and both serializers;
-all six query statuses retain subject identity and the B0 semantic hash is unchanged.
-The implementation checks pass, but the Goal normally stops because its full-suite
-requirement contradicted its literal no-media clause—the suite itself reads the pinned
-synthetic demo fixture. See the
-[M31 evidence report](docs/evaluation/m31-answer-trace-subject-implementation-v1.md).
-
-## Run the demo
-
-Requires Python 3.11 or newer. The lockfile was generated with `uv 0.11.24`.
+Requires Git and Python 3.11 or newer. The first setup downloads public Python packages;
+the demo itself makes no cloud/model request.
 
 ### Windows PowerShell
 
 ```powershell
+git clone https://github.com/kr-yep/whole-home-agent-public.git
+cd whole-home-agent-public
 python -m pip install uv==0.11.24
-uv sync --frozen --extra demo
-.\.venv\Scripts\whole-home-agent.exe demo-recorded --compact
-.\.venv\Scripts\streamlit.exe run src\whole_home_agent\streamlit_app.py
+uv run --frozen --extra demo whole-home-agent demo-recorded --compact
+uv run --frozen --extra demo streamlit run src/whole_home_agent/streamlit_app.py
 ```
 
 ### macOS or Linux
 
 ```bash
-python -m pip install uv==0.11.24
-uv sync --frozen --extra demo
-.venv/bin/whole-home-agent demo-recorded --compact
-.venv/bin/streamlit run src/whole_home_agent/streamlit_app.py
+git clone https://github.com/kr-yep/whole-home-agent-public.git
+cd whole-home-agent-public
+python3 -m pip install uv==0.11.24
+uv run --frozen --extra demo whole-home-agent demo-recorded --compact
+uv run --frozen --extra demo streamlit run src/whole_home_agent/streamlit_app.py
 ```
 
-The Streamlit app has no upload, arbitrary path, camera, chat, cloud, credential, or
-action input. It always runs the included allowlisted D0 clip. Its text-context section
-is a local preview, not an API call. See the [90-second and 3-minute demo guide](docs/demo-guide.md).
+The first `uv run` synchronizes the locked environment and prints the structured answer.
+The second opens the visual demo. Neither command accepts an upload, camera, credential,
+free-form prompt, or action handle.
 
-## Deterministic B0 replay
+## What the demo proves
 
-The original semantic oracle remains independent of video and optional dependencies:
+- One prerecorded-video path reaches detection, tracking, relation inference, state,
+  query, and presentation.
+- `key → bag → sofa` is resolved without fabricating a direct key movement.
+- The answer exposes source claims, evidence frames, replay scope, and `estimated` status.
+- A deterministic local Chinese presenter works without an LLM or API key.
+- Ambiguous or incomplete runs fail closed instead of returning partial state.
 
-```bash
-uv sync --frozen
-.venv/bin/whole-home-agent replay examples/fixtures/b0_key_bag_sofa_v1.json \
-  --entity key --as-of 2 --run-id demo-b0-001
-.venv/bin/python -m unittest discover -s tests -v
-```
-
-On Windows, use the matching executables under `.venv\Scripts\`.
+It does **not** prove real-home recognition, 24/7 operation, live sensing, multi-camera
+identity, durable memory, or device control.
 
 ## Architecture
 
 ```text
 allowlisted generated MP4 + manifest/config hashes
-  → PTS frame adapter
-  → detector estimates
-  → clip-local tracker
-  → one-instance binder
-  → conservative temporal rules / abstention
-  → ClaimCandidate (estimated)
-  → deterministic ClaimCommitter
-  → session projection
-  → scoped AnswerTrace
-  → CLI / Streamlit presentation dictionaries
-  → Streamlit-only minimized text-context preview (no provider)
+  → PTS-aware frame decoder
+  → replaceable detector and clip-local tracker
+  → conservative relation candidates / abstention
+  → deterministic claim validation and commit
+  → session projection and scoped query
+  → structured AnswerTrace
+  → compact CLI or Streamlit presentation
+  → optional minimized text context + deterministic local prose
 ```
 
-Detector and rule outputs cannot directly mutate state. A complete source failure returns no queryable session. The UI receives presentation values and public media bytes, not a model, ledger, filesystem, credential, or generic tool handle. No graph database, Memory Core, LLM/VLM, multi-agent runtime, durable database, or action executor is required for this slice.
+Only canonical claim candidates cross from perception into state. Detector/model output
+cannot commit facts directly. The presenter sees only the scoped answer context—not
+frames, the ledger, credentials, or an action interface.
 
-See the [market synthesis](docs/market-synthesis.md),
-[minimal B0 → B1 architecture](docs/b0-b1-architecture-plan.md), [system diagram](docs/b0-b1-system.architecture.html), [perception data flow](docs/b0-b1-perception.dataflow.html), [implementation notes](docs/technology-notes/), [release checklist](docs/release-checklist.md), and [ADRs](docs/adr/). Proposed governance and ADR status are recorded in [PROJECT_STATE.md](PROJECT_STATE.md); implementation does not adopt those documents or enable operation.
+The current slice is a modular monolith. It does not require a graph database, vector
+store, Memory Core, multi-agent runtime, message broker, LLM/VLM, or durable database.
+
+## What works today
+
+- deterministic B0 semantic replay with idempotency, conflict, cycle, and unknown cases;
+- hash-pinned generated H.264 replay and exact annotation/manifest checks;
+- PTS-aware PyAV decoding and optional motion-plus-periodic scheduling;
+- synthetic RGB detector, clip-local tracking, containment/location rules, and abstention;
+- evidence-bound `AnswerTrace` with subject, location, epistemic status, and relation path;
+- compact JSON CLI and a closed Streamlit UI;
+- provider-neutral minimized text context and deterministic local presentation fallback;
+- automated tests on Python 3.11–3.14 plus prerecorded-video and demo CI jobs.
+
+On the included synthetic clip, the current RGB baseline measures AP50 `1.0`,
+mAP50:95 about `0.7293`, key recall `1.0`, event F1 `1.0`, and the expected final
+answer. These measurements apply only to this generated artwork.
+
+Public-data experiments and alternative detector adapters remain a supporting research
+lane. None has established reliable real-home small-object detection or tracking.
+
+## Test the handoff
+
+```powershell
+uv run --frozen --extra demo python -m unittest tests.test_public_demo -v
+uv run --frozen --extra demo python tools/audit_public_release.py
+```
+
+The full deterministic suite is larger and includes historical research contracts:
+
+```powershell
+uv run --frozen --extra demo python -m unittest discover -s tests -v
+```
+
+## 90-second presentation
+
+1. Show the red `OPERATE DISABLED` banner: this is a safe prerecorded prototype.
+2. Play the eight-second clip: the key enters the bag and the bag moves to the sofa.
+3. Ask “Where is the key?” and show the answer plus `estimated` status.
+4. Show the two relation rows: `inside(key, bag)` and `at_zone(bag, sofa)`.
+5. Explain that a model proposes candidates, while deterministic code validates state.
+6. Close with the limit: this proves the architecture on one generated clip, not a real
+   household deployment.
+
+See the complete [demo guide](docs/demo-guide.md).
+
+## Three-day scope
+
+**Demo-critical:** the included video, B0 claim/query core, B1 prerecorded adapter,
+compact CLI, Streamlit UI, and deterministic presenter.
+
+**Supporting research:** VISOR/VOST/YCB-V screens and alternative detector adapters.
+They inform later model work but are not required to install or present the demo.
+
+**Deferred:** live/private cameras, multi-camera handoff, cloud LLM calls, persistent
+household history, and physical actions. `OPERATE` remains disabled.
+
+## Current gaps
+
+- one independent teammate run of the quick start on their own machine;
+- a convincing protected-group real indoor small-object benchmark;
+- tracking robust to occlusion, camera motion, and container transitions;
+- a product-level recorded indoor replay beyond generated artwork;
+- any adopted provider/egress policy or optional language-model adapter;
+- live sensing, durable household memory, consent/retention controls, and actions.
+
+A wheel or sdist is optional for this Git-checkout hackathon handoff. Historical M41–M44
+artifact experiments are retained as diagnostics, but they do not block the verified
+repository demo.
 
 ## Repository map
 
 ```text
-src/whole_home_agent/       B0 core, B1 contracts/adapters, CLI, presentation
+src/whole_home_agent/       product core, prerecorded adapters, CLI, presentation
 configs/perception/         versioned detector/rule/evaluation controls
-configs/evaluation/         public-data source, license, split, and hash controls
-examples/fixtures/          frozen semantic D0 fixtures
-examples/media/generated/   one CC0 project-generated replay + manifest
-tests/                      semantic, hostile, failure, CV, relation, UI tests
-tools/                      fixture generation, evaluation, public audit
-docs/                       architecture, demo, ADR, and technology notes
+examples/fixtures/          frozen semantic fixtures
+examples/media/generated/   included CC0 generated replay and manifest
+tests/                      product, boundary, and historical research tests
+tools/                      evaluation and public-release utilities
+docs/evaluation/            detailed experiment evidence and limits
 ```
 
-## Next evidence gate
-
-The first public detector, consecutive motion, target-tracking, failure-localization,
-RF-DETR replacement, D-FINE synthetic engineering, M14 scientific-priority, M15
-target-substrate, M16 label-oracle, M17 generation-strategy, M18 vector-substrate, and
-M19 real-oracle through M32 verification-boundary gates are frozen. M27 selects the existing
-synthetic end-to-end replay as the primary demo, keeps M26 as optional smoke, and defers
-scientific gain to a separately contracted protected-group development/untouched-test
-lane. M31's additive implementation passes all semantic checks but remains a historical
-normal stop. M32 now permits the exact committed D0 synthetic fixture only inside the
-complete-regression profile. M33 is one separately frozen teammate clean-install and
-closed-demo drill; it cannot use external/private/live media, rerun M29, load a model,
-tune, or train.
-Tracker replacement remains a separate later co-gate.
-The reserved VOST validation source and VISOR `P14_05` must remain untouched. Do not add
-a movement-candidate layer merely because scheduling is inexpensive. Training remains
-capped at 20 epochs with patience 5, and test tuning and automatic submissions remain
-prohibited. See the [M11 diagnostic](docs/evaluation/vost-m11-failure-localization-v1.md)
-and [M12 detector screen](docs/evaluation/vost-m12-rfdetr-small-v1.md), plus the
-[M13 engineering screen](docs/evaluation/m13-dfine-small-synthetic-v1.md), the
-[M14 priority decision](docs/evaluation/m14-detector-scientific-priority-v1.md), and the
-[M15 result](docs/evaluation/m15-target-domain-substrate-v1.md), plus the
-[M16 result](docs/evaluation/m16-target-label-oracle-feasibility-v1.md), the
-[M17 result](docs/evaluation/m17-generation-strategy-reality-gate-v1.md), the
-[M18 result](docs/evaluation/m18-vector-d1-slice-v1.md), and the
-[M19 result](docs/evaluation/m19-real-transfer-oracle-reality-gate-v1.md), the
-[M20 result](docs/evaluation/m20-ycbv-bop19-acquisition-translation-v1.md), and the
-[M21 result](docs/evaluation/m21-ycbv-per-archive-root-repair-v1.md), and the
-[M22 result](docs/evaluation/m22-ycbv-annotation-failure-localization-v1.md), and the
-[M23 result](docs/evaluation/m23-cross-scene-transfer-oracle-validity-v1.md), and the
-[M24 result](docs/evaluation/m24-ycbv-cross-scene-d1-materialization-v1.md), plus the
-[M25 result](docs/evaluation/m25-ycbv-small-bbox-alignment-v1.md), and the
-[M26 result](docs/evaluation/m26-ycbv-dual-area-replacement-d1-v1.md), and the
-[M27 result](docs/evaluation/m27-demo-evaluation-contract-v1.md).
-The [M28 result](docs/evaluation/m28-primary-demo-acceptance-v1.md) records the
-normal stop, exact trace mismatch, and bounded presentation hardening.
-The [M29 result](docs/evaluation/m29-primary-demo-acceptance-retry-v1.md) records the
-single retry, corrected time semantics, and remaining answer-subject mismatch.
-The [M30 result](docs/evaluation/m30-answer-subject-identity-decision-v1.md) selects the
-canonical boundary for one separately frozen implementation.
-The [M31 result](docs/evaluation/m31-answer-trace-subject-implementation-v1.md) records
-the correct additive implementation and the distinct verification-boundary STOP.
-The [M32 result](docs/evaluation/m32-verification-fixture-boundary-decision-v1.md)
-separates static, complete-regression, and ad-hoc experiment authority without changing
-M31 history.
-The [M33 result](docs/evaluation/m33-teammate-clean-install-demo-drill-v1.md) records the
-clean-clone success and exact pre-install harness stop without mislabeling it as a repo
-or dependency failure.
-The [M34 result](docs/evaluation/m34-teammate-drill-infrastructure-retry-v1.md) records
-the successful clean install/offline semantics and the distinct CRLF lock-identity STOP.
-The [M35 result](docs/evaluation/m35-versioned-text-identity-portability-decision-v1.md)
-selects Git-blob identity for the separately bounded non-acceptance checker hardening.
-The [M36 result](docs/evaluation/m36-checker-git-blob-identity-hardening-v1.md) implements
-that checker-only hardening without rerunning acceptance.
-The [M37 result](docs/evaluation/m37-teammate-handoff-runbook-v1.md) packages the exact
-real-teammate procedure without claiming that a teammate has executed it.
-The [M38 market synthesis](docs/market-synthesis.md) records the representative
-adopt/defer/reject cut and the exact minimized text context now visible in the demo;
-[ADR 0020](docs/adr/0020-preview-minimized-text-before-language-provider.md) keeps any
-real language provider and egress outside this implementation.
-The [M39 decision](docs/evaluation/m39-language-presentation-boundary-v1.md) and
-[ADR 0021](docs/adr/0021-keep-language-presentation-local-by-default.md) keep the
-deterministic answer as default, distinguish pure local from local-first hybrid, and
-make policy authorization independent of API-key presence.
-The [M40 result](docs/evaluation/m40-local-presentation-implementation-v1.md) and
-[ADR 0022](docs/adr/0022-use-a-deterministic-local-presentation-port.md) implement that
-default without adding a model and keep the structured answer through presenter failure.
-The [M41 result](docs/evaluation/m41-release-candidate-packaging-v1.md) preserves the
-single offline cache-initialization failure without turning it into package evidence or
-silently retrying under different infrastructure.
-The [M42 result](docs/evaluation/m42-uv-cache-path-preflight-v1.md) separates uv's
-acceptance of an explicit cache path from actual creation and writability evidence.
-The [M43 result](docs/evaluation/m43-caller-created-uv-cache-v1.md) proves the bounded
-caller-created alternative and preserves its pre-attempt direct-launch failure.
-The [M44 result](docs/evaluation/m44-explicit-cache-packaging-v1.md) preserves the sole
-partial-build stop, CP950 runner failure, missing wheel, and missing sdist `uv.lock`
-without manufacturing package, install, demo, public-CI, or teammate evidence.
+Start with the concise [capability status](docs/current-capability-status.md). Detailed
+architecture and historical evidence remain in
+[the B0→B1 plan](docs/b0-b1-architecture-plan.md),
+[market synthesis](docs/market-synthesis.md),
+[evaluation reports](docs/evaluation/), and [PROJECT_STATE.md](PROJECT_STATE.md).
 
 ## Safety and data boundary
 
 - `OPERATE` is globally disabled.
-- Do not add real household recordings, identifying media, private queries, model weights, secrets, or credentials to Git.
+- Do not commit real household recordings, identifying media, private queries, model
+  weights, secrets, or credentials.
 - Do not connect cameras, RTSP feeds, cloud endpoints, accounts, or physical devices.
-- Repository access and passing tests grant no household, consent, policy, or runtime authority.
-- Do not claim “real-time,” “24/7,” “understands the home,” or “improved” beyond a directly supporting benchmark.
+- Passing tests grants no household, consent, policy, or runtime authority.
+- Do not claim real-time, 24/7, general home understanding, or improved indoor accuracy
+  without a directly supporting benchmark.
 
-Read [AGENTS.md](AGENTS.md), [PROJECT_STATE.md](PROJECT_STATE.md), and [ACTION_POLICY.md](ACTION_POLICY.md) before changing data, sensing, authority, or action boundaries. Contributions are described in [CONTRIBUTING.md](CONTRIBUTING.md).
+Read [AGENTS.md](AGENTS.md), [PROJECT_STATE.md](PROJECT_STATE.md), and
+[ACTION_POLICY.md](ACTION_POLICY.md) before changing data, sensing, authority, or action
+boundaries. Contributions are described in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
-Original repository code and documentation use the [MIT License](LICENSE). The generated replay is marked `CC0-1.0`; optional dependencies, public evaluation data, and model candidates retain the licenses listed in [third-party notices](docs/third-party-notices.md). No VISOR/VOST source data or model weights are distributed.
+Original repository code and documentation use the [MIT License](LICENSE). The included
+generated replay is marked `CC0-1.0`; optional dependencies, public evaluation data, and
+model candidates retain the licenses listed in
+[third-party notices](docs/third-party-notices.md). No VISOR/VOST source data or model
+weights are distributed.

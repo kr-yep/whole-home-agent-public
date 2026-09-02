@@ -1,15 +1,22 @@
 # Demo guide
 
-## Before presenting
+## Fast path
 
 ```powershell
 python -m pip install uv==0.11.24
-uv sync --frozen --extra demo
-.\.venv\Scripts\python.exe -m unittest tests.test_public_demo -v
-.\.venv\Scripts\streamlit.exe run src\whole_home_agent\streamlit_app.py
+uv run --frozen --extra demo whole-home-agent demo-recorded --compact --run-id judging-demo
+uv run --frozen --extra demo streamlit run src/whole_home_agent/streamlit_app.py
 ```
 
-Use the macOS/Linux `.venv/bin/` equivalents where appropriate. The demo needs no account, API key, network model call, camera, or private recording.
+These commands are the hackathon handoff path on Windows, macOS, and Linux. The first
+setup may download public Python dependencies. The demo needs no account, API key,
+network model call, camera, or private recording.
+
+Optional pre-demo check:
+
+```powershell
+uv run --frozen --extra demo python -m unittest tests.test_public_demo -v
+```
 
 ## 90-second version
 

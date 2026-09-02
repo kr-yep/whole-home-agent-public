@@ -1,6 +1,6 @@
 # Whole Home Agent — Public Repository State
 
-**Checkpoint:** `PUBLIC-B1-M44-001`
+**Checkpoint:** `PUBLIC-B1-HACKATHON-RECOVERY-001`
 
 **As of:** `2026-09-02 Asia/Taipei`
 
@@ -12,6 +12,8 @@ This file is the live checkpoint for the clean public repository. It records cur
 
 ## Current direction
 
+- Optimize the three-day handoff for one teammate-runnable repository checkout and one
+  clear 90-second prerecorded demo; research and artifact-publishing lanes must not block it.
 - Publish and collaborate on the smallest viable offline B0 semantic replay baseline plus one bounded B1 prerecorded replay.
 - Keep B0/B1 inputs limited to synthetic or separately licensed, lawfully reusable public fixtures.
 - Keep the product slice limited to the fixed project-generated clip; use the local-only, hash-pinned VISOR sparse-frame set strictly as a non-commercial detector screen behind a separate adapter.
@@ -29,6 +31,22 @@ This file is the live checkpoint for the clean public repository. It records cur
 - Route the closed demo through one local `LocationPresenter` port selected only by the
   composition root. Presenter failure must retain the structured answer and expose no
   exception content; presenter prose is never truth or authority.
+
+## Current scoped supersession
+
+`HACKATHON-RECOVERY-001` — `2026-09-02 Asia/Taipei`, authorized by the current user's
+explicit repository direction:
+
+- supersedes only the interpretation that M41–M44 are prerequisites for running or
+  handing off the repository-checkout demo;
+- preserves every M41–M44 result as historical evidence and does not relabel a failed
+  artifact attempt as successful;
+- selects the same path used by public CI: locked repository checkout → `uv run`/`uv
+  sync --frozen --extra demo` → public-demo tests → compact CLI or Streamlit;
+- requires `uv.lock` in the repository for locked synchronization, but does not require
+  it inside an sdist unless artifact publication later becomes an explicit deliverable;
+- does not supersede privacy, consent, provenance, model-claim, action, or `OPERATE`
+  restrictions.
 
 ## Authority and roles
 
@@ -91,6 +109,7 @@ This file is the live checkpoint for the clean public repository. It records cur
 | M42 explicit uv cache preflight | `IMPLEMENTED / NORMAL PRE-PROBE STOP` | The exact repository-local path was accepted and reported by `uv cache dir`, but uv did not create it. The frozen uv-initialization condition failed before the write probe; no build, cache, retry, or push is authorized |
 | M43 caller-created uv cache | `IMPLEMENTED / BOUNDED NO-BUILD PASS` | A closed preflight created and probed the exact ignored cache, uv confirmed that existing path, and non-recursive cleanup proved it stayed empty. This authorizes only a separate explicit-cache packaging gate, not a build or push |
 | M44 explicit-cache release-candidate packaging | `IMPLEMENTED / NORMAL STOP AFTER SDIST, BEFORE WHEEL` | The sole offline attempt seeded the exact cache and started the build, but implicit CP950 decoding broke runner receipt assembly. Read-only forensics found one partial sdist, no wheel, and a missing required `uv.lock`; install/demo never started and no retry or push is authorized |
+| Hackathon repository-checkout delivery | `IMPLEMENTED / LOCAL CLEAN-CHECKOUT PASS` | A new Python 3.12 environment synchronized the locked demo extra, all seven public-demo tests passed, and the installed checkout command returned the expected scoped answer and local presentation. Existing workspace dependency cache was used because the Codex sandbox cannot access the user's AppData cache |
 | B1 binding/relation/query slice | `IMPLEMENTED / VERIFIED ON ONE SYNTHETIC REPLAY` | One-instance binding, conservative containment/zone assertion and retraction rules, typed abstentions, estimated candidates through the unchanged committer, relation evaluation, and evidence-traceable `key → bag → sofa` query exist; no real indoor transfer evidence exists |
 | B1 CLI and Streamlit presentation | `IMPLEMENTED / VERIFIED ON ONE SYNTHETIC REPLAY` | A closed composition/presentation boundary exposes the fixed clip, scoped answer, evidence, abstentions, metrics, diagnostics, and receipt; it accepts no upload, camera, arbitrary path, free-form query, credential, or action handle |
 | Python package distribution | `IMPLEMENTED / VERIFIED BY LOCAL CLEAN INSTALL` | The wheel contains only the fixed D0 replay, its configs, and generator provenance; a fresh Python 3.12 environment ran the CLI from outside the checkout |
@@ -101,6 +120,14 @@ This file is the live checkpoint for the clean public repository. It records cur
 
 ## Evidence envelope
 
+- The hackathon-recovery candidate passed all 485 tests from a normal Windows CRLF
+  checkout after the four remaining historical lock checks were aligned with the
+  already-selected Git-blob identity. The public Git audit scanned 340 files / 680
+  index-and-worktree snapshots with zero violations. A clean detached checkout at base
+  revision `c28fbdb` synchronized 40 locked demo packages into a new Python 3.12
+  environment in 2.47 seconds; all seven public-demo tests and the compact installed
+  checkout command passed with `COMPLETE / FOUND key → sofa / PRESENTED / OPERATE
+  DISABLED`.
 - The public export contains the B0 package, synthetic semantic fixtures, one project-generated CC0 prerecorded clip with manifests/annotations, B1 adapters, public asset/hash configs, tests, presentation code, architecture/evaluation documents, and proposed governance. It does not contain VISOR/VOST source bytes or model weights.
 - It intentionally excludes prior private Git history, coursework/competition experiments, third-party datasets, household/private media, model weights, run outputs, local databases, environment files, and credentials.
 - Existing tests exercise semantic replay, provenance, idempotency, conflict/unknown handling, malformed input, boundary restrictions, media allowlisting and timing, detector/tracker/evaluator contracts, conservative relation inference, partial-source failure without a queryable session, and the fixed CLI/Streamlit presentation.
@@ -302,12 +329,13 @@ This file is the live checkpoint for the clean public repository. It records cur
   public CI.
 - M44 does not establish packaging recovery. Its runner retained no build return code,
   the only sdist fails the inherited `uv.lock` content requirement, no wheel exists, and
-  installed M40 presentation/demo behavior remains unverified.
+  no wheel install exists. Under `HACKATHON-RECOVERY-001`, this remains an artifact-
+  publication gap rather than a blocker for the verified repository-checkout demo.
 
 ## Next safe action
 
-Stop after M44. If work resumes, prepare a repository-only M45 decision that preserves
-the failed attempt while hardening subprocess output capture against non-CP950 bytes and
-deciding how the required `uv.lock` enters an sdist. Add a non-ASCII output regression
-without rebuilding. Any new package execution must be separately frozen; do not infer a
-retry or push from M44, use a provider/private data, or change runtime authority.
+Have one teammate follow the README quick start from a normal public clone and report
+whether the compact answer and Streamlit UI run. Fix only a reproduced handoff blocker.
+Artifact publishing, real indoor perception, live sensing, provider integration, durable
+memory, and actions remain separate later decisions. Do not use private data or change
+runtime authority; push only after explicit user approval.

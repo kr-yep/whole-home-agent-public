@@ -58,6 +58,19 @@ def _sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def _git_blob_sha256(relative_path: str) -> str:
+    process = subprocess.run(
+        ["git", "show", f"HEAD:{relative_path}"],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+        shell=False,
+    )
+    if process.returncode != 0:
+        raise ValueError(f"cannot read committed {relative_path}")
+    return hashlib.sha256(process.stdout).hexdigest()
+
+
 def _inside_repo(value: object, *, field: str) -> Path:
     if not isinstance(value, str) or not value or "\\" in value:
         raise ValueError(f"{field} must be a POSIX repository-relative path")
@@ -193,7 +206,7 @@ def load_contract(path: Path = CONTRACT_PATH) -> M13Contract:
         or runtime["uv_lock_reproduces_gpu_environment"] is not False
     ):
         raise ValueError("M13 runtime profile changed")
-    if _sha256(ROOT / "uv.lock") != runtime["uv_lock_sha256"]:
+    if _git_blob_sha256("uv.lock") != runtime["uv_lock_sha256"]:
         raise ValueError("M13 dependency lock changed")
 
     fixture = document["fixture"]

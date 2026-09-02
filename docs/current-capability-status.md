@@ -1,13 +1,13 @@
 # Current capability status
 
-**Checkpoint:** M44 packaging normal stop · **Runtime:** `OPERATE DISABLED` · **Production ready:** no
+**Checkpoint:** hackathon demo recovery · **Runtime:** `OPERATE DISABLED` · **Production ready:** no
 
 This page is updated with every milestone push so a teammate can see what is usable and
 what is still missing without reconstructing the full experiment history.
 
 ## Usable now
 
-- Install the public Python package from this repository on Python 3.11–3.14.
+- Clone the repository and run its locked demo environment on Python 3.11–3.14.
 - Run deterministic B0 semantic fixtures and receive scoped, evidence-bound answers.
 - Run one closed, project-owned, prerecorded synthetic key→bag→sofa replay locally.
 - Use either compact JSON CLI output or the closed Streamlit demo; neither accepts an
@@ -17,12 +17,8 @@ what is still missing without reconstructing the full experiment history.
 - Rebuild the same B0 claim ledger/projection; the golden semantic SHA-256 remains
   `226d30a5b826720d607d0b9a29bf3dfb9f5429eeedbbd70ffd1ff23c21233c8f`.
 - Run the public test/CI matrix and mechanical release audit.
-- Use the teammate checker without false `uv.lock` failures from Git LF/CRLF checkout
-  representation; exact revision, clean worktree, and committed blob identity remain
-  fail-closed.
-- Follow one exact Windows PowerShell or macOS/Linux teammate procedure for clone,
-  locked install, offline receipt, 90-second presentation or CLI fallback, and guarded
-  cleanup.
+- Use one cross-platform `uv run --frozen --extra demo ...` path for both the compact CLI
+  and Streamlit UI.
 - Inspect the exact `whole-home-agent.location-context.v1` text packet that a future
   language presenter could receive. It is generated locally from the public answer and
   excludes media, evidence/run history, raw queries, credentials, and action handles.
@@ -42,15 +38,11 @@ what is still missing without reconstructing the full experiment history.
 - A tracker that survives occlusion and camera motion strongly enough for movement-event
   work; the current VOST target path was rejected on development.
 - A product-level recorded indoor relation replay beyond project-generated artwork.
-- Clear packaging/recovery evidence on each teammate platform.
+- One real teammate execution of the README quick start on their own platform.
 - An adopted language-provider and data-egress policy, assigned credential owner,
   provider or local-model implementation, and runtime verification of failure fallback.
-- A clean installed-wheel receipt proving the new M40 presentation module and compact
-  demo work outside the checkout. M41 stopped before artifact creation during default
-  `uv` cache initialization; M42 only proved that uv accepts an explicit path, not that
-  it creates or can use it. M43 proves a caller-created empty cache is locally writable
-  and selected by uv. M44 reached a partial sdist, but output decoding broke the runner,
-  no wheel existed, and the sdist lacked required `uv.lock`; packaging remains unverified.
+- A published wheel only if the team later decides installation without a Git checkout
+  is a hackathon requirement. It is not required for the current repository demo.
 
 ## Deliberately not available
 
@@ -64,17 +56,19 @@ what is still missing without reconstructing the full experiment history.
 These remain blocked by proposed governance, unassigned roles, absent consent and data
 policy, and `OPERATE DISABLED`.
 
-## Latest local milestone: M44 explicit-cache packaging stop
+## Latest local verification: repository checkout demo
 
-The [M44 result](evaluation/m44-explicit-cache-packaging-v1.md) preserves its sole
-package attempt exactly. The build subprocess started with the frozen caller-created
-cache, but implicit CP950 decoding failed before the runner could retain a receipt.
-Read-only inspection found one partial source archive containing the correct M40 module,
-no wheel, and no required `uv.lock`. Install and demo never started.
+At local revision `c28fbdb`, a clean detached checkout synchronized the locked `demo`
+extra into a new Python 3.12 environment in 2.47 seconds using an existing workspace
+dependency cache. All seven public-demo tests passed. The installed project command then
+returned `COMPLETE`, `FOUND`, subject `key`, location `sofa`, two relation steps,
+`PRESENTED`, and `OPERATE DISABLED`.
 
-The 628 MB copied cache, detached worktree, partial archive, and output directories were
-removed. No dependency change, provider, key, model, endpoint, request, private media,
-or product change was introduced. Public CI was not run, nothing was pushed, and
-`OPERATE` remains disabled. A future runner/content repair and any new package attempt
-must be separately frozen. All 485 local regression tests pass with 30 optional skips;
-the 340-file / 680-snapshot Git audit reports zero violations.
+Codex could not use the normal AppData uv cache because its sandbox service identity has
+no access to that user directory; this is a local sandbox restriction, not a repository
+failure. Public CI already uses the normal `uv sync --frozen` path. M41–M44 remain
+historical packaging diagnostics and no longer block the Git-checkout hackathon demo.
+After aligning the remaining historical lock checks with Git-blob identity, all 485
+tests also pass from the normal Windows CRLF checkout. The public audit scanned 340
+files / 680 snapshots with zero violations. No provider, key, private media, device, or
+action was added, and nothing was pushed.

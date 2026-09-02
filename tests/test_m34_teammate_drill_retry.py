@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import re
+import subprocess
 import tomllib
 import unittest
 from pathlib import Path
@@ -45,6 +46,14 @@ class M34ContractTests(unittest.TestCase):
                     record["sha256"],
                     "cd285badb9e4ccd6b5ab8e94a657cdfa814294ceffc9d72468875ea977118c5f",
                 )
+            elif record["path"] == "uv.lock":
+                blob = subprocess.run(
+                    ["git", "show", "HEAD:uv.lock"],
+                    cwd=ROOT,
+                    check=True,
+                    capture_output=True,
+                ).stdout
+                self.assertEqual(hashlib.sha256(blob).hexdigest(), record["sha256"])
             else:
                 self.assertEqual(
                     hashlib.sha256((ROOT / record["path"]).read_bytes()).hexdigest(),
