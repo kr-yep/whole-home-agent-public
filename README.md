@@ -41,7 +41,8 @@ Live/private sensing, cloud calls, and actions remain blocked.
 records a normal pre-probe stop. The sole no-build command accepted and reported the
 exact ignored repository-local cache path but did not create it, so writability was not
 inferred and no packaging retry was authorized. No cache, artifact, install, demo, or
-product change remains. This local branch has not been pushed or run in public CI.
+product change remains. All 458 local regression tests and the 327-file / 654-snapshot
+Git audit pass. This local branch has not been pushed or run in public CI.
 
 ## What works today
 

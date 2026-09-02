@@ -72,3 +72,4 @@ The frozen gate therefore stopped before its write probe.
 The target never existed and the empty parent was removed. No retry, build, install,
 demo, dependency change, provider, key, model, endpoint, request, or product change was
 introduced. Public CI was not run, nothing was pushed, and `OPERATE` remains disabled.
+All 458 local regression tests and the 327-file / 654-snapshot Git audit pass.

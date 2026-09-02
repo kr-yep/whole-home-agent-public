@@ -44,6 +44,17 @@ proxy_index_token_or_credential_forwarded = false
 os_level_network_instrumented = false
 network_attempt_count = -1
 
+[verification]
+revision = "a1c1de835a543747f006d01e8f8bc35de1022b4a"
+focused_contract_checker_and_result_tests_passed = 13
+full_tests_passed = 458
+full_tests_skipped = 39
+public_git_audit_scanned_files = 327
+public_git_audit_scanned_snapshots = 654
+public_git_audit_violations = 0
+public_ci_run_id = 0
+public_ci_conclusion = "NOT_RUN_LOCAL_BRANCH_ONLY"
+
 [cleanup]
 target_absent_after_attempt = true
 empty_temp_parent_removed = true

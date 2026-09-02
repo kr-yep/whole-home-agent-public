@@ -177,7 +177,10 @@ This file is the live checkpoint for the clean public repository. It records cur
   `CACHE_NOT_INITIALIZED` before its write probe. The target never existed, the empty
   parent was removed, and no cache, build, install, demo, product change, retry, or push
   occurred. This does not establish writability, default-cache root cause, or zero
-  OS-level network attempts.
+  OS-level network attempts. Result revision
+  `a1c1de835a543747f006d01e8f8bc35de1022b4a` passed all 458 local regression tests
+  with 39 existing optional-dependency skips; the Git-mode public audit scanned 327
+  files / 654 snapshots with zero violations.
 - GitHub Actions run [33486414127](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33486414127) passed every job except Python 3.11 because one test fixture used Python 3.12's generalized nested f-string grammar. The fixture now builds its TOML blocks before interpolation; local `ast` parsing under the 3.11 grammar and the focused tests passed. Follow-up run [33486674987](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33486674987) completed successfully across Python 3.11–3.14, the prerecorded-video contract, and the closed public demo.
 - An isolated offline M9 package build produced the source archive and universal wheel and included the new Python adapter/evaluator modules without including VOST/VISOR data, model weights, local receipts, or evaluation configs/tools in the installed runtime data bundle.
 - Source revision 2 is an 80-frame H.264/yuv420p generated replay with SHA-256 `b9cc79476d77f8d45acd1803c924de73914ffc4790f4da271f77cc8d4742eb43`. It was versioned because revision 1's encoding failed Chromium playback. Two consecutive local generations matched; browser QA then showed duration 8 seconds, ready state 4, scoped revision-2 content, and zero console errors.

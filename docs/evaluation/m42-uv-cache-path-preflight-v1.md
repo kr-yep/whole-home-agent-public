@@ -27,6 +27,12 @@ The target never existed. The empty ignored `.tmp` parent created for the attemp
 removed, and no cache or probe remains. No build, install, demo, dependency, product,
 provider, media, device, action, or push occurred; `OPERATE` stayed disabled.
 
+On result revision `a1c1de835a543747f006d01e8f8bc35de1022b4a`, all 13 M42
+contract/checker/result tests and all 458 complete-regression tests passed in a Git-blob/
+LF worktree; 39 existing optional-dependency tests were skipped. The Git-mode public
+audit scanned 327 files / 654 index-and-worktree snapshots with zero violations. Public
+CI was not run.
+
 M42 is not a packaging authorization and may not be retried. A separate no-build gate
 may decide whether the caller should create and probe an exact new cache directory before
 passing it to uv. Such a gate must preserve the same path confinement, environment
