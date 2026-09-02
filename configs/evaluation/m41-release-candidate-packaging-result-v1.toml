@@ -1,0 +1,78 @@
+schema_version = 1
+status = "IMPLEMENTED_NORMAL_STOP_BEFORE_ARTIFACT"
+gate_id = "m41-release-candidate-packaging-v1"
+decision = "STOP_M41_LOCAL_RELEASE_CANDIDATE_PACKAGING"
+contract_revision = "12fcbd6bc607c83e608b4668e8a873a7538d5832"
+execution_revision = "12fcbd6bc607c83e608b4668e8a873a7538d5832"
+attempts_started = 1
+attempt_limit = 1
+additional_retry_used = false
+additional_retry_authorized = false
+
+[source]
+revision_matched = true
+git_diff_clean = true
+git_cached_diff_clean = true
+untracked_count = 0
+uv_lock_git_blob_sha256 = "f2d3639c4b34b9c8a05381baec95cd178d39e056d81bbb7bc028eaeba1c94c3e"
+checkout_uv_lock_sha256 = "f2d3639c4b34b9c8a05381baec95cd178d39e056d81bbb7bc028eaeba1c94c3e"
+
+[build]
+command = "uv build --offline --out-dir <disposable-dist>"
+uv_semantic_version = "0.11.24"
+offline_flag_set = true
+exit_code = 2
+elapsed_ms = 58.167
+sdist_count = 0
+wheel_count = 0
+
+[failure]
+stage = "UV_CACHE_INITIALIZATION"
+failure_class = "DEFAULT_CACHE_INITIALIZATION_OS_ERROR_183"
+sanitized_path = "%LOCALAPPDATA%/uv/cache"
+path_observed_after_failure = "DIRECTORY"
+tool_message_meaning = "PATH_ALREADY_EXISTS_WHILE_INITIALIZING_CACHE"
+root_cause_established = false
+product_code_reached = false
+artifact_created = false
+install_started = false
+demo_started = false
+
+[network]
+build_network_allowed = false
+uv_offline_flag_set = true
+os_level_network_instrumented = false
+network_attempt_count = -1
+
+[cleanup]
+worktree_removed = true
+dist_removed = true
+venv_removed_or_never_created = true
+run_root_removed = true
+artifact_retained = false
+
+[verification]
+focused_contract_and_checker_tests_passed_before_attempt = 8
+public_audit_scanned_files_before_result = 318
+public_audit_violations_before_result = 0
+operate_enabled = false
+public_ci_run_id = 0
+public_ci_conclusion = "NOT_RUN_LOCAL_BRANCH_ONLY"
+
+[claim_limits]
+establishes_package_build = false
+establishes_wheel_contents = false
+establishes_fresh_install = false
+establishes_installed_demo = false
+establishes_teammate_or_public_ci_success = false
+establishes_product_defect = false
+establishes_cache_root_cause = false
+authorizes_retry = false
+authorizes_push = false
+
+[boundaries]
+product_behavior_or_dependency_changed = false
+provider_model_key_endpoint_or_network_added = false
+private_live_or_additional_media_read = false
+action_policy_adopted = false
+operate_enabled = false

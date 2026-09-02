@@ -37,13 +37,12 @@ consent, an adopted language-provider/egress policy, a provider implementation, 
 operational activation.
 Live/private sensing, cloud calls, and actions remain blocked.
 
-**Latest milestone (M40):** the [deterministic presentation implementation](docs/evaluation/m40-local-presentation-implementation-v1.md)
-adds one narrow port, one pure local presenter, exact context/output validation, and a
-fixed fallback receipt. The demo now verbalizes only the active `key → bag → sofa`
-relations instead of inventing temporal movement from a static context. The structured
-answer remains available on presenter failure. No provider, key, model, endpoint, or
-request was added. All 433 local regression tests and the 315-file / 630-snapshot
-public audit pass. This local branch has not been pushed or run in public CI.
+**Latest milestone (M41):** the [release-candidate packaging gate](docs/evaluation/m41-release-candidate-packaging-v1.md)
+records a normal pre-artifact stop. The sole exact-revision offline build attempt ended
+while `uv` initialized its default Windows cache path; no sdist, wheel, environment,
+install, or installed demo was produced. The disposable paths were cleaned and the
+result authorizes neither a retry nor a push. M40 product behavior is unchanged, and
+this local branch has not been pushed or run in public CI.
 
 ## What works today
 
@@ -376,6 +375,9 @@ make policy authorization independent of API-key presence.
 The [M40 result](docs/evaluation/m40-local-presentation-implementation-v1.md) and
 [ADR 0022](docs/adr/0022-use-a-deterministic-local-presentation-port.md) implement that
 default without adding a model and keep the structured answer through presenter failure.
+The [M41 result](docs/evaluation/m41-release-candidate-packaging-v1.md) preserves the
+single offline cache-initialization failure without turning it into package evidence or
+silently retrying under different infrastructure.
 
 ## Safety and data boundary
 

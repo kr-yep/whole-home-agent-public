@@ -1,6 +1,6 @@
 # Current capability status
 
-**Checkpoint:** M40 deterministic local presentation · **Runtime:** `OPERATE DISABLED` · **Production ready:** no
+**Checkpoint:** M41 packaging pre-artifact stop · **Runtime:** `OPERATE DISABLED` · **Production ready:** no
 
 This page is updated with every milestone push so a teammate can see what is usable and
 what is still missing without reconstructing the full experiment history.
@@ -46,7 +46,8 @@ what is still missing without reconstructing the full experiment history.
 - An adopted language-provider and data-egress policy, assigned credential owner,
   provider or local-model implementation, and runtime verification of failure fallback.
 - A clean installed-wheel receipt proving the new M40 presentation module and compact
-  demo work outside the checkout.
+  demo work outside the checkout. M41 stopped before artifact creation during default
+  `uv` cache initialization, so this remains unverified.
 
 ## Deliberately not available
 
@@ -60,16 +61,15 @@ what is still missing without reconstructing the full experiment history.
 These remain blocked by proposed governance, unassigned roles, absent consent and data
 policy, and `OPERATE DISABLED`.
 
-## Latest local milestone: M40 deterministic local presentation
+## Latest local milestone: M41 packaging pre-artifact stop
 
-Added the [M40 result](evaluation/m40-local-presentation-implementation-v1.md) and
-[ADR 0022](adr/0022-use-a-deterministic-local-presentation-port.md). The closed demo now
-passes the exact M38 context through one narrow, pure local port. It validates context,
-presenter identity, and bounded output and returns an explicit presentation or fallback
-receipt while preserving the structured answer.
+The [M41 result](evaluation/m41-release-candidate-packaging-v1.md) records the sole
+exact-revision attempt. Source identity passed, but `uv build --offline` returned Windows
+error 183 while initializing its default cache path. The path was observed as a directory
+afterward, so the exact root cause is not claimed. Zero package artifacts were produced;
+installation and the installed demo never started.
 
-The successful wording now describes only `inside(key, bag)` and `at_zone(bag, sofa)`;
-it no longer invents a temporal put/move sequence absent from the presenter context.
-All 433 local regression tests and the 315-file / 630-snapshot public audit pass with
-zero violations. No provider, model, key, endpoint, request, or new dependency exists;
-public CI was not run, nothing was pushed, and `OPERATE` remains disabled.
+The disposable worktree and empty output/run directories were removed. No retry,
+alternate cache, dependency change, provider, key, model, endpoint, request, or product
+change was introduced. Public CI was not run, nothing was pushed, and `OPERATE` remains
+disabled.
