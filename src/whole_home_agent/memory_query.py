@@ -59,6 +59,17 @@ def _known_entities(answer_source: object) -> tuple[str, ...]:
     )
 
 
+def list_known_entities(archive: ReplayArchive) -> tuple[str, ...]:
+    """Return the entity IDs the newest stored replay can be asked about.
+
+    A caller needs this to show the closed vocabulary instead of letting a person
+    guess an entity and receive an unsupported-question rejection that looks the
+    same as having no evidence.
+    """
+
+    return _known_entities(archive.load_latest())
+
+
 def answer_latest_memory(
     archive: ReplayArchive,
     question: str,

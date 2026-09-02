@@ -323,15 +323,35 @@ class MemoryUiBoundaryTests(unittest.TestCase):
 
         app_path = ROOT / "src" / "whole_home_agent" / "memory_app.py"
         with tempfile.TemporaryDirectory() as directory, contextlib.chdir(directory):
+            def click(app, label):
+                """Select by label; index-based selection breaks on any layout change."""
+
+                for button in app.button:
+                    if button.label == label:
+                        return button.click().run(timeout=30)
+                raise AssertionError(f"no button labelled {label!r}")
+
             app = AppTest.from_file(str(app_path)).run(timeout=30)
             self.assertEqual(app.exception, [])
-            app.button[0].click().run(timeout=30)
+
+            app = click(app, "建立示範記憶")
             self.assertEqual(app.exception, [])
-            self.assertTrue(any("INSERTED" in item.value for item in app.success))
-            app.button[1].click().run(timeout=30)
+            self.assertTrue(Path(".whole-home-agent/demo-memory.sqlite3").is_file())
+
+            # The closed vocabulary is disclosed as one chip per askable entity.
+            chip_labels = {button.label for button in app.button}
+            self.assertLessEqual({"🔑 鑰匙", "👜 包包", "🛋 沙發"}, chip_labels)
+
+            app = click(app, "🔑 鑰匙")
             self.assertEqual(app.exception, [])
             self.assertTrue(any("沙發" in item.value for item in app.success))
-            self.assertTrue(Path(".whole-home-agent/demo-memory.sqlite3").is_file())
+
+            # A rejected question explains itself instead of printing an error code.
+            app.text_input[0].set_value("鑰匙跟包包在哪？").run(timeout=30)
+            app = click(app, "詢問記憶")
+            self.assertEqual(app.exception, [])
+            self.assertTrue(any("一次只能問一個東西。" in item.value for item in app.info))
+            self.assertFalse(any("unsupported_question" in item.value for item in app.warning))
 
 
 if __name__ == "__main__":

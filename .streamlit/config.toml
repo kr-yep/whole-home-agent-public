@@ -3,3 +3,9 @@ gatherUsageStats = false
 
 [server]
 headless = true
+
+[theme]
+# Keep red for the OPERATE warning and errors only; primary actions must not
+# share it or the governance banner competes with the call to action.
+base = "dark"
+primaryColor = "#3D8BFD"
