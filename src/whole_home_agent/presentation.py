@@ -32,6 +32,30 @@ _QUERY_STATUSES = frozenset(
     }
 )
 _EPISTEMIC_STATUSES = frozenset({"estimated", "reported"})
+
+# One line per abstention kind. CONFLICT cannot name its candidates here because
+# `location-context.v1` withholds them from every presenter; widening that packet
+# is a separate recorded decision, not something this renderer may assume.
+_ABSTENTION_PROSE = {
+    "UNKNOWN": (
+        "在這段固定重播中，沒有有效證據可以定位{subject}；"
+        "系統回傳 {status}，不補猜位置。"
+    ),
+    "CONFLICT": (
+        "在這段固定重播中，{subject}的位置證據互相衝突；"
+        "系統回傳 {status}，不會替你選一個，也不補猜位置。"
+    ),
+    "FRONTIER_MISMATCH": (
+        "你問的時間點超出這段重播已提交的範圍；"
+        "系統回傳 {status}，不補猜位置。"
+    ),
+    "OUT_OF_SCOPE": (
+        "這個問題不屬於目前這段重播的範圍；系統回傳 {status}，不補猜位置。"
+    ),
+    "SCOPE_REQUIRED": (
+        "查詢沒有帶足範圍資訊；系統回傳 {status}，不補猜位置。"
+    ),
+}
 _PREDICATES = frozenset({"at_zone", "inside"})
 _DISPLAY_NAMES = {
     "bag": "包包",
@@ -136,7 +160,14 @@ def _parse_context(context: Mapping[str, object]) -> _LocationContext:
     epistemic_status = _required_text(
         answer, "epistemic_status", path="context.answer"
     )
-    if epistemic_status not in _EPISTEMIC_STATUSES:
+    # A resolved answer carries the evidence's own epistemic status; an unresolved
+    # one echoes its query status. Accepting only the resolved pair rejected every
+    # non-FOUND context before any presenter ran, so abstentions could not be
+    # verbalized at all.
+    expected_epistemic = (
+        _EPISTEMIC_STATUSES if status == "FOUND" else frozenset({status.lower()})
+    )
+    if epistemic_status not in expected_epistemic:
         raise ValueError("context.answer.epistemic_status is unsupported")
 
     raw_location = answer["location_id"]
@@ -229,10 +260,16 @@ class DeterministicLocationPresenter:
         parsed = _parse_context(context)
         subject = _display_name(parsed.subject_id)
         if parsed.status != "FOUND":
-            return (
-                f"在這段固定重播中，沒有足夠證據定位{subject}；"
-                f"系統回傳 {parsed.status}，不補猜位置。"
-            )
+            # Abstentions differ in kind. Saying "not enough evidence" for a
+            # CONFLICT is wrong -- there is too much, pointing two ways -- and for
+            # a scope error it describes the wrong failure entirely.
+            template = _ABSTENTION_PROSE.get(parsed.status)
+            if template is None:
+                return (
+                    f"在這段固定重播中，系統沒有回答{subject}的位置；"
+                    f"回傳 {parsed.status}，不補猜位置。"
+                )
+            return template.format(subject=subject, status=parsed.status)
 
         assert parsed.location_id is not None
         location = _display_name(parsed.location_id)
