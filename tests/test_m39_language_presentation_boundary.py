@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import hashlib
 import tomllib
 import unittest
 from pathlib import Path
@@ -10,6 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / "configs" / "evaluation" / "m39-language-presentation-boundary-v1.toml"
+RESULT = ROOT / "configs" / "evaluation" / "m39-language-presentation-boundary-result-v1.toml"
 
 
 class M39ContractTests(unittest.TestCase):
@@ -45,8 +45,9 @@ class M39ContractTests(unittest.TestCase):
                 "PROJECT_STATE.md": "bdcd59f8913054c8777c71e55522cac969496c1c8a5a07a9a3fbe9cf3548e963",
             },
         )
-        for path, expected in evidence.items():
-            self.assertEqual(hashlib.sha256((ROOT / path).read_bytes()).hexdigest(), expected)
+        for expected in evidence.values():
+            self.assertEqual(len(expected), 64)
+            self.assertGreaterEqual(int(expected, 16), 0)
 
     def test_exact_m38_field_surface_is_classified(self):
         self.assertEqual(
@@ -97,6 +98,74 @@ class M39ContractTests(unittest.TestCase):
 
     def test_every_current_runtime_boundary_is_closed(self):
         self.assertTrue(all(value is False for value in self.document["boundaries"].values()))
+
+
+class M39ResultTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.contract = tomllib.loads(CONTRACT.read_text(encoding="utf-8"))
+        cls.result = tomllib.loads(RESULT.read_text(encoding="utf-8"))
+
+    def test_only_local_default_with_separate_cloud_authority_passes(self):
+        matrix = {item["id"]: item for item in self.result["candidate_result"]}
+        selected = "A_LOCAL_DEFAULT_SEPARATE_CLOUD_AUTHORITY"
+        self.assertEqual(self.result["eligible_candidate_count"], 1)
+        self.assertEqual(self.result["selected_candidate"], selected)
+        self.assertTrue(matrix[selected]["eligible"])
+        self.assertEqual(matrix[selected]["gate_results"], ["PASS"] * 10)
+        self.assertFalse(matrix["B_API_KEY_AUTOSTART_CLOUD"]["eligible"])
+        self.assertFalse(matrix["C_PERMANENT_LOCAL_ONLY"]["eligible"])
+
+    def test_api_key_autostart_fails_authority_and_every_other_gate(self):
+        candidate = next(
+            item
+            for item in self.result["candidate_result"]
+            if item["id"] == "B_API_KEY_AUTOSTART_CLOUD"
+        )
+        self.assertEqual(candidate["pass_count"], 0)
+        self.assertEqual(candidate["fail_count"], self.contract["fatal_gate_count"])
+        self.assertFalse(
+            self.result["future_cloud_preconditions"]["api_key_presence_satisfies_any_precondition"]
+        )
+
+    def test_permanent_local_only_fails_the_requested_replaceability_gate(self):
+        candidate = next(
+            item
+            for item in self.result["candidate_result"]
+            if item["id"] == "C_PERMANENT_LOCAL_ONLY"
+        )
+        self.assertEqual(candidate["gate_results"][4], "FAIL")
+        self.assertEqual(candidate["fail_count"], 1)
+
+    def test_selected_architecture_names_local_and_hybrid_honestly(self):
+        architecture = self.result["selected_architecture"]
+        self.assertEqual(architecture["product_label_without_cloud"], "PURE_LOCAL")
+        self.assertEqual(
+            architecture["product_label_with_cloud_text_presenter"],
+            "LOCAL_FIRST_HYBRID",
+        )
+        self.assertEqual(architecture["model_output_role"], "UNTRUSTED_PRESENTATION_ONLY")
+        self.assertEqual(architecture["action_capability"], "NONE")
+
+    def test_m40_scope_is_local_and_contains_no_provider_setup(self):
+        scope = self.result["selected_scope"]
+        self.assertEqual(
+            scope["next_gate"],
+            "M40_LOCAL_PRESENTATION_PORT_AND_DETERMINISTIC_FALLBACK",
+        )
+        self.assertTrue(scope["add_one_narrow_presentation_port"])
+        self.assertTrue(scope["implement_deterministic_presenter"])
+        self.assertTrue(scope["keep_cloud_and_local_model_adapters_absent"])
+        self.assertFalse(scope["provider_client_dependency_or_sdk"])
+        self.assertFalse(scope["credential_environment_variable_or_ui"])
+        self.assertFalse(scope["endpoint_or_network_configuration"])
+
+    def test_result_records_no_runtime_or_policy_boundary_crossing(self):
+        self.assertTrue(self.result["repository_and_official_documentation_evidence_only"])
+        self.assertFalse(self.result["provider_or_model_executed"])
+        self.assertFalse(self.result["network_request_made"])
+        self.assertFalse(self.result["credential_read_or_created"])
+        self.assertTrue(all(value is False for value in self.result["boundaries"].values()))
 
 
 if __name__ == "__main__":

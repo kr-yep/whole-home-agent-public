@@ -84,12 +84,8 @@ household or send anything to a cloud service.
 
 ## Next smallest task prepared
 
-M39 should decide the language-provider boundary before adding any provider code:
-
-1. compare local-only generation with an explicit opt-in cloud presenter;
-2. classify the exact text fields and retention/telemetry behavior;
-3. define credential ownership, network allowlisting, timeouts, failure behavior, and a
-   no-provider deterministic fallback;
-4. require the relevant authority to adopt the egress decision before a real request.
-
-Until that decision exists, adding an API key must not activate network access.
+M39 now selects local default plus separately authorized cloud replaceability and keeps
+API-key presence distinct from authority. M40 may add only one narrow presentation port
+and deterministic local presenter over the existing M38 context. It must retain the
+structured answer fallback and add no provider SDK, local-model adapter, key, endpoint,
+network path, household data, policy broker, or action capability.

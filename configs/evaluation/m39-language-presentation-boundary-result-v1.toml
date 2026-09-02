@@ -1,0 +1,127 @@
+schema_version = 1
+status = "RECORDED_SINGLE_ELIGIBLE_SELECTION"
+gate_id = "m39-language-presentation-boundary-v1"
+decision = "SELECT_A_BOUNDED_LOCAL_FIRST_LANGUAGE_PRESENTATION_ARCHITECTURE"
+contract_revision = "f5bdbb30e4e9f69fb3ab2b101baa6ab457899350"
+selected_candidate = "A_LOCAL_DEFAULT_SEPARATE_CLOUD_AUTHORITY"
+eligible_candidate_count = 1
+repository_and_official_documentation_evidence_only = true
+provider_or_model_executed = false
+network_request_made = false
+credential_read_or_created = false
+
+[[observed_fact]]
+id = "F1_M38_CONTEXT_IS_EXACT_ALLOWLIST"
+status = "PASS"
+evidence = "PURE_PROJECTION_EXPOSES_TEN_NAMED_FIELD_PATHS_AND_PERFORMS_NO_IO"
+
+[[observed_fact]]
+id = "F2_CURRENT_POLICY_PROHIBITS_EGRESS"
+status = "PASS"
+evidence = "ACTION_POLICY_HAS_NO_APPROVED_HOUSEHOLD_DATA_EGRESS_OR_RUNTIME_CREDENTIAL"
+
+[[observed_fact]]
+id = "F3_TEXT_CAN_STILL_BE_PRIVATE"
+status = "PASS"
+evidence = "OBJECT_ZONE_STATUS_AND_RELATION_VALUES_CAN_DISCLOSE_DERIVED_HOUSEHOLD_STATE_WITHOUT_MEDIA"
+
+[[observed_fact]]
+id = "F4_KEY_IS_CREDENTIAL_NOT_AUTHORITY"
+status = "PASS"
+evidence = "A_SECRET_CAN_AUTHENTICATE_A_PROVIDER_REQUEST_BUT_CANNOT_SUPPLY_AFFECTED_PERSON_CONSENT_OR_PROJECT_POLICY_APPROVAL"
+
+[[observed_fact]]
+id = "F5_PROVIDER_RETENTION_HAS_DISTINCT_LAYERS"
+status = "PASS"
+evidence = "OFFICIAL_OPENAI_DOCUMENTATION_SEPARATES_TRAINING_ABUSE_MONITORING_AND_APPLICATION_STATE_RETENTION"
+
+[[observed_fact]]
+id = "F6_STORE_FALSE_IS_NOT_ZERO_RETENTION"
+status = "PASS"
+evidence = "DISABLING_RESPONSES_APPLICATION_STATE_DOES_NOT_BY_ITSELF_REMOVE_DEFAULT_ABUSE_MONITORING_RETENTION"
+
+[[candidate_result]]
+id = "A_LOCAL_DEFAULT_SEPARATE_CLOUD_AUTHORITY"
+eligible = true
+pass_count = 10
+fail_count = 0
+gate_results = ["PASS", "PASS", "PASS", "PASS", "PASS", "PASS", "PASS", "PASS", "PASS", "PASS"]
+
+[[candidate_result]]
+id = "B_API_KEY_AUTOSTART_CLOUD"
+eligible = false
+pass_count = 0
+fail_count = 10
+gate_results = ["FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL", "FAIL"]
+
+[[candidate_result]]
+id = "C_PERMANENT_LOCAL_ONLY"
+eligible = false
+pass_count = 9
+fail_count = 1
+gate_results = ["PASS", "PASS", "PASS", "PASS", "FAIL", "PASS", "PASS", "PASS", "PASS", "PASS"]
+
+[selected_architecture]
+product_label_without_cloud = "PURE_LOCAL"
+product_label_with_cloud_text_presenter = "LOCAL_FIRST_HYBRID"
+default_presenter = "DETERMINISTIC_NO_MODEL"
+local_model_presenter = "OPTIONAL_SEPARATE_FUTURE_IMPLEMENTATION"
+cloud_text_presenter = "OPTIONAL_SEPARATE_FUTURE_IMPLEMENTATION_BLOCKED_BY_AUTHORITY"
+context_admission = "DETERMINISTIC_EXACT_M38_ALLOWLIST"
+model_output_role = "UNTRUSTED_PRESENTATION_ONLY"
+truth_source = "SCOPED_STATE_QUERY_ANSWER_AND_RELATION_TRACE"
+action_capability = "NONE"
+
+[selected_scope]
+next_gate = "M40_LOCAL_PRESENTATION_PORT_AND_DETERMINISTIC_FALLBACK"
+add_one_narrow_presentation_port = true
+implement_deterministic_presenter = true
+keep_cloud_and_local_model_adapters_absent = true
+keep_composition_root_on_deterministic_presenter = true
+preserve_exact_m38_context_schema = true
+preserve_existing_public_answer_as_fallback = true
+provider_client_dependency_or_sdk = false
+credential_environment_variable_or_ui = false
+endpoint_or_network_configuration = false
+policy_broker_or_operate_activation = false
+
+[future_cloud_preconditions]
+separate_action_policy_adoption = true
+affected_person_and_space_scope_recorded = true
+exact_allowed_context_values_and_recipient_approved = true
+retention_telemetry_deletion_and_incident_policy_approved = true
+project_scoped_least_privilege_credential_owner_assigned = true
+exact_host_path_model_timeout_and_cost_cap_frozen = true
+independent_network_enforcement_and_revocation_verified = true
+provider_output_hostile_tests_and_deterministic_fallback_verified = true
+api_key_presence_satisfies_any_precondition = false
+
+[claim_limits]
+selection_establishes_language_quality = false
+selection_establishes_household_data_safety = false
+selection_establishes_zero_provider_retention = false
+selection_establishes_teammate_or_cross_platform_usability = false
+selection_adopts_action_policy_or_consent = false
+selection_authorizes_only_separately_frozen_local_m40 = true
+
+[verification]
+python = "3.12.13"
+focused_tests_passed = 12
+full_tests_passed = 411
+public_audit_scanned_files = 309
+public_audit_scanned_snapshots = 618
+public_audit_violations = 0
+operate_enabled = false
+public_ci_run_id = 0
+public_ci_conclusion = "NOT_RUN_LOCAL_BRANCH_ONLY"
+
+[boundaries]
+provider_client_or_dependency_added = false
+credential_or_endpoint_configuration_added = false
+network_request_made = false
+model_loaded_or_inference_run = false
+media_or_private_household_data_read = false
+claim_state_query_or_evidence_semantics_changed = false
+action_tool_or_generic_command_interface_added = false
+action_policy_adopted = false
+operate_enabled = false

@@ -1,6 +1,6 @@
 # Current capability status
 
-**Checkpoint:** M38 market synthesis + text-context preview · **Runtime:** `OPERATE DISABLED` · **Production ready:** no
+**Checkpoint:** M39 local-first language boundary · **Runtime:** `OPERATE DISABLED` · **Production ready:** no
 
 This page is updated with every milestone push so a teammate can see what is usable and
 what is still missing without reconstructing the full experiment history.
@@ -26,6 +26,9 @@ what is still missing without reconstructing the full experiment history.
 - Inspect the exact `whole-home-agent.location-context.v1` text packet that a future
   language presenter could receive. It is generated locally from the public answer and
   excludes media, evidence/run history, raw queries, credentials, and action handles.
+- Inspect a machine-checked comparison that keeps deterministic local presentation as
+  the default, treats API-key presence as credential only, and separates pure local
+  deployment from a future local-first hybrid cloud option.
 
 ## Still missing before a credible hackathon handoff
 
@@ -37,8 +40,8 @@ what is still missing without reconstructing the full experiment history.
   work; the current VOST target path was rejected on development.
 - A product-level recorded indoor relation replay beyond project-generated artwork.
 - Clear packaging/recovery evidence on each teammate platform.
-- An adopted language-provider and data-egress policy, provider implementation,
-  credential boundary, failure contract, and deterministic fallback verification.
+- An adopted language-provider and data-egress policy, assigned credential owner,
+  provider or local-model implementation, and runtime verification of failure fallback.
 
 ## Deliberately not available
 
@@ -52,17 +55,16 @@ what is still missing without reconstructing the full experiment history.
 These remain blocked by proposed governance, unassigned roles, absent consent and data
 policy, and `OPERATE DISABLED`.
 
-## Latest push: M38 market synthesis + text-context preview
+## Latest local milestone: M39 language-presentation boundary
 
-Added the representative [market synthesis](market-synthesis.md) and
-[ADR 0020](adr/0020-preview-minimized-text-before-language-provider.md). The project
-adopts staged compute, deterministic claim admission, traceable event relations,
-provider replaceability, and question-first presentation. It defers identity, audio,
-proactivity, multi-sensor fusion, and device control, and rejects raw-media cloud egress
-and robotic embodiment for the hackathon slice.
+Added the [M39 decision](evaluation/m39-language-presentation-boundary-v1.md) and
+[ADR 0021](adr/0021-keep-language-presentation-local-by-default.md). Three candidates
+were checked against ten gates. The selected architecture always retains the existing
+deterministic answer, permits a separately validated local model later, and keeps any
+cloud text presenter blocked until explicit data/egress and runtime authority exists.
 
-The Streamlit demo now shows an exact provider-neutral text packet produced by a pure
-allowlist projection. It makes no network call and adds no dependency, prompt input,
-credential, memory reader, or action interface. A real provider is still missing and
-unauthorized. All 399 local regression tests and the 304-file / 608-snapshot public
-audit pass with zero violations; `OPERATE` remains disabled.
+The decision classifies every M38 field, records why text can still expose private
+household state, and defines future retention, credential, telemetry, timeout, failure,
+and fallback constraints. It adds no provider, key, model, endpoint, or request. All 411
+local regression tests and the 309-file / 618-snapshot public audit pass with zero
+violations; public CI was not run, nothing was pushed, and `OPERATE` remains disabled.

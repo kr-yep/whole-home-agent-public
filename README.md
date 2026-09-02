@@ -1,6 +1,6 @@
 # Whole Home Agent
 
-> **Current milestone:** `B1 — offline replay + minimized text-context preview`
+> **Current milestone:** `B1 — offline replay + local-first language boundary`
 >
 > **Status:** `NOT PRODUCTION` · `OPERATE DISABLED`
 > **Allowed data:** included generated fixtures plus separately downloaded, licensed D0 public data
@@ -25,22 +25,24 @@ project-owned prerecorded synthetic key→bag→sofa demo through JSON CLI or St
 traceable scoped answers with explicit top-level query `subject_id`; automated public CI;
 an exact cross-platform [teammate handoff runbook](docs/teammate-handoff-runbook.md);
 a Streamlit preview of the exact minimized text context an optional language presenter
-could receive, with no provider or network request.
+could receive, with no provider or network request; and a machine-checked M39 decision
+that keeps deterministic local output available while separating any future cloud
+presenter from credential and egress authority.
 
 **Still missing:** an actual teammate clean-install/demo receipt; convincing protected-group real
 indoor small-object gain; robust tracking under occlusion/camera motion; live camera and
 multi-camera support; durable household memory/retention; assigned policy/data roles,
-consent, a language-provider/egress decision, and any operational activation.
+consent, an adopted language-provider/egress policy, a provider implementation, and any
+operational activation.
 Live/private sensing, cloud calls, and actions remain blocked.
 
-**Latest milestone (M38):** a representative [market synthesis](docs/market-synthesis.md)
-records what to adopt, defer, and reject from Miloco, Home Assistant, Google Home,
-Alexa+, embodied-home products, and video-memory research. The closed Streamlit demo
-now displays `whole-home-agent.location-context.v1`, a pure local allowlist containing
-only answer and relation facts. It sends nothing, accepts no credential or prompt, and
-does not change claim semantics. All 399 local regression tests and the 304-file /
-608-snapshot public audit pass. A real language provider remains a separately governed
-future decision.
+**Latest milestone (M39):** the [language-presentation boundary](docs/evaluation/m39-language-presentation-boundary-v1.md)
+compares deterministic/local generation, API-key autostart, and a permanent local-only
+design across ten fatal gates. It selects local default plus separately authorized
+cloud replaceability, classifies every M38 field, and defines credential, retention,
+telemetry, timeout, failure, and fallback boundaries. No provider, key, model, endpoint,
+or request was added. All 411 local regression tests and the 309-file / 618-snapshot
+public audit pass. This local branch has not been pushed or run in public CI.
 
 ## What works today
 
@@ -63,6 +65,8 @@ future decision.
 - JSON CLI and a local Streamlit presentation;
 - an exact, provider-neutral minimized text-context preview derived from the public
   answer presentation with no I/O;
+- a machine-checked local-first language boundary in which an API key is a credential,
+  never consent or egress authority, and cloud use would make the deployment hybrid;
 - automated B0 tests on Python 3.11–3.14 plus locked B1/demo jobs.
 
 On the included browser-compatible H.264 synthetic clip, the current RGB baseline measures AP50 `1.0`, mAP50:95 about `0.7293`, key recall `1.0`, zero false positives, event F1 `1.0`, and the final expected answer. The clip-local tracker records zero ID switches and zero fragmentations on this one easy fixture. These numbers apply only to this generated artwork and do not establish indoor accuracy, real-time operation, or 24/7 readiness.
@@ -362,6 +366,10 @@ The [M38 market synthesis](docs/market-synthesis.md) records the representative
 adopt/defer/reject cut and the exact minimized text context now visible in the demo;
 [ADR 0020](docs/adr/0020-preview-minimized-text-before-language-provider.md) keeps any
 real language provider and egress outside this implementation.
+The [M39 decision](docs/evaluation/m39-language-presentation-boundary-v1.md) and
+[ADR 0021](docs/adr/0021-keep-language-presentation-local-by-default.md) keep the
+deterministic answer as default, distinguish pure local from local-first hybrid, and
+make policy authorization independent of API-key presence.
 
 ## Safety and data boundary
 
