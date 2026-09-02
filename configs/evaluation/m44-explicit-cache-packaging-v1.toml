@@ -1,0 +1,111 @@
+schema_version = 1
+status = "FROZEN_BEFORE_SINGLE_EXPLICIT_CACHE_PACKAGE_ATTEMPT"
+gate_id = "m44-explicit-cache-packaging-v1"
+intended_use = "ONE_NO_PUSH_OFFLINE_SDIST_WHEEL_FRESH_INSTALL_AND_INSTALLED_DEMO_GATE"
+product_revision = "ba0954650586471a737efd9eb829d65e48eea73b"
+execution_revision_rule = "FIRST_CLEAN_DESCENDANT_CONTAINING_ONLY_M44_CONTRACT_CHECKERS_RUNNER_AND_TESTS"
+attempt_limit = 1
+additional_retry_allowed = false
+
+[frozen_input]
+m43_result = "configs/evaluation/m43-caller-created-uv-cache-result-v1.toml"
+m43_result_sha256 = "f12ddd01b67735d8cb929c7b37431782ab8359e3dff7d3f566a538a2e20ce7f1"
+m41_contract = "configs/evaluation/m41-release-candidate-packaging-v1.toml"
+m41_contract_sha256 = "b027ee326f7ea8112d9efd40130878e138663a87a183cd80d6b8d7a232a60dcc"
+m41_checker = "tools/check_m41_release_candidate.py"
+m41_checker_sha256 = "e409c95c2e39ef905b9a1d081a45cd93e692a4328b3a2d047bd3e83a16401082"
+pyproject_sha256 = "bb70f2f967938a93d7599ce7b2fe08c3be797316b4426f66914529b2cf65b7da"
+uv_lock_git_blob_sha256 = "f2d3639c4b34b9c8a05381baec95cd178d39e056d81bbb7bc028eaeba1c94c3e"
+presentation_module_sha256 = "26e625e763575a2b873978f8d930128be624c23433eb2fb72cfa3b65ee596a55"
+
+[cache_source]
+role = "LOCAL_IGNORED_PRIOR_PUBLIC_DEMO_UV_CACHE"
+source_path_is_runtime_argument = true
+source_mutation_allowed = false
+excluded_prefixes = ["sdists-v9/editable/", "interpreter-v4/"]
+excluded_file_count = 13
+included_file_count = 14049
+included_bytes = 627590722
+included_tree_sha256 = "5f5101e6fe74e847d0bb9d0a3e9e06398e00a85917106ada647f3225072812fc"
+reparse_point_count = 0
+metadata_credential_pattern_count = 0
+excluded_local_absolute_path_metadata_files = 7
+upstream_provenance_independently_authenticated = false
+
+[cache_target]
+path_basis = "CONTROL_REPOSITORY_ROOT/.tmp/m44-uv-cache"
+must_not_exist_before_seed = true
+caller_created_by_byte_copy = true
+source_and_target_tree_identity_must_match = true
+copy_acl_or_security_descriptor_allowed = false
+must_be_gitignored = true
+recursive_cleanup_after_receipt_required = true
+
+[build_environment]
+python = "3.12.13"
+setuptools = "84.0.0"
+wheel = "0.48.0"
+uv_semantic_version = "0.11.24"
+build_isolation = false
+build_backend_from_explicit_python = true
+
+[commands]
+build = "uv --offline --no-config --no-python-downloads --cache-dir <cache> build --no-build-isolation --python <build-python> --out-dir <dist>"
+venv = "uv --offline --no-config --no-python-downloads --cache-dir <cache> venv --python <build-python> <venv>"
+install = "uv --offline --no-config --no-python-downloads --cache-dir <cache> pip install --python <venv-python> <wheel>[demo]"
+installed_check = "<venv-python> -B <m41-checker> --wheel <wheel> --sdist <sdist> --expected-revision <revision>"
+
+[installed_dependency_expectation]
+whole_home_agent = "0.1.0"
+av = "18.1.0"
+numpy = "2.5.2"
+pillow = "12.3.0"
+streamlit = "1.62.0"
+
+[artifact_and_demo]
+inherit_m41_archive_contracts = true
+inherit_m41_normal_and_fallback_contracts = true
+inherit_m41_demo_python_socket_guard = true
+project_package_source_must_be_wheel_only = true
+editable_install_allowed = false
+working_directory_must_be_outside_source = true
+
+[environment]
+allowlisted_names = ["PATH", "SYSTEMROOT", "WINDIR", "TEMP", "TMP"]
+forced_uv_offline = "1"
+forced_uv_no_config = "1"
+forced_uv_python_downloads = "never"
+proxy_index_token_or_credential_forwarding_allowed = false
+os_level_network_instrumented = false
+
+[time_budget_ms]
+cache_seed_maximum = 120000.0
+build_maximum = 120000.0
+venv_maximum = 60000.0
+install_maximum = 120000.0
+installed_check_maximum = 60000.0
+total_maximum = 420000.0
+
+[cleanup]
+source_worktree_removed = true
+cache_target_removed = true
+dist_removed = true
+venv_removed = true
+run_root_removed = true
+generated_artifact_or_cache_retained = false
+
+[decision]
+pass = "PASS_M44_EXPLICIT_CACHE_PACKAGING"
+normal_stop = "STOP_M44_EXPLICIT_CACHE_PACKAGING"
+pass_authorizes_only = "PREPARE_SEPARATE_NO_PUSH_PUBLICATION_READINESS_DECISION"
+normal_stop_authorizes_retry = false
+
+[boundaries]
+product_code_schema_behavior_or_dependency_change_allowed = false
+m41_m42_or_m43_history_rewrite_allowed = false
+network_download_private_registry_or_credential_allowed = false
+external_private_live_or_additional_media_allowed = false
+provider_model_key_endpoint_or_action_allowed = false
+public_push_or_ci_claim_allowed = false
+action_policy_adopted = false
+operate_enabled = false
