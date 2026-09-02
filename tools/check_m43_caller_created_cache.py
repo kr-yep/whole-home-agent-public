@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -12,18 +13,53 @@ import time
 import tomllib
 from typing import Callable, Mapping, Sequence
 
-from tools.check_m42_uv_cache_preflight import (
-    sanitized_environment,
-    sha256_bytes,
-    target_has_exact_ignore_rule,
-    uv_cache_command,
-)
-
-
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / "configs" / "evaluation" / "m43-caller-created-uv-cache-v1.toml"
 TARGET_RELATIVE = Path(".tmp") / "m43-uv-cache"
 Runner = Callable[..., subprocess.CompletedProcess[str]]
+
+
+def sha256_bytes(value: bytes) -> str:
+    return hashlib.sha256(value).hexdigest()
+
+
+def target_has_exact_ignore_rule(root: Path = ROOT) -> bool:
+    ignore_file = root / ".gitignore"
+    if not ignore_file.is_file():
+        return False
+    rules = {
+        line.strip()
+        for line in ignore_file.read_text(encoding="utf-8").splitlines()
+        if line.strip() and not line.lstrip().startswith("#")
+    }
+    return ".tmp/" in rules
+
+
+def uv_cache_command(uv: Path, cache_root: Path) -> tuple[str, ...]:
+    return (
+        str(uv),
+        "--offline",
+        "--no-config",
+        "--no-python-downloads",
+        "--cache-dir",
+        str(cache_root),
+        "cache",
+        "dir",
+    )
+
+
+def sanitized_environment(source: Mapping[str, str], cache_root: Path) -> dict[str, str]:
+    allowed = {"PATH", "SYSTEMROOT", "WINDIR", "TEMP", "TMP"}
+    environment = {key: value for key, value in source.items() if key.upper() in allowed}
+    environment.update(
+        {
+            "UV_CACHE_DIR": str(cache_root),
+            "UV_NO_CONFIG": "1",
+            "UV_OFFLINE": "1",
+            "UV_PYTHON_DOWNLOADS": "never",
+        }
+    )
+    return environment
 
 
 def expected_cache_root(root: Path = ROOT) -> Path:

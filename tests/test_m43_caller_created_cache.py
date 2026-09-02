@@ -6,6 +6,7 @@ import hashlib
 import os
 from pathlib import Path
 import subprocess
+import sys
 import tempfile
 import tomllib
 import unittest
@@ -43,6 +44,21 @@ def _prepare_root(directory: str) -> tuple[Path, Path]:
 
 
 class M43CheckerTests(unittest.TestCase):
+    def test_checker_can_launch_directly_outside_repository_without_pythonpath(self):
+        environment = dict(os.environ)
+        environment.pop("PYTHONPATH", None)
+        process = subprocess.run(
+            [sys.executable, "-B", str(ROOT / "tools" / "check_m43_caller_created_cache.py"), "--help"],
+            cwd=ROOT.parent,
+            check=False,
+            capture_output=True,
+            text=True,
+            shell=False,
+            env=environment,
+        )
+        self.assertEqual(process.returncode, 0, process.stderr)
+        self.assertIn("--cache-root", process.stdout)
+
     def test_target_must_be_exact_and_absent(self):
         with tempfile.TemporaryDirectory() as directory:
             root, target = _prepare_root(directory)
