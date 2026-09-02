@@ -40,8 +40,45 @@ uv run --frozen --extra demo streamlit run src/whole_home_agent/streamlit_app.py
 ```
 
 The first `uv run` synchronizes the locked environment and prints the structured answer.
-The second opens the visual demo. Neither command accepts an upload, camera, credential,
-free-form prompt, or action handle.
+The second opens the original closed visual demo. Neither command accepts an upload,
+camera, credential, free-form prompt, or action handle.
+
+## Add local memory and free-text questions
+
+The new optional path writes only the completed generated replay's semantic claims to
+an explicit local SQLite file. It stores no video, frame, question, answer prose, or API
+key. A later process verifies and rebuilds the projection before answering.
+
+```powershell
+uv run --frozen --extra demo whole-home-agent remember-demo `
+  --db .whole-home-agent/demo-memory.sqlite3
+uv run --frozen --extra demo whole-home-agent ask-memory `
+  --db .whole-home-agent/demo-memory.sqlite3 `
+  --question "鑰匙在哪裡？"
+uv run --frozen --extra demo streamlit run src/whole_home_agent/memory_app.py
+```
+
+The bounded parser accepts location questions in Chinese or English and maps exactly
+one known entity to the typed query. Ambiguous, unknown, action-shaped, or malformed
+text is rejected instead of being sent to a model.
+
+An optional OpenAI-compatible presenter can be used with a language model already
+running on a literal loopback address:
+
+```powershell
+$env:WHA_LLM_API_KEY = "optional-local-token"
+uv run --frozen --extra demo whole-home-agent ask-memory `
+  --db .whole-home-agent/demo-memory.sqlite3 `
+  --question "Where is my key?" `
+  --presenter local-api `
+  --llm-endpoint http://127.0.0.1:11434/v1/chat/completions `
+  --llm-model your-exact-local-model-id
+```
+
+The key is read only after `local-api` is explicitly selected. Remote hosts, redirects,
+and ambient proxies are rejected. The model receives only the minimized answer and
+relation text packet; its output cannot change memory, query results, policy, or action.
+Cloud API use remains disabled pending adopted data-egress authority.
 
 ## What the demo proves
 
@@ -50,10 +87,12 @@ free-form prompt, or action handle.
 - `key → bag → sofa` is resolved without fabricating a direct key movement.
 - The answer exposes source claims, evidence frames, replay scope, and `estimated` status.
 - A deterministic local Chinese presenter works without an LLM or API key.
+- A completed D0 replay can be restored from SQLite in another process and queried in
+  bounded Chinese or English.
 - Ambiguous or incomplete runs fail closed instead of returning partial state.
 
 It does **not** prove real-home recognition, 24/7 operation, live sensing, multi-camera
-identity, durable memory, or device control.
+identity, durable household memory/retention safety, cloud privacy, or device control.
 
 ## Architecture
 
@@ -63,18 +102,21 @@ allowlisted generated MP4 + manifest/config hashes
   → replaceable detector and clip-local tracker
   → conservative relation candidates / abstention
   → deterministic claim validation and commit
-  → session projection and scoped query
+  → optional D0-only SQLite completed-replay archive
+  → rebuilt projection and scoped query
+  → bounded free-text subject parser
   → structured AnswerTrace
   → compact CLI or Streamlit presentation
-  → optional minimized text context + deterministic local prose
+  → minimized text context + deterministic or loopback-local prose
 ```
 
 Only canonical claim candidates cross from perception into state. Detector/model output
 cannot commit facts directly. The presenter sees only the scoped answer context—not
 frames, the ledger, credentials, or an action interface.
 
-The current slice is a modular monolith. It does not require a graph database, vector
-store, Memory Core, multi-agent runtime, message broker, LLM/VLM, or durable database.
+The current slice is a modular monolith. SQLite is an optional completed-replay archive;
+it is not a Memory Core, graph, model authority, or second claim-write path. The default
+demo still needs no database or LLM.
 
 ## What works today
 
@@ -85,6 +127,9 @@ store, Memory Core, multi-agent runtime, message broker, LLM/VLM, or durable dat
 - evidence-bound `AnswerTrace` with subject, location, epistemic status, and relation path;
 - compact JSON CLI and a closed Streamlit UI;
 - provider-neutral minimized text context and deterministic local presentation fallback;
+- optional SQLite replay persistence, bounded natural-language location questions, and
+  a separate local-memory Streamlit UI;
+- optional no-retry loopback OpenAI-compatible presentation with remote egress denied;
 - automated tests on Python 3.11–3.14 plus prerecorded-video and demo CI jobs.
 
 On the included synthetic clip, the current RGB baseline measures AP50 `1.0`,
@@ -128,7 +173,7 @@ compact CLI, Streamlit UI, and deterministic presenter.
 They inform later model work but are not required to install or present the demo.
 
 **Deferred:** live/private cameras, multi-camera handoff, cloud LLM calls, persistent
-household history, and physical actions. `OPERATE` remains disabled.
+household history/retention, and physical actions. `OPERATE` remains disabled.
 
 ## Current gaps
 
@@ -136,8 +181,8 @@ household history, and physical actions. `OPERATE` remains disabled.
 - a convincing protected-group real indoor small-object benchmark;
 - tracking robust to occlusion, camera motion, and container transitions;
 - a product-level recorded indoor replay beyond generated artwork;
-- any adopted provider/egress policy or optional language-model adapter;
-- live sensing, durable household memory, consent/retention controls, and actions.
+- any adopted cloud-provider/egress policy or remote language-model adapter;
+- live sensing, real household persistence, consent/retention controls, and actions.
 
 A wheel or sdist is optional for this Git-checkout hackathon handoff. Historical M41–M44
 artifact experiments are retained as diagnostics, but they do not block the verified

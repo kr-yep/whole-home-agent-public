@@ -1,6 +1,6 @@
 # Whole Home Agent — Public Repository State
 
-**Checkpoint:** `PUBLIC-B1-HACKATHON-RECOVERY-001`
+**Checkpoint:** `PUBLIC-B1-OFFLINE-MEMORY-001`
 
 **As of:** `2026-09-02 Asia/Taipei`
 
@@ -20,7 +20,8 @@ This file is the live checkpoint for the clean public repository. It records cur
 - Use the local-only, hash-pinned VOST consecutive-frame subset strictly as a non-commercial scheduler/cost screen; it is not a product claim source.
 - Reuse the implemented B0 `ClaimCandidate` → commit → projection → query path as the only semantic state path for B1.
 - Exclude live/private sensing and all physical or external action from the current scope.
-- Do not assume a graph, Memory Core, multi-agent runtime, or durable database is necessary.
+- Do not assume a graph, Memory Core, or multi-agent runtime is necessary. The explicit
+  cross-process demo-memory request now justifies one narrow SQLite replay archive.
 - Use the representative market synthesis to keep staged compute, deterministic claim
   admission, traceable relations, and a question-first UX while deferring identity,
   audio, proactivity, sensor fusion, device control, and embodiment.
@@ -31,6 +32,9 @@ This file is the live checkpoint for the clean public repository. It records cur
 - Route the closed demo through one local `LocationPresenter` port selected only by the
   composition root. Presenter failure must retain the structured answer and expose no
   exception content; presenter prose is never truth or authority.
+- Add one explicit D0-only completed-replay SQLite archive, a closed natural-language
+  location parser, and an optional literal-loopback language presenter. This is a local
+  hackathon demo extension, not household persistence or cloud-egress activation.
 
 ## Current scoped supersession
 
@@ -47,6 +51,19 @@ explicit repository direction:
   it inside an sdist unless artifact publication later becomes an explicit deliverable;
 - does not supersede privacy, consent, provenance, model-claim, action, or `OPERATE`
   restrictions.
+
+`OFFLINE-MEMORY-001` — `2026-09-02 Asia/Taipei`, authorized by the current user's
+explicit request to add persistence, free-text questions, and an optional LLM API before
+teammate real-world testing:
+
+- authorizes local reversible repository implementation and tests using only the fixed
+  synthetic/public D0 replay;
+- supersedes the earlier M40 implementation-scope prohibition on adding storage or a
+  local-model adapter, but does not rewrite the historical M39/M40 result;
+- selects SQLite as a completed-replay archive and a literal-loopback OpenAI-compatible
+  presenter as the only current optional model path;
+- does not adopt `ACTION_POLICY.md`, enroll a credential/endpoint/person/room/device,
+  authorize cloud egress or private-data persistence, or enable `OPERATE`.
 
 ## Authority and roles
 
@@ -67,6 +84,7 @@ explicit repository direction:
 | `AGENTS.md` | `PROPOSED` | Conservative interim repository instructions |
 | `ACTION_POLICY.md` | `PROPOSED — NOT ADOPTED` | All sensing, private-data, egress, device, and physical operation disabled |
 | ADR 0001–0005 | `PROPOSED` | Design candidates, not automatically adopted requirements |
+| ADR 0023 | `PROPOSED / BOUNDED IMPLEMENTATION` | D0 completed-replay archive, bounded location parser, and loopback-only presenter; not household/cloud authority |
 | B0 implementation and fixtures | `IMPLEMENTED / VERIFIED IN DECLARED TEST ENVELOPE` | A bounded semantic replay slice exists; its frozen golden semantic hash is unchanged |
 | B1 candidate-source seam and run receipt | `IMPLEMENTED / VERIFIED WITH SYNTHETIC CONTRACT TESTS` | Generic finite source contract, provenance types, fail-closed run outcome, and B0 compatibility remain the sole semantic admission path used by the later prerecorded adapter |
 | B1 generated-video manifest, PTS decoder, and scheduler | `IMPLEMENTED / VERIFIED ON ONE SYNTHETIC REPLAY` | Hash-pinned allowlisted H.264 source revision 2, exact PTS/time-base decode, and motion-plus-periodic frame selection feed the later bounded perception source; revision 1 remains in Git history |
@@ -112,6 +130,9 @@ explicit repository direction:
 | Hackathon repository-checkout delivery | `IMPLEMENTED / LOCAL CLEAN-CHECKOUT PASS` | A new Python 3.12 environment synchronized the locked demo extra, all seven public-demo tests passed, and the installed checkout command returned the expected scoped answer and local presentation. Existing workspace dependency cache was used because the Codex sandbox cannot access the user's AppData cache |
 | B1 binding/relation/query slice | `IMPLEMENTED / VERIFIED ON ONE SYNTHETIC REPLAY` | One-instance binding, conservative containment/zone assertion and retraction rules, typed abstentions, estimated candidates through the unchanged committer, relation evaluation, and evidence-traceable `key → bag → sofa` query exist; no real indoor transfer evidence exists |
 | B1 CLI and Streamlit presentation | `IMPLEMENTED / VERIFIED ON ONE SYNTHETIC REPLAY` | A closed composition/presentation boundary exposes the fixed clip, scoped answer, evidence, abstentions, metrics, diagnostics, and receipt; it accepts no upload, camera, arbitrary path, free-form query, credential, or action handle |
+| D0 completed-replay SQLite archive | `IMPLEMENTED / VERIFIED ON SYNTHETIC D0` | One explicit local file stores canonical completed D0 session documents, rejects incompatible/corrupt reads, preserves idempotency/conflicts, and rebuilds the derived projection; it stores no media, question, prose, or credential |
+| Bounded natural-language memory query | `IMPLEMENTED / VERIFIED ON SYNTHETIC D0` | Chinese/English location text maps exactly one known entity to the existing scoped `StateQuery`; unsupported, ambiguous, hostile, or action-shaped text is rejected before presentation |
+| Optional loopback language presenter | `IMPLEMENTED / VERIFIED WITH A FAKE LOCAL RESPONSE` | One explicitly selected no-retry OpenAI-compatible adapter accepts only literal loopback, disables redirects/proxies, receives only the M38 minimized context, and preserves deterministic fallback; no real model or cloud host was used |
 | Python package distribution | `IMPLEMENTED / VERIFIED BY LOCAL CLEAN INSTALL` | The wheel contains only the fixed D0 replay, its configs, and generator provenance; a fresh Python 3.12 environment ran the CLI from outside the checkout |
 | `docs/b0-b1-architecture-plan.md` | `PROPOSED — NOT ADOPTED` | Smallest B0 → B1 boundary, quality scenarios, gates, and deferred complexity |
 | ADR 0005 and `docs/evaluation/visor-screen-v1.md` | `PROPOSED DESIGN / VERIFIED BOUNDED EVIDENCE` | Public sparse-frame evaluation design and the exact Reality Gate findings; neither grants sensing, product, or policy authority |
@@ -120,6 +141,14 @@ explicit repository direction:
 
 ## Evidence envelope
 
+- The offline-memory slice passed `16/16` focused tests and `501/501` full-regression
+  tests on Python 3.12.13. The staged public audit scanned 349 files / 698 index-and-
+  worktree snapshots with zero violations and `operate_enabled: false`. Tests cover
+  SQLite restart/rebuild, idempotency, identity conflict, corruption, missing-store
+  behavior, Chinese/English and hostile questions, minimized loopback request content,
+  sanitized provider failure, two-process CLI use, and the separate Streamlit flow.
+  The language response was fake test data; no model, remote request, private media,
+  household data, credential, camera, device, or action was used.
 - The hackathon-recovery candidate passed all 485 tests from a normal Windows CRLF
   checkout after the four remaining historical lock checks were aligned with the
   already-selected Git-blob identity. The public Git audit scanned 340 files / 680
@@ -306,6 +335,7 @@ explicit repository direction:
 | `PUB-DIR-042` | Before any new packaging gate, test one exact ignored repository-local uv cache path without building or repairing the default cache | Implemented as an M42 normal pre-probe stop. uv accepted and reported the explicit path but did not create it; caller-created cache semantics require a separate decision |
 | `PUB-DIR-043` | Prove caller-created, confined, writable, empty, uv-selected, and non-recursively cleanable cache semantics before packaging | Implemented as an M43 bounded no-build pass. Only a separately frozen M44 explicit-cache packaging gate may follow |
 | `PUB-DIR-044` | Attempt the exact M40 package once with the M43 explicit-cache semantics, and fail closed before install or publication on any runner/artifact mismatch | Implemented as an M44 normal stop. Preserve the decode failure, missing-wheel state, and missing `uv.lock`; no retry or push follows from this gate |
+| `PUB-DIR-045` | Add persistent replay memory, free-text questions, and an optional local LLM API without enabling real household data or cloud egress | Implemented and locally verified as the bounded `OFFLINE-MEMORY-001` slice: completed D0 SQLite archive, deterministic parser, separate memory UI, and literal-loopback presenter; public CI evidence pending |
 | `PUB-DIR-031` | Every milestone push must visibly state what is usable now, what is still missing, and what changed in that push | Active; README handoff block and `docs/current-capability-status.md` are the public handoff surface |
 
 ## Open gates and blockers
@@ -315,9 +345,9 @@ explicit repository direction:
 - The B1 candidate-source seam, generated video/decoder/scheduler slice, conservative binding/relation/query rules, and closed CLI/Streamlit presentation remain unchanged. VISOR and VOST are separate evaluation adapters, not claim-producing sources. VISOR is sparse egocentric kitchen data with active-object rather than exhaustive-scene labels; VOST is consecutive egocentric transformation data whose selected mask is not a COCO class contract. Neither supplies the key→bag→sofa relation, fixed-camera transfer, live-source evidence, or operational capability. The RF-DETR Small development result is rejected; the D-FINE Small result is synthetic engineering evidence only; M14 stops D-FINE Medium and RT-DETRv2 Small from extending the model tournament. M15 selects none of HOMAGE, CAD-120, or Watch-n-Patch. M16 adds only an evaluation oracle. M17 selects only a vector generation strategy, M18 proves its bounded substrate mechanics, M19 selects only one real transfer-oracle acquisition route, M23 permits only a tiny cross-scene test oracle, M24 materializes a metric-misaligned pair, M25 selects an exact metric-aligned replacement, M26 materializes it as one M16 small-bbox smoke target, M27 keeps that smoke separate from the selected synthetic product demo and deferred scientific lane, M28 hardens presentation while preserving its trace mismatch, M29 exposes an answer-subject gap, M30 selects its canonical boundary, and M31 implements it while preserving a verification-boundary stop. No detector or dataset adapter is promoted into the semantic path.
 - No household data class, person, room, camera, credential, endpoint, device, or capability is enrolled.
 - Consent, retention, deletion, access, incident, kill-switch, and independent enforcement mechanisms do not exist.
-- The M38 text packet is verified only on the fixed synthetic replay. M39 classifies its
-  fields and proposes retention, credential, network, and failure constraints, but no
-  policy authority or credential owner is assigned and no provider is implemented.
+- The M38 text packet is verified only on the fixed synthetic replay. A loopback-only
+  presenter now implements the narrow port, but no cloud policy authority, credential
+  owner, remote endpoint, provider-retention decision, or egress activation exists.
 - M40 proves only deterministic local prose and failure fallback in the closed synthetic
   demo. M41 did not reach artifact creation, so it does not establish installed-wheel
   packaging of the new module, clean-install behavior, model quality, or provider
@@ -334,8 +364,8 @@ explicit repository direction:
 
 ## Next safe action
 
-Have one teammate follow the README quick start from a normal public clone and report
-whether the compact answer and Streamlit UI run. Fix only a reproduced handoff blocker.
-Artifact publishing, real indoor perception, live sensing, provider integration, durable
-memory, and actions remain separate later decisions. Do not use private data or change
-runtime authority; push only after explicit user approval.
+Complete the offline-memory full regression, public release audit, and public CI; then
+have one teammate follow both README demo paths from a normal public clone. Teammate
+real-indoor testing, household persistence, cloud provider integration, live sensing,
+and actions remain separate decisions. Do not use private data or change runtime
+authority.

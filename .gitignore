@@ -36,6 +36,7 @@ credentials/
 *.sqlite-*
 *.sqlite3
 *.sqlite3-*
+.whole-home-agent/
 
 # Model weights and generated ML artifacts
 weights/

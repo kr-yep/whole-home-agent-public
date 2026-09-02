@@ -18,6 +18,23 @@ Optional pre-demo check:
 uv run --frozen --extra demo python -m unittest tests.test_public_demo -v
 ```
 
+## Local-memory path
+
+```powershell
+uv run --frozen --extra demo whole-home-agent remember-demo --db .whole-home-agent/demo-memory.sqlite3
+uv run --frozen --extra demo whole-home-agent ask-memory --db .whole-home-agent/demo-memory.sqlite3 --question "鑰匙在哪裡？"
+uv run --frozen --extra demo streamlit run src/whole_home_agent/memory_app.py
+```
+
+This is a second, explicit demo surface. The first command archives the completed
+generated replay; the second starts a new process, verifies and rebuilds it, then maps
+the bounded question to `key`. The Streamlit page exposes the same two steps. Delete the
+local SQLite file to reset the demo; it is ignored by Git.
+
+The default presenter is deterministic. `--presenter local-api` supports only a model
+already hosted on a literal loopback OpenAI-compatible endpoint. Remote/cloud endpoints
+remain disabled; an API key never activates egress by itself.
+
 ## 90-second version
 
 1. Point to the red `OPERATE DISABLED` banner: “This is a safe prerecorded prototype, not a live household camera.”
@@ -26,6 +43,10 @@ uv run --frozen --extra demo python -m unittest tests.test_public_demo -v
 4. Show the two evidence rows: estimated `inside(key, bag)` at confirmation frame 37 and `at_zone(bag, sofa)` at frame 68.
 5. Open “Evidence limits”: no abstention was needed on this easy generated replay, while ambiguous, unsupported, and interrupted cases are tested to fail closed.
 6. Close with the limit: “This demonstrates the traceable architecture on one generated clip. Separate public-data screens test detector and scheduler candidates, but none turns this demo into a real-home result.”
+
+For the local-memory version, initialize the archive, ask `鑰匙在哪裡？`, then explain
+that the question itself was not stored and that the answer was rebuilt from accepted
+relations after reopening SQLite.
 
 ## Three-minute version
 
@@ -55,3 +76,5 @@ The JSON includes the answer path, evidence ranges, producer/config hashes, qual
 - that it is 24/7, real-time, production-ready, or privacy-complete;
 - that an accepted estimate is a physical fact;
 - that live sensing or device action is enabled.
+- that the D0 replay archive is safe or authorized for real household history;
+- that a configured API key authorizes cloud egress.

@@ -15,6 +15,7 @@ from .adapters.tracking import IoUTracker
 from .errors import ErrorCode, SourceError
 from .evaluation import evaluate_perception
 from .llm_context import build_llm_text_context
+from .memory import ReplayArchive
 from .model import AnswerTrace, QueryRequest, RunStatus
 from .orchestrator import run_source
 from .presentation import (
@@ -160,6 +161,7 @@ def run_public_demo(
     replay_run_id: str = "public-b1-demo-001",
     subject_id: str = "key",
     include_frames: bool = True,
+    archive: ReplayArchive | None = None,
 ) -> dict[str, Any]:
     """Run the one allowlisted offline demo and return presentation-safe values."""
 
@@ -199,6 +201,7 @@ def run_public_demo(
             details={"run_status": result.status.value},
         )
     session = result.session
+    archive_receipt = archive.save_completed(session) if archive is not None else None
     answer = session.locate(
         QueryRequest(
             subject_id=subject_id,
@@ -240,7 +243,7 @@ def run_public_demo(
         }
         for trace in source.trace
     ]
-    return {
+    payload = {
         "answer": answer_payload,
         "answer_summary": presentation.text,
         "claims": [_claim_dict(item) for item in session.accepted_claims],
@@ -283,3 +286,6 @@ def run_public_demo(
             "No live camera, upload, cloud service, device, account, or action capability is connected.",
         ],
     }
+    if archive_receipt is not None:
+        payload["archive"] = archive_receipt.as_dict()
+    return payload

@@ -9,6 +9,13 @@
 
 這份文件提出一個可以被反駁、逐步驗證的最小基線。它不代表架構已採納、程式已實作、模型已有效、家庭資料可被處理，或系統可連接攝影機、雲端與裝置。
 
+> 2026-09-02 bounded extension: the user later requested cross-process demo memory,
+> free-text location questions, and an optional LLM API. ADR 0023 implements these only
+> for synthetic/public D0 through a completed-replay SQLite archive, deterministic
+> parser, and literal-loopback presenter. This supersedes the session-only engineering
+> choice for that bounded demo slice, not the B0 baseline, household-data policy, cloud
+> egress prohibition, or `OPERATE DISABLED` status.
+
 ## 1. 決策摘要
 
 第一個基線只證明一件事：給定凍結、可合法使用的離線測試輸入，系統能把「物件被放入容器，容器後來移到某區域」整理成可追溯的狀態估計，並回答它知道什麼、不知道什麼，以及答案依據哪些輸入。

@@ -21,6 +21,11 @@ class ErrorCode(str, Enum):
     CONTAINMENT_CYCLE = "containment_cycle"
     INVALID_SOURCE = "invalid_source"
     SOURCE_FAILURE = "source_failure"
+    INVALID_ARCHIVE = "invalid_archive"
+    ARCHIVE_CONFLICT = "archive_conflict"
+    ARCHIVE_NOT_FOUND = "archive_not_found"
+    UNSUPPORTED_QUESTION = "unsupported_question"
+    INVALID_PRESENTER_CONFIG = "invalid_presenter_config"
 
 
 class B0Error(Exception):
@@ -73,3 +78,21 @@ class SourceError(B0Error):
     """A bounded candidate source failed or violated its declared contract."""
 
     default_error_code = ErrorCode.SOURCE_FAILURE
+
+
+class ArchiveError(B0Error):
+    """A durable D0 replay archive failed validation or could not be read."""
+
+    default_error_code = ErrorCode.INVALID_ARCHIVE
+
+
+class QuestionError(B0Error):
+    """A free-text request could not be reduced to one allowlisted location query."""
+
+    default_error_code = ErrorCode.UNSUPPORTED_QUESTION
+
+
+class PresenterConfigError(B0Error):
+    """An optional presenter configuration crossed the local-only boundary."""
+
+    default_error_code = ErrorCode.INVALID_PRESENTER_CONFIG

@@ -4,12 +4,16 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 from typing import Sequence
 
 from .errors import B0Error
 from .fixture import load_fixture
+from .adapters.loopback_llm import LoopbackChatPresenter
+from .adapters.sqlite_archive import SQLiteReplayArchive
+from .memory_query import answer_latest_memory
 from .model import AnswerTrace, QueryRequest
 from .orchestrator import run_fixture
 from .public_demo import run_public_demo
@@ -46,6 +50,28 @@ def _build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="omit the per-frame presentation timeline from JSON output",
     )
+    remember = subparsers.add_parser(
+        "remember-demo",
+        help="store one completed fixed D0 replay in an explicit local SQLite file",
+    )
+    remember.add_argument("--db", required=True, type=Path)
+    remember.add_argument(
+        "--run-id", dest="run_id", default="public-b1-memory-demo-001"
+    )
+    ask = subparsers.add_parser(
+        "ask-memory",
+        help="ask one free-text location question against the latest stored D0 replay",
+    )
+    ask.add_argument("--db", required=True, type=Path)
+    ask.add_argument("--question", required=True)
+    ask.add_argument(
+        "--presenter",
+        choices=("deterministic", "local-api"),
+        default="deterministic",
+    )
+    ask.add_argument("--llm-endpoint")
+    ask.add_argument("--llm-model")
+    ask.add_argument("--llm-timeout", type=float, default=8.0)
     return parser
 
 
@@ -88,6 +114,35 @@ def main(argv: Sequence[str] | None = None) -> int:
                 replay_run_id=arguments.run_id,
                 subject_id=arguments.entity,
                 include_frames=not arguments.compact,
+            )
+        elif arguments.command == "remember-demo":
+            archive = SQLiteReplayArchive(arguments.db)
+            result = run_public_demo(
+                replay_run_id=arguments.run_id,
+                include_frames=False,
+                archive=archive,
+            )
+            payload = {
+                "archive": result["archive"],
+                "governance": result["governance"],
+                "run_receipt": result["run_receipt"],
+                "source": result["source"],
+            }
+        elif arguments.command == "ask-memory":
+            archive = SQLiteReplayArchive(arguments.db)
+            if arguments.presenter == "local-api":
+                presenter = LoopbackChatPresenter(
+                    endpoint=arguments.llm_endpoint,
+                    model=arguments.llm_model,
+                    authorization_value=os.environ.get("WHA_LLM_API_KEY"),
+                    timeout_seconds=arguments.llm_timeout,
+                )
+            else:
+                presenter = None
+            payload = answer_latest_memory(
+                archive,
+                arguments.question,
+                presenter=presenter,
             )
         elif arguments.command == "replay":
             fixture = load_fixture(arguments.fixture)

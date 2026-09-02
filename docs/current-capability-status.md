@@ -1,6 +1,6 @@
 # Current capability status
 
-**Checkpoint:** hackathon demo recovery · **Runtime:** `OPERATE DISABLED` · **Production ready:** no
+**Checkpoint:** offline memory + bounded questions · **Runtime:** `OPERATE DISABLED` · **Production ready:** no
 
 This page is updated with every milestone push so a teammate can see what is usable and
 what is still missing without reconstructing the full experiment history.
@@ -28,6 +28,15 @@ what is still missing without reconstructing the full experiment history.
 - Receive deterministic relation-only prose plus a typed receipt from the same exact
   M38 context; malformed context or presenter failure produces fixed fallback prose and
   leaves the structured answer available.
+- Explicitly archive a completed synthetic/public D0 replay in SQLite, reopen it in a
+  second process, verify its hashes, rebuild the projection, and query it without
+  retaining video, frames, question text, answer prose, or credentials.
+- Ask a bounded Chinese or English location question naming exactly one known entity;
+  ambiguous, unknown, malformed, and action-shaped text fails closed.
+- Optionally present the minimized text through an explicitly selected literal-loopback
+  OpenAI-compatible API. Deterministic output remains the default; remote hosts,
+  redirects, ambient proxies, automatic retries, and key-triggered activation are absent.
+- Run a separate local-memory Streamlit page while retaining the original closed demo.
 
 ## Still missing before a credible hackathon handoff
 
@@ -39,8 +48,10 @@ what is still missing without reconstructing the full experiment history.
   work; the current VOST target path was rejected on development.
 - A product-level recorded indoor relation replay beyond project-generated artwork.
 - One real teammate execution of the README quick start on their own platform.
-- An adopted language-provider and data-egress policy, assigned credential owner,
-  provider or local-model implementation, and runtime verification of failure fallback.
+- An adopted cloud language-provider/data-egress policy, assigned credential owner,
+  provider retention review, remote adapter, and runtime authorization.
+- Retention, deletion, access control, migration, backup, concurrency, and capacity
+  requirements for any future real household memory.
 - A published wheel only if the team later decides installation without a Git checkout
   is a hackathon requirement. It is not required for the current repository demo.
 
@@ -50,6 +61,8 @@ what is still missing without reconstructing the full experiment history.
   audio capture.
 - Durable household memory, private-data search, retention/deletion controls, cloud
   inference, device control, purchases, messages, or physical action.
+- Any assumption that an API key authorizes egress; only a literal-loopback local API is
+  accepted by the optional adapter.
 - Any claim of 24/7 readiness, real-home accuracy, general home understanding, or
   safety-critical behavior.
 
@@ -71,4 +84,16 @@ historical packaging diagnostics and no longer block the Git-checkout hackathon 
 After aligning the remaining historical lock checks with Git-blob identity, all 485
 tests also pass from the normal Windows CRLF checkout. The public audit scanned 340
 files / 680 snapshots with zero violations. No provider, key, private media, device, or
-action was added, and nothing was pushed.
+action was added in that recovery checkpoint.
+
+## Latest local verification: offline memory slice
+
+Python 3.12.13 passed `16/16` focused tests and `501/501` full-regression tests. The
+staged public audit scanned 349 files / 698 index-and-worktree snapshots with zero
+violations and `operate_enabled: false`. Coverage includes SQLite restart/rebuild,
+identical-write idempotency, identity conflict, corruption, missing-store behavior,
+query minimization, Chinese/English parsing, hostile questions, loopback-only endpoint
+validation, minimized request content, sanitized fallback, two-process CLI use, and the
+separate Streamlit interaction. This remains synthetic/public D0 implementation
+evidence only; teammates have not tested a real indoor recording, real local model,
+cloud provider, or live camera. Public CI for this checkpoint is still pending.
