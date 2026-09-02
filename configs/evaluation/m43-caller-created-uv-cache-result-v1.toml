@@ -1,0 +1,80 @@
+schema_version = 1
+status = "IMPLEMENTED_BOUNDED_PASS"
+gate_id = "m43-caller-created-uv-cache-v1"
+decision = "PASS_M43_CALLER_CREATED_UV_CACHE"
+contract_revision = "9464c0c430e3e9251565da3ad4b6f1e9ae44c50b"
+checker_revision = "b86e2c0db48f82ee87348731cce49cf1658906c1"
+cache_attempts_started = 1
+attempt_limit = 1
+additional_retry_used = false
+
+[pre_attempt_launch_failure]
+occurred = true
+revision = "9464c0c430e3e9251565da3ad4b6f1e9ae44c50b"
+failure_class = "DIRECT_SCRIPT_PACKAGE_IMPORT_PATH"
+target_created = false
+probe_started = false
+uv_process_started = false
+counted_as_cache_attempt = false
+repair_revision = "b86e2c0db48f82ee87348731cce49cf1658906c1"
+repair_scope = "SELF_CONTAINED_DIRECT_EXECUTION_AND_HELP_SUBPROCESS_REGRESSION"
+
+[precondition]
+target_relative_path = ".tmp/m43-uv-cache"
+target_absent = true
+parent_resolved_below_repository = true
+parent_was_not_symlink = true
+target_gitignored = true
+
+[responsibility]
+caller_created_new_empty_directory = true
+caller_write_probe_passed = true
+probe_removed_before_uv = true
+uv_only_confirmed_selected_path = true
+uv_expected_to_create_directory = false
+
+[probe]
+payload = "M43_CALLER_CREATED_CACHE_WRITE_PROBE_V1"
+sha256 = "fa1c6fde2dad49408d7d605ee73397ab22ca09d5c12898fc0ce52750cdbc87ae"
+exclusive_create_used = true
+fsync_completed = true
+readback_matched = true
+probe_removed = true
+
+[uv]
+semantic_version = "0.11.24"
+cache_command_exit_code = 0
+cache_command_elapsed_ms = 38.287
+stdout_matched_exact_target = true
+stderr_present = false
+offline_flag_set = true
+configuration_discovery_disabled = true
+python_downloads_disabled = true
+
+[network]
+proxy_index_token_or_credential_forwarded = false
+os_level_network_instrumented = false
+network_attempt_count = -1
+
+[cleanup]
+target_removed_non_recursively = true
+target_absent_after_checker = true
+empty_temp_parent_removed = true
+cache_probe_or_artifact_retained = false
+
+[claim_limits]
+establishes_caller_created_cache_semantics_on_this_host = true
+establishes_default_cache_root_cause_or_repair = false
+establishes_package_build_install_or_demo = false
+establishes_dependency_cache_completeness = false
+establishes_zero_os_network_attempts = false
+establishes_teammate_or_public_ci_success = false
+authorizes_only_separately_frozen_m44_packaging_gate = true
+authorizes_push = false
+
+[boundaries]
+product_behavior_or_dependency_changed = false
+provider_model_key_endpoint_or_network_added = false
+private_live_or_additional_media_read = false
+action_policy_adopted = false
+operate_enabled = false

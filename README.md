@@ -37,12 +37,12 @@ consent, an adopted language-provider/egress policy, a provider implementation, 
 operational activation.
 Live/private sensing, cloud calls, and actions remain blocked.
 
-**Latest milestone (M42):** the [explicit cache-path preflight](docs/evaluation/m42-uv-cache-path-preflight-v1.md)
-records a normal pre-probe stop. The sole no-build command accepted and reported the
-exact ignored repository-local cache path but did not create it, so writability was not
-inferred and no packaging retry was authorized. No cache, artifact, install, demo, or
-product change remains. All 458 local regression tests and the 327-file / 654-snapshot
-Git audit pass. This local branch has not been pushed or run in public CI.
+**Latest milestone (M43):** the [caller-created cache gate](docs/evaluation/m43-caller-created-uv-cache-v1.md)
+passes its bounded no-build check. A closed preflight created and fsync-probed the exact
+ignored cache, uv confirmed that existing path, and non-recursive cleanup proved it
+stayed empty. This authorizes only preparation of a separate packaging gate—not a build
+or push. No cache, artifact, install, demo, or product change remains. This local branch
+has not been pushed or run in public CI.
 
 ## What works today
 
@@ -380,6 +380,8 @@ single offline cache-initialization failure without turning it into package evid
 silently retrying under different infrastructure.
 The [M42 result](docs/evaluation/m42-uv-cache-path-preflight-v1.md) separates uv's
 acceptance of an explicit cache path from actual creation and writability evidence.
+The [M43 result](docs/evaluation/m43-caller-created-uv-cache-v1.md) proves the bounded
+caller-created alternative and preserves its pre-attempt direct-launch failure.
 
 ## Safety and data boundary
 

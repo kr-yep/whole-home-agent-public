@@ -1,6 +1,6 @@
 # Current capability status
 
-**Checkpoint:** M42 cache pre-probe stop · **Runtime:** `OPERATE DISABLED` · **Production ready:** no
+**Checkpoint:** M43 caller-created cache pass · **Runtime:** `OPERATE DISABLED` · **Production ready:** no
 
 This page is updated with every milestone push so a teammate can see what is usable and
 what is still missing without reconstructing the full experiment history.
@@ -48,7 +48,8 @@ what is still missing without reconstructing the full experiment history.
 - A clean installed-wheel receipt proving the new M40 presentation module and compact
   demo work outside the checkout. M41 stopped before artifact creation during default
   `uv` cache initialization; M42 only proved that uv accepts an explicit path, not that
-  it creates or can use it. Packaging therefore remains unverified.
+  it creates or can use it. M43 proves a caller-created empty cache is locally writable
+  and selected by uv, but packaging itself remains unverified.
 
 ## Deliberately not available
 
@@ -62,14 +63,14 @@ what is still missing without reconstructing the full experiment history.
 These remain blocked by proposed governance, unassigned roles, absent consent and data
 policy, and `OPERATE DISABLED`.
 
-## Latest local milestone: M42 explicit cache-path preflight
+## Latest local milestone: M43 caller-created cache semantics
 
-The [M42 result](evaluation/m42-uv-cache-path-preflight-v1.md) records one no-build
-attempt. uv 0.11.24 accepted and reported the exact ignored `.tmp/m42-uv-cache` path
-under offline, no-config, and no-Python-download flags, but did not create the directory.
-The frozen gate therefore stopped before its write probe.
+The [M43 result](evaluation/m43-caller-created-uv-cache-v1.md) proves the smallest
+working responsibility split: the preflight creates and probes a new exact ignored
+directory, uv confirms the existing path under sanitized offline settings, and the
+checker removes the still-empty target non-recursively.
 
-The target never existed and the empty parent was removed. No retry, build, install,
-demo, dependency change, provider, key, model, endpoint, request, or product change was
-introduced. Public CI was not run, nothing was pushed, and `OPERATE` remains disabled.
-All 458 local regression tests and the 327-file / 654-snapshot Git audit pass.
+The target and empty parent were removed. No build, install, demo, dependency change,
+provider, key, model, endpoint, request, or product change was introduced. Public CI was
+not run, nothing was pushed, and `OPERATE` remains disabled. Packaging evidence still
+requires a separate frozen gate.

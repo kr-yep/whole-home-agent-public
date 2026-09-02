@@ -1,6 +1,6 @@
 # Whole Home Agent — Public Repository State
 
-**Checkpoint:** `PUBLIC-B1-M42-001`
+**Checkpoint:** `PUBLIC-B1-M43-001`
 
 **As of:** `2026-09-02 Asia/Taipei`
 
@@ -89,6 +89,7 @@ This file is the live checkpoint for the clean public repository. It records cur
 | M40 deterministic local presentation | `IMPLEMENTED / LOCAL VERIFICATION / NO MODEL` | One narrow port validates the exact M38 context and bounded output, then emits a sanitized receipt. The composition root selects only a deterministic local presenter; structured answer/evidence survive fallback and no provider surface exists |
 | M41 release-candidate packaging | `IMPLEMENTED / NORMAL PRE-ARTIFACT STOP` | The sole exact-revision offline build attempt stopped during default `uv` cache initialization with Windows error 183. No sdist, wheel, environment, install, or demo was produced; cleanup passed and no retry or push is authorized |
 | M42 explicit uv cache preflight | `IMPLEMENTED / NORMAL PRE-PROBE STOP` | The exact repository-local path was accepted and reported by `uv cache dir`, but uv did not create it. The frozen uv-initialization condition failed before the write probe; no build, cache, retry, or push is authorized |
+| M43 caller-created uv cache | `IMPLEMENTED / BOUNDED NO-BUILD PASS` | A closed preflight created and probed the exact ignored cache, uv confirmed that existing path, and non-recursive cleanup proved it stayed empty. This authorizes only a separate explicit-cache packaging gate, not a build or push |
 | B1 binding/relation/query slice | `IMPLEMENTED / VERIFIED ON ONE SYNTHETIC REPLAY` | One-instance binding, conservative containment/zone assertion and retraction rules, typed abstentions, estimated candidates through the unchanged committer, relation evaluation, and evidence-traceable `key → bag → sofa` query exist; no real indoor transfer evidence exists |
 | B1 CLI and Streamlit presentation | `IMPLEMENTED / VERIFIED ON ONE SYNTHETIC REPLAY` | A closed composition/presentation boundary exposes the fixed clip, scoped answer, evidence, abstentions, metrics, diagnostics, and receipt; it accepts no upload, camera, arbitrary path, free-form query, credential, or action handle |
 | Python package distribution | `IMPLEMENTED / VERIFIED BY LOCAL CLEAN INSTALL` | The wheel contains only the fixed D0 replay, its configs, and generator provenance; a fresh Python 3.12 environment ran the CLI from outside the checkout |
@@ -181,6 +182,15 @@ This file is the live checkpoint for the clean public repository. It records cur
   `a1c1de835a543747f006d01e8f8bc35de1022b4a` passed all 458 local regression tests
   with 39 existing optional-dependency skips; the Git-mode public audit scanned 327
   files / 654 snapshots with zero violations.
+- M43 froze its caller-created-cache contract at
+  `9464c0c430e3e9251565da3ad4b6f1e9ae44c50b`. A direct-script import failure
+  occurred before any target/probe/uv attempt; checker-only revision
+  `b86e2c0db48f82ee87348731cce49cf1658906c1` fixed that launch boundary and added
+  an outside-repository `--help` regression. The sole cache attempt then exclusively
+  created, fsynced, read back, and deleted its probe; uv confirmed the same existing
+  path in `38.287 ms`; non-recursive cleanup and empty-parent cleanup passed. No build,
+  install, demo, default-cache repair, product change, or push occurred. OS-level zero
+  network attempts are not claimed.
 - GitHub Actions run [33486414127](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33486414127) passed every job except Python 3.11 because one test fixture used Python 3.12's generalized nested f-string grammar. The fixture now builds its TOML blocks before interpolation; local `ast` parsing under the 3.11 grammar and the focused tests passed. Follow-up run [33486674987](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33486674987) completed successfully across Python 3.11–3.14, the prerecorded-video contract, and the closed public demo.
 - An isolated offline M9 package build produced the source archive and universal wheel and included the new Python adapter/evaluator modules without including VOST/VISOR data, model weights, local receipts, or evaluation configs/tools in the installed runtime data bundle.
 - Source revision 2 is an 80-frame H.264/yuv420p generated replay with SHA-256 `b9cc79476d77f8d45acd1803c924de73914ffc4790f4da271f77cc8d4742eb43`. It was versioned because revision 1's encoding failed Chromium playback. Two consecutive local generations matched; browser QA then showed duration 8 seconds, ready state 4, scoped revision-2 content, and zero console errors.
@@ -250,6 +260,7 @@ This file is the live checkpoint for the clean public repository. It records cur
 | `PUB-DIR-040` | Implement the M39 local default through one narrow port without widening runtime or authority | Implemented as M40: exact admission/output validation, deterministic relation-only prose, sanitized fallback, and unchanged structured truth path |
 | `PUB-DIR-041` | Verify the exact M40 package and installed demo once, offline and outside the checkout, before any publication decision | Implemented as an M41 normal pre-artifact stop. The single build attempt hit an unresolved default-cache initialization error; no retry, alternate cache, package claim, public-CI claim, or push is authorized |
 | `PUB-DIR-042` | Before any new packaging gate, test one exact ignored repository-local uv cache path without building or repairing the default cache | Implemented as an M42 normal pre-probe stop. uv accepted and reported the explicit path but did not create it; caller-created cache semantics require a separate decision |
+| `PUB-DIR-043` | Prove caller-created, confined, writable, empty, uv-selected, and non-recursively cleanable cache semantics before packaging | Implemented as an M43 bounded no-build pass. Only a separately frozen M44 explicit-cache packaging gate may follow |
 | `PUB-DIR-031` | Every milestone push must visibly state what is usable now, what is still missing, and what changed in that push | Active; README handoff block and `docs/current-capability-status.md` are the public handoff surface |
 
 ## Open gates and blockers
@@ -268,11 +279,15 @@ This file is the live checkpoint for the clean public repository. It records cur
   compatibility.
 - M42 establishes path-option acceptance only. It does not establish cache creation,
   writability, packaging recovery, or M41's default-cache root cause.
+- M43 establishes caller-created cache mechanics only. It does not establish dependency
+  availability, artifact contents, clean install, demo behavior, teammate success, or
+  public CI.
 
 ## Next safe action
 
-Prepare M43 as a no-build caller-created-cache semantics gate. Freeze M42's stop, create
-the exact ignored path from an absent state, prove confinement and local write/read/delete,
-then require uv to echo that already-created path under the same sanitized offline flags.
-Clean it afterward. Do not rerun M41/M42, build/install/demo, change product behavior or
-dependencies, claim packaging/teammate/public-CI success, or push.
+Prepare M44 as a separately frozen explicit-cache release-candidate packaging gate.
+Reuse the M41 exact source/artifact/install/demo contracts, but make a caller-created,
+confined disposable cache an explicit precondition and preserve M41/M42/M43 history.
+Permit one build/install/demo attempt only after checker/source/lock/package identities
+are frozen. Do not change product behavior or dependencies, use a provider/private data,
+claim public-CI/teammate success, or push.
