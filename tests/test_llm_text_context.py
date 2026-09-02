@@ -144,14 +144,17 @@ class LlmTextContextTests(unittest.TestCase):
         source = (
             ROOT / "src" / "whole_home_agent" / "streamlit_app.py"
         ).read_text(encoding="utf-8")
-        self.assertIn('st.subheader("4 · What a text-only LLM could see")', source)
-        self.assertIn('build_llm_text_context(result["answer"])', source)
+        self.assertIn('st.subheader("4 · Local text presentation boundary")', source)
+        self.assertIn('st.json(result["language_context"])', source)
+        self.assertNotIn("build_llm_text_context", source)
         self.assertNotIn("api_key", source.lower())
 
     @unittest.skipUnless(HAS_VIDEO, "video optional dependencies are not installed")
     def test_public_demo_answer_produces_the_minimized_context(self):
         result = run_public_demo(replay_run_id="m38-context-test", include_frames=False)
         context = build_llm_text_context(result["answer"])
+        self.assertEqual(result["language_context"], context)
+        self.assertEqual(result["presentation"]["context_schema"], CONTEXT_SCHEMA)
         self.assertEqual(
             context["answer"],
             {

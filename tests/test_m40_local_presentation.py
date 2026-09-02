@@ -2,10 +2,23 @@
 
 from __future__ import annotations
 
+import ast
 import hashlib
 import tomllib
 import unittest
 from pathlib import Path
+
+from whole_home_agent.presentation import (
+    DETERMINISTIC_PRESENTER_ID,
+    FALLBACK,
+    FALLBACK_TEXT,
+    MAX_PRESENTATION_CHARACTERS,
+    PRESENTATION_SCHEMA,
+    PRESENTED,
+    PRESENTER_FAILURE,
+    DeterministicLocationPresenter,
+    present_location_context,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -75,6 +88,228 @@ class M40ContractTests(unittest.TestCase):
 
     def test_every_runtime_and_authority_boundary_remains_closed(self):
         self.assertTrue(all(value is False for value in self.document["boundaries"].values()))
+
+
+def found_context(*, relation_facts: list[dict[str, str]] | None = None):
+    return {
+        "schema": "whole-home-agent.location-context.v1",
+        "purpose": "verbalize_location_answer",
+        "answer": {
+            "subject_id": "key",
+            "status": "FOUND",
+            "location_id": "sofa",
+            "epistemic_status": "estimated",
+        },
+        "relation_facts": relation_facts if relation_facts is not None else [
+            {
+                "subject_id": "key",
+                "predicate": "inside",
+                "object_id": "bag",
+                "epistemic_status": "estimated",
+            },
+            {
+                "subject_id": "bag",
+                "predicate": "at_zone",
+                "object_id": "sofa",
+                "epistemic_status": "estimated",
+            },
+        ],
+    }
+
+
+def non_found_context(status: str):
+    return {
+        "schema": "whole-home-agent.location-context.v1",
+        "purpose": "verbalize_location_answer",
+        "answer": {
+            "subject_id": "key",
+            "status": status,
+            "location_id": None,
+            "epistemic_status": "reported",
+        },
+        "relation_facts": [],
+    }
+
+
+class _CapturePresenter:
+    presenter_id = "capture/1"
+
+    def __init__(self, output: object = "bounded output"):
+        self.output = output
+        self.calls: list[object] = []
+
+    def present(self, context):
+        self.calls.append(context)
+        return self.output
+
+
+class _ThrowingPresenter:
+    presenter_id = "throwing/1"
+
+    def present(self, context):
+        raise RuntimeError("sensitive-provider-payload-must-not-escape")
+
+
+class M40ImplementationTests(unittest.TestCase):
+    def test_found_chain_uses_only_present_relation_facts(self):
+        result = present_location_context(
+            found_context(),
+            DeterministicLocationPresenter(),
+        )
+        self.assertEqual(result.status, PRESENTED)
+        self.assertEqual(result.presenter_id, DETERMINISTIC_PRESENTER_ID)
+        self.assertEqual(
+            result.text,
+            "在這段固定重播中，系統估計鑰匙在包包裡，且包包位於沙發；"
+            "所以鑰匙可能在沙發上的包包裡。",
+        )
+        self.assertNotIn("被放進", result.text)
+        self.assertNotIn("之後", result.text)
+        self.assertNotIn("停在", result.text)
+
+    def test_found_without_chain_uses_bounded_direct_location(self):
+        result = present_location_context(
+            found_context(relation_facts=[]),
+            DeterministicLocationPresenter(),
+        )
+        self.assertEqual(result.status, PRESENTED)
+        self.assertEqual(result.text, "在這段固定重播中，系統估計鑰匙位於沙發。")
+        reported = found_context()
+        reported["answer"]["epistemic_status"] = "reported"
+        for fact in reported["relation_facts"]:
+            fact["epistemic_status"] = "reported"
+        reported_result = present_location_context(
+            reported,
+            DeterministicLocationPresenter(),
+        )
+        self.assertIn("系統記錄鑰匙在包包裡", reported_result.text)
+
+    def test_every_non_found_status_abstains_and_names_the_status(self):
+        for status in (
+            "CONFLICT",
+            "FRONTIER_MISMATCH",
+            "OUT_OF_SCOPE",
+            "SCOPE_REQUIRED",
+            "UNKNOWN",
+        ):
+            with self.subTest(status=status):
+                result = present_location_context(
+                    non_found_context(status),
+                    DeterministicLocationPresenter(),
+                )
+                self.assertEqual(result.status, PRESENTED)
+                self.assertIn(status, result.text)
+                self.assertIn("不補猜位置", result.text)
+                self.assertNotIn("沙發", result.text)
+
+    def test_malformed_extra_and_hostile_identifier_contexts_fall_back_before_call(self):
+        cases = []
+        extra = found_context()
+        extra["history"] = ["must-not-leave"]
+        cases.append(extra)
+        hostile = found_context()
+        hostile["answer"]["subject_id"] = "<script>"
+        cases.append(hostile)
+        contradictory = non_found_context("UNKNOWN")
+        contradictory["answer"]["location_id"] = "sofa"
+        cases.append(contradictory)
+        for context in cases:
+            presenter = _CapturePresenter()
+            with self.subTest(context=context):
+                result = present_location_context(context, presenter)
+                self.assertEqual(result.status, FALLBACK)
+                self.assertEqual(result.failure_code, PRESENTER_FAILURE)
+                self.assertEqual(result.text, FALLBACK_TEXT)
+                self.assertEqual(presenter.calls, [])
+
+    def test_throwing_empty_overlong_and_control_outputs_fall_back(self):
+        presenters = (
+            _ThrowingPresenter(),
+            _CapturePresenter(""),
+            _CapturePresenter("x" * (MAX_PRESENTATION_CHARACTERS + 1)),
+            _CapturePresenter("line one\nline two"),
+            _CapturePresenter(7),
+        )
+        for presenter in presenters:
+            with self.subTest(presenter=type(presenter).__name__):
+                result = present_location_context(found_context(), presenter)
+                self.assertEqual(result.status, FALLBACK)
+                self.assertTrue(result.fallback_used)
+                self.assertEqual(result.failure_code, PRESENTER_FAILURE)
+
+    def test_exception_content_never_leaves_the_sanitized_result(self):
+        result = present_location_context(found_context(), _ThrowingPresenter())
+        serialized = str(result.as_dict())
+        self.assertNotIn("sensitive-provider-payload", serialized)
+        self.assertEqual(result.presenter_id, "throwing/1")
+
+    def test_port_receives_a_fresh_exact_minimized_mapping(self):
+        context = found_context()
+        presenter = _CapturePresenter()
+        result = present_location_context(context, presenter)
+        self.assertEqual(result.status, PRESENTED)
+        self.assertEqual(len(presenter.calls), 1)
+        received = presenter.calls[0]
+        self.assertIsNot(received, context)
+        self.assertEqual(set(received), {"schema", "purpose", "answer", "relation_facts"})
+        self.assertEqual(
+            set(received["answer"]),
+            {"subject_id", "status", "location_id", "epistemic_status"},
+        )
+        self.assertEqual(
+            set(received["relation_facts"][0]),
+            {"subject_id", "predicate", "object_id", "epistemic_status"},
+        )
+
+    def test_result_dictionary_has_only_the_frozen_receipt_fields(self):
+        result = present_location_context(found_context(), _CapturePresenter())
+        payload = result.as_dict()
+        self.assertEqual(payload["schema"], PRESENTATION_SCHEMA)
+        self.assertEqual(payload["status"], PRESENTED)
+        self.assertFalse(payload["fallback_used"])
+        self.assertIsNone(payload["failure_code"])
+        self.assertEqual(
+            set(payload),
+            {
+                "schema",
+                "status",
+                "presenter_id",
+                "context_schema",
+                "text",
+                "fallback_used",
+                "failure_code",
+            },
+        )
+
+    def test_invalid_presenter_identity_is_sanitized_and_not_called(self):
+        presenter = _CapturePresenter()
+        presenter.presenter_id = "bad identity with spaces"
+        result = present_location_context(found_context(), presenter)
+        self.assertEqual(result.status, FALLBACK)
+        self.assertEqual(result.presenter_id, "unavailable")
+        self.assertEqual(presenter.calls, [])
+
+    def test_presentation_module_has_no_io_network_provider_or_dynamic_import(self):
+        path = ROOT / "src" / "whole_home_agent" / "presentation.py"
+        tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+        imported_roots: set[str] = set()
+        called_names: set[str] = set()
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                imported_roots.update(alias.name.split(".")[0] for alias in node.names)
+            elif isinstance(node, ast.ImportFrom) and node.module:
+                imported_roots.add(node.module.split(".")[0])
+            elif isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
+                called_names.add(node.func.id)
+        self.assertEqual(
+            imported_roots,
+            {"__future__", "re", "collections", "dataclasses", "typing", "llm_context"},
+        )
+        self.assertTrue(
+            called_names.isdisjoint(
+                {"open", "exec", "eval", "compile", "__import__"}
+            )
+        )
 
 
 if __name__ == "__main__":

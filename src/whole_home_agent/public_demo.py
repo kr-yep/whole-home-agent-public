@@ -14,8 +14,13 @@ from .adapters.synthetic_color import (
 from .adapters.tracking import IoUTracker
 from .errors import ErrorCode, SourceError
 from .evaluation import evaluate_perception
-from .model import AnswerTrace, QueryRequest, QueryStatus, RunStatus
+from .llm_context import build_llm_text_context
+from .model import AnswerTrace, QueryRequest, RunStatus
 from .orchestrator import run_source
+from .presentation import (
+    DeterministicLocationPresenter,
+    present_location_context,
+)
 from .relation_evaluation import (
     evaluate_relations,
     load_relation_evaluation_config,
@@ -102,23 +107,6 @@ def _answer_dict(answer: AnswerTrace) -> dict[str, object]:
         "subject_id": answer.subject_id,
         "world_scope": answer.world_scope,
     }
-
-
-def _answer_summary(answer: AnswerTrace, subject_id: str) -> str:
-    if answer.status is not QueryStatus.FOUND:
-        return (
-            f"在這段固定重播中，沒有足夠證據定位 {subject_id}；"
-            f"系統選擇 {answer.status.value}，不補猜位置。"
-        )
-    if subject_id == "key" and answer.location_id == "sofa":
-        return (
-            "在這段固定重播中，系統估計鑰匙被放進包包，之後包包停在沙發；"
-            "所以鑰匙可能在沙發上的包包裡。"
-        )
-    return (
-        f"在這段固定重播中，系統估計 {subject_id} 的位置是 "
-        f"{answer.location_id}。"
-    )
 
 
 def _claim_dict(claim) -> dict[str, object]:
@@ -229,6 +217,12 @@ def run_public_demo(
             repository_root=demo_root,
         ),
     )
+    answer_payload = _answer_dict(answer)
+    language_context = build_llm_text_context(answer_payload)
+    presentation = present_location_context(
+        language_context,
+        DeterministicLocationPresenter(),
+    )
     frames = [
         {
             "bound_entity_ids": sorted(trace.binding.by_entity()),
@@ -247,8 +241,8 @@ def run_public_demo(
         for trace in source.trace
     ]
     return {
-        "answer": _answer_dict(answer),
-        "answer_summary": _answer_summary(answer, subject_id),
+        "answer": answer_payload,
+        "answer_summary": presentation.text,
         "claims": [_claim_dict(item) for item in session.accepted_claims],
         "frames": frames if include_frames else [],
         "governance": {
@@ -257,7 +251,9 @@ def run_public_demo(
             "operate": "DISABLED",
             "physical_truth_claimed": False,
         },
+        "language_context": language_context,
         "perception_evaluation": perception_report.as_dict(),
+        "presentation": presentation.as_dict(),
         "relation_evaluation": relation_report.as_dict(),
         "run_receipt": result.receipt.as_dict(),
         "source": {

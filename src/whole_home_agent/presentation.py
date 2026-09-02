@@ -1,0 +1,303 @@
+"""Local presentation boundary for one minimized location-answer context."""
+
+from __future__ import annotations
+
+import re
+from collections.abc import Mapping
+from dataclasses import dataclass
+from typing import Protocol
+
+from .llm_context import CONTEXT_SCHEMA
+
+
+PRESENTATION_SCHEMA = "whole-home-agent.presentation-result.v1"
+DETERMINISTIC_PRESENTER_ID = "deterministic-location/1"
+PRESENTED = "PRESENTED"
+FALLBACK = "FALLBACK"
+PRESENTER_FAILURE = "PRESENTER_FAILURE"
+MAX_PRESENTATION_CHARACTERS = 500
+FALLBACK_TEXT = "無法產生文字摘要；請以結構化答案與證據鏈為準。"
+
+_PURPOSE = "verbalize_location_answer"
+_IDENTIFIER = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$")
+_PRESENTER_IDENTIFIER = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._/-]{0,63}$")
+_QUERY_STATUSES = frozenset(
+    {
+        "CONFLICT",
+        "FOUND",
+        "FRONTIER_MISMATCH",
+        "OUT_OF_SCOPE",
+        "SCOPE_REQUIRED",
+        "UNKNOWN",
+    }
+)
+_EPISTEMIC_STATUSES = frozenset({"estimated", "reported"})
+_PREDICATES = frozenset({"at_zone", "inside"})
+_DISPLAY_NAMES = {
+    "bag": "包包",
+    "key": "鑰匙",
+    "sofa": "沙發",
+}
+
+
+class LocationPresenter(Protocol):
+    """Narrow presentation-only port; it has no state, tool, or authority handle."""
+
+    presenter_id: str
+
+    def present(self, context: Mapping[str, object]) -> str:
+        """Return prose for one already-scoped, validated location context."""
+
+
+@dataclass(frozen=True, slots=True)
+class _RelationFact:
+    subject_id: str
+    predicate: str
+    object_id: str
+    epistemic_status: str
+
+
+@dataclass(frozen=True, slots=True)
+class _LocationContext:
+    subject_id: str
+    status: str
+    location_id: str | None
+    epistemic_status: str
+    relation_facts: tuple[_RelationFact, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class PresentationResult:
+    """Sanitized result of one presentation attempt."""
+
+    status: str
+    presenter_id: str
+    context_schema: str
+    text: str
+    fallback_used: bool
+    failure_code: str | None
+
+    def as_dict(self) -> dict[str, object]:
+        return {
+            "schema": PRESENTATION_SCHEMA,
+            "status": self.status,
+            "presenter_id": self.presenter_id,
+            "context_schema": self.context_schema,
+            "text": self.text,
+            "fallback_used": self.fallback_used,
+            "failure_code": self.failure_code,
+        }
+
+
+def _exact_mapping(
+    value: object, *, path: str, fields: frozenset[str]
+) -> Mapping[str, object]:
+    if not isinstance(value, Mapping):
+        raise ValueError(f"{path} must be a mapping")
+    if set(value) != fields:
+        raise ValueError(f"{path} fields do not match the presentation contract")
+    return value
+
+
+def _required_text(record: Mapping[str, object], key: str, *, path: str) -> str:
+    value = record[key]
+    if not isinstance(value, str) or not value:
+        raise ValueError(f"{path}.{key} must be a non-empty string")
+    return value
+
+
+def _identifier_text(record: Mapping[str, object], key: str, *, path: str) -> str:
+    value = _required_text(record, key, path=path)
+    if _IDENTIFIER.fullmatch(value) is None:
+        raise ValueError(f"{path}.{key} is outside the identifier contract")
+    return value
+
+
+def _parse_context(context: Mapping[str, object]) -> _LocationContext:
+    root = _exact_mapping(
+        context,
+        path="context",
+        fields=frozenset({"schema", "purpose", "answer", "relation_facts"}),
+    )
+    if root["schema"] != CONTEXT_SCHEMA or root["purpose"] != _PURPOSE:
+        raise ValueError("context schema or purpose is unsupported")
+
+    answer = _exact_mapping(
+        root["answer"],
+        path="context.answer",
+        fields=frozenset(
+            {"subject_id", "status", "location_id", "epistemic_status"}
+        ),
+    )
+    subject_id = _identifier_text(answer, "subject_id", path="context.answer")
+    status = _required_text(answer, "status", path="context.answer")
+    if status not in _QUERY_STATUSES:
+        raise ValueError("context.answer.status is unsupported")
+    epistemic_status = _required_text(
+        answer, "epistemic_status", path="context.answer"
+    )
+    if epistemic_status not in _EPISTEMIC_STATUSES:
+        raise ValueError("context.answer.epistemic_status is unsupported")
+
+    raw_location = answer["location_id"]
+    location_id: str | None
+    if raw_location is None:
+        location_id = None
+    elif isinstance(raw_location, str) and _IDENTIFIER.fullmatch(raw_location):
+        location_id = raw_location
+    else:
+        raise ValueError("context.answer.location_id is outside the identifier contract")
+    if status == "FOUND" and location_id is None:
+        raise ValueError("FOUND context requires a location")
+    if status != "FOUND" and location_id is not None:
+        raise ValueError("non-FOUND context must abstain from location")
+
+    raw_facts = root["relation_facts"]
+    if not isinstance(raw_facts, list):
+        raise ValueError("context.relation_facts must be a list")
+    if status != "FOUND" and raw_facts:
+        raise ValueError("non-FOUND context must abstain from relation facts")
+
+    facts: list[_RelationFact] = []
+    for index, raw_fact in enumerate(raw_facts):
+        path = f"context.relation_facts[{index}]"
+        fact = _exact_mapping(
+            raw_fact,
+            path=path,
+            fields=frozenset(
+                {"subject_id", "predicate", "object_id", "epistemic_status"}
+            ),
+        )
+        predicate = _required_text(fact, "predicate", path=path)
+        if predicate not in _PREDICATES:
+            raise ValueError(f"{path}.predicate is unsupported")
+        fact_epistemic_status = _required_text(
+            fact, "epistemic_status", path=path
+        )
+        if fact_epistemic_status not in _EPISTEMIC_STATUSES:
+            raise ValueError(f"{path}.epistemic_status is unsupported")
+        facts.append(
+            _RelationFact(
+                subject_id=_identifier_text(fact, "subject_id", path=path),
+                predicate=predicate,
+                object_id=_identifier_text(fact, "object_id", path=path),
+                epistemic_status=fact_epistemic_status,
+            )
+        )
+    return _LocationContext(
+        subject_id=subject_id,
+        status=status,
+        location_id=location_id,
+        epistemic_status=epistemic_status,
+        relation_facts=tuple(facts),
+    )
+
+
+def _normalized_context(context: Mapping[str, object]) -> dict[str, object]:
+    parsed = _parse_context(context)
+    return {
+        "schema": CONTEXT_SCHEMA,
+        "purpose": _PURPOSE,
+        "answer": {
+            "subject_id": parsed.subject_id,
+            "status": parsed.status,
+            "location_id": parsed.location_id,
+            "epistemic_status": parsed.epistemic_status,
+        },
+        "relation_facts": [
+            {
+                "subject_id": fact.subject_id,
+                "predicate": fact.predicate,
+                "object_id": fact.object_id,
+                "epistemic_status": fact.epistemic_status,
+            }
+            for fact in parsed.relation_facts
+        ],
+    }
+
+
+def _display_name(identifier: str) -> str:
+    return _DISPLAY_NAMES.get(identifier, identifier)
+
+
+class DeterministicLocationPresenter:
+    """Pure local renderer that verbalizes only the active relation context."""
+
+    presenter_id = DETERMINISTIC_PRESENTER_ID
+
+    def present(self, context: Mapping[str, object]) -> str:
+        parsed = _parse_context(context)
+        subject = _display_name(parsed.subject_id)
+        if parsed.status != "FOUND":
+            return (
+                f"在這段固定重播中，沒有足夠證據定位{subject}；"
+                f"系統回傳 {parsed.status}，不補猜位置。"
+            )
+
+        assert parsed.location_id is not None
+        location = _display_name(parsed.location_id)
+        verb = "估計" if parsed.epistemic_status == "estimated" else "記錄"
+        for inside in parsed.relation_facts:
+            if inside.subject_id != parsed.subject_id or inside.predicate != "inside":
+                continue
+            for at_zone in parsed.relation_facts:
+                if (
+                    at_zone.subject_id == inside.object_id
+                    and at_zone.predicate == "at_zone"
+                    and at_zone.object_id == parsed.location_id
+                ):
+                    container = _display_name(inside.object_id)
+                    return (
+                        f"在這段固定重播中，系統{verb}{subject}在{container}裡，"
+                        f"且{container}位於{location}；"
+                        f"所以{subject}可能在{location}上的{container}裡。"
+                    )
+
+        return f"在這段固定重播中，系統{verb}{subject}位於{location}。"
+
+
+def _safe_presenter_id(presenter: object) -> str:
+    value = getattr(presenter, "presenter_id", None)
+    if isinstance(value, str) and _PRESENTER_IDENTIFIER.fullmatch(value):
+        return value
+    return "unavailable"
+
+
+def _valid_output(value: object) -> str:
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError("presenter output must be non-empty text")
+    if len(value) > MAX_PRESENTATION_CHARACTERS:
+        raise ValueError("presenter output exceeds the bounded presentation size")
+    if any(ord(character) < 32 for character in value):
+        raise ValueError("presenter output contains control characters")
+    return value
+
+
+def present_location_context(
+    context: Mapping[str, object], presenter: LocationPresenter
+) -> PresentationResult:
+    """Validate, minimize, present, and fall back without exposing failure content."""
+
+    presenter_id = _safe_presenter_id(presenter)
+    try:
+        normalized = _normalized_context(context)
+        if presenter_id == "unavailable":
+            raise ValueError("presenter identity is invalid")
+        text = _valid_output(presenter.present(normalized))
+    except Exception:
+        return PresentationResult(
+            status=FALLBACK,
+            presenter_id=presenter_id,
+            context_schema=CONTEXT_SCHEMA,
+            text=FALLBACK_TEXT,
+            fallback_used=True,
+            failure_code=PRESENTER_FAILURE,
+        )
+    return PresentationResult(
+        status=PRESENTED,
+        presenter_id=presenter_id,
+        context_schema=CONTEXT_SCHEMA,
+        text=text,
+        fallback_used=False,
+        failure_code=None,
+    )
