@@ -1,6 +1,6 @@
 # Current capability status
 
-**Checkpoint:** M39 local-first language boundary · **Runtime:** `OPERATE DISABLED` · **Production ready:** no
+**Checkpoint:** M40 deterministic local presentation · **Runtime:** `OPERATE DISABLED` · **Production ready:** no
 
 This page is updated with every milestone push so a teammate can see what is usable and
 what is still missing without reconstructing the full experiment history.
@@ -29,6 +29,9 @@ what is still missing without reconstructing the full experiment history.
 - Inspect a machine-checked comparison that keeps deterministic local presentation as
   the default, treats API-key presence as credential only, and separates pure local
   deployment from a future local-first hybrid cloud option.
+- Receive deterministic relation-only prose plus a typed receipt from the same exact
+  M38 context; malformed context or presenter failure produces fixed fallback prose and
+  leaves the structured answer available.
 
 ## Still missing before a credible hackathon handoff
 
@@ -42,6 +45,8 @@ what is still missing without reconstructing the full experiment history.
 - Clear packaging/recovery evidence on each teammate platform.
 - An adopted language-provider and data-egress policy, assigned credential owner,
   provider or local-model implementation, and runtime verification of failure fallback.
+- A clean installed-wheel receipt proving the new M40 presentation module and compact
+  demo work outside the checkout.
 
 ## Deliberately not available
 
@@ -55,16 +60,16 @@ what is still missing without reconstructing the full experiment history.
 These remain blocked by proposed governance, unassigned roles, absent consent and data
 policy, and `OPERATE DISABLED`.
 
-## Latest local milestone: M39 language-presentation boundary
+## Latest local milestone: M40 deterministic local presentation
 
-Added the [M39 decision](evaluation/m39-language-presentation-boundary-v1.md) and
-[ADR 0021](adr/0021-keep-language-presentation-local-by-default.md). Three candidates
-were checked against ten gates. The selected architecture always retains the existing
-deterministic answer, permits a separately validated local model later, and keeps any
-cloud text presenter blocked until explicit data/egress and runtime authority exists.
+Added the [M40 result](evaluation/m40-local-presentation-implementation-v1.md) and
+[ADR 0022](adr/0022-use-a-deterministic-local-presentation-port.md). The closed demo now
+passes the exact M38 context through one narrow, pure local port. It validates context,
+presenter identity, and bounded output and returns an explicit presentation or fallback
+receipt while preserving the structured answer.
 
-The decision classifies every M38 field, records why text can still expose private
-household state, and defines future retention, credential, telemetry, timeout, failure,
-and fallback constraints. It adds no provider, key, model, endpoint, or request. All 411
-local regression tests and the 309-file / 618-snapshot public audit pass with zero
-violations; public CI was not run, nothing was pushed, and `OPERATE` remains disabled.
+The successful wording now describes only `inside(key, bag)` and `at_zone(bag, sofa)`;
+it no longer invents a temporal put/move sequence absent from the presenter context.
+All 433 local regression tests and the 315-file / 630-snapshot public audit pass with
+zero violations. No provider, model, key, endpoint, request, or new dependency exists;
+public CI was not run, nothing was pushed, and `OPERATE` remains disabled.

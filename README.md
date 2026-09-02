@@ -1,6 +1,6 @@
 # Whole Home Agent
 
-> **Current milestone:** `B1 — offline replay + local-first language boundary`
+> **Current milestone:** `B1 — offline replay + deterministic local presentation`
 >
 > **Status:** `NOT PRODUCTION` · `OPERATE DISABLED`
 > **Allowed data:** included generated fixtures plus separately downloaded, licensed D0 public data
@@ -27,7 +27,8 @@ an exact cross-platform [teammate handoff runbook](docs/teammate-handoff-runbook
 a Streamlit preview of the exact minimized text context an optional language presenter
 could receive, with no provider or network request; and a machine-checked M39 decision
 that keeps deterministic local output available while separating any future cloud
-presenter from credential and egress authority.
+presenter from credential and egress authority; and an M40 local presentation port with
+sanitized fallback that never removes the structured answer.
 
 **Still missing:** an actual teammate clean-install/demo receipt; convincing protected-group real
 indoor small-object gain; robust tracking under occlusion/camera motion; live camera and
@@ -36,12 +37,12 @@ consent, an adopted language-provider/egress policy, a provider implementation, 
 operational activation.
 Live/private sensing, cloud calls, and actions remain blocked.
 
-**Latest milestone (M39):** the [language-presentation boundary](docs/evaluation/m39-language-presentation-boundary-v1.md)
-compares deterministic/local generation, API-key autostart, and a permanent local-only
-design across ten fatal gates. It selects local default plus separately authorized
-cloud replaceability, classifies every M38 field, and defines credential, retention,
-telemetry, timeout, failure, and fallback boundaries. No provider, key, model, endpoint,
-or request was added. All 411 local regression tests and the 309-file / 618-snapshot
+**Latest milestone (M40):** the [deterministic presentation implementation](docs/evaluation/m40-local-presentation-implementation-v1.md)
+adds one narrow port, one pure local presenter, exact context/output validation, and a
+fixed fallback receipt. The demo now verbalizes only the active `key → bag → sofa`
+relations instead of inventing temporal movement from a static context. The structured
+answer remains available on presenter failure. No provider, key, model, endpoint, or
+request was added. All 433 local regression tests and the 315-file / 630-snapshot
 public audit pass. This local branch has not been pushed or run in public CI.
 
 ## What works today
@@ -67,6 +68,8 @@ public audit pass. This local branch has not been pushed or run in public CI.
   answer presentation with no I/O;
 - a machine-checked local-first language boundary in which an API key is a credential,
   never consent or egress authority, and cloud use would make the deployment hybrid;
+- one deterministic local presentation port with exact input/output validation,
+  sanitized failure receipt, and no dependency or I/O;
 - automated B0 tests on Python 3.11–3.14 plus locked B1/demo jobs.
 
 On the included browser-compatible H.264 synthetic clip, the current RGB baseline measures AP50 `1.0`, mAP50:95 about `0.7293`, key recall `1.0`, zero false positives, event F1 `1.0`, and the final expected answer. The clip-local tracker records zero ID switches and zero fragmentations on this one easy fixture. These numbers apply only to this generated artwork and do not establish indoor accuracy, real-time operation, or 24/7 readiness.
@@ -370,6 +373,9 @@ The [M39 decision](docs/evaluation/m39-language-presentation-boundary-v1.md) and
 [ADR 0021](docs/adr/0021-keep-language-presentation-local-by-default.md) keep the
 deterministic answer as default, distinguish pure local from local-first hybrid, and
 make policy authorization independent of API-key presence.
+The [M40 result](docs/evaluation/m40-local-presentation-implementation-v1.md) and
+[ADR 0022](docs/adr/0022-use-a-deterministic-local-presentation-port.md) implement that
+default without adding a model and keep the structured answer through presenter failure.
 
 ## Safety and data boundary
 

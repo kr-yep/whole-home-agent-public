@@ -23,6 +23,7 @@ from whole_home_agent.presentation import (
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / "configs" / "evaluation" / "m40-local-presentation-implementation-v1.toml"
+RESULT = ROOT / "configs" / "evaluation" / "m40-local-presentation-implementation-result-v1.toml"
 
 
 class M40ContractTests(unittest.TestCase):
@@ -310,6 +311,67 @@ class M40ImplementationTests(unittest.TestCase):
                 {"open", "exec", "eval", "compile", "__import__"}
             )
         )
+
+
+class M40ResultTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.contract = tomllib.loads(CONTRACT.read_text(encoding="utf-8"))
+        cls.result = tomllib.loads(RESULT.read_text(encoding="utf-8"))
+
+    def test_result_binds_exact_contract_implementation_and_module(self):
+        self.assertEqual(
+            self.result["contract_revision"],
+            "99d785e1b77f3ad36b9d178c8c8f13a4690d0518",
+        )
+        self.assertEqual(
+            self.result["implementation_revision"],
+            "9d0fc81e47f0077e5dce6e7a244d866826506d53",
+        )
+        module = ROOT / "src" / "whole_home_agent" / "presentation.py"
+        self.assertEqual(
+            hashlib.sha256(module.read_bytes()).hexdigest(),
+            self.result["presentation_module_sha256"],
+        )
+
+    def test_implemented_surface_is_one_local_presenter_without_dependency(self):
+        surface = self.result["implemented_surface"]
+        self.assertEqual(surface["port"], self.contract["implementation"]["port"])
+        self.assertEqual(
+            surface["local_presenter"],
+            self.contract["implementation"]["concrete_presenter"],
+        )
+        self.assertFalse(surface["provider_or_local_model_adapter"])
+        self.assertFalse(surface["runtime_dependency_added"])
+
+    def test_recorded_prose_is_relation_only_and_additive(self):
+        presentation = self.result["presentation_result"]
+        compatibility = self.result["compatibility"]
+        self.assertEqual(presentation["status"], PRESENTED)
+        self.assertFalse(presentation["temporal_put_move_or_sequence_claim"])
+        self.assertNotIn("被放進", presentation["text"])
+        self.assertNotIn("之後", presentation["text"])
+        self.assertTrue(compatibility["answer_field_retained"])
+        self.assertTrue(compatibility["answer_summary_field_retained"])
+        self.assertFalse(
+            compatibility["claim_query_relation_evidence_and_context_semantics_changed"]
+        )
+
+    def test_recorded_fallback_is_sanitized_and_keeps_structured_answer(self):
+        fallback = self.result["fallback_result"]
+        self.assertEqual(fallback["status"], FALLBACK)
+        self.assertEqual(fallback["failure_code"], PRESENTER_FAILURE)
+        self.assertFalse(fallback["exception_content_exposed"])
+        self.assertTrue(fallback["structured_answer_retained"])
+        self.assertFalse(fallback["provider_retry_or_network"])
+
+    def test_result_preserves_every_runtime_authority_and_claim_limit(self):
+        self.assertTrue(all(value is False for value in self.result["boundaries"].values()))
+        limits = self.result["claim_limits"]
+        self.assertFalse(limits["establishes_language_model_quality"])
+        self.assertFalse(limits["establishes_local_model_or_cloud_provider_compatibility"])
+        self.assertFalse(limits["establishes_real_home_or_teammate_usability"])
+        self.assertTrue(limits["authorizes_only_separately_frozen_m41_packaging_gate"])
 
 
 if __name__ == "__main__":

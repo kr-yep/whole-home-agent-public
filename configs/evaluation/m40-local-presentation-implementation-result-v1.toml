@@ -1,0 +1,95 @@
+schema_version = 1
+status = "IMPLEMENTED_AND_VERIFIED_LOCAL_BRANCH"
+gate_id = "m40-local-presentation-implementation-v1"
+decision = "PASS_M40_LOCAL_PRESENTATION_BOUNDARY"
+contract_revision = "99d785e1b77f3ad36b9d178c8c8f13a4690d0518"
+implementation_revision = "9d0fc81e47f0077e5dce6e7a244d866826506d53"
+presentation_module_sha256 = "26e625e763575a2b873978f8d930128be624c23433eb2fb72cfa3b65ee596a55"
+context_schema = "whole-home-agent.location-context.v1"
+result_schema = "whole-home-agent.presentation-result.v1"
+presenter_id = "deterministic-location/1"
+
+[implemented_surface]
+port = "LocationPresenter"
+local_presenter = "DeterministicLocationPresenter"
+use_case = "present_location_context"
+result_type = "PresentationResult"
+composition_root = "src/whole_home_agent/public_demo.py"
+ui = "src/whole_home_agent/streamlit_app.py"
+provider_or_local_model_adapter = false
+runtime_dependency_added = false
+
+[presentation_result]
+status = "PRESENTED"
+fallback_used = false
+failure_code = "NONE"
+text = "在這段固定重播中，系統估計鑰匙在包包裡，且包包位於沙發；所以鑰匙可能在沙發上的包包裡。"
+temporal_put_move_or_sequence_claim = false
+structured_answer_retained = true
+language_context_retained = true
+
+[fallback_result]
+status = "FALLBACK"
+failure_code = "PRESENTER_FAILURE"
+text = "無法產生文字摘要；請以結構化答案與證據鏈為準。"
+exception_content_exposed = false
+structured_answer_retained = true
+provider_retry_or_network = false
+
+[input_validation]
+exact_context_fields = true
+bounded_identifiers = true
+allowed_query_statuses = true
+allowed_predicates = true
+allowed_epistemic_statuses = true
+extra_fields_rejected = true
+contradictory_non_found_location_rejected = true
+fresh_minimized_copy_passed_to_port = true
+
+[output_validation]
+non_empty_text_required = true
+max_characters = 500
+control_characters_rejected = true
+invalid_presenter_identity_sanitized = true
+exception_text_sanitized = true
+
+[compatibility]
+answer_field_retained = true
+answer_summary_field_retained = true
+language_context_field_added = true
+presentation_field_added = true
+answer_summary_equals_presentation_text = true
+answer_summary_wording_changed = true
+wording_change_reason = "REMOVE_UNREPRESENTED_TEMPORAL_EVENT_CLAIM"
+claim_query_relation_evidence_and_context_semantics_changed = false
+
+[verification]
+python = "3.12.13"
+focused_tests_passed = 35
+full_tests_passed = 433
+full_tests_skipped = 38
+public_audit_scanned_files = 315
+public_audit_scanned_snapshots = 630
+public_audit_violations = 0
+operate_enabled = false
+public_ci_run_id = 0
+public_ci_conclusion = "NOT_RUN_LOCAL_BRANCH_ONLY"
+
+[claim_limits]
+establishes_language_model_quality = false
+establishes_local_model_or_cloud_provider_compatibility = false
+establishes_real_home_or_teammate_usability = false
+establishes_physical_truth = false
+adopts_data_egress_policy_or_consent = false
+authorizes_only_separately_frozen_m41_packaging_gate = true
+
+[boundaries]
+provider_or_local_model_adapter_added = false
+provider_sdk_or_dependency_added = false
+credential_env_ui_or_secret_added = false
+endpoint_network_or_retry_added = false
+live_private_or_additional_media_read = false
+claim_query_relation_evidence_or_context_semantics_changed = false
+action_tool_policy_broker_or_generic_command_added = false
+action_policy_adopted = false
+operate_enabled = false

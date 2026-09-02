@@ -1,6 +1,6 @@
 # Whole Home Agent — Public Repository State
 
-**Checkpoint:** `PUBLIC-B1-M39-001`
+**Checkpoint:** `PUBLIC-B1-M40-001`
 
 **As of:** `2026-09-02 Asia/Taipei`
 
@@ -26,6 +26,9 @@ This file is the live checkpoint for the clean public repository. It records cur
   future local model as optional and any future cloud text presenter as local-first
   hybrid, separately blocked by data/egress and runtime authority. An API key is only a
   credential and cannot activate egress.
+- Route the closed demo through one local `LocationPresenter` port selected only by the
+  composition root. Presenter failure must retain the structured answer and expose no
+  exception content; presenter prose is never truth or authority.
 
 ## Authority and roles
 
@@ -83,6 +86,7 @@ This file is the live checkpoint for the clean public repository. It records cur
 | M37 teammate handoff runbook | `IMPLEMENTED / LOCAL, AUDIT, AND PUBLIC CI PASS` | Exact Windows and macOS/Linux procedures, receipt interpretation, bounded troubleshooting, guarded cleanup, presentation fallback, and result template exist. All 393 local tests, the 300-file public audit, and six follow-up public CI jobs pass. First CI's depth-1 test-only failure is retained; no real teammate receipt or acceptance rerun exists |
 | M38 market synthesis and text-context preview | `IMPLEMENTED / LOCAL OFFLINE VERIFICATION` | Representative primary sources are reduced to an explicit adopt/defer/reject product cut. A pure allowlist projection exposes only answer and relation facts in the closed Streamlit demo. It has no provider, network, credential, prompt input, memory reader, or action handle; cloud egress remains prohibited |
 | M39 language-presentation boundary | `IMPLEMENTED / REPOSITORY DECISION / NO PROVIDER` | Ten fatal gates select deterministic local default plus separately authorized cloud replaceability. Every M38 field is classified; credential, retention, telemetry, network-failure, and fallback boundaries are explicit. This does not adopt policy, configure a key, or authorize a request |
+| M40 deterministic local presentation | `IMPLEMENTED / LOCAL VERIFICATION / NO MODEL` | One narrow port validates the exact M38 context and bounded output, then emits a sanitized receipt. The composition root selects only a deterministic local presenter; structured answer/evidence survive fallback and no provider surface exists |
 | B1 binding/relation/query slice | `IMPLEMENTED / VERIFIED ON ONE SYNTHETIC REPLAY` | One-instance binding, conservative containment/zone assertion and retraction rules, typed abstentions, estimated candidates through the unchanged committer, relation evaluation, and evidence-traceable `key → bag → sofa` query exist; no real indoor transfer evidence exists |
 | B1 CLI and Streamlit presentation | `IMPLEMENTED / VERIFIED ON ONE SYNTHETIC REPLAY` | A closed composition/presentation boundary exposes the fixed clip, scoped answer, evidence, abstentions, metrics, diagnostics, and receipt; it accepts no upload, camera, arbitrary path, free-form query, credential, or action handle |
 | Python package distribution | `IMPLEMENTED / VERIFIED BY LOCAL CLEAN INSTALL` | The wheel contains only the fixed D0 replay, its configs, and generator provenance; a fresh Python 3.12 environment ran the CLI from outside the checkout |
@@ -141,6 +145,17 @@ This file is the live checkpoint for the clean public repository. It records cur
   the public audit scanned 309 files / 618 snapshots with zero violations and
   `operate_enabled: false`. This is local-branch evidence only: no provider, dependency,
   key, endpoint, request, model, private data, policy adoption, action, or push occurred.
+- M40 froze the local implementation at
+  `99d785e1b77f3ad36b9d178c8c8f13a4690d0518` and implemented it at
+  `9d0fc81e47f0077e5dce6e7a244d866826506d53`. One port and deterministic
+  presenter accept only the exact M38 context, validate bounded prose, and return an
+  explicit receipt or sanitized fallback. The previous temporal put/move wording was
+  removed because that sequence is not present in the presenter context. Python 3.12.13
+  passed `35/35` focused and `433/433` complete tests; 38 optional-dependency cases were
+  skipped under their existing guards. The public audit scanned 315 files / 630
+  snapshots with zero violations and `operate_enabled: false`. No provider, model,
+  dependency, key, endpoint, request, private data, action, policy adoption, or push
+  occurred.
 - GitHub Actions run [33486414127](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33486414127) passed every job except Python 3.11 because one test fixture used Python 3.12's generalized nested f-string grammar. The fixture now builds its TOML blocks before interpolation; local `ast` parsing under the 3.11 grammar and the focused tests passed. Follow-up run [33486674987](https://github.com/kr-yep/whole-home-agent-public/actions/runs/33486674987) completed successfully across Python 3.11–3.14, the prerecorded-video contract, and the closed public demo.
 - An isolated offline M9 package build produced the source archive and universal wheel and included the new Python adapter/evaluator modules without including VOST/VISOR data, model weights, local receipts, or evaluation configs/tools in the installed runtime data bundle.
 - Source revision 2 is an 80-frame H.264/yuv420p generated replay with SHA-256 `b9cc79476d77f8d45acd1803c924de73914ffc4790f4da271f77cc8d4742eb43`. It was versioned because revision 1's encoding failed Chromium playback. Two consecutive local generations matched; browser QA then showed duration 8 seconds, ready state 4, scoped revision-2 content, and zero console errors.
@@ -207,6 +222,7 @@ This file is the live checkpoint for the clean public repository. It records cur
 | `PUB-DIR-037` | Give a real teammate exact cross-platform commands, receipt semantics, troubleshooting, guarded cleanup, presentation fallback, and a sanitized report without manufacturing external evidence | Implemented as the M37 document gate; no real teammate receipt exists |
 | `PUB-DIR-038` | Consolidate representative whole-home products and research into a smallest useful demo, implement one independently verifiable task, and prepare the next without widening runtime authority | Implemented as M38: market adopt/defer/reject decisions, ADR 0020, and a local minimized text-context preview. M39 is prepared as a separate provider/egress decision; no provider code or egress was added |
 | `PUB-DIR-039` | Decide the smallest replaceable language-presentation boundary without treating a key as authority or adding provider code | Implemented as M39: local default, exact field classification, blocked cloud preconditions, deterministic fallback, and honest pure-local/hybrid labels |
+| `PUB-DIR-040` | Implement the M39 local default through one narrow port without widening runtime or authority | Implemented as M40: exact admission/output validation, deterministic relation-only prose, sanitized fallback, and unchanged structured truth path |
 | `PUB-DIR-031` | Every milestone push must visibly state what is usable now, what is still missing, and what changed in that push | Active; README handoff block and `docs/current-capability-status.md` are the public handoff surface |
 
 ## Open gates and blockers
@@ -219,12 +235,15 @@ This file is the live checkpoint for the clean public repository. It records cur
 - The M38 text packet is verified only on the fixed synthetic replay. M39 classifies its
   fields and proposes retention, credential, network, and failure constraints, but no
   policy authority or credential owner is assigned and no provider is implemented.
+- M40 proves only deterministic local prose and failure fallback in the closed synthetic
+  demo. It does not establish model quality, provider compatibility, or installed-wheel
+  packaging of the new module.
 
 ## Next safe action
 
-Prepare M40 as a separately frozen local implementation: add one narrow presentation
-port and deterministic presenter, keep the composition root on it, preserve the exact
-M38 context and structured-answer fallback, and add no provider/local-model adapter,
-SDK, key, endpoint, network path, policy broker, household data, or operation. Do not
-claim teammate, cross-platform, live, real-home, language-model, or operational success
-without corresponding evidence and authority.
+Prepare M41 as a no-push release-candidate packaging gate: build from the exact clean
+M40 revision, inspect source/wheel contents, install the wheel into a disposable clean
+environment from locked/cacheable artifacts, and run the compact recorded demo outside
+the checkout while checking the presentation receipt and structured fallback contract.
+Do not change product behavior, add dependencies or providers, claim teammate/public-CI
+success, or push without a separate publication decision.

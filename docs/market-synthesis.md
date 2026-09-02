@@ -84,8 +84,8 @@ household or send anything to a cloud service.
 
 ## Next smallest task prepared
 
-M39 now selects local default plus separately authorized cloud replaceability and keeps
-API-key presence distinct from authority. M40 may add only one narrow presentation port
-and deterministic local presenter over the existing M38 context. It must retain the
-structured answer fallback and add no provider SDK, local-model adapter, key, endpoint,
+M39 selected local default plus separately authorized cloud replaceability, and M40 now
+implements the local port, deterministic relation-only prose, and sanitized fallback.
+M41 may only verify that the exact clean revision packages and runs outside the checkout.
+It must add no product behavior, provider SDK, local-model adapter, key, endpoint,
 network path, household data, policy broker, or action capability.
