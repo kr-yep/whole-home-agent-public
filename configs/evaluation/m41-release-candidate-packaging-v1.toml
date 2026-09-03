@@ -7,10 +7,10 @@ execution_revision_rule = "FIRST_CLEAN_DESCENDANT_CONTAINING_ONLY_M41_CONTRACT_C
 attempt_limit = 1
 additional_retry_allowed = false
 m40_result = "configs/evaluation/m40-local-presentation-implementation-result-v1.toml"
-m40_result_sha256 = "46ed18891fcce951fd9bbdb9b0939140b54c38ab8c78b380ad1bdfb567bf13a6"
+m40_result_sha256 = "697c720084b377b4a0756b22e55bb3cb65b29b62d72a285ecd879a7e50589183"
 pyproject_sha256 = "bb70f2f967938a93d7599ce7b2fe08c3be797316b4426f66914529b2cf65b7da"
 uv_lock_git_blob_sha256 = "f2d3639c4b34b9c8a05381baec95cd178d39e056d81bbb7bc028eaeba1c94c3e"
-presentation_module_sha256 = "26e625e763575a2b873978f8d930128be624c23433eb2fb72cfa3b65ee596a55"
+presentation_module_sha256 = "387b6ff56d42fea792901b1b2a09d3e5be3bea5fa31b636a2332fd6da34caf50"
 
 [environment]
 python = "3.12"
