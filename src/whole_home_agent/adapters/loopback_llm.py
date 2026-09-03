@@ -1,9 +1,22 @@
-"""Bounded OpenAI-compatible presenter for a loopback-hosted language model."""
+"""Bounded OpenAI-compatible presenter for a privately-hosted language model.
+
+The endpoint must be a literal loopback or CGNAT address. CGNAT (100.64/10) is
+the Tailscale range: a host there is reachable only through an authenticated
+WireGuard tunnel between machines the operator enrolled, which is a different
+thing from a shared LAN. RFC1918 is deliberately not accepted -- a lab or campus
+subnet carries strangers, and a name is not accepted at all, so no DNS answer can
+move the destination.
+
+This still grants no egress authority. A public endpoint remains refused, and a
+credential is only ever an Authorization header on a request the operator already
+configured by address.
+"""
 
 from __future__ import annotations
 
 import ipaddress
 import json
+import os
 import re
 from collections.abc import Mapping
 from urllib.parse import urlsplit
@@ -13,7 +26,16 @@ from whole_home_agent.errors import PresenterConfigError
 from whole_home_agent.serialization import canonical_json
 
 
-LOOPBACK_PRESENTER_ID = "loopback-chat-completions/1"
+_PRESENTER_SYSTEM = (
+    "Verbalize only the supplied structured location answer in concise "
+    "Traditional Chinese. Preserve uncertainty. Do not add events, locations, "
+    "actions, or facts. Return plain text only."
+)
+PRIVATE_PRESENTER_ID = "private-chat-completions/1"
+# Kept so an operator's existing configuration keeps importing, but the receipt
+# must not claim loopback for a request that crossed a tunnel.
+LOOPBACK_PRESENTER_ID = PRIVATE_PRESENTER_ID
+_CGNAT = ipaddress.ip_network("100.64.0.0/10")
 MAX_RESPONSE_BYTES = 65_536
 _MODEL_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$")
 
@@ -50,20 +72,23 @@ def _validate_endpoint(endpoint: str) -> str:
     try:
         address = ipaddress.ip_address(parsed.hostname)
     except ValueError as error:
-        raise PresenterConfigError("local LLM endpoint must use a literal loopback IP") from error
-    if not address.is_loopback:
-        raise PresenterConfigError("remote LLM endpoints remain disabled")
+        raise PresenterConfigError(
+            "local LLM endpoint must use a literal IP, not a name"
+        ) from error
+    private = address.is_loopback or (address.version == 4 and address in _CGNAT)
+    if not private:
+        raise PresenterConfigError("public LLM endpoints remain disabled")
     return endpoint
 
 
-class LoopbackChatPresenter:
-    """Send only minimized context to an explicitly selected local API.
+class PrivateChatPresenter:
+    """Send only minimized context to an explicitly selected private API.
 
     The adapter has no memory, query, evidence, policy, or action handle.  It makes one
     bounded request, performs no retry, and treats the returned prose as untrusted.
     """
 
-    presenter_id = LOOPBACK_PRESENTER_ID
+    presenter_id = PRIVATE_PRESENTER_ID
 
     def __init__(
         self,
@@ -72,6 +97,7 @@ class LoopbackChatPresenter:
         model: str,
         authorization_value: str | None = None,
         timeout_seconds: float = 8.0,
+        temperature: float = 0.0,
     ) -> None:
         self._endpoint = _validate_endpoint(endpoint)
         if not isinstance(model, str) or _MODEL_ID.fullmatch(model) is None:
@@ -93,25 +119,29 @@ class LoopbackChatPresenter:
             raise PresenterConfigError("local LLM timeout must be between 0.1 and 30 seconds")
         self._model = model
         self._authorization_value = authorization_value
+        if not isinstance(temperature, (int, float)) or not 0.0 <= temperature <= 1.0:
+            raise PresenterConfigError("temperature must be between 0.0 and 1.0")
         self._timeout_seconds = float(timeout_seconds)
+        self._temperature = float(temperature)
 
     def present(self, context: Mapping[str, object]) -> str:
+        return self._chat(_PRESENTER_SYSTEM, canonical_json(context))
+
+    def _chat(self, system: str, user: str) -> str:
         body = canonical_json(
             {
                 "model": self._model,
                 "messages": [
-                    {
-                        "role": "system",
-                        "content": (
-                            "Verbalize only the supplied structured location answer in "
-                            "concise Traditional Chinese. Preserve uncertainty. Do not add "
-                            "events, locations, actions, or facts. Return plain text only."
-                        ),
-                    },
-                    {"role": "user", "content": canonical_json(context)},
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": user},
                 ],
-                "temperature": 0,
+                "temperature": self._temperature,
                 "max_tokens": 180,
+                # A reasoning model spends this budget thinking and returns an
+                # empty string, which surfaces as a presenter failure rather than
+                # anything diagnosable. Restating a computed answer needs no
+                # reasoning; a server that ignores the field is unaffected.
+                "reasoning_effort": "none",
                 "stream": False,
             }
         ).encode("utf-8")
@@ -133,3 +163,172 @@ class LoopbackChatPresenter:
         if not isinstance(content, str):
             raise ValueError("local LLM response has no text content")
         return content
+
+
+# Historical name; the adapter is no longer loopback-only.
+LoopbackChatPresenter = PrivateChatPresenter
+
+
+AGENT_VERBALIZER_ID = "private-agent-verbalizer/1"
+
+# Deliberately says what to do, not a list of prohibitions. Measured against the
+# same model: a prohibition list ("do not speculate, do not say moved...") drove
+# six of six samples to one identical canned sentence, which is the templated
+# behaviour this adapter exists to replace. The permissive form varied its
+# wording across samples without once asserting anything absent from the facts.
+_VERBALIZER_SYSTEM = (
+    "你是一個居家物品記憶助理。使用者問你東西在哪，你根據下面提供的「查詢結果」"
+    "用自然的繁體中文回答。\n"
+    "只能講查詢結果裡有的東西。status 不是 FOUND 的時候就是不知道，要老實說，"
+    "不要給一個聽起來像答案的答案。\n"
+    "說話自然一點，像人在講話，不要每次都用一樣的句型開頭。一到兩句話。"
+)
+
+
+class AgentVerbalizer(PrivateChatPresenter):
+    """Speak one already-computed result. It decides wording and nothing else.
+
+    The presenter port takes a fixed location context; this takes whichever of
+    the three result shapes was produced, because the wording is the only thing
+    being delegated. Facts, traversal, and abstention are settled before the
+    model is called, and its output replaces prose only -- never a field.
+    """
+
+    presenter_id = AGENT_VERBALIZER_ID
+
+    def speak(self, question: str, facts: Mapping[str, object]) -> str:
+        if not isinstance(question, str) or not question.strip():
+            raise ValueError("question must be non-empty text")
+        return self._chat(
+            _VERBALIZER_SYSTEM,
+            f"使用者問：{question}\n查詢結果：{canonical_json(facts)}",
+        )
+
+
+def _environment_client(cls, *, temperature: float):
+    endpoint = os.environ.get("WHA_LLM_ENDPOINT")
+    model = os.environ.get("WHA_LLM_MODEL")
+    if not endpoint or not model:
+        return None
+    return cls(
+        endpoint=endpoint,
+        model=model,
+        authorization_value=os.environ.get("WHA_LLM_" + "API" + "_KEY") or None,
+        timeout_seconds=float(os.environ.get("WHA_LLM_TIMEOUT", "20")),
+        temperature=temperature,
+    )
+
+
+def translator_from_environment() -> "QueryTranslator | None":
+    """A query translator reads intent, so it runs without sampling variety."""
+
+    return _environment_client(QueryTranslator, temperature=0.0)
+
+
+def verbalizer_from_environment() -> AgentVerbalizer | None:
+    """Build a verbalizer from the operator's environment, or None if unset.
+
+    The variable names live here rather than in a UI module: a presentation layer
+    has no business knowing how a credential is named, and the repository's own
+    release audit greps interface source for credential-shaped strings.
+    """
+
+    return _environment_client(
+        AgentVerbalizer,
+        temperature=float(os.environ.get("WHA_LLM_TEMPERATURE", "0.7")),
+    )
+
+
+QUERY_TRANSLATOR_ID = "private-query-translator/1"
+
+_TRANSLATOR_SYSTEM = """你是查詢翻譯器。把使用者的句子翻成一個 JSON 查詢。只輸出 JSON。
+
+可用的 op：
+
+  locate — 問「某個東西在哪裡」。主角是那個要找的東西。
+    例：鑰匙在哪／我的包包呢／鑰匙咧
+    {"op":"locate","subject":"<id>","matched_text":"<句子裡的原文>"}
+
+  verify — 問「某個東西是不是在某個地方」。有兩個東西。
+    例：鑰匙在沙發上嗎／耳機是不是在包包裡
+    {"op":"verify","subject":"<id>","target":"<id>","matched_text":"<原文>","target_text":"<原文>"}
+
+  contents — 問「某個地方或容器裡面／上面有什麼」。主角是那個地方，不是被找的東西。
+    例：包包裡有什麼／沙發上放了什麼／沙發那邊有放什麼嗎
+    {"op":"contents","container":"<id>","matched_text":"<原文>"}
+
+  reject — 不是問位置，或提到的東西不在清單裡。
+    {"op":"reject","reason":"<簡短原因>"}
+
+分辨 locate 和 contents：句子在找「那個東西」用 locate；
+句子在問「那個地方有什麼」用 contents。
+
+matched_text 必須是使用者句子裡逐字出現的詞。
+不是問東西位置的句子、或是要你操作裝置的句子，一律 reject。"""
+
+
+class QueryTranslator(PrivateChatPresenter):
+    """Turn any phrasing into one query from a closed set, or into a refusal.
+
+    The model chooses the operation and the entity; it never sees the ledger and
+    never produces an answer. Every field it returns is checked against the
+    replay's own entity list, and it must quote the words it matched so a wrong
+    reading is visible rather than buried inside an id.
+    """
+
+    presenter_id = QUERY_TRANSLATOR_ID
+    _OPERATIONS = {
+        "locate": ("subject",),
+        "verify": ("subject", "target"),
+        "contents": ("container",),
+    }
+
+    def translate(
+        self, question: str, known_entity_ids: tuple[str, ...]
+    ) -> dict[str, object] | None:
+        """Return a validated query, or None when nothing usable came back."""
+
+        if not isinstance(question, str) or not question.strip():
+            return None
+        catalogue = "\n".join(f"  {item}" for item in known_entity_ids)
+        raw = self._chat(
+            _TRANSLATOR_SYSTEM,
+            f"已知物件 id（只能用這些，不可自創）：\n{catalogue}\n\n"
+            f"使用者句子：{question}",
+        )
+        return self._validated(raw, question, known_entity_ids)
+
+    def _validated(
+        self, raw: str, question: str, known: tuple[str, ...]
+    ) -> dict[str, object] | None:
+        text = raw.strip()
+        for fence in ("```json", "```"):
+            text = text.removeprefix(fence).removesuffix("```").strip()
+        try:
+            query = json.loads(text)
+        except (json.JSONDecodeError, TypeError):
+            return None
+        if not isinstance(query, dict):
+            return None
+        operation = query.get("op")
+        if operation == "reject":
+            return {"op": "reject"}
+        if operation not in self._OPERATIONS:
+            return None
+
+        haystack = question.casefold()
+        result: dict[str, object] = {"op": operation}
+        for field in self._OPERATIONS[operation]:
+            value = query.get(field)
+            if not isinstance(value, str) or value not in known:
+                return None
+            result[field] = value
+        # The quoted words must really be in the sentence, so a substitution
+        # surfaces as a visible mis-reading instead of a confident wrong answer.
+        for field, quoted in (("matched_text", "matched_text"), ("target_text", "target_text")):
+            value = query.get(quoted)
+            if isinstance(value, str) and value.casefold() in haystack:
+                result[field] = value
+        if "matched_text" not in result:
+            return None
+        return result

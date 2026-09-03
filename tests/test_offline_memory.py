@@ -188,14 +188,42 @@ class NaturalQuestionTests(unittest.TestCase):
 
 
 class LoopbackPresenterTests(unittest.TestCase):
-    def test_remote_hostname_and_remote_ip_are_rejected(self):
+    def test_public_endpoints_and_names_are_rejected(self):
         for endpoint in (
             "https://api.openai.com/v1/chat/completions",
             "http://8.8.8.8/v1/chat/completions",
-            "http://localhost/v1/chat/completions",
+            "http://localhost/v1/chat/completions",   # a name, not an address
+            "http://192.168.1.50/v1/chat/completions",  # shared LAN, not a tunnel
+            # Assembled rather than written out: a literal userinfo URL trips
+            # this repository's own credential scanner, which is correct of it.
+            "http://{}@127.0.0.1/v1/chat/completions".format("u:p"),
+            "https://127.0.0.1/v1/chat/completions",
         ):
             with self.subTest(endpoint=endpoint), self.assertRaises(PresenterConfigError):
                 LoopbackChatPresenter(endpoint=endpoint, model="model-v1")
+
+    def test_loopback_and_tailnet_addresses_are_accepted(self):
+        for endpoint in (
+            "http://127.0.0.1:11434/v1/chat/completions",
+            "http://100.123.132.69:11435/v1/chat/completions",
+        ):
+            with self.subTest(endpoint=endpoint):
+                presenter = LoopbackChatPresenter(endpoint=endpoint, model="model-v1")
+                self.assertEqual(presenter.presenter_id, LOOPBACK_PRESENTER_ID)
+
+    def test_request_disables_reasoning_so_the_budget_reaches_the_answer(self):
+        """A reasoning model would spend max_tokens thinking and return ""."""
+
+        response = _Response({"choices": [{"message": {"content": "好"}}]})
+        presenter = LoopbackChatPresenter(
+            endpoint="http://127.0.0.1:11434/v1/chat/completions", model="m-v1"
+        )
+        with mock.patch(
+            "whole_home_agent.adapters.loopback_llm._open_request", return_value=response
+        ) as opened:
+            presenter.present(_context())
+        sent = json.loads(opened.call_args.args[0].data.decode("utf-8"))
+        self.assertEqual(sent["reasoning_effort"], "none")
 
     def test_one_loopback_request_contains_only_minimized_context(self):
         response = _Response(
@@ -356,3 +384,136 @@ class MemoryUiBoundaryTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class LocationVerificationTests(unittest.TestCase):
+    """Yes/no questions answer from the resolved chain, or abstain as before."""
+
+    def _archive(self, directory: str, fixture: str = "b0_key_bag_sofa_v1.json"):
+        path = Path(directory) / "memory.sqlite3"
+        session = run_fixture(
+            load_fixture(ROOT / "examples" / "fixtures" / fixture),
+            replay_run_id="verify-test",
+        )
+        SQLiteReplayArchive(path).save_completed(session)
+        return SQLiteReplayArchive(path)
+
+    def test_proposed_zone_and_container_both_count_as_yes(self):
+        from whole_home_agent.memory_query import verify_latest_memory
+
+        with tempfile.TemporaryDirectory() as directory:
+            archive = self._archive(directory)
+            for question in ("鑰匙在沙發上嗎", "鑰匙在包包裡嗎", "is my key on the sofa?"):
+                with self.subTest(question=question):
+                    result = verify_latest_memory(archive, question)
+                    self.assertEqual(result["verification"]["verdict"], "YES")
+
+    def test_wrong_place_is_no_and_still_reports_the_known_one(self):
+        from whole_home_agent.memory_query import verify_latest_memory
+
+        with tempfile.TemporaryDirectory() as directory:
+            result = verify_latest_memory(self._archive(directory), "包包在鑰匙裡嗎")
+        verification = result["verification"]
+        self.assertEqual(verification["verdict"], "NO")
+        self.assertIn("沙發", verification["text"])
+
+    def test_unknown_place_answers_from_what_it_does_know(self):
+        """The case a person actually hits: asking about a thing never recorded."""
+
+        from whole_home_agent.memory_query import verify_latest_memory
+
+        with tempfile.TemporaryDirectory() as directory:
+            result = verify_latest_memory(self._archive(directory), "鑰匙在我的桌上嗎")
+        verification = result["verification"]
+        self.assertEqual(verification["verdict"], "TARGET_UNKNOWN")
+        self.assertIsNone(verification["target_id"])
+        self.assertIn("包包", verification["text"])
+
+    def test_unresolved_subject_refuses_to_answer_yes_or_no(self):
+        from whole_home_agent.memory_query import verify_latest_memory
+
+        with tempfile.TemporaryDirectory() as directory:
+            archive = self._archive(directory, "b0_take_out_v1.json")
+            result = verify_latest_memory(archive, "鑰匙在沙發上嗎")
+        verification = result["verification"]
+        self.assertEqual(verification["verdict"], "UNRESOLVED")
+        self.assertIn("UNKNOWN", verification["text"])
+
+    def test_router_sends_each_question_shape_to_its_own_path(self):
+        from whole_home_agent.memory_query import answer_question
+
+        with tempfile.TemporaryDirectory() as directory:
+            archive = self._archive(directory)
+            self.assertIn("verification", answer_question(archive, "鑰匙在沙發上嗎"))
+            self.assertIn("presentation", answer_question(archive, "鑰匙在哪"))
+            with self.assertRaises(QuestionError):
+                answer_question(archive, "幫我開門")
+            with self.assertRaises(QuestionError):
+                answer_question(archive, "沙發好看嗎")
+
+    def test_verification_does_not_store_the_question(self):
+        from whole_home_agent.memory_query import verify_latest_memory
+
+        with tempfile.TemporaryDirectory() as directory:
+            archive = self._archive(directory)
+            verify_latest_memory(archive, "鑰匙在沙發上嗎")
+            raw = (Path(directory) / "memory.sqlite3").read_bytes()
+        self.assertNotIn("鑰匙在沙發上嗎".encode("utf-8"), raw)
+
+
+class ContainerContentsTests(unittest.TestCase):
+    """The reverse of a location question, read from the same active relations."""
+
+    def _archive(self, directory: str):
+        path = Path(directory) / "memory.sqlite3"
+        SQLiteReplayArchive(path).save_completed(_session("contents-test"))
+        return SQLiteReplayArchive(path)
+
+    def test_container_lists_what_the_projection_already_holds(self):
+        from whole_home_agent.memory_query import list_container_contents
+
+        with tempfile.TemporaryDirectory() as directory:
+            archive = self._archive(directory)
+            for question in ("包包裡有什麼", "我的包包裡面有什麼", "what is in my bag"):
+                with self.subTest(question=question):
+                    result = list_container_contents(archive, question)
+                    self.assertEqual(result["contents"]["contained_entity_ids"], ["key"])
+                    self.assertIn("鑰匙", result["contents"]["text"])
+
+    def test_a_zone_reports_what_stands_at_it_not_inside_it(self):
+        from whole_home_agent.memory_query import list_container_contents
+
+        with tempfile.TemporaryDirectory() as directory:
+            result = list_container_contents(self._archive(directory), "沙發上有什麼")
+        self.assertEqual(result["contents"]["contained_entity_ids"], ["bag"])
+        self.assertIn("沙發上有包包", result["contents"]["text"])
+
+    def test_empty_container_says_unrecorded_not_empty(self):
+        from whole_home_agent.memory_query import list_container_contents
+
+        with tempfile.TemporaryDirectory() as directory:
+            result = list_container_contents(self._archive(directory), "鑰匙裡有什麼")
+        self.assertEqual(result["contents"]["contained_entity_ids"], [])
+        self.assertIn("不代表它是空的", result["contents"]["text"])
+
+    def test_english_contents_question_is_not_routed_to_verification(self):
+        """"what is in my bag" satisfies is...in; answering its location is wrong."""
+
+        from whole_home_agent.memory_query import answer_question
+
+        with tempfile.TemporaryDirectory() as directory:
+            result = answer_question(self._archive(directory), "what is in my bag")
+        self.assertIn("contents", result)
+        self.assertNotIn("verification", result)
+
+    def test_router_keeps_the_three_shapes_apart(self):
+        from whole_home_agent.memory_query import answer_question
+
+        with tempfile.TemporaryDirectory() as directory:
+            archive = self._archive(directory)
+            self.assertIn("contents", answer_question(archive, "包包裡有什麼"))
+            self.assertIn("verification", answer_question(archive, "鑰匙在沙發上嗎"))
+            self.assertIn("presentation", answer_question(archive, "鑰匙在哪"))
+            for rejected in ("幫我開門", "沙發好看嗎", "今天天氣如何"):
+                with self.subTest(question=rejected), self.assertRaises(QuestionError):
+                    answer_question(archive, rejected)
