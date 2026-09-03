@@ -5,6 +5,7 @@ from __future__ import annotations
 import re
 import unicodedata
 from collections.abc import Iterable, Mapping
+from dataclasses import dataclass
 
 from .errors import ErrorCode, QuestionError
 
@@ -95,6 +96,168 @@ def parse_location_question(
     if len(matches) != 1:
         raise QuestionError(
             "question must name exactly one known object",
+            error_code=ErrorCode.UNSUPPORTED_QUESTION,
+            details={"matched_entity_count": len(matches)},
+        )
+    return matches[0]
+
+
+VERIFICATION_PARSER_ID = "bounded-location-verification/1"
+
+_CJK_VERIFY_INTENT = ("嗎", "吗", "是不是", "在不在", "有沒有", "有没有")
+_ENGLISH_VERIFY_INTENT = re.compile(r"\b(is|are|was|were)\b.+\b(at|on|in|inside)\b")
+_CJK_SPATIAL = ("在", "上", "裡", "裏", "里", "內", "内")
+# "what is in my bag" satisfies is...in, but it asks for contents, not a verdict.
+# Answering it as a yes/no about the bag's own location is worse than refusing.
+_ENGLISH_WH = re.compile(r"^(what|which|who|whom|whose|where|when|why|how)\b")
+
+
+@dataclass(frozen=True, slots=True)
+class LocationVerification:
+    """One subject, and the place the asker proposed for it.
+
+    ``target_id`` is None when the sentence named a place this replay has never
+    heard of. That is answerable rather than a rejection: the subject's own
+    location is still known, and saying so is more use than refusing.
+    """
+
+    subject_id: str
+    target_id: str | None
+
+
+def _first_position(text: str, entity_aliases: tuple[str, ...]) -> int | None:
+    positions = [
+        text.index(alias.lower())
+        for alias in entity_aliases
+        if _contains_alias(text, alias.lower())
+    ]
+    return min(positions) if positions else None
+
+
+def parse_location_verification(
+    question: str,
+    *,
+    allowed_entity_ids: Iterable[str],
+    aliases: Mapping[str, tuple[str, ...]] = DEFAULT_ENTITY_ALIASES,
+) -> LocationVerification:
+    """Reduce a yes/no location question to one subject and one proposed place.
+
+    Word order decides which is which: the first entity named is the thing being
+    asked about. This parser still chooses nothing about the answer -- it only
+    names the two ends of a comparison the projection performs.
+    """
+
+    if not isinstance(question, str):
+        raise QuestionError("question must be text")
+    if any(ord(character) < 32 or ord(character) == 127 for character in question):
+        raise QuestionError("question contains control characters")
+    normalized = unicodedata.normalize("NFKC", question).strip().lower()
+    if not normalized or len(normalized) > MAX_QUESTION_CHARACTERS:
+        raise QuestionError("question is empty, overlong, or contains control characters")
+
+    # A yes/no marker alone is not enough. "嗎" is a bare question particle, so
+    # "沙發好看嗎" would otherwise be routed here and answered as if it asked
+    # about a location. A spatial marker has to be present too.
+    cjk_verification = any(
+        token in normalized for token in _CJK_VERIFY_INTENT
+    ) and any(token in normalized for token in _CJK_SPATIAL)
+    english_verification = (
+        _ENGLISH_VERIFY_INTENT.search(normalized) is not None
+        and _ENGLISH_WH.match(normalized) is None
+    )
+    if not (english_verification or cjk_verification):
+        raise QuestionError(
+            "not a yes/no location question",
+            error_code=ErrorCode.UNSUPPORTED_QUESTION,
+        )
+    if _ENGLISH_ACTION.search(normalized) or any(
+        token in normalized for token in _CJK_ACTION
+    ):
+        raise QuestionError(
+            "action-shaped questions are outside the location-query capability",
+            error_code=ErrorCode.UNSUPPORTED_QUESTION,
+        )
+
+    ordered: list[tuple[int, str]] = []
+    for entity_id in sorted(set(allowed_entity_ids)):
+        position = _first_position(normalized, aliases.get(entity_id, ()) + (entity_id,))
+        if position is not None:
+            ordered.append((position, entity_id))
+    ordered.sort()
+
+    if not ordered:
+        raise QuestionError(
+            "question names nothing this replay knows about",
+            error_code=ErrorCode.UNSUPPORTED_QUESTION,
+            details={"matched_entity_count": 0},
+        )
+    if len(ordered) > 2:
+        raise QuestionError(
+            "question names more than two known objects",
+            error_code=ErrorCode.UNSUPPORTED_QUESTION,
+            details={"matched_entity_count": len(ordered)},
+        )
+    subject_id = ordered[0][1]
+    target_id = ordered[1][1] if len(ordered) == 2 else None
+    return LocationVerification(subject_id=subject_id, target_id=target_id)
+
+
+CONTENTS_PARSER_ID = "bounded-container-contents/1"
+
+_CJK_CONTENTS_INTENT = (
+    "有什麼", "有什么", "有哪些", "裝了什麼", "装了什么", "放了什麼", "放了什么",
+)
+_ENGLISH_CONTENTS_INTENT = re.compile(
+    r"^what(?:'s| is| are)?\b.*\b(in|inside|contain|contains)\b"
+)
+
+
+def parse_container_question(
+    question: str,
+    *,
+    allowed_entity_ids: Iterable[str],
+    aliases: Mapping[str, tuple[str, ...]] = DEFAULT_ENTITY_ALIASES,
+) -> str:
+    """Return the one container whose contents were asked for.
+
+    This is the reverse of :func:`parse_location_question`. The projection already
+    holds the containment edge in both directions; only the question surface was
+    one-way.
+    """
+
+    if not isinstance(question, str):
+        raise QuestionError("question must be text")
+    if any(ord(character) < 32 or ord(character) == 127 for character in question):
+        raise QuestionError("question contains control characters")
+    normalized = unicodedata.normalize("NFKC", question).strip().lower()
+    if not normalized or len(normalized) > MAX_QUESTION_CHARACTERS:
+        raise QuestionError("question is empty, overlong, or contains control characters")
+
+    if not (
+        _ENGLISH_CONTENTS_INTENT.search(normalized)
+        or any(token in normalized for token in _CJK_CONTENTS_INTENT)
+    ):
+        raise QuestionError(
+            "not a container-contents question",
+            error_code=ErrorCode.UNSUPPORTED_QUESTION,
+        )
+    if _ENGLISH_ACTION.search(normalized) or any(
+        token in normalized for token in _CJK_ACTION
+    ):
+        raise QuestionError(
+            "action-shaped questions are outside the location-query capability",
+            error_code=ErrorCode.UNSUPPORTED_QUESTION,
+        )
+
+    matches = [
+        entity_id
+        for entity_id in sorted(set(allowed_entity_ids))
+        if _first_position(normalized, aliases.get(entity_id, ()) + (entity_id,))
+        is not None
+    ]
+    if len(matches) != 1:
+        raise QuestionError(
+            "question must name exactly one known container",
             error_code=ErrorCode.UNSUPPORTED_QUESTION,
             details={"matched_entity_count": len(matches)},
         )

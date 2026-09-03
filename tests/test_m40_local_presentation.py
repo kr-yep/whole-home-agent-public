@@ -126,6 +126,8 @@ def found_context(*, relation_facts: list[dict[str, str]] | None = None):
 
 
 def non_found_context(status: str):
+    # An unresolved answer echoes its query status here; build_llm_text_context
+    # never emits "reported" for one, so pinning that made this fixture unreal.
     return {
         "schema": "whole-home-agent.location-context.v1",
         "purpose": "verbalize_location_answer",
@@ -133,7 +135,7 @@ def non_found_context(status: str):
             "subject_id": "key",
             "status": status,
             "location_id": None,
-            "epistemic_status": "reported",
+            "epistemic_status": status.lower(),
         },
         "relation_facts": [],
     }
@@ -423,3 +425,91 @@ class M40ResultTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class AbstentionPresentationTests(unittest.TestCase):
+    """Unresolved answers must reach a presenter and be verbalized as themselves.
+
+    Every non-FOUND context previously failed `_parse_context`, so the packet never
+    reached any presenter -- deterministic or model-backed -- and the caller only
+    ever saw the generic fallback string.
+    """
+
+    ROOT = Path(__file__).resolve().parents[1]
+
+    def _present(self, fixture: str, subject: str, as_of: int | None = None,
+                 world_scope: str | None = None):
+        from whole_home_agent.fixture import load_fixture
+        from whole_home_agent.llm_context import build_llm_text_context
+        from whole_home_agent.memory_query import _answer_dict
+        from whole_home_agent.model import QueryRequest
+        from whole_home_agent.orchestrator import run_fixture
+        from whole_home_agent.presentation import (
+            DeterministicLocationPresenter,
+            present_location_context,
+        )
+
+        session = run_fixture(
+            load_fixture(self.ROOT / "examples" / "fixtures" / fixture),
+            replay_run_id="abstention-test",
+        )
+        answer = session.locate(
+            QueryRequest(
+                subject_id=subject,
+                world_scope=session.world_scope if world_scope is None else world_scope,
+                replay_run_id=session.replay_run_id,
+                as_of_source_sequence=(
+                    session.projection_frontier if as_of is None else as_of
+                ),
+            )
+        )
+        context = build_llm_text_context(_answer_dict(answer))
+        result = present_location_context(context, DeterministicLocationPresenter())
+        return answer.status.value, result.as_dict()
+
+    def test_every_abstention_kind_is_presented_not_fallen_back(self):
+        cases = [
+            ("UNKNOWN", dict(fixture="b0_key_bag_sofa_v1.json", subject="sofa")),
+            ("CONFLICT", dict(fixture="b0_multi_location_conflict_v1.json", subject="key")),
+            ("FRONTIER_MISMATCH",
+             dict(fixture="b0_key_bag_sofa_v1.json", subject="key", as_of=9999)),
+            ("OUT_OF_SCOPE",
+             dict(fixture="b0_key_bag_sofa_v1.json", subject="key", world_scope="other")),
+        ]
+        texts = set()
+        for expected_status, kwargs in cases:
+            with self.subTest(status=expected_status):
+                status, result = self._present(**kwargs)
+                self.assertEqual(status, expected_status)
+                self.assertFalse(result["fallback_used"])
+                self.assertEqual(result["status"], PRESENTED)
+                texts.add(result["text"])
+        self.assertEqual(len(texts), len(cases), "each abstention needs its own wording")
+
+    def test_conflict_refuses_to_choose_and_does_not_claim_missing_evidence(self):
+        _, result = self._present(
+            fixture="b0_multi_location_conflict_v1.json", subject="key"
+        )
+        self.assertIn("衝突", result["text"])
+        self.assertIn("不會替你選", result["text"])
+        self.assertNotIn("沒有有效證據", result["text"])
+
+    def test_resolved_answer_still_requires_an_evidence_epistemic_status(self):
+        from whole_home_agent.presentation import (
+            DeterministicLocationPresenter,
+            present_location_context,
+        )
+
+        context = {
+            "schema": "whole-home-agent.location-context.v1",
+            "purpose": "verbalize_location_answer",
+            "answer": {
+                "subject_id": "key",
+                "status": "FOUND",
+                "location_id": "sofa",
+                "epistemic_status": "unknown",
+            },
+            "relation_facts": [],
+        }
+        result = present_location_context(context, DeterministicLocationPresenter())
+        self.assertTrue(result.as_dict()["fallback_used"])
