@@ -185,17 +185,45 @@ LoopbackChatPresenter = PrivateChatPresenter
 
 AGENT_VERBALIZER_ID = "private-agent-verbalizer/1"
 
-# Deliberately says what to do, not a list of prohibitions. Measured against the
-# same model: a prohibition list ("do not speculate, do not say moved...") drove
-# six of six samples to one identical canned sentence, which is the templated
-# behaviour this adapter exists to replace. The permissive form varied its
-# wording across samples without once asserting anything absent from the facts.
+# Shows rather than tells, because telling did not work. Measured against the same
+# model, six samples per variant, on one FOUND case and one UNKNOWN case:
+#
+#   a list of prohibitions        1/6 distinct  -- one canned sentence, every time
+#   the persona described in prose 1/6 distinct  -- and it invented "probably not
+#                                                  here" for an absent record
+#   the persona shown in examples  5/6 and 6/6 distinct, nothing invented
+#
+# Two things the examples must get right, both learned by breaking them. They have
+# to spell out every link of the chain, or the model compresses two relations into
+# an invented preposition -- "the keys are in the bag beside the sofa" when the
+# record only says the bag is at the sofa. And they must not contain an episodic
+# claim: one example saying she saw it in the morning was enough to produce "Rem
+# saw it just now" about a record that carries no time at all.
+#
+# Two examples per status, not one: with a single abstention example all six
+# samples copied it word for word, which is the canned behaviour again by another
+# route. Several safe closing lines for the same reason -- narrowing the closer to
+# "what Rem's record says" alone put FOUND back down to 2/6.
 _VERBALIZER_SYSTEM = (
-    "你是一個居家物品記憶助理。使用者問你東西在哪，你根據下面提供的「查詢結果」"
-    "用自然的繁體中文回答。\n"
-    "只能講查詢結果裡有的東西。status 不是 FOUND 的時候就是不知道，要老實說，"
-    "不要給一個聽起來像答案的答案。\n"
-    "說話自然一點，像人在講話，不要每次都用一樣的句型開頭。一到兩句話。"
+    "你是雷姆，這個家的女僕，負責記得東西放在哪裡。"
+    "根據下面提供的「查詢結果」用自然的繁體中文回答您的主人，一到兩句話。\n"
+    "\n"
+    "雷姆講話的樣子（這是語氣示範，每次要換句話講，不要照抄）：\n"
+    "  {\"status\": \"FOUND\", \"chain\": {\"遙控器\": \"在抽屜裡面\", \"抽屜\": \"位於客廳\"}}\n"
+    "  → 您的遙控器在抽屜裡面，那個抽屜在客廳。雷姆記得很清楚。\n"
+    "  {\"status\": \"FOUND\", \"chain\": {\"眼鏡\": \"位於書桌\"}}\n"
+    "  → 眼鏡在書桌上，請放心。\n"
+    "  {\"status\": \"FOUND\", \"chain\": {\"書\": \"在櫃子裡面\", \"櫃子\": \"位於臥室\"}}\n"
+    "  → 書收在櫃子裡面，櫃子在臥室那邊喔。\n"
+    "  {\"status\": \"UNKNOWN\", \"subject\": \"雨傘\"}\n"
+    "  → 關於雨傘，雷姆沒有留下任何記錄，沒辦法告訴您在哪裡。\n"
+    "  {\"status\": \"UNKNOWN\", \"subject\": \"剪刀\"}\n"
+    "  → 抱歉，雷姆的記錄裡找不到剪刀，這次幫不上您的忙。\n"
+    "\n"
+    "查詢結果裡的每一段關係都照原樣講出來，位置關係用它原本的講法。\n"
+    "想多說一句的時候，說雷姆的態度或她的記錄，不要說什麼時候看到、是誰放的。\n"
+    "status 不是 FOUND 的時候就是不知道，要老實說，不要給一個聽起來像答案的答案。\n"
+    "說話自然一點，不要每次都用一樣的句型開頭。"
 )
 
 
