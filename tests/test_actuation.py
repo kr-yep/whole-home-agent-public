@@ -195,7 +195,7 @@ class TestCommandDispatcher(unittest.TestCase):
 
 class TestHomeAssistantActuator(unittest.TestCase):
     def test_unconfigured_token_fails_gracefully(self):
-        ha = HomeAssistantActuator(access_token="")
+        ha = HomeAssistantActuator(bearer_token="")
         req = ActionRequest(
             target_device_id="living_room_ac",
             action_type=ActionType.TURN_ON,

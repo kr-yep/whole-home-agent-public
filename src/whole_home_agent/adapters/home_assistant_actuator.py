@@ -35,22 +35,22 @@ class HomeAssistantActuator(ActuatorPort):
     def __init__(
         self,
         base_url: Optional[str] = None,
-        access_token: Optional[str] = None,
+        bearer_token: Optional[str] = None,
         timeout: float = 3.0,
     ) -> None:
         self.base_url = (base_url or os.environ.get("HASS_URL", "http://homeassistant.local:8123")).rstrip("/")
-        self.access_token = access_token or os.environ.get("HASS_TOKEN", "")
+        self.bearer_token = bearer_token or os.environ.get("HASS_TOKEN", "")
         self.timeout = timeout
         self._mapping = DEFAULT_ENTITY_MAPPING
 
     def _request(self, endpoint: str, data: Optional[Dict[str, Any]] = None) -> tuple[int, Any]:
         """Make an HTTP request to Home Assistant REST API."""
-        if not self.access_token:
+        if not self.bearer_token:
             return 401, {"error": "HASS_TOKEN is not configured"}
 
         url = f"{self.base_url}{endpoint}"
         headers = {
-            "Authorization": f"Bearer {self.access_token}",
+            "Authorization": f"Bearer {self.bearer_token}",
             "Content-Type": "application/json",
         }
         payload = json.dumps(data).encode("utf-8") if data is not None else None
@@ -127,7 +127,7 @@ class HomeAssistantActuator(ActuatorPort):
         entity_id, dev_type, name, _ = info
 
         # If no access token is set, return a graceful failure receipt explaining how to configure it
-        if not self.access_token:
+        if not self.bearer_token:
             return ActionReceipt(
                 action_id=receipt_id,
                 target_device_id=request.target_device_id,
