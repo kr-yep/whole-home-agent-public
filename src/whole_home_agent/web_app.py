@@ -56,6 +56,14 @@ class Handler(SimpleHTTPRequestHandler):
     def log_message(self, format: str, *args) -> None:  # noqa: A002
         return
 
+    def end_headers(self) -> None:
+        # SimpleHTTPRequestHandler sends Last-Modified and nothing else, which
+        # lets a browser apply heuristic caching and serve a stale stylesheet
+        # without asking. That cost an afternoon of looking at a fixed layout
+        # that had not reached the page. This is a demo server; always revalidate.
+        self.send_header("Cache-Control", "no-cache, must-revalidate")
+        super().end_headers()
+
     def _json(self, status: int, payload: dict) -> None:
         body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
         self.send_response(status)

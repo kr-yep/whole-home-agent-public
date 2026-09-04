@@ -24,16 +24,14 @@ html, body {
 
 #stage { position: fixed; inset: 0; width: 100%; height: 100%; }
 
-/* What she just said, in the gap beside her rather than over her face.
-   The right edge is derived from where she is actually drawn: the model is
-   4800x9000, scaled to 0.92 of the viewport height and centred at 0.74 of the
-   width, so her left edge lands at 74vw - 24.5vh. That is where these numbers
-   come from -- anchored to the corner instead, the bubble covered her head. */
+/* What she just said, in the gap beside her rather than over her face. The left
+   and right edges are set from JavaScript against her actual bounds, because she
+   can be dragged and a stylesheet would have to assume she had not been. */
 #bubble {
   position: fixed;
   top: 14vh;
-  left: calc(min(28rem, 42vw) + 1.5rem);
-  right: calc(26vw + 24.5vh + 1rem);
+  left: 50vw;
+  right: 4vw;
   width: fit-content;
   max-width: 100%;
   margin-left: auto;
@@ -46,11 +44,7 @@ html, body {
   animation: rise 0.28s ease-out;
 }
 
-/* Below this the gap between the panel and the model closes up, and a bubble
-   squeezed into it is less readable than no bubble: the log still has the line. */
-@media (max-width: 1024px) {
-  #bubble { display: none; }
-}
+#stage { cursor: grab; }
 @keyframes rise { from { opacity: 0; transform: translateY(6px); } }
 
 #panel {

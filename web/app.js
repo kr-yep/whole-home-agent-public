@@ -4,6 +4,7 @@
 const MODEL_URL = "/live2d/rem/REM.model3.json";
 
 const stage = document.getElementById("stage");
+const panel = document.getElementById("panel");
 const bubble = document.getElementById("bubble");
 const log = document.getElementById("log");
 const form = document.getElementById("ask");
@@ -20,6 +21,44 @@ const label = (id) => LABELS[id] || id;
 /* ---------- Live2D ---------- */
 
 let model = null;
+
+const VIEW_KEY = "wha.character.view";
+const DEFAULT_VIEW = { x: 0.74, y: 0.54, scale: 0.92 };
+
+function readView() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(VIEW_KEY) || "null");
+    if (saved && ["x", "y", "scale"].every((k) => typeof saved[k] === "number")) {
+      return saved;
+    }
+  } catch (_) { /* a corrupt entry is not worth a broken page */ }
+  return { ...DEFAULT_VIEW };
+}
+
+let view = readView();
+
+function saveView() {
+  try { localStorage.setItem(VIEW_KEY, JSON.stringify(view)); } catch (_) { /* private mode */ }
+}
+
+const clamp = (value, low, high) => Math.min(high, Math.max(low, value));
+
+// The bubble sits in whatever gap is left between the panel and wherever she is
+// standing now. Deriving it from her actual bounds is why this moved out of CSS:
+// the stylesheet had to assume a position, and she is no longer at one.
+function placeBubble() {
+  if (!model) return;
+  const bounds = model.getBounds();
+  const left = panel.getBoundingClientRect().right + 16;
+  const right = Math.max(16, window.innerWidth - bounds.left + 16);
+  const usable = window.innerWidth - right - left;
+  bubble.style.left = `${left}px`;
+  bubble.style.right = `${right}px`;
+  // Squeezed into a sliver it is less readable than not being there; the log
+  // still carries the line either way.
+  bubble.style.visibility = usable < 200 ? "hidden" : "";
+}
+
 
 async function mountModel() {
   // The browser bundle does not wire itself to a ticker. Without this the model
@@ -92,12 +131,72 @@ async function mountModel() {
     const height = window.innerHeight;
     const width = window.innerWidth;
     if (!height || !width) return;
-    model.scale.set((height * 0.92) / model.internalModel.originalHeight);
+    model.scale.set((height * view.scale) / model.internalModel.originalHeight);
     model.anchor.set(0.5, 0.5);
-    // Right of centre, leaving the gap beside her for the speech bubble.
-    model.x = width * 0.74;
-    model.y = height * 0.54;
+    model.x = width * view.x;
+    model.y = height * view.y;
+    placeBubble();
   }
+
+  // Drag her anywhere. The bubble follows, so moving her out of its way is the
+  // fix for the bubble covering her rather than a set of numbers I guessed.
+  //
+  // The grab is decided against her bounding box rather than through the
+  // plugin's hit test: this model declares two hit areas with empty names, and
+  // a pointerdown over her middle never reached a handler registered that way.
+  let drag = null;
+
+  stage.addEventListener("pointerdown", (event) => {
+    const box = model.getBounds();
+    const inside =
+      event.clientX >= box.left && event.clientX <= box.right &&
+      event.clientY >= box.top && event.clientY <= box.bottom;
+    if (!inside) return;
+    drag = { x: model.x - event.clientX, y: model.y - event.clientY };
+    stage.style.cursor = "grabbing";
+    stage.setPointerCapture(event.pointerId);
+  });
+
+  window.addEventListener("pointermove", (event) => {
+    if (!drag) return;
+    // Keep a grip on her: she can go mostly off-screen but never entirely.
+    const margin = 80;
+    model.x = clamp(event.clientX + drag.x, margin, window.innerWidth - margin);
+    model.y = clamp(event.clientY + drag.y, -window.innerHeight, window.innerHeight * 1.5);
+    placeBubble();
+  });
+
+  window.addEventListener("pointerup", () => {
+    if (!drag) return;
+    drag = null;
+    stage.style.cursor = "";
+    view.x = model.x / window.innerWidth;
+    view.y = model.y / window.innerHeight;
+    saveView();
+  });
+
+  // Her own zoom. Browser zoom cannot make her bigger: she is sized as a share
+  // of the viewport height, and zooming in shrinks the viewport in CSS pixels by
+  // the same factor, so she keeps her size on screen while the text around her
+  // grows. This is the control that actually does what that gesture meant.
+  window.addEventListener(
+    "wheel",
+    (event) => {
+      if (event.target.closest && event.target.closest("#panel")) return;
+      event.preventDefault();
+      view.scale = clamp(view.scale * (event.deltaY > 0 ? 0.92 : 1.08), 0.25, 3);
+      layout();
+      saveView();
+    },
+    { passive: false }
+  );
+
+  // Put her back where she started.
+  stage.addEventListener("dblclick", () => {
+    view = { ...DEFAULT_VIEW };
+    layout();
+    saveView();
+  });
 }
 
 // This model files all 96 motions under one unnamed group, so a motion cannot be
@@ -178,6 +277,7 @@ function express(result) {
 function speak(text) {
   bubble.textContent = text;
   bubble.hidden = false;
+  placeBubble();
 }
 
 function basisNode(result) {
