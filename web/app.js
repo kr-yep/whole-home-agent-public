@@ -180,6 +180,20 @@ function speak(text) {
 }
 
 function basisNode(result) {
+  // A refusal now sounds like ordinary speech, which is the point, but it is the
+  // one answer with nothing behind it. Say so, and show the machine's own wording
+  // underneath -- that sentence is what actually decided the refusal.
+  if (result.refused) {
+    const note = document.createElement("details");
+    note.className = "basis";
+    note.innerHTML = "<summary>沒有記憶佐證</summary>";
+    const body = document.createElement("div");
+    body.className = "body";
+    body.textContent = result.reason || "系統沒有給出原因。";
+    note.appendChild(body);
+    return note;
+  }
+
   const memory = result.memory;
   const projection = result.projection;
   if (!memory || !projection) return null;

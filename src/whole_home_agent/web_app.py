@@ -29,6 +29,24 @@ DEFAULT_DATABASE = Path(".whole-home-agent/demo-memory.sqlite3")
 MAX_QUESTION_BYTES = 4096
 
 
+def _voiced_refusal(verbalizer: object | None, question: str, message: str) -> str:
+    """Let her say the refusal in her own words, or fall back to the system's.
+
+    The refusal itself was decided before either could speak, so nothing here can
+    change whether the answer is a refusal -- only how it sounds. Any failure at
+    all keeps the original wording, because a refusal that does not arrive is
+    worse than one that arrives blunt.
+    """
+
+    if verbalizer is None:
+        return message
+    try:
+        voiced = verbalizer.refuse(question, message)
+    except Exception:
+        return message
+    return voiced.strip() if isinstance(voiced, str) and voiced.strip() else message
+
+
 class Handler(SimpleHTTPRequestHandler):
     database: Path
 
@@ -73,21 +91,26 @@ class Handler(SimpleHTTPRequestHandler):
             self._json(400, {"error": "question must be non-empty text"})
             return
 
+        verbalizer = verbalizer_from_environment()
         try:
             result = answer_question(
                 SQLiteReplayArchive(self.database),
                 question,
-                verbalizer=verbalizer_from_environment(),
+                verbalizer=verbalizer,
                 translator=translator_from_environment(),
             )
         except B0Error as error:
             # A refusal is an answer here: the page shows it as speech, so the
-            # character says it rather than the page rendering an error box.
+            # character says it rather than the page rendering an error box. She
+            # says it in her own words when a model is configured, and in the
+            # system's words when one is not -- the refusal itself is the same
+            # either way, because it was decided before either could speak.
             self._json(
                 200,
                 {
                     "refused": True,
-                    "text": str(error),
+                    "text": _voiced_refusal(verbalizer, question, str(error)),
+                    "reason": str(error),
                     "details": getattr(error, "details", None) or {},
                 },
             )

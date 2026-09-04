@@ -15,6 +15,7 @@ from unittest import mock
 
 from whole_home_agent.adapters.loopback_llm import (
     LOOPBACK_PRESENTER_ID,
+    AgentVerbalizer,
     LoopbackChatPresenter,
 )
 from whole_home_agent.adapters.sqlite_archive import SQLiteReplayArchive
@@ -432,6 +433,88 @@ class MemoryUiBoundaryTests(unittest.TestCase):
             self.assertEqual(app.exception, [])
             self.assertTrue(any("一次只能問一個東西。" in item.value for item in app.info))
             self.assertFalse(any("unsupported_question" in item.value for item in app.warning))
+
+
+class RefusalVoiceTests(unittest.TestCase):
+    """She may reword a refusal. She may never turn one into an answer.
+
+    The refusal is decided before any model is asked to speak, so everything here
+    is about wording and about what happens when the wording fails to arrive.
+    """
+
+    ENDPOINT = "http://127.0.0.1:11434/v1/chat/completions"
+
+    def test_a_refusal_uses_the_refusal_prompt_not_the_fact_prompt(self):
+        from whole_home_agent.adapters.loopback_llm import (
+            _REFUSAL_SYSTEM,
+            _VERBALIZER_SYSTEM,
+        )
+
+        response = _Response({"choices": [{"message": {"content": "雷姆幫不上您的忙。"}}]})
+        verbalizer = AgentVerbalizer(endpoint=self.ENDPOINT, model="m-v1")
+        with mock.patch(
+            "whole_home_agent.adapters.loopback_llm._open_request", return_value=response
+        ) as opened:
+            self.assertEqual(verbalizer.refuse("今天天氣如何", "看不懂"), "雷姆幫不上您的忙。")
+        sent = json.loads(opened.call_args.args[0].data.decode("utf-8"))
+        self.assertEqual(sent["messages"][0]["content"], _REFUSAL_SYSTEM)
+        self.assertNotEqual(sent["messages"][0]["content"], _VERBALIZER_SYSTEM)
+        # The system's own sentence is context for her, not a line to read out.
+        self.assertIn("不要照念", sent["messages"][1]["content"])
+
+    def test_a_refusal_prompt_never_offers_a_location(self):
+        """The examples teach the shape of the answer, so none may name a place."""
+
+        from whole_home_agent.adapters.loopback_llm import _REFUSAL_SYSTEM
+
+        for place in ("沙發", "包包", "抽屜", "客廳", "臥室", "書桌"):
+            with self.subTest(place=place):
+                self.assertNotIn(f"在{place}", _REFUSAL_SYSTEM)
+
+    def test_an_empty_question_is_a_programming_error(self):
+        verbalizer = AgentVerbalizer(endpoint=self.ENDPOINT, model="m-v1")
+        for question in ("", "   "):
+            with self.subTest(question=question):
+                with self.assertRaises(ValueError):
+                    verbalizer.refuse(question)
+
+    def test_without_a_model_the_system_wording_survives(self):
+        from whole_home_agent.web_app import _voiced_refusal
+
+        self.assertEqual(_voiced_refusal(None, "你是誰", "聽不懂"), "聽不懂")
+
+    def test_any_failure_to_speak_keeps_the_refusal(self):
+        """A refusal that arrives blunt beats one that does not arrive."""
+
+        from whole_home_agent.web_app import _voiced_refusal
+
+        class Broken:
+            def refuse(self, question, reason):
+                raise RuntimeError("endpoint down")
+
+        class Empty:
+            def refuse(self, question, reason):
+                return "   "
+
+        class Wrong:
+            def refuse(self, question, reason):
+                return None
+
+        for speaker in (Broken(), Empty(), Wrong()):
+            with self.subTest(speaker=type(speaker).__name__):
+                self.assertEqual(_voiced_refusal(speaker, "你是誰", "聽不懂"), "聽不懂")
+
+    def test_a_usable_line_replaces_the_system_wording(self):
+        from whole_home_agent.web_app import _voiced_refusal
+
+        class Speaker:
+            def refuse(self, question, reason):
+                return "  雷姆只記得東西放在哪裡，這件事幫不上您的忙。  "
+
+        self.assertEqual(
+            _voiced_refusal(Speaker(), "今天天氣如何", "聽不懂"),
+            "雷姆只記得東西放在哪裡，這件事幫不上您的忙。",
+        )
 
 
 if __name__ == "__main__":

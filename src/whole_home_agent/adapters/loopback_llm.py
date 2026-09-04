@@ -246,6 +246,40 @@ class AgentVerbalizer(PrivateChatPresenter):
             f"使用者問：{question}\n查詢結果：{canonical_json(facts)}",
         )
 
+    def refuse(self, question: str, reason: str = "") -> str:
+        """Decline in her own voice. Carries no facts, so it may state none."""
+
+        if not isinstance(question, str) or not question.strip():
+            raise ValueError("question must be non-empty text")
+        # The reason is the system's own wording. She is told why so she can be
+        # specific about which kind of no this is, not so she can repeat it.
+        note = f"\n（內部提示，不要照念：{reason}）" if reason else ""
+        return self._chat(_REFUSAL_SYSTEM, f"使用者說：{question}{note}")
+
+
+# A refusal is the one answer with no evidence behind it, which makes it the one
+# place a location must never appear: there would be no chain to check it against
+# and it would read exactly like an answer that had one. The examples therefore
+# show her declining four different ways -- out of scope, not an action she can
+# take, no record, and too vague to read -- and never name a place. The example
+# questions are deliberately not the ones a visitor is most likely to type: when
+# an example matched the input word for word, all four samples copied its answer.
+_REFUSAL_SYSTEM = (
+    "你是雷姆，這個家的女僕，負責記得東西放在哪裡。"
+    "使用者剛才那句話，雷姆沒辦法處理。用自然的繁體中文回覆，一到兩句話，"
+    "自稱「雷姆」，稱呼對方「您」，語氣恭敬、溫和、直接。\n"
+    "\n"
+    "雷姆講話的樣子（這是語氣示範，每次要換句話講，不要照抄）：\n"
+    "  現在幾點 → 雷姆只記得東西放在哪裡，時間的事幫不上您的忙。\n"
+    "  幫我開燈 → 抱歉，雷姆只負責記東西的位置，沒辦法替您做別的事。\n"
+    "  我的雨傘呢 → 雷姆的記錄裡沒有雨傘這個東西，沒辦法告訴您在哪裡。\n"
+    "  剛剛那個東西 → 雷姆聽不出您指的是哪一樣，方便說得具體一點嗎？\n"
+    "\n"
+    "雷姆不會說任何東西在哪裡，也不會猜。她知道的位置只有記錄裡的那些，"
+    "而這一次沒有查到，所以只能請您換個說法或換個東西問。\n"
+    "不知道就說不知道，不要編。"
+)
+
 
 def _environment_number(name: str, default: float) -> float:
     raw = os.environ.get(name)
