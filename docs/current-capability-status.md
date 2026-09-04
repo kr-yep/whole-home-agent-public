@@ -31,11 +31,15 @@ what is still missing without reconstructing the full experiment history.
 - Explicitly archive a completed synthetic/public D0 replay in SQLite, reopen it in a
   second process, verify its hashes, rebuild the projection, and query it without
   retaining video, frames, question text, answer prose, or credentials.
-- Ask a bounded Chinese or English location question naming exactly one known entity;
-  ambiguous, unknown, malformed, and action-shaped text fails closed.
-- Optionally present the minimized text through an explicitly selected literal-loopback
-  OpenAI-compatible API. Deterministic output remains the default; remote hosts,
-  redirects, ambient proxies, automatic retries, and key-triggered activation are absent.
+- Ask where an item is, whether it is at a proposed place, or what a container/zone
+  holds. The UI exposes the known vocabulary; deterministic parsing runs first and an
+  optional translator can return only a closed query over existing entity IDs.
+- Optionally present minimized text through an explicitly selected `localhost`, literal
+  loopback, or existing literal CGNAT/tailnet OpenAI-compatible profile. Deterministic
+  output remains the default; redirects, ambient proxies and automatic retries are absent.
+- Use the calibrated D0 restriction profile: `localhost` is accepted, provider-specific
+  reasoning fields are not forced, cold-start timeout may be configured up to 120 seconds,
+  and malformed numeric environment settings degrade to deterministic output.
 - Run a separate local-memory Streamlit page while retaining the original closed demo.
 
 ## Still missing before a credible hackathon handoff
@@ -48,8 +52,8 @@ what is still missing without reconstructing the full experiment history.
   work; the current VOST target path was rejected on development.
 - A product-level recorded indoor relation replay beyond project-generated artwork.
 - One real teammate execution of the README quick start on their own platform.
-- An adopted cloud language-provider/data-egress policy, assigned credential owner,
-  provider retention review, remote adapter, and runtime authorization.
+- A decision for public-cloud language egress, including exact sent data, credential
+  owner, provider retention review and cost bounds.
 - Retention, deletion, access control, migration, backup, concurrency, and capacity
   requirements for any future real household memory.
 - A published wheel only if the team later decides installation without a Git checkout
@@ -61,8 +65,8 @@ what is still missing without reconstructing the full experiment history.
   audio capture.
 - Durable household memory, private-data search, retention/deletion controls, cloud
   inference, device control, purchases, messages, or physical action.
-- Any assumption that an API key authorizes egress; only a literal-loopback local API is
-  accepted by the optional adapter.
+- Any assumption that an API key authorizes public-cloud or private-household egress;
+  current real-endpoint tests remain unperformed.
 - Any claim of 24/7 readiness, real-home accuracy, general home understanding, or
   safety-critical behavior.
 
@@ -87,6 +91,13 @@ files / 680 snapshots with zero violations. No provider, key, private media, dev
 action was added in that recovery checkpoint.
 
 ## Latest local verification: offline memory slice
+
+Restriction ablation v1 passed `55` focused tests with four optional video/UI skips in
+the minimal runner. The complete suite ran `518` tests with 33 optional dependency skips,
+and the staged public audit passed across 352 files / 704 snapshots with zero violations.
+The run used fake model responses and no real endpoint, camera, household data, device,
+or action. Details and retained boundaries are in
+[`restriction-ablation-v1.md`](evaluation/restriction-ablation-v1.md).
 
 Python 3.12.13 passed `16/16` focused tests and `501/501` full-regression tests. The
 staged public audit scanned 349 files / 698 index-and-worktree snapshots with zero

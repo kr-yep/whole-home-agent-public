@@ -31,9 +31,11 @@ generated replay; the second starts a new process, verifies and rebuilds it, the
 the bounded question to `key`. The Streamlit page exposes the same two steps. Delete the
 local SQLite file to reset the demo; it is ignored by Git.
 
-The default presenter is deterministic. `--presenter local-api` supports only a model
-already hosted on a literal loopback OpenAI-compatible endpoint. Remote/cloud endpoints
-remain disabled; an API key never activates egress by itself.
+The default presenter is deterministic. `--presenter local-api` supports a model hosted
+on `localhost`, a literal loopback address, or the adapter's existing literal
+CGNAT/tailnet profile. No real remote endpoint is exercised by this repository, and a
+public-cloud endpoint remains outside the current data-egress decision. An API key never
+changes the structured answer or grants memory/action access.
 
 ## 90-second version
 

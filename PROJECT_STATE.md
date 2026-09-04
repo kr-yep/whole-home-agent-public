@@ -65,6 +65,19 @@ teammate real-world testing:
 - does not adopt `ACTION_POLICY.md`, enroll a credential/endpoint/person/room/device,
   authorize cloud egress or private-data persistence, or enable `OPERATE`.
 
+`RESTRICTION-ABLATION-001` — `2026-09-04 Asia/Taipei`, authorized by the current
+user's request to test whether accumulated restrictions are excessive:
+
+- removes four D0 engineering constraints shown to add configuration/compatibility cost:
+  literal-IP-only local naming, a forced provider-specific reasoning field, the 30-second
+  cold-start ceiling, and repeated unsafe environment-number parsing;
+- retains structural boundaries that keep models out of claim commit, memory mutation,
+  credentials, devices and actions, and preserves deterministic abstention/fallback;
+- records public-cloud, LAN, live/private sensing and physical action as not decided by
+  this D0 ablation rather than treating every future capability as permanently rejected;
+- does not activate an endpoint, read household data, enable a camera, or enable
+  `OPERATE`. See `docs/evaluation/restriction-ablation-v1.md` and ADR 0024.
+
 ## Authority and roles
 
 | Role | Assignment | Current authority |
@@ -85,6 +98,7 @@ teammate real-world testing:
 | `ACTION_POLICY.md` | `PROPOSED — NOT ADOPTED` | All sensing, private-data, egress, device, and physical operation disabled |
 | ADR 0001–0005 | `PROPOSED` | Design candidates, not automatically adopted requirements |
 | ADR 0023 | `PROPOSED / BOUNDED IMPLEMENTATION` | D0 completed-replay archive, bounded location parser, and loopback-only presenter; not household/cloud authority |
+| ADR 0024 | `PROPOSED / BOUNDED IMPLEMENTATION` | Evidence-led removal of D0 engineering friction while retaining data, mutation, authority and action boundaries |
 | B0 implementation and fixtures | `IMPLEMENTED / VERIFIED IN DECLARED TEST ENVELOPE` | A bounded semantic replay slice exists; its frozen golden semantic hash is unchanged |
 | B1 candidate-source seam and run receipt | `IMPLEMENTED / VERIFIED WITH SYNTHETIC CONTRACT TESTS` | Generic finite source contract, provenance types, fail-closed run outcome, and B0 compatibility remain the sole semantic admission path used by the later prerecorded adapter |
 | B1 generated-video manifest, PTS decoder, and scheduler | `IMPLEMENTED / VERIFIED ON ONE SYNTHETIC REPLAY` | Hash-pinned allowlisted H.264 source revision 2, exact PTS/time-base decode, and motion-plus-periodic frame selection feed the later bounded perception source; revision 1 remains in Git history |
@@ -141,6 +155,11 @@ teammate real-world testing:
 
 ## Evidence envelope
 
+- Restriction ablation v1 passed `55` focused tests with four optional video/UI
+  skips in the minimal runner and the complete suite passed `518` tests with 33
+  optional skips. The staged public audit scanned 352 files / 704 index-and-worktree
+  snapshots with zero violations and `operate_enabled: false`. No real model,
+  endpoint, camera, household data, device, or action was used.
 - The offline-memory slice passed `16/16` focused tests and `501/501` full-regression
   tests on Python 3.12.13. The staged public audit scanned 349 files / 698 index-and-
   worktree snapshots with zero violations and `operate_enabled: false`. Tests cover

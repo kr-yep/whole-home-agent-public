@@ -192,7 +192,6 @@ class LoopbackPresenterTests(unittest.TestCase):
         for endpoint in (
             "https://api.openai.com/v1/chat/completions",
             "http://8.8.8.8/v1/chat/completions",
-            "http://localhost/v1/chat/completions",   # a name, not an address
             "http://192.168.1.50/v1/chat/completions",  # shared LAN, not a tunnel
             # Assembled rather than written out: a literal userinfo URL trips
             # this repository's own credential scanner, which is correct of it.
@@ -205,14 +204,22 @@ class LoopbackPresenterTests(unittest.TestCase):
     def test_loopback_and_tailnet_addresses_are_accepted(self):
         for endpoint in (
             "http://127.0.0.1:11434/v1/chat/completions",
+            "http://localhost:11434/v1/chat/completions",
             "http://100.123.132.69:11435/v1/chat/completions",
         ):
             with self.subTest(endpoint=endpoint):
                 presenter = LoopbackChatPresenter(endpoint=endpoint, model="model-v1")
                 self.assertEqual(presenter.presenter_id, LOOPBACK_PRESENTER_ID)
 
-    def test_request_disables_reasoning_so_the_budget_reaches_the_answer(self):
-        """A reasoning model would spend max_tokens thinking and return ""."""
+        slow_start = LoopbackChatPresenter(
+            endpoint="http://localhost:11434/v1/chat/completions",
+            model="model-v1",
+            timeout_seconds=60,
+        )
+        self.assertEqual(slow_start.presenter_id, LOOPBACK_PRESENTER_ID)
+
+    def test_request_uses_the_common_chat_completions_contract(self):
+        """Optional provider extensions must not be forced on every local server."""
 
         response = _Response({"choices": [{"message": {"content": "好"}}]})
         presenter = LoopbackChatPresenter(
@@ -223,7 +230,24 @@ class LoopbackPresenterTests(unittest.TestCase):
         ) as opened:
             presenter.present(_context())
         sent = json.loads(opened.call_args.args[0].data.decode("utf-8"))
-        self.assertEqual(sent["reasoning_effort"], "none")
+        self.assertNotIn("reasoning_effort", sent)
+
+    def test_invalid_environment_numbers_fail_as_configuration_errors(self):
+        from whole_home_agent.adapters.loopback_llm import verbalizer_from_environment
+
+        with (
+            mock.patch.dict(
+                os.environ,
+                {
+                    "WHA_LLM_ENDPOINT": "http://localhost:11434/v1/chat/completions",
+                    "WHA_LLM_MODEL": "model-v1",
+                    "WHA_LLM_TIMEOUT": "not-a-number",
+                },
+                clear=True,
+            ),
+            self.assertRaises(PresenterConfigError),
+        ):
+            verbalizer_from_environment()
 
     def test_one_loopback_request_contains_only_minimized_context(self):
         response = _Response(
