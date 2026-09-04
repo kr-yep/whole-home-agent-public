@@ -191,6 +191,14 @@ def main() -> None:
         st.error(f"無法讀取記憶：{error}")
         return
 
+    try:
+        verbalizer = verbalizer_from_environment()
+        translator = translator_from_environment()
+    except B0Error as error:
+        verbalizer = None
+        translator = None
+        st.warning(f"LLM 設定無效，已改用本機決定性回答：{error}")
+
     st.write("**我現在認得這些東西**，點一下就問：")
     for column, entity_id in zip(st.columns(len(entity_ids)), entity_ids):
         if column.button(_label(entity_id), key=f"chip-{entity_id}", use_container_width=True):
@@ -212,8 +220,8 @@ def main() -> None:
                 answer_question(
                     archive,
                     question,
-                    verbalizer=verbalizer_from_environment(),
-                    translator=translator_from_environment(),
+                    verbalizer=verbalizer,
+                    translator=translator,
                 )
             )
         except B0Error as error:
@@ -225,7 +233,7 @@ def main() -> None:
             _build_memory()
             st.rerun()
 
-    if verbalizer_from_environment() is None:
+    if verbalizer is None:
         st.caption(
             "目前由本機決定性模板回答，不需要模型。設定 WHA_LLM_ENDPOINT 與 "
             "WHA_LLM_MODEL 之後改由私有端點上的模型講述；它只重寫措辭，"

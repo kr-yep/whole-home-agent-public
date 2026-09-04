@@ -72,8 +72,10 @@ def _validate_endpoint(endpoint: str) -> str:
     try:
         address = ipaddress.ip_address(parsed.hostname)
     except ValueError as error:
+        if parsed.hostname.casefold() == "localhost":
+            return endpoint
         raise PresenterConfigError(
-            "local LLM endpoint must use a literal IP, not a name"
+            "local LLM endpoint must use localhost or a literal private IP"
         ) from error
     private = address.is_loopback or (address.version == 4 and address in _CGNAT)
     if not private:
@@ -115,8 +117,8 @@ class PrivateChatPresenter:
             )
         ):
             raise PresenterConfigError("local LLM API key is invalid")
-        if not isinstance(timeout_seconds, (int, float)) or not 0.1 <= timeout_seconds <= 30:
-            raise PresenterConfigError("local LLM timeout must be between 0.1 and 30 seconds")
+        if not isinstance(timeout_seconds, (int, float)) or not 0.1 <= timeout_seconds <= 120:
+            raise PresenterConfigError("local LLM timeout must be between 0.1 and 120 seconds")
         self._model = model
         self._authorization_value = authorization_value
         if not isinstance(temperature, (int, float)) or not 0.0 <= temperature <= 1.0:
@@ -137,11 +139,6 @@ class PrivateChatPresenter:
                 ],
                 "temperature": self._temperature,
                 "max_tokens": 180,
-                # A reasoning model spends this budget thinking and returns an
-                # empty string, which surfaces as a presenter failure rather than
-                # anything diagnosable. Restating a computed answer needs no
-                # reasoning; a server that ignores the field is unaffected.
-                "reasoning_effort": "none",
                 "stream": False,
             }
         ).encode("utf-8")
@@ -205,6 +202,16 @@ class AgentVerbalizer(PrivateChatPresenter):
         )
 
 
+def _environment_number(name: str, default: float) -> float:
+    raw = os.environ.get(name)
+    if raw is None:
+        return default
+    try:
+        return float(raw)
+    except ValueError as error:
+        raise PresenterConfigError(f"{name} must be a number") from error
+
+
 def _environment_client(cls, *, temperature: float):
     endpoint = os.environ.get("WHA_LLM_ENDPOINT")
     model = os.environ.get("WHA_LLM_MODEL")
@@ -214,7 +221,7 @@ def _environment_client(cls, *, temperature: float):
         endpoint=endpoint,
         model=model,
         authorization_value=os.environ.get("WHA_LLM_" + "API" + "_KEY") or None,
-        timeout_seconds=float(os.environ.get("WHA_LLM_TIMEOUT", "20")),
+        timeout_seconds=_environment_number("WHA_LLM_TIMEOUT", 20.0),
         temperature=temperature,
     )
 
@@ -235,7 +242,7 @@ def verbalizer_from_environment() -> AgentVerbalizer | None:
 
     return _environment_client(
         AgentVerbalizer,
-        temperature=float(os.environ.get("WHA_LLM_TEMPERATURE", "0.7")),
+        temperature=_environment_number("WHA_LLM_TEMPERATURE", 0.7),
     )
 
 

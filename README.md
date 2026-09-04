@@ -58,12 +58,14 @@ uv run --frozen --extra demo whole-home-agent ask-memory `
 uv run --frozen --extra demo streamlit run src/whole_home_agent/memory_app.py
 ```
 
-The bounded parser accepts location questions in Chinese or English and maps exactly
-one known entity to the typed query. Ambiguous, unknown, action-shaped, or malformed
-text is rejected instead of being sent to a model.
+The deterministic path supports three bounded question shapes: where an item is,
+whether it is at a proposed place, and what a container/zone holds. The UI discloses
+the replay's known entities. If a private model endpoint is configured, unfamiliar
+phrasing may be translated only into one of those three typed queries using existing
+entity IDs; it still cannot produce the answer or write memory.
 
 An optional OpenAI-compatible presenter can be used with a language model already
-running on a literal loopback address:
+running on local loopback. Both `localhost` and a literal loopback address work:
 
 ```powershell
 $env:WHA_LLM_API_KEY = "optional-local-token"
@@ -75,10 +77,14 @@ uv run --frozen --extra demo whole-home-agent ask-memory `
   --llm-model your-exact-local-model-id
 ```
 
-The key is read only after `local-api` is explicitly selected. Remote hosts, redirects,
-and ambient proxies are rejected. The model receives only the minimized answer and
-relation text packet; its output cannot change memory, query results, policy, or action.
-Cloud API use remains disabled pending adopted data-egress authority.
+The key is read only after `local-api` is explicitly selected. Redirects and ambient
+proxies are rejected. The model receives only the minimized answer and relation text
+packet; its output cannot change memory, query results, policy, or action. The adapter
+also recognizes the existing literal CGNAT/tailnet profile, but this repository has not
+run a real remote endpoint. Public-cloud API use remains a separate data-egress decision.
+
+The restriction ablation and the guards deliberately retained are recorded in
+[`docs/evaluation/restriction-ablation-v1.md`](docs/evaluation/restriction-ablation-v1.md).
 
 ## What the demo proves
 
