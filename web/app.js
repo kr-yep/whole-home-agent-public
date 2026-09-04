@@ -79,6 +79,9 @@ async function mountModel() {
   // model to nothing and leave it there. Keep asking until the page has a size.
   new ResizeObserver(layout).observe(document.body);
 
+  // Start her moving straight away rather than after the first interval.
+  idleLoop();
+
   // Eyes and head follow the cursor anywhere on the page, not only over the
   // canvas, so she keeps looking at you while you type in the panel.
   window.addEventListener("pointermove", (event) => {
@@ -98,8 +101,8 @@ async function mountModel() {
 
 // This model files all 96 motions under one unnamed group, so a motion cannot be
 // asked for by group the way the sample model allowed. Index them by filename
-// once, then play the first candidate that exists -- a model that names things
-// differently simply plays nothing rather than throwing.
+// once, then play by name -- a model that names things differently plays nothing
+// rather than throwing.
 const MOTIONS = {};
 
 function indexMotions() {
@@ -112,21 +115,61 @@ function indexMotions() {
   }
 }
 
-function play(...candidates) {
-  if (!model) return;
-  for (const name of candidates) {
-    if (name in MOTIONS) {
-      const [group, index] = MOTIONS[name];
-      try { model.motion(group, index); } catch (_) { /* not loadable */ }
-      return;
-    }
+// Every motion in this model is marked Loop, so none of them ever end. Two
+// consequences, both measured against the model rather than assumed:
+//
+//   IDLE   succeeds once, then never again -- it is refused while anything plays
+//   NORMAL succeeds once, then never again -- priority never falls back
+//   FORCE  succeeds every time
+//
+// So everything plays at FORCE, and the idle rotation runs on a timer instead of
+// waiting for a motion to finish, because waiting would wait forever.
+function play(candidates) {
+  const usable = candidates.filter((name) => name in MOTIONS);
+  if (!model || !usable.length) return;
+  const [group, index] = MOTIONS[usable[0]];
+  try {
+    model.motion(group, index, PIXI.live2d.MotionPriority.FORCE);
+  } catch (_) { /* not loadable */ }
+}
+
+// Calm families only. The model also carries angry, startled and suffering sets;
+// they are good motions, but they would read as noise from something whose whole
+// job is to wait quietly until you ask it where your keys are.
+const IDLE_FAMILIES = [
+  "act_normal", "act_hohoemu", "act_egao",
+  "face_normal", "face_hohoemu", "face_egao",
+];
+
+function idlePool() {
+  const all = Object.keys(MOTIONS).filter((name) =>
+    IDLE_FAMILIES.some((family) => name.startsWith(family))
+  );
+  // The "_w" variants are the ones drawn to be held rather than performed once.
+  const held = all.filter((name) => name.endsWith("_w"));
+  return held.length ? held : all;
+}
+
+// A reaction should get to play before the rotation takes the stage back.
+const REACTION_HOLD_MS = 9000;
+let lastReaction = 0;
+
+function idleLoop() {
+  if (model && Date.now() - lastReaction > REACTION_HOLD_MS) {
+    const pool = idlePool();
+    if (pool.length) play([pool[Math.floor(Math.random() * pool.length)]]);
   }
+  // Uneven spacing, so she does not look like she is on a metronome. The idle
+  // motions run one to four seconds and loop, so each is held a few times over.
+  window.setTimeout(idleLoop, 12000 + Math.random() * 8000);
 }
 
 function express(result) {
-  // Names are the model's own: unazuku nods, nayamu is troubled, kangaeru thinks.
-  if (result && result.refused) play("act_nayamu", "act_komaru", "act_tameiki");
-  else play("act_unazuku", "act_egao", "act_hohoemu");
+  // Names are the model's own: unazuku nods, nayamu is troubled, komaru is at a
+  // loss, kangaeru thinks.
+  lastReaction = Date.now();
+  if (result && result.refused) play(["act_nayamu", "face_komaru", "act_tameiki"]);
+  else play(["act_unazuku", "act_egao", "act_hohoemu"]);
 }
 
 /* ---------- rendering an answer ---------- */
@@ -208,7 +251,8 @@ async function ask(text) {
   if (!text.trim()) return;
   send.disabled = true;
   speak("……");
-  play("act_kangaeru", "act_shinken");
+  lastReaction = Date.now();
+  play(["act_kangaeru", "act_shinken"]);
   try {
     const response = await fetch("/api/ask", {
       method: "POST",
