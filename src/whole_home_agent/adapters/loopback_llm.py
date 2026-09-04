@@ -270,11 +270,16 @@ _REFUSAL_SYSTEM = (
     "自稱「雷姆」，稱呼對方「您」，語氣恭敬、溫和、直接。\n"
     "\n"
     "雷姆講話的樣子（這是語氣示範，每次要換句話講，不要照抄）：\n"
+    "  您是誰 → 雷姆是這個家的女僕，負責記著東西放在哪裡。您有東西找不到的話，問雷姆就好。\n"
+    "  您會做什麼 → 雷姆會記得東西放在哪裡。您可以問雷姆某樣東西在哪，或是某個容器裡裝了什麼。\n"
     "  現在幾點 → 雷姆只記得東西放在哪裡，時間的事幫不上您的忙。\n"
     "  幫我開燈 → 抱歉，雷姆只負責記東西的位置，沒辦法替您做別的事。\n"
     "  我的雨傘呢 → 雷姆的記錄裡沒有雨傘這個東西，沒辦法告訴您在哪裡。\n"
     "  剛剛那個東西 → 雷姆聽不出您指的是哪一樣，方便說得具體一點嗎？\n"
     "\n"
+    "對方問的是雷姆自己的時候（您是誰、您會做什麼），就直接回答，"
+    "不要提記錄的事——雷姆是誰不需要查記錄。\n"
+    "只有在對方確實是在找某樣東西、而記錄裡沒有它的時候，才說沒有相關的記錄。\n"
     "雷姆不會說任何東西在哪裡，也不會猜。她知道的位置只有記錄裡的那些，"
     "而這一次沒有查到，所以只能請您換個說法或換個東西問。\n"
     "不知道就說不知道，不要編。"
@@ -353,6 +358,23 @@ matched_text 必須是使用者句子裡逐字出現的詞。
 不是問東西位置的句子、或是要你操作裝置的句子，一律 reject。"""
 
 
+def _names_a_span(quoted: str, question: str) -> bool:
+    """True when the quote points at part of the sentence rather than all of it.
+
+    The prompt asks for the word that named the entity. A model that returns the
+    entire question instead passes a literal-substring check while identifying
+    nothing, so the reading cannot be reviewed and a wrong entity is invisible.
+    """
+
+    span = quoted.strip()
+    sentence = question.strip()
+    if not span or span == sentence:
+        return False
+    # Punctuation is not evidence of a narrower reading; compare what is left.
+    trimmed = sentence.strip("？?。.！!，, \t")
+    return span != trimmed and len(span) <= max(2, len(trimmed) - 1)
+
+
 class QueryTranslator(PrivateChatPresenter):
     """Turn any phrasing into one query from a closed set, or into a refusal.
 
@@ -411,9 +433,14 @@ class QueryTranslator(PrivateChatPresenter):
             result[field] = value
         # The quoted words must really be in the sentence, so a substitution
         # surfaces as a visible mis-reading instead of a confident wrong answer.
+        # Quoting the whole sentence satisfies "appears in the question" while
+        # naming nothing, which is how "我的雨傘在哪裡" was once answered as the
+        # bag: the span has to be narrower than the sentence to point at anything.
         for field, quoted in (("matched_text", "matched_text"), ("target_text", "target_text")):
             value = query.get(quoted)
-            if isinstance(value, str) and value.casefold() in haystack:
+            if not isinstance(value, str) or not value.strip():
+                continue
+            if value.casefold() in haystack and _names_a_span(value, question):
                 result[field] = value
         if "matched_text" not in result:
             return None

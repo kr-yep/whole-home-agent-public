@@ -517,6 +517,76 @@ class RefusalVoiceTests(unittest.TestCase):
         )
 
 
+class TranslatedReadingBoundaryTests(unittest.TestCase):
+    """A model may re-read a sentence. It may not swap the object in it."""
+
+    def _archive(self, directory: str):
+        path = Path(directory) / "memory.sqlite3"
+        session = run_fixture(load_fixture(FIXTURE), replay_run_id="translate-test")
+        SQLiteReplayArchive(path).save_completed(session)
+        return SQLiteReplayArchive(path)
+
+    def test_a_whole_sentence_quote_names_nothing(self):
+        from whole_home_agent.adapters.loopback_llm import _names_a_span
+
+        question = "我的雨傘在哪裡"
+        self.assertFalse(_names_a_span(question, question))
+        self.assertFalse(_names_a_span("我的鑰匙呢", "我的鑰匙呢？"))
+        self.assertTrue(_names_a_span("雨傘", question))
+        self.assertTrue(_names_a_span("鑰匙", "我的鑰匙呢？"))
+
+    def test_an_unmentioned_entity_is_not_answered(self):
+        """locate/bag for a question about an umbrella must not reach the ledger."""
+
+        from whole_home_agent.memory_query import _entities_not_named
+
+        self.assertEqual(
+            _entities_not_named("我的雨傘在哪裡", {"op": "locate", "subject": "bag"}),
+            ("包包",),
+        )
+        self.assertEqual(
+            _entities_not_named("我的鑰匙呢", {"op": "locate", "subject": "key"}),
+            (),
+        )
+        self.assertEqual(
+            _entities_not_named(
+                "鑰匙在沙發上嗎", {"op": "verify", "subject": "key", "target": "sofa"}
+            ),
+            (),
+        )
+
+    def test_a_substituted_entity_refuses_instead_of_answering(self):
+        from whole_home_agent.memory_query import answer_by_translation
+
+        class Substituting:
+            presenter_id = "test-translator/1"
+
+            def translate(self, question, known_entity_ids):
+                return {"op": "locate", "subject": "bag", "matched_text": "雨傘"}
+
+        with tempfile.TemporaryDirectory() as folder:
+            with self.assertRaises(QuestionError) as raised:
+                answer_by_translation(
+                    self._archive(folder), "我的雨傘在哪裡", Substituting()
+                )
+            self.assertIn("沒有提到", str(raised.exception))
+
+    def test_a_faithful_reading_still_answers(self):
+        from whole_home_agent.memory_query import answer_by_translation
+
+        class Faithful:
+            presenter_id = "test-translator/1"
+
+            def translate(self, question, known_entity_ids):
+                return {"op": "locate", "subject": "key", "matched_text": "鑰匙"}
+
+        with tempfile.TemporaryDirectory() as folder:
+            result = answer_by_translation(
+                self._archive(folder), "我的鑰匙呢", Faithful()
+            )
+            self.assertEqual(result["answer"]["subject_id"], "key")
+
+
 if __name__ == "__main__":
     unittest.main()
 

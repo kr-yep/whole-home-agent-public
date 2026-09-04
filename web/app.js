@@ -94,7 +94,8 @@ async function mountModel() {
     if (!height || !width) return;
     model.scale.set((height * 0.92) / model.internalModel.originalHeight);
     model.anchor.set(0.5, 0.5);
-    model.x = width * 0.68;
+    // Right of centre, leaving the gap beside her for the speech bubble.
+    model.x = width * 0.74;
     model.y = height * 0.54;
   }
 }
