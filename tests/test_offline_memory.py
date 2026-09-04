@@ -218,8 +218,15 @@ class LoopbackPresenterTests(unittest.TestCase):
         )
         self.assertEqual(slow_start.presenter_id, LOOPBACK_PRESENTER_ID)
 
-    def test_request_uses_the_common_chat_completions_contract(self):
-        """Optional provider extensions must not be forced on every local server."""
+    def test_request_suppresses_reasoning_so_the_budget_reaches_the_answer(self):
+        """A reasoning model must not spend the whole token budget thinking.
+
+        Measured against qwen3:8b on the private endpoint: with the field
+        omitted the translator returned an empty string twelve times out of
+        twelve, so an ordinary question was refused rather than answered. The
+        field is optional by the spec, so a server that does not recognise it
+        ignores it; a server that answers empty anyway is caught below.
+        """
 
         response = _Response({"choices": [{"message": {"content": "好"}}]})
         presenter = LoopbackChatPresenter(
@@ -230,7 +237,28 @@ class LoopbackPresenterTests(unittest.TestCase):
         ) as opened:
             presenter.present(_context())
         sent = json.loads(opened.call_args.args[0].data.decode("utf-8"))
-        self.assertNotIn("reasoning_effort", sent)
+        self.assertEqual(sent["reasoning_effort"], "none")
+        self.assertEqual(
+            set(sent),
+            {"model", "messages", "temperature", "max_tokens", "reasoning_effort", "stream"},
+        )
+
+    def test_empty_content_is_diagnosable_rather_than_a_silent_template(self):
+        """An exhausted budget must name itself, not look like a missing model."""
+
+        presenter = LoopbackChatPresenter(
+            endpoint="http://127.0.0.1:11434/v1/chat/completions", model="m-v1"
+        )
+        for content in ("", "   ", "\n"):
+            with self.subTest(content=content):
+                response = _Response({"choices": [{"message": {"content": content}}]})
+                with mock.patch(
+                    "whole_home_agent.adapters.loopback_llm._open_request",
+                    return_value=response,
+                ):
+                    with self.assertRaises(ValueError) as raised:
+                        presenter.present(_context())
+                self.assertIn("empty content", str(raised.exception))
 
     def test_invalid_environment_numbers_fail_as_configuration_errors(self):
         from whole_home_agent.adapters.loopback_llm import verbalizer_from_environment

@@ -139,6 +139,14 @@ class PrivateChatPresenter:
                 ],
                 "temperature": self._temperature,
                 "max_tokens": 180,
+                # Measured against qwen3:8b on the private endpoint: without this
+                # the model spends the whole 180-token budget reasoning and
+                # returns an empty string. The translator failed that way twelve
+                # times out of twelve, which refuses ordinary questions outright.
+                # It is an optional field by the spec, so a server that does not
+                # know it ignores it; the empty-content check below catches any
+                # server where that assumption does not hold.
+                "reasoning_effort": "none",
                 "stream": False,
             }
         ).encode("utf-8")
@@ -159,6 +167,15 @@ class PrivateChatPresenter:
         content = message.get("content") if isinstance(message, dict) else None
         if not isinstance(content, str):
             raise ValueError("local LLM response has no text content")
+        if not content.strip():
+            # A reasoning model that exhausts max_tokens answers with an empty
+            # string and a length finish reason. Returning it would silently
+            # degrade to a template, or refuse the question, with nothing said
+            # about why; name it here so the cause is visible.
+            raise ValueError(
+                "local LLM returned empty content, which usually means the model "
+                "spent the token budget reasoning"
+            )
         return content
 
 
