@@ -202,7 +202,12 @@ class SyntheticStreamBuilder:
         self._buf.write(pack_wire_message(KIND_END, meta))
         return self._buf.getvalue()
 
-    def emit_aborted_end(self, *, ended_ns: Optional[int] = None) -> bytes:
+    def emit_aborted_end(
+        self,
+        *,
+        failure_code: str = "CAPTURE_CANCELLED",
+        ended_ns: Optional[int] = None,
+    ) -> bytes:
         e_ns = self._last_monotonic_ns + 10_000_000 if ended_ns is None else ended_ns
         last_seq = (self._current_sequence - 1) if self._current_sequence > 0 else None
         meta = {
@@ -216,7 +221,31 @@ class SyntheticStreamBuilder:
             "dropped_frame_count": self._dropped_count,
             "ended_monotonic_ns": e_ns,
             "stream_sha256": None,
-            "failure_code": "CAPTURE_CANCELLED",
+            "failure_code": failure_code,
+        }
+        self._buf.write(pack_wire_message(KIND_END, meta))
+        return self._buf.getvalue()
+
+    def emit_failed_end(
+        self,
+        *,
+        failure_code: str = "CAPTURE_INTERNAL_FAILED",
+        ended_ns: Optional[int] = None,
+    ) -> bytes:
+        e_ns = self._last_monotonic_ns + 10_000_000 if ended_ns is None else ended_ns
+        last_seq = (self._current_sequence - 1) if self._current_sequence > 0 else None
+        meta = {
+            "schema": "whole-home-agent.capture-message.v1",
+            "kind": "end",
+            "capture_session_id": self.session_id,
+            "source_id": self.source_id,
+            "status": "FAILED",
+            "last_source_sequence": last_seq,
+            "frame_count": self._frame_count,
+            "dropped_frame_count": self._dropped_count,
+            "ended_monotonic_ns": e_ns,
+            "stream_sha256": None,
+            "failure_code": failure_code,
         }
         self._buf.write(pack_wire_message(KIND_END, meta))
         return self._buf.getvalue()

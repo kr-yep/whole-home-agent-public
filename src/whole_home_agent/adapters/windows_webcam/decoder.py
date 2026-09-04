@@ -413,10 +413,16 @@ class CaptureStreamDecoder:
             reset_temporal_state=(gap_count >= 3),
         )
 
+        t_start = self._time_ns()
         try:
             self._roi.accept_gap(gap)
+            t_end = self._time_ns()
         except Exception:
             self._fail("ROI_CONSUMER_REJECTED")
+            return
+
+        if (t_end - t_start) > 100_000_000:
+            self._fail("ROI_CONSUMER_TIMEOUT")
             return
 
         self._expected_sequence = last_missing + 1
