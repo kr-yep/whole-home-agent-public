@@ -78,6 +78,20 @@ user's request to test whether accumulated restrictions are excessive:
 - does not activate an endpoint, read household data, enable a camera, or enable
   `OPERATE`. See `docs/evaluation/restriction-ablation-v1.md` and ADR 0024.
 
+`WINDOWS-CAPTURE-ROI-R0` — `2026-09-04 Asia/Taipei`, authorized by the current user's
+explicit adoption of the integrated webcam-to-ROI handoff specification:
+
+- formalizes Stage R0 (Document Review) for specification `WHA-WIN-CAPTURE-ROI-001`
+  (`docs/windows-webcam-roi-handoff-spec.md`);
+- establishes ADR 0025 (AppContainer capture isolation), ADR 0026 (WHA1 wire framing and
+  incremental SHA-256 digest), and ADR 0027 (synchronous read-only ROI frame lease);
+- strictly confirms that "ROI delivery" ends at the ROI Ingress with normalized full frames
+  (1280×720 RGB24) and does not include crop generation, object detection, or claims;
+- enforces the 5-frame application memory ceiling (approx 13.18 MiB) and zero-retention;
+- retains `OPERATE DISABLED`; physical webcam access is strictly deferred to Stage R4;
+- authorizes Stage R1 pure Python generated contract and decoder test implementation.
+
+
 ## Authority and roles
 
 | Role | Assignment | Current authority |
@@ -99,6 +113,8 @@ user's request to test whether accumulated restrictions are excessive:
 | ADR 0001–0005 | `PROPOSED` | Design candidates, not automatically adopted requirements |
 | ADR 0023 | `PROPOSED / BOUNDED IMPLEMENTATION` | D0 completed-replay archive, bounded location parser, and loopback-only presenter; not household/cloud authority |
 | ADR 0024 | `PROPOSED / BOUNDED IMPLEMENTATION` | Evidence-led removal of D0 engineering friction while retaining data, mutation, authority and action boundaries |
+| `docs/windows-webcam-roi-handoff-spec.md` (`WHA-WIN-CAPTURE-ROI-001`) | `PROPOSED / NOT IMPLEMENTED` | Integrated specification from Windows webcam input to ROI ingress handoff; OPERATE DISABLED |
+| ADR 0025–0027 | `PROPOSED` | AppContainer capture isolation, WHA1 wire protocol, synchronous read-only ROI frame lease |
 | B0 implementation and fixtures | `IMPLEMENTED / VERIFIED IN DECLARED TEST ENVELOPE` | A bounded semantic replay slice exists; its frozen golden semantic hash is unchanged |
 | B1 candidate-source seam and run receipt | `IMPLEMENTED / VERIFIED WITH SYNTHETIC CONTRACT TESTS` | Generic finite source contract, provenance types, fail-closed run outcome, and B0 compatibility remain the sole semantic admission path used by the later prerecorded adapter |
 | B1 generated-video manifest, PTS decoder, and scheduler | `IMPLEMENTED / VERIFIED ON ONE SYNTHETIC REPLAY` | Hash-pinned allowlisted H.264 source revision 2, exact PTS/time-base decode, and motion-plus-periodic frame selection feed the later bounded perception source; revision 1 remains in Git history |
