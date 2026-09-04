@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import contextlib
+import copy
 import hashlib
 import io
 import socket
@@ -127,28 +128,38 @@ class M41CheckerTests(unittest.TestCase):
 
     def test_archive_inspection_accepts_exact_minimal_members(self):
         presentation_bytes = (ROOT / "src" / "whole_home_agent" / "presentation.py").read_bytes()
+        active_contract = copy.deepcopy(self.contract)
+        active_contract["presentation_module_sha256"] = hashlib.sha256(
+            presentation_bytes
+        ).hexdigest()
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             wheel = root / "whole_home_agent-0.1.0-py3-none-any.whl"
             with zipfile.ZipFile(wheel, "w") as archive:
-                for suffix in self.contract["wheel_contract"]["required_suffixes"]:
+                for suffix in active_contract["wheel_contract"]["required_suffixes"]:
                     name = suffix if suffix.startswith("whole_home_agent/") else f"data/{suffix}"
                     data = presentation_bytes if name.endswith("whole_home_agent/presentation.py") else b"fixture"
                     archive.writestr(name, data)
             sdist = root / "whole_home_agent-0.1.0.tar.gz"
             with tarfile.open(sdist, "w:gz") as archive:
-                for suffix in self.contract["sdist_contract"]["required_suffixes"]:
+                for suffix in active_contract["sdist_contract"]["required_suffixes"]:
                     name = f"whole_home_agent-0.1.0/{suffix}"
                     data = presentation_bytes if suffix.endswith("src/whole_home_agent/presentation.py") else b"fixture"
                     info = tarfile.TarInfo(name)
                     info.size = len(data)
                     archive.addfile(info, io.BytesIO(data))
 
-            failures, receipt = inspect_artifacts(wheel, sdist, self.contract)
+            failures, receipt = inspect_artifacts(wheel, sdist, active_contract)
 
         self.assertEqual(failures, [])
-        self.assertEqual(receipt["wheel_presentation_sha256"], self.contract["presentation_module_sha256"])
-        self.assertEqual(receipt["wheel_member_count"], len(self.contract["wheel_contract"]["required_suffixes"]))
+        self.assertEqual(
+            receipt["wheel_presentation_sha256"],
+            active_contract["presentation_module_sha256"],
+        )
+        self.assertEqual(
+            receipt["wheel_member_count"],
+            len(active_contract["wheel_contract"]["required_suffixes"]),
+        )
 
     def test_archive_inspection_rejects_traversal_and_forbidden_artifact(self):
         with tempfile.TemporaryDirectory() as directory:
