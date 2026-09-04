@@ -12,6 +12,9 @@ from whole_home_agent.adapters.loopback_llm import (
 )
 from whole_home_agent.adapters.sqlite_archive import SQLiteReplayArchive
 from whole_home_agent.errors import B0Error
+from whole_home_agent.actuation.dispatcher import CommandDispatcher
+from whole_home_agent.actuation.models import ActionReceipt, ActionStatus
+from whole_home_agent.adapters.mock_actuator import MockActuator
 from whole_home_agent.memory_query import answer_question, list_known_entities
 from whole_home_agent.public_demo import run_public_demo
 
@@ -165,6 +168,43 @@ def _render_rejection(error: B0Error, entity_ids: tuple[str, ...]) -> None:
             "「鑰匙在沙發上嗎」、「包包裡有什麼」。不能操作任何裝置。"
         )
 
+def _render_action_receipt(receipt: ActionReceipt) -> None:
+    """Render the execution receipt of a smart device action."""
+    if receipt.status in (ActionStatus.EXECUTED, ActionStatus.SIMULATED):
+        st.success(receipt.message)
+        st.caption(
+            f"⚡ 收據 ID: `{receipt.action_id}` · 目標設備: `{receipt.target_device_id}` · "
+            f"狀態: `{receipt.status.value}` · 時間: {receipt.executed_at}"
+        )
+    elif receipt.status == ActionStatus.DENIED:
+        st.error(receipt.message)
+        st.caption(f"🛑 安全防護閘攔截 · 收據 ID: `{receipt.action_id}`")
+    else:
+        st.warning(receipt.message)
+
+
+def _render_devices_panel(actuator: MockActuator) -> None:
+    """Display the status card for household smart devices."""
+    with st.expander("🏠 智慧家庭設備狀態 (Smart Devices)", expanded=False):
+        st.caption("支援自然語言操控：例如「開冷氣」、「冷氣設為26度」、「開客廳燈」、「關臥室燈」、「拉開窗簾」")
+        devices = actuator.list_devices()
+        cols = st.columns(len(devices))
+        icons = {
+            "living_room_ac": "❄️",
+            "living_room_light": "💡",
+            "bedroom_light": "💡",
+            "living_room_curtain": "🪟",
+        }
+        for col, dev in zip(cols, devices):
+            icon = icons.get(dev.device_id, "🔌")
+            state_text = "開啟" if dev.is_on else "關閉"
+            extra = ""
+            if dev.temperature is not None:
+                extra = f" ({dev.temperature}°C)"
+            elif dev.position is not None:
+                extra = f" ({dev.position}%)"
+            col.markdown(f"**{icon} {dev.name}**\n\n狀態：`{state_text}`{extra}")
+
 
 def main() -> None:
     st.set_page_config(page_title="Whole Home Agent — Local Memory", page_icon="🏠")
@@ -199,6 +239,13 @@ def main() -> None:
         translator = None
         st.warning(f"LLM 設定無效，已改用本機決定性回答：{error}")
 
+    if "actuator" not in st.session_state:
+        st.session_state["actuator"] = MockActuator()
+    actuator = st.session_state["actuator"]
+    dispatcher = CommandDispatcher(actuator)
+
+    _render_devices_panel(actuator)
+
     st.write("**我現在認得這些東西**，點一下就問：")
     for column, entity_id in zip(st.columns(len(entity_ids)), entity_ids):
         if column.button(_label(entity_id), key=f"chip-{entity_id}", use_container_width=True):
@@ -209,23 +256,27 @@ def main() -> None:
     st.text_input(
         "或自己打一句",
         key="question",
-        placeholder="鑰匙在哪裡？　也可以問「鑰匙在沙發上嗎」「包包裡有什麼」",
+        placeholder="鑰匙在哪裡？　也可以下指令「開客廳冷氣」「冷氣設為26度」「開燈」「拉開窗簾」",
     )
     asked = st.button("詢問記憶", type="primary") or st.session_state.pop("auto_ask", False)
 
     if asked:
         question = st.session_state.get("question", "")
-        try:
-            _render_answer(
-                answer_question(
-                    archive,
-                    question,
-                    verbalizer=verbalizer,
-                    translator=translator,
+        receipt = dispatcher.dispatch(question)
+        if receipt is not None:
+            _render_action_receipt(receipt)
+        else:
+            try:
+                _render_answer(
+                    answer_question(
+                        archive,
+                        question,
+                        verbalizer=verbalizer,
+                        translator=translator,
+                    )
                 )
-            )
-        except B0Error as error:
-            _render_rejection(error, entity_ids)
+            except B0Error as error:
+                _render_rejection(error, entity_ids)
 
     with st.expander("重建示範記憶"):
         st.caption("重跑內附影片並覆寫本機 SQLite。內容相同時為 UNCHANGED。")
