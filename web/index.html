@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Whole Home Agent</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<canvas id="stage"></canvas>
+
+<div id="bubble" hidden></div>
+
+<aside id="panel">
+  <header>
+    <h1>Whole Home Agent</h1>
+    <p class="scope">八秒合成重播的持久記憶 · 回答是估計值，不是真實住家</p>
+  </header>
+
+  <div id="chips" class="chips"></div>
+
+  <div id="log" class="log"></div>
+
+  <form id="ask" autocomplete="off">
+    <input id="question" type="text" placeholder="鑰匙在哪？　也可以問「在沙發上嗎」「包包裡有什麼」">
+    <button type="submit" id="send">問</button>
+  </form>
+
+  <p class="foot">拖曳可以移動雷姆，滾輪縮放，雙擊復原</p>
+  <p class="foot">OPERATE DISABLED · 無攝影機、上傳、雲端、住家資料或裝置動作</p>
+</aside>
+
+<script src="/vendor/live2dcubismcore.min.js"></script>
+<script src="/vendor/pixi.min.js"></script>
+<script src="/vendor/cubism4.min.js"></script>
+<script src="/app.js"></script>
+</body>
+</html>

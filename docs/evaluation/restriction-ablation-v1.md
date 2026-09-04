@@ -58,6 +58,39 @@ measured locally.
 The focused ablation run executed 55 tests successfully with four optional video/UI
 tests skipped in the minimal runner. It used fake responses and opened no real endpoint.
 
+## Correction: reasoning suppression was ablated against a fake only
+
+**Date:** 2026-09-04 **Verdict:** `ROW REVERSED`
+
+The row removing `reasoning_effort` was decided by a fake OpenAI-compatible server. A
+fake does not reason, so it cannot exhibit the failure the field existed to prevent.
+Replayed against the real endpoint the row does not hold.
+
+| Client | Field omitted | Field present |
+|---|---|---|
+| Translator, `我的鑰匙呢？` | empty content 12 of 12; `finish_reason` `length`; all 180 completion tokens consumed | valid query 8 of 8 |
+| Verbalizer, same question | answered 6 of 6 at this prompt length | answered |
+
+An empty string is a valid `str`, so it passed the response contract unchanged and
+reached the caller as an answer of no words. The translator reads that as an unusable
+translation, so questions needing translation, `我的鑰匙呢？` among them, were refused
+outright rather than degraded to a template. The verbalizer survived at its current
+prompt length but has no margin: a terser system prompt tried during the same session
+returned empty as well.
+
+The field is restored, and empty content is now a named failure rather than a silent
+one, so a server that ignores the field fails with its cause stated. The compatibility
+concern behind the original row stands on its own: `reasoning_effort` is optional, and
+a server that does not recognise it ignores it, which is why forcing it costs nothing
+that the ablation could measure.
+
+Two things this correction does not change. The other four rows were argued from
+configuration cost, not from model behaviour, and are unaffected. And the general
+lesson is about the fake, not about this field: an ablation that removes a workaround
+must be replayed against the hardware that motivated it, because a fake will confirm
+whatever contract it was written to satisfy.
+
+
 ## Restrictions retained because they protect a real boundary
 
 - A model cannot append accepted claims, write SQLite, change a structured answer,

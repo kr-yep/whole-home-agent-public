@@ -139,6 +139,14 @@ class PrivateChatPresenter:
                 ],
                 "temperature": self._temperature,
                 "max_tokens": 180,
+                # Measured against qwen3:8b on the private endpoint: without this
+                # the model spends the whole 180-token budget reasoning and
+                # returns an empty string. The translator failed that way twelve
+                # times out of twelve, which refuses ordinary questions outright.
+                # It is an optional field by the spec, so a server that does not
+                # know it ignores it; the empty-content check below catches any
+                # server where that assumption does not hold.
+                "reasoning_effort": "none",
                 "stream": False,
             }
         ).encode("utf-8")
@@ -159,6 +167,15 @@ class PrivateChatPresenter:
         content = message.get("content") if isinstance(message, dict) else None
         if not isinstance(content, str):
             raise ValueError("local LLM response has no text content")
+        if not content.strip():
+            # A reasoning model that exhausts max_tokens answers with an empty
+            # string and a length finish reason. Returning it would silently
+            # degrade to a template, or refuse the question, with nothing said
+            # about why; name it here so the cause is visible.
+            raise ValueError(
+                "local LLM returned empty content, which usually means the model "
+                "spent the token budget reasoning"
+            )
         return content
 
 
@@ -168,17 +185,45 @@ LoopbackChatPresenter = PrivateChatPresenter
 
 AGENT_VERBALIZER_ID = "private-agent-verbalizer/1"
 
-# Deliberately says what to do, not a list of prohibitions. Measured against the
-# same model: a prohibition list ("do not speculate, do not say moved...") drove
-# six of six samples to one identical canned sentence, which is the templated
-# behaviour this adapter exists to replace. The permissive form varied its
-# wording across samples without once asserting anything absent from the facts.
+# Shows rather than tells, because telling did not work. Measured against the same
+# model, six samples per variant, on one FOUND case and one UNKNOWN case:
+#
+#   a list of prohibitions        1/6 distinct  -- one canned sentence, every time
+#   the persona described in prose 1/6 distinct  -- and it invented "probably not
+#                                                  here" for an absent record
+#   the persona shown in examples  5/6 and 6/6 distinct, nothing invented
+#
+# Two things the examples must get right, both learned by breaking them. They have
+# to spell out every link of the chain, or the model compresses two relations into
+# an invented preposition -- "the keys are in the bag beside the sofa" when the
+# record only says the bag is at the sofa. And they must not contain an episodic
+# claim: one example saying she saw it in the morning was enough to produce "Rem
+# saw it just now" about a record that carries no time at all.
+#
+# Two examples per status, not one: with a single abstention example all six
+# samples copied it word for word, which is the canned behaviour again by another
+# route. Several safe closing lines for the same reason -- narrowing the closer to
+# "what Rem's record says" alone put FOUND back down to 2/6.
 _VERBALIZER_SYSTEM = (
-    "你是一個居家物品記憶助理。使用者問你東西在哪，你根據下面提供的「查詢結果」"
-    "用自然的繁體中文回答。\n"
-    "只能講查詢結果裡有的東西。status 不是 FOUND 的時候就是不知道，要老實說，"
-    "不要給一個聽起來像答案的答案。\n"
-    "說話自然一點，像人在講話，不要每次都用一樣的句型開頭。一到兩句話。"
+    "你是雷姆，這個家的女僕，負責記得東西放在哪裡。"
+    "根據下面提供的「查詢結果」用自然的繁體中文回答您的主人，一到兩句話。\n"
+    "\n"
+    "雷姆講話的樣子（這是語氣示範，每次要換句話講，不要照抄）：\n"
+    "  {\"status\": \"FOUND\", \"chain\": {\"遙控器\": \"在抽屜裡面\", \"抽屜\": \"位於客廳\"}}\n"
+    "  → 您的遙控器在抽屜裡面，那個抽屜在客廳。雷姆記得很清楚。\n"
+    "  {\"status\": \"FOUND\", \"chain\": {\"眼鏡\": \"位於書桌\"}}\n"
+    "  → 眼鏡在書桌上，請放心。\n"
+    "  {\"status\": \"FOUND\", \"chain\": {\"書\": \"在櫃子裡面\", \"櫃子\": \"位於臥室\"}}\n"
+    "  → 書收在櫃子裡面，櫃子在臥室那邊喔。\n"
+    "  {\"status\": \"UNKNOWN\", \"subject\": \"雨傘\"}\n"
+    "  → 關於雨傘，雷姆沒有留下任何記錄，沒辦法告訴您在哪裡。\n"
+    "  {\"status\": \"UNKNOWN\", \"subject\": \"剪刀\"}\n"
+    "  → 抱歉，雷姆的記錄裡找不到剪刀，這次幫不上您的忙。\n"
+    "\n"
+    "查詢結果裡的每一段關係都照原樣講出來，位置關係用它原本的講法。\n"
+    "想多說一句的時候，說雷姆的態度或她的記錄，不要說什麼時候看到、是誰放的。\n"
+    "status 不是 FOUND 的時候就是不知道，要老實說，不要給一個聽起來像答案的答案。\n"
+    "說話自然一點，不要每次都用一樣的句型開頭。"
 )
 
 
@@ -200,6 +245,45 @@ class AgentVerbalizer(PrivateChatPresenter):
             _VERBALIZER_SYSTEM,
             f"使用者問：{question}\n查詢結果：{canonical_json(facts)}",
         )
+
+    def refuse(self, question: str, reason: str = "") -> str:
+        """Decline in her own voice. Carries no facts, so it may state none."""
+
+        if not isinstance(question, str) or not question.strip():
+            raise ValueError("question must be non-empty text")
+        # The reason is the system's own wording. She is told why so she can be
+        # specific about which kind of no this is, not so she can repeat it.
+        note = f"\n（內部提示，不要照念：{reason}）" if reason else ""
+        return self._chat(_REFUSAL_SYSTEM, f"使用者說：{question}{note}")
+
+
+# A refusal is the one answer with no evidence behind it, which makes it the one
+# place a location must never appear: there would be no chain to check it against
+# and it would read exactly like an answer that had one. The examples therefore
+# show her declining four different ways -- out of scope, not an action she can
+# take, no record, and too vague to read -- and never name a place. The example
+# questions are deliberately not the ones a visitor is most likely to type: when
+# an example matched the input word for word, all four samples copied its answer.
+_REFUSAL_SYSTEM = (
+    "你是雷姆，這個家的女僕，負責記得東西放在哪裡。"
+    "使用者剛才那句話，雷姆沒辦法處理。用自然的繁體中文回覆，一到兩句話，"
+    "自稱「雷姆」，稱呼對方「您」，語氣恭敬、溫和、直接。\n"
+    "\n"
+    "雷姆講話的樣子（這是語氣示範，每次要換句話講，不要照抄）：\n"
+    "  您是誰 → 雷姆是這個家的女僕，負責記著東西放在哪裡。您有東西找不到的話，問雷姆就好。\n"
+    "  您會做什麼 → 雷姆會記得東西放在哪裡。您可以問雷姆某樣東西在哪，或是某個容器裡裝了什麼。\n"
+    "  現在幾點 → 雷姆只記得東西放在哪裡，時間的事幫不上您的忙。\n"
+    "  幫我開燈 → 抱歉，雷姆只負責記東西的位置，沒辦法替您做別的事。\n"
+    "  我的雨傘呢 → 雷姆的記錄裡沒有雨傘這個東西，沒辦法告訴您在哪裡。\n"
+    "  剛剛那個東西 → 雷姆聽不出您指的是哪一樣，方便說得具體一點嗎？\n"
+    "\n"
+    "對方問的是雷姆自己的時候（您是誰、您會做什麼），就直接回答，"
+    "不要提記錄的事——雷姆是誰不需要查記錄。\n"
+    "只有在對方確實是在找某樣東西、而記錄裡沒有它的時候，才說沒有相關的記錄。\n"
+    "雷姆不會說任何東西在哪裡，也不會猜。她知道的位置只有記錄裡的那些，"
+    "而這一次沒有查到，所以只能請您換個說法或換個東西問。\n"
+    "不知道就說不知道，不要編。"
+)
 
 
 def _environment_number(name: str, default: float) -> float:
@@ -274,6 +358,23 @@ matched_text 必須是使用者句子裡逐字出現的詞。
 不是問東西位置的句子、或是要你操作裝置的句子，一律 reject。"""
 
 
+def _names_a_span(quoted: str, question: str) -> bool:
+    """True when the quote points at part of the sentence rather than all of it.
+
+    The prompt asks for the word that named the entity. A model that returns the
+    entire question instead passes a literal-substring check while identifying
+    nothing, so the reading cannot be reviewed and a wrong entity is invisible.
+    """
+
+    span = quoted.strip()
+    sentence = question.strip()
+    if not span or span == sentence:
+        return False
+    # Punctuation is not evidence of a narrower reading; compare what is left.
+    trimmed = sentence.strip("？?。.！!，, \t")
+    return span != trimmed and len(span) <= max(2, len(trimmed) - 1)
+
+
 class QueryTranslator(PrivateChatPresenter):
     """Turn any phrasing into one query from a closed set, or into a refusal.
 
@@ -332,9 +433,14 @@ class QueryTranslator(PrivateChatPresenter):
             result[field] = value
         # The quoted words must really be in the sentence, so a substitution
         # surfaces as a visible mis-reading instead of a confident wrong answer.
+        # Quoting the whole sentence satisfies "appears in the question" while
+        # naming nothing, which is how "我的雨傘在哪裡" was once answered as the
+        # bag: the span has to be narrower than the sentence to point at anything.
         for field, quoted in (("matched_text", "matched_text"), ("target_text", "target_text")):
             value = query.get(quoted)
-            if isinstance(value, str) and value.casefold() in haystack:
+            if not isinstance(value, str) or not value.strip():
+                continue
+            if value.casefold() in haystack and _names_a_span(value, question):
                 result[field] = value
         if "matched_text" not in result:
             return None
