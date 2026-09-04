@@ -15,6 +15,7 @@ from unittest import mock
 
 from whole_home_agent.adapters.loopback_llm import (
     LOOPBACK_PRESENTER_ID,
+    AgentVerbalizer,
     LoopbackChatPresenter,
 )
 from whole_home_agent.adapters.sqlite_archive import SQLiteReplayArchive
@@ -218,8 +219,15 @@ class LoopbackPresenterTests(unittest.TestCase):
         )
         self.assertEqual(slow_start.presenter_id, LOOPBACK_PRESENTER_ID)
 
-    def test_request_uses_the_common_chat_completions_contract(self):
-        """Optional provider extensions must not be forced on every local server."""
+    def test_request_suppresses_reasoning_so_the_budget_reaches_the_answer(self):
+        """A reasoning model must not spend the whole token budget thinking.
+
+        Measured against qwen3:8b on the private endpoint: with the field
+        omitted the translator returned an empty string twelve times out of
+        twelve, so an ordinary question was refused rather than answered. The
+        field is optional by the spec, so a server that does not recognise it
+        ignores it; a server that answers empty anyway is caught below.
+        """
 
         response = _Response({"choices": [{"message": {"content": "好"}}]})
         presenter = LoopbackChatPresenter(
@@ -230,7 +238,28 @@ class LoopbackPresenterTests(unittest.TestCase):
         ) as opened:
             presenter.present(_context())
         sent = json.loads(opened.call_args.args[0].data.decode("utf-8"))
-        self.assertNotIn("reasoning_effort", sent)
+        self.assertEqual(sent["reasoning_effort"], "none")
+        self.assertEqual(
+            set(sent),
+            {"model", "messages", "temperature", "max_tokens", "reasoning_effort", "stream"},
+        )
+
+    def test_empty_content_is_diagnosable_rather_than_a_silent_template(self):
+        """An exhausted budget must name itself, not look like a missing model."""
+
+        presenter = LoopbackChatPresenter(
+            endpoint="http://127.0.0.1:11434/v1/chat/completions", model="m-v1"
+        )
+        for content in ("", "   ", "\n"):
+            with self.subTest(content=content):
+                response = _Response({"choices": [{"message": {"content": content}}]})
+                with mock.patch(
+                    "whole_home_agent.adapters.loopback_llm._open_request",
+                    return_value=response,
+                ):
+                    with self.assertRaises(ValueError) as raised:
+                        presenter.present(_context())
+                self.assertIn("empty content", str(raised.exception))
 
     def test_invalid_environment_numbers_fail_as_configuration_errors(self):
         from whole_home_agent.adapters.loopback_llm import verbalizer_from_environment
@@ -404,6 +433,158 @@ class MemoryUiBoundaryTests(unittest.TestCase):
             self.assertEqual(app.exception, [])
             self.assertTrue(any("一次只能問一個東西。" in item.value for item in app.info))
             self.assertFalse(any("unsupported_question" in item.value for item in app.warning))
+
+
+class RefusalVoiceTests(unittest.TestCase):
+    """She may reword a refusal. She may never turn one into an answer.
+
+    The refusal is decided before any model is asked to speak, so everything here
+    is about wording and about what happens when the wording fails to arrive.
+    """
+
+    ENDPOINT = "http://127.0.0.1:11434/v1/chat/completions"
+
+    def test_a_refusal_uses_the_refusal_prompt_not_the_fact_prompt(self):
+        from whole_home_agent.adapters.loopback_llm import (
+            _REFUSAL_SYSTEM,
+            _VERBALIZER_SYSTEM,
+        )
+
+        response = _Response({"choices": [{"message": {"content": "雷姆幫不上您的忙。"}}]})
+        verbalizer = AgentVerbalizer(endpoint=self.ENDPOINT, model="m-v1")
+        with mock.patch(
+            "whole_home_agent.adapters.loopback_llm._open_request", return_value=response
+        ) as opened:
+            self.assertEqual(verbalizer.refuse("今天天氣如何", "看不懂"), "雷姆幫不上您的忙。")
+        sent = json.loads(opened.call_args.args[0].data.decode("utf-8"))
+        self.assertEqual(sent["messages"][0]["content"], _REFUSAL_SYSTEM)
+        self.assertNotEqual(sent["messages"][0]["content"], _VERBALIZER_SYSTEM)
+        # The system's own sentence is context for her, not a line to read out.
+        self.assertIn("不要照念", sent["messages"][1]["content"])
+
+    def test_a_refusal_prompt_never_offers_a_location(self):
+        """The examples teach the shape of the answer, so none may name a place."""
+
+        from whole_home_agent.adapters.loopback_llm import _REFUSAL_SYSTEM
+
+        for place in ("沙發", "包包", "抽屜", "客廳", "臥室", "書桌"):
+            with self.subTest(place=place):
+                self.assertNotIn(f"在{place}", _REFUSAL_SYSTEM)
+
+    def test_an_empty_question_is_a_programming_error(self):
+        verbalizer = AgentVerbalizer(endpoint=self.ENDPOINT, model="m-v1")
+        for question in ("", "   "):
+            with self.subTest(question=question):
+                with self.assertRaises(ValueError):
+                    verbalizer.refuse(question)
+
+    def test_without_a_model_the_system_wording_survives(self):
+        from whole_home_agent.web_app import _voiced_refusal
+
+        self.assertEqual(_voiced_refusal(None, "你是誰", "聽不懂"), "聽不懂")
+
+    def test_any_failure_to_speak_keeps_the_refusal(self):
+        """A refusal that arrives blunt beats one that does not arrive."""
+
+        from whole_home_agent.web_app import _voiced_refusal
+
+        class Broken:
+            def refuse(self, question, reason):
+                raise RuntimeError("endpoint down")
+
+        class Empty:
+            def refuse(self, question, reason):
+                return "   "
+
+        class Wrong:
+            def refuse(self, question, reason):
+                return None
+
+        for speaker in (Broken(), Empty(), Wrong()):
+            with self.subTest(speaker=type(speaker).__name__):
+                self.assertEqual(_voiced_refusal(speaker, "你是誰", "聽不懂"), "聽不懂")
+
+    def test_a_usable_line_replaces_the_system_wording(self):
+        from whole_home_agent.web_app import _voiced_refusal
+
+        class Speaker:
+            def refuse(self, question, reason):
+                return "  雷姆只記得東西放在哪裡，這件事幫不上您的忙。  "
+
+        self.assertEqual(
+            _voiced_refusal(Speaker(), "今天天氣如何", "聽不懂"),
+            "雷姆只記得東西放在哪裡，這件事幫不上您的忙。",
+        )
+
+
+class TranslatedReadingBoundaryTests(unittest.TestCase):
+    """A model may re-read a sentence. It may not swap the object in it."""
+
+    def _archive(self, directory: str):
+        path = Path(directory) / "memory.sqlite3"
+        session = run_fixture(load_fixture(FIXTURE), replay_run_id="translate-test")
+        SQLiteReplayArchive(path).save_completed(session)
+        return SQLiteReplayArchive(path)
+
+    def test_a_whole_sentence_quote_names_nothing(self):
+        from whole_home_agent.adapters.loopback_llm import _names_a_span
+
+        question = "我的雨傘在哪裡"
+        self.assertFalse(_names_a_span(question, question))
+        self.assertFalse(_names_a_span("我的鑰匙呢", "我的鑰匙呢？"))
+        self.assertTrue(_names_a_span("雨傘", question))
+        self.assertTrue(_names_a_span("鑰匙", "我的鑰匙呢？"))
+
+    def test_an_unmentioned_entity_is_not_answered(self):
+        """locate/bag for a question about an umbrella must not reach the ledger."""
+
+        from whole_home_agent.memory_query import _entities_not_named
+
+        self.assertEqual(
+            _entities_not_named("我的雨傘在哪裡", {"op": "locate", "subject": "bag"}),
+            ("包包",),
+        )
+        self.assertEqual(
+            _entities_not_named("我的鑰匙呢", {"op": "locate", "subject": "key"}),
+            (),
+        )
+        self.assertEqual(
+            _entities_not_named(
+                "鑰匙在沙發上嗎", {"op": "verify", "subject": "key", "target": "sofa"}
+            ),
+            (),
+        )
+
+    def test_a_substituted_entity_refuses_instead_of_answering(self):
+        from whole_home_agent.memory_query import answer_by_translation
+
+        class Substituting:
+            presenter_id = "test-translator/1"
+
+            def translate(self, question, known_entity_ids):
+                return {"op": "locate", "subject": "bag", "matched_text": "雨傘"}
+
+        with tempfile.TemporaryDirectory() as folder:
+            with self.assertRaises(QuestionError) as raised:
+                answer_by_translation(
+                    self._archive(folder), "我的雨傘在哪裡", Substituting()
+                )
+            self.assertIn("沒有提到", str(raised.exception))
+
+    def test_a_faithful_reading_still_answers(self):
+        from whole_home_agent.memory_query import answer_by_translation
+
+        class Faithful:
+            presenter_id = "test-translator/1"
+
+            def translate(self, question, known_entity_ids):
+                return {"op": "locate", "subject": "key", "matched_text": "鑰匙"}
+
+        with tempfile.TemporaryDirectory() as folder:
+            result = answer_by_translation(
+                self._archive(folder), "我的鑰匙呢", Faithful()
+            )
+            self.assertEqual(result["answer"]["subject_id"], "key")
 
 
 if __name__ == "__main__":

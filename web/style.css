@@ -1,0 +1,121 @@
+:root {
+  --ink: #e8e6e3;
+  --dim: #9a958f;
+  --panel: rgba(18, 20, 26, 0.82);
+  --line: rgba(255, 255, 255, 0.10);
+  --accent: #7fb2ff;
+  --warn: #ffb26b;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: "Noto Sans TC", "PingFang TC", system-ui, sans-serif;
+  color: var(--ink);
+  /* Swap for an image by dropping one in and setting background-image here. */
+  background:
+    radial-gradient(1200px 800px at 78% 22%, #2b3350 0%, transparent 60%),
+    radial-gradient(900px 700px at 20% 80%, #35283c 0%, transparent 55%),
+    linear-gradient(160deg, #0d1017 0%, #141a24 55%, #0b0d12 100%);
+}
+
+#stage { position: fixed; inset: 0; width: 100%; height: 100%; }
+
+/* What she just said, in the gap beside her rather than over her face. The left
+   and right edges are set from JavaScript against her actual bounds, because she
+   can be dragged and a stylesheet would have to assume she had not been. */
+#bubble {
+  position: fixed;
+  top: 14vh;
+  left: 50vw;
+  right: 4vw;
+  width: fit-content;
+  max-width: 100%;
+  margin-left: auto;
+  padding: 0.9rem 1.15rem;
+  background: rgba(20, 23, 30, 0.9);
+  border: 1px solid var(--line);
+  border-radius: 1rem 1rem 0.25rem 1rem;
+  line-height: 1.7;
+  backdrop-filter: blur(8px);
+  animation: rise 0.28s ease-out;
+}
+
+#stage { cursor: grab; }
+@keyframes rise { from { opacity: 0; transform: translateY(6px); } }
+
+#panel {
+  position: fixed;
+  left: 0; top: 0; bottom: 0;
+  width: min(28rem, 42vw);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.4rem 1.4rem 1rem;
+  background: var(--panel);
+  border-right: 1px solid var(--line);
+  backdrop-filter: blur(14px);
+}
+
+h1 { margin: 0; font-size: 1.05rem; letter-spacing: 0.02em; font-weight: 600; }
+.scope { margin: 0.3rem 0 0; font-size: 0.74rem; color: var(--dim); line-height: 1.5; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.chips button {
+  padding: 0.35rem 0.7rem;
+  font: inherit; font-size: 0.82rem;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  cursor: pointer;
+}
+.chips button:hover { background: rgba(127, 178, 255, 0.16); border-color: var(--accent); }
+
+.log { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 0.85rem; padding-right: 0.3rem; }
+.turn { font-size: 0.88rem; line-height: 1.65; }
+.turn .you { color: var(--dim); }
+.turn .her { margin-top: 0.2rem; }
+.turn.refused .her { color: var(--warn); }
+
+/* Collapsed by default: the receipt is there when something looks wrong,
+   not competing with her for attention when it does not. */
+details.basis { margin-top: 0.35rem; font-size: 0.74rem; color: var(--dim); }
+details.basis summary { cursor: pointer; list-style: none; opacity: 0.75; }
+details.basis summary::-webkit-details-marker { display: none; }
+details.basis summary:hover { opacity: 1; color: var(--accent); }
+details.basis .body {
+  margin-top: 0.45rem; padding: 0.6rem 0.7rem;
+  background: rgba(0, 0, 0, 0.28);
+  border-left: 2px solid var(--line);
+  border-radius: 0 0.4rem 0.4rem 0;
+  white-space: pre-wrap; word-break: break-all;
+  font-family: ui-monospace, "JetBrains Mono", monospace;
+  font-size: 0.68rem; line-height: 1.6;
+}
+details.basis .walked { color: var(--accent); }
+
+#ask { display: flex; gap: 0.5rem; }
+#question {
+  flex: 1; padding: 0.6rem 0.8rem;
+  font: inherit; font-size: 0.86rem; color: var(--ink);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--line); border-radius: 0.6rem;
+}
+#question:focus { outline: none; border-color: var(--accent); }
+#send {
+  padding: 0.6rem 1rem; font: inherit; font-weight: 600;
+  color: #06121f; background: var(--accent);
+  border: 0; border-radius: 0.6rem; cursor: pointer;
+}
+#send:disabled { opacity: 0.5; cursor: default; }
+
+.foot { margin: 0; font-size: 0.66rem; color: var(--dim); opacity: 0.75; }
+
+@media (max-width: 720px) {
+  #panel { width: 100%; background: rgba(12, 14, 19, 0.9); }
+  #bubble { display: none; }
+}

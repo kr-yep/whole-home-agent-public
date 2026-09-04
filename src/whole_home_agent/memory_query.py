@@ -382,6 +382,29 @@ _TRANSLATED_OPERATIONS = {
 }
 
 
+def _entities_not_named(question: str, query: Mapping[str, object]) -> tuple[str, ...]:
+    """Entities the model resolved that the sentence never actually mentions.
+
+    The translator is there to read unfamiliar sentence shapes, not to introduce
+    objects. Asked where an umbrella was, it once answered locate/bag: the bag is
+    a known entity, so every id check passed, and the projection returned FOUND
+    with a real chain behind it. An answer about the wrong object carrying a
+    genuine receipt is the one failure the chain exists to make impossible, so
+    the name has to be in the sentence before the reading is accepted.
+    """
+
+    haystack = question.casefold()
+    missing = []
+    for field in ("subject", "target", "container"):
+        entity_id = query.get(field)
+        if not isinstance(entity_id, str):
+            continue
+        display = _CONTAINER_DISPLAY.get(entity_id, entity_id)
+        if display.casefold() not in haystack and entity_id.casefold() not in haystack:
+            missing.append(display)
+    return tuple(missing)
+
+
 def answer_by_translation(
     archive: ReplayArchive,
     question: str,
@@ -402,6 +425,12 @@ def answer_by_translation(
     if query is None or query["op"] == "reject":
         raise QuestionError(
             "這句我聽不出是在問哪個東西的位置",
+            error_code=ErrorCode.UNSUPPORTED_QUESTION,
+        )
+    unnamed = _entities_not_named(question, query)
+    if unnamed:
+        raise QuestionError(
+            "我把這句讀成在問" + "、".join(unnamed) + "，但您的句子裡沒有提到，所以不敢直接回答",
             error_code=ErrorCode.UNSUPPORTED_QUESTION,
         )
     result = _TRANSLATED_OPERATIONS[query["op"]](session, query, presenter)

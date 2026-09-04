@@ -113,3 +113,6 @@ data/external/
 .DS_Store
 Thumbs.db
 Desktop.ini
+
+# Live2D 模型自備，不進版控（體積大，而且同人模型授權多半不明）
+web/live2d/
