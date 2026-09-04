@@ -1,7 +1,7 @@
 /* Character front end. Everything factual comes from /api/ask; this file only
    decides how it looks and where she is looking. */
 
-const MODEL_URL = "/live2d/haru/haru_greeter_t03.model3.json";
+const MODEL_URL = "/live2d/rem/REM.model3.json";
 
 const stage = document.getElementById("stage");
 const bubble = document.getElementById("bubble");
@@ -43,6 +43,7 @@ async function mountModel() {
   }
 
   app.stage.addChild(model);
+  indexMotions();
 
   // Drive the model from this app's ticker rather than the plugin's own wiring:
   // the browser bundle reports autoUpdate true while never attaching, which
@@ -73,11 +74,37 @@ async function mountModel() {
   }
 }
 
+// This model files all 96 motions under one unnamed group, so a motion cannot be
+// asked for by group the way the sample model allowed. Index them by filename
+// once, then play the first candidate that exists -- a model that names things
+// differently simply plays nothing rather than throwing.
+const MOTIONS = {};
+
+function indexMotions() {
+  const groups = (model.internalModel.settings || {}).motions || {};
+  for (const [group, entries] of Object.entries(groups)) {
+    (entries || []).forEach((entry, index) => {
+      const stem = String(entry.File || "").split("/").pop().replace(".motion3.json", "");
+      if (stem && !(stem in MOTIONS)) MOTIONS[stem] = [group, index];
+    });
+  }
+}
+
+function play(...candidates) {
+  if (!model) return;
+  for (const name of candidates) {
+    if (name in MOTIONS) {
+      const [group, index] = MOTIONS[name];
+      try { model.motion(group, index); } catch (_) { /* not loadable */ }
+      return;
+    }
+  }
+}
+
 function express(result) {
-  if (!model || !model.internalModel) return;
-  // Motion groups differ per model, so ask for one and ignore a miss.
-  const group = result && result.refused ? "TapBody" : "Idle";
-  try { model.motion(group); } catch (_) { /* model has no such group */ }
+  // Names are the model's own: unazuku nods, nayamu is troubled, kangaeru thinks.
+  if (result && result.refused) play("act_nayamu", "act_komaru", "act_tameiki");
+  else play("act_unazuku", "act_egao", "act_hohoemu");
 }
 
 /* ---------- rendering an answer ---------- */
@@ -159,6 +186,7 @@ async function ask(text) {
   if (!text.trim()) return;
   send.disabled = true;
   speak("……");
+  play("act_kangaeru", "act_shinken");
   try {
     const response = await fetch("/api/ask", {
       method: "POST",
