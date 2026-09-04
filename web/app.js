@@ -27,12 +27,25 @@ async function mountModel() {
   // toward them, so the eyes stay dead ahead.
   PIXI.live2d.Live2DModel.registerTicker(PIXI.Ticker);
 
+  // This model's texture is 1500x1500, which is not a power of two, and PIXI
+  // only mipmaps power-of-two textures by default. She is drawn about 660px
+  // tall, so every frame was minifying a 1500px texture with no mip chain and
+  // no anisotropic filtering, which is what made the hair and the outlines
+  // crawl. WebGL2 mipmaps a non-power-of-two texture happily. PIXI clamps the
+  // anisotropy request to whatever the GPU reports.
+  PIXI.settings.MIPMAP_TEXTURES = PIXI.MIPMAP_MODES.ON;
+  PIXI.settings.ANISOTROPIC_LEVEL = 16;
+
   const app = new PIXI.Application({
     view: stage,
     autoStart: true,
     resizeTo: window,
     backgroundAlpha: 0,
     antialias: true,
+    // Without these the canvas renders at CSS pixels and the display scales it
+    // up, which costs half the detail on any HiDPI screen.
+    resolution: window.devicePixelRatio || 1,
+    autoDensity: true,
   });
 
   try {
@@ -44,6 +57,15 @@ async function mountModel() {
 
   app.stage.addChild(model);
   indexMotions();
+
+  // Cubism draws every clipped part -- hair over the face, layered clothing --
+  // into one mask buffer and samples it back. The SDK default is 256x256, so
+  // those edges were being magnified roughly three times before they reached
+  // the screen; they were the most visible jaggies of the three causes.
+  const renderer = model.internalModel.renderer;
+  if (renderer && typeof renderer.setClippingMaskBufferSize === "function") {
+    renderer.setClippingMaskBufferSize(2048);
+  }
 
   // Drive the model from this app's ticker rather than the plugin's own wiring:
   // the browser bundle reports autoUpdate true while never attaching, which
