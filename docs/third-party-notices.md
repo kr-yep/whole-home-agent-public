@@ -1,5 +1,32 @@
 # Third-Party Notices
 
+## Vendored Web libraries (inventory added 2026-09-05)
+
+Character integration imports `three.min.js` (r147, MIT banner) and
+`GLTFLoader.js` from teammate branch `live2d-character` at `4fec8b5`.
+The upstream branch identifies the loader as part of the same Three.js release.
+This integration does not complete a redistribution/legal review.
+
+Optional artwork is not included or automatically downloaded. The teammate's
+asset helper identifies Rem's source as `BaneBeetle/waifubeetle2`, and Nailong's
+model as “Nailong by okstepanova2012” on Sketchfab (model ID
+`d4617facf9574b45bc57c64e44497242`), labelled Creative Commons Attribution by
+that branch. Confirm current source terms before supplying or demonstrating it;
+public availability alone is not permission. The character UI displays the
+provided credit when that model is selected. Underlying character rights are
+not granted by this repository's MIT license.
+
+- `web/vendor/pixi.min.js`: header identifies PixiJS 6.5.10.
+- `web/vendor/cubism4.min.js`: bundle identifies pixi-live2d-display version 0.4.0.
+- `web/vendor/live2dcubismcore.min.js`: header identifies Live2D Cubism Core,
+  copyright 2019 Live2D Inc., and references
+  https://www.live2d.com/eula/live2d-proprietary-software-license-agreement_en.html.
+
+These vendor files are not relicensed under this project's MIT license. This is
+an inventory, not a completed redistribution/legal review. Character model artwork
+is excluded from Git; a separate authorized source is required for any supplied
+model. The default house avatar is Unicode/HTML and does not require a character asset.
+
 The self-contained Archify HTML viewers in this directory include software generated from Archify. Archify is not a runtime dependency of the Whole Home Agent Python package.
 
 ## Archify

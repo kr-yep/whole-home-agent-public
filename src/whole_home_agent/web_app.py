@@ -15,12 +15,15 @@ import mimetypes
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from .actuation.dispatcher import CommandDispatcher
 from .actuation.models import ActionStatus
 from .actuation.port import ActuatorPort
 from .adapters.mock_actuator import MockActuator
 from .adapters.loopback_llm import (
+    character_name,
+    DEFAULT_CHARACTER,
     translator_from_environment,
     verbalizer_from_environment,
 )
@@ -39,6 +42,21 @@ from .rem_persona import (
 WEB_ROOT = Path(__file__).resolve().parents[2] / "web"
 DEFAULT_DATABASE = Path(".whole-home-agent/demo-memory.sqlite3")
 MAX_QUESTION_BYTES = 4096
+
+
+def _character_payload(payload: dict, character: object) -> dict:
+    """Change presentation prose only; never replace entity IDs or evidence."""
+    name = character_name(character)
+    if name == DEFAULT_CHARACTER:
+        return payload
+    result = dict(payload)
+    if isinstance(result.get("text"), str):
+        result["text"] = result["text"].replace(DEFAULT_CHARACTER, name)
+    for key in ("spoken", "presentation"):
+        if isinstance(result.get(key), dict) and isinstance(result[key].get("text"), str):
+            result[key] = dict(result[key])
+            result[key]["text"] = result[key]["text"].replace(DEFAULT_CHARACTER, name)
+    return result
 
 
 def _voiced_refusal(verbalizer: object | None, question: str, message: str) -> str:
@@ -80,6 +98,8 @@ class Handler(SimpleHTTPRequestHandler):
         super().end_headers()
 
     def _json(self, status: int, payload: dict) -> None:
+        if self.path == "/api/ask":
+            payload = _character_payload(payload, getattr(self, "character", None))
         body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
         self.send_response(status)
         self.send_header("Content-Type", "application/json; charset=utf-8")
@@ -101,23 +121,40 @@ class Handler(SimpleHTTPRequestHandler):
         super().do_GET()
 
     def do_POST(self) -> None:
+        self.character = None
         if self.path != "/api/ask":
             self._json(404, {"error": "no such route"})
             return
-        length = int(self.headers.get("Content-Length") or 0)
+        origin = self.headers.get("Origin")
+        if origin and urlsplit(origin).netloc != self.headers.get("Host"):
+            self._json(403, {"error": "cross-origin requests are unsupported"})
+            return
+        try:
+            length = int(self.headers.get("Content-Length") or 0)
+        except ValueError:
+            self._json(400, {"error": "invalid content length"})
+            return
         if length <= 0 or length > MAX_QUESTION_BYTES:
             self._json(413, {"error": "question size unsupported"})
             return
         try:
-            question = json.loads(self.rfile.read(length)).get("question")
-        except json.JSONDecodeError:
+            document = json.loads(self.rfile.read(length))
+            question = document.get("question") if isinstance(document, dict) else None
+        except (json.JSONDecodeError, UnicodeDecodeError):
             self._json(400, {"error": "body must be JSON"})
             return
         if not isinstance(question, str) or not question.strip():
             self._json(400, {"error": "question must be non-empty text"})
             return
 
-        verbalizer = verbalizer_from_environment()
+        # character_name validates type before lookup (lists/dicts are unhashable).
+        self.character = document.get("character")
+        try:
+            verbalizer = verbalizer_from_environment(self.character)
+            translator = translator_from_environment()
+        except B0Error:
+            verbalizer = None
+            translator = None
 
         # 1. Dispatch device actuation commands
         action_receipt = self.dispatcher.dispatch(question)
@@ -157,7 +194,7 @@ class Handler(SimpleHTTPRequestHandler):
                 question,
                 presenter=self.presenter,
                 verbalizer=verbalizer,
-                translator=translator_from_environment(),
+                translator=translator,
             )
             # Polish container or verification spoken text with Rem persona if verbalizer is not active
             if verbalizer is None:
@@ -194,14 +231,26 @@ def main() -> None:
     parser.add_argument("--db", type=Path, default=DEFAULT_DATABASE)
     parser.add_argument("--bind", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8600)
+    parser.add_argument("--initialize-demo", action="store_true", help="create the generated replay archive if missing")
     arguments = parser.parse_args()
+    if not WEB_ROOT.is_dir():
+        parser.error("Web assets are missing; run from a repository checkout.")
+    if arguments.initialize_demo and not arguments.db.exists():
+        from .public_demo import run_public_demo
+        run_public_demo(replay_run_id="web-demo-001", include_frames=False,
+                        archive=SQLiteReplayArchive(arguments.db))
 
     mimetypes.add_type("application/json", ".json")
     mimetypes.add_type("application/octet-stream", ".moc3")
     Handler.database = arguments.db
     server = ThreadingHTTPServer((arguments.bind, arguments.port), Handler)
     print(f"serving {WEB_ROOT} on http://{arguments.bind}:{arguments.port}", flush=True)
-    server.serve_forever()
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        server.server_close()
 
 
 if __name__ == "__main__":

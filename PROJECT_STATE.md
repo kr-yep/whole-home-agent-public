@@ -1,5 +1,42 @@
 # Whole Home Agent — Public Repository State
 
+## Current integration note — 2026-09-05
+
+Local verification: locked demo environment passed 570 tests with zero skips.
+Perception ablation v2 completed 60 development and 180 evaluation runs.
+Burst + confirmation preserved measured quality, reduced detector calls 27.5%
+and paired replay time 25.0% on synthetic variants. Single-confirmation arms
+produced false events under occlusion. Defaults remain unchanged; the candidate
+is experiment-only. See docs/evaluation/perception-ablation-v2.md. No commit/push.
+Integrated the main asset-help change (`40dab4b`) and character-switch code from
+`origin/live2d-character` (`4fec8b5`) into the current working tree, without merging
+Git history, committing or pushing. Local hardening and ablation files are retained.
+Three new Python tests and a Node switch-controller test cover character input,
+evidence preservation, missing assets and concurrent selection. Node syntax checks
+passed for the new front-end scripts and vendor libraries. All three artwork
+entries are missing locally; actual character animation/WebGL rendering remains
+unverified. The house fallback remains available. No artwork was downloaded.
+Perception ablation v1 completed 15 fixed synthetic replays across five arms.
+Default motion scheduling lost both events; no-tracking and single-confirmation
+matched baseline on this limited clip; direct-only queries lost the key location.
+Production defaults are unchanged. See docs/evaluation/perception-ablation-v1.md.
+Measured component results: template 15/15, persona 15/15, policy-on 5/5,
+policy-off mock negative control 3/5. No real model/device calls were made.
+These results concern the current uncommitted working tree, not a published release.
+
+Current user direction authorizes local bug fixes, repeatable experiments and demo
+integration. Named project direction: Kris / Whole-Home Agent Team. The existing
+claim ledger and pure domain remain intact. New Web and Streamlit controls use
+MockActuator only. Real sensing, Home Assistant operation and physical actions are
+not activated by this checkpoint. Historical role/gate tables below are retained
+as history rather than prerequisites for ordinary authorized repository fixes.
+
+Current delivery: repository checkout, generated-video memory, text queries, house
+avatar fallback, optional separately supplied Live2D, simulated device receipts.
+The current benchmark is tools/benchmark_local_components.py; historical v2
+scripted-control claims are withdrawn. Next external validation is a teammate clean
+checkout demo and separately scoped real indoor perception testing.
+
 **Checkpoint:** `PUBLIC-B1-OFFLINE-MEMORY-001`
 
 **As of:** `2026-09-02 Asia/Taipei`

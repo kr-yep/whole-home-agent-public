@@ -1,0 +1,46 @@
+{
+  "annotations": {
+    "path": "ablation_v2_stationary_2.annotations.json",
+    "sha256": "24fae3a708af90bbb041bfecfbfae3e203cb7d47010ca20002c1f480e0d9bae1"
+  },
+  "entities": [
+    {
+      "entity_id": "key",
+      "instance_count": 1,
+      "label": "key"
+    },
+    {
+      "entity_id": "bag",
+      "instance_count": 1,
+      "label": "bag"
+    },
+    {
+      "entity_id": "sofa",
+      "instance_count": 1,
+      "label": "sofa"
+    }
+  ],
+  "events": [],
+  "fps": {
+    "denominator": 1,
+    "numerator": 10
+  },
+  "frame_count": 80,
+  "height": 360,
+  "license": "CC0-1.0",
+  "path": "ablation_v2_stationary_2.mp4",
+  "provenance": {
+    "generator": "tools/generate_ablation_v2.py",
+    "generator_sha256": "71d1a2e52613ab6102866a5c689c891fc8fd4e5d035d5c9a7c7a3a961a6e20fd",
+    "kind": "project_generated_synthetic"
+  },
+  "schema_version": 1,
+  "sha256": "3e16af33ffbcee4cbb2c0515f1b7cb727e75494266d4ad66694bc885704d61b0",
+  "source_id": "ablation_v2_stationary_2",
+  "source_kind": "recorded_video",
+  "source_revision": "1",
+  "split": "test",
+  "timestamp_basis": "media_pts",
+  "use_class": "D0_SYNTHETIC",
+  "width": 640
+}

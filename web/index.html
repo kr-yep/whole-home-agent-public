@@ -9,6 +9,7 @@
 <body>
 
 <canvas id="stage"></canvas>
+<div id="avatar-fallback" style="position:fixed;right:8%;top:30%;font-size:clamp(50px,12vw,150px);text-align:center" aria-label="家庭助手">🏠<p style="font-size:18px">家庭助手 · 展示模式</p></div>
 
 <div id="bubble" hidden></div>
 
@@ -18,12 +19,14 @@
       <h1>Whole Home Agent</h1>
       <button id="tts-toggle" class="tts-btn" title="切換雷姆語音朗讀">🔊 語音：開</button>
     </div>
-    <p class="scope">離線可審計記憶 × 智慧家電操控 × Live2D 雷姆</p>
+    <p class="scope">合成影片記憶 × 模擬家電控制 × 語音問答</p>
   </header>
+
+  <div id="cast" class="cast" aria-label="選擇角色"></div>
 
   <!-- 智慧家庭即時狀態列 -->
   <div class="device-section">
-    <div class="section-label">🏠 家電即時狀態</div>
+    <div class="section-label">🏠 模擬家電狀態</div>
     <div id="device-bar" class="device-bar"></div>
   </div>
 
@@ -50,13 +53,17 @@
     <button type="submit" id="send">吩咐</button>
   </form>
 
-  <p class="foot">拖曳可以移動雷姆 · 滾輪縮放 · 雙擊復原站位</p>
-  <p class="foot">OPERATE · 證據導向記憶約束 × 物理舒適安全防護</p>
+  <p class="foot">拖曳可以移動角色 · 滾輪縮放 · 雙擊復原站位</p>
+  <p id="character-credit" class="foot"></p>
+  <p class="foot">離線展示 · 家電操作僅模擬 · 未連接真實攝影機或設備</p>
 </aside>
 
 <script src="/vendor/live2dcubismcore.min.js"></script>
 <script src="/vendor/pixi.min.js"></script>
 <script src="/vendor/cubism4.min.js"></script>
+<script src="/vendor/three.min.js"></script>
+<script src="/vendor/GLTFLoader.js"></script>
+<script src="/characters.js"></script>
 <script src="/app.js"></script>
 </body>
 </html>

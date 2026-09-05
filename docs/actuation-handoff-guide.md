@@ -1,5 +1,10 @@
 # 智慧家電控制端對接與協作指南 (Actuation Handoff Guide)
 
+> 2026-09-05 更正：目前兩個 UI 固定使用 MockActuator。設定 HASS_URL/HASS_TOKEN
+> 不會切換真機。HomeAssistantActuator 是未完成實測的候選介面，不能宣稱已整合。
+> UI 必須透過 CommandDispatcher/ActionPolicy；不得直接呼叫 execute 繞過驗證。
+> 下方舊版真機與直接 execute 指引保留供歷史查考，以此更正為準。
+
 本文件專為團隊組員撰寫，說明如何基於目前的 `ActuatorPort` 協議進行家電控制功能的延伸與硬體對接，確保每位組員在各自的工作進行到一半時，**拉取最新代碼不受任何衝擊（100% 向後相容）**。
 
 ---

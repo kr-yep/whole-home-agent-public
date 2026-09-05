@@ -10,7 +10,7 @@ from .models import ActionRequest, ActionType
 
 # Regex patterns for Chinese & English command recognition
 _RE_AC_TEMP = re.compile(
-    r"(?:冷氣|空調|ac|air\s*conditioner).*?(?:設為|調到|設至|調成|到|為|set\s*(?:ac|temperature)?\s*to)?\s*(\d{1,2}(?:\.\d)?)\s*(?:度|°c|°|c)?",
+    r"(?:冷氣|空調|ac|air\s*conditioner).*?(?:設為|調到|設至|調成|到|為|set\s*(?:ac|temperature)?\s*to)?\s*((?<![\d.])[+-]?\d+(?:\.\d+)?)(?![\d.])\s*(?:度|°c|°|c)?",
     re.IGNORECASE,
 )
 _RE_COVER_POS = re.compile(
@@ -26,6 +26,14 @@ def parse_action_command(text: str) -> Optional[ActionRequest]:
     """
     raw = text.strip()
     lower = raw.lower()
+
+    # Questions, negation, and multi-command sentences must never become actions.
+    if any(word in lower for word in (
+        "不要", "別", "不想", "不能", "別再", "是否", "嗎", "？", "?",
+        "don't", "do not", "never", "not ", "is ", "why ", "how ",
+        "然後", "同時", "以及", " and ",
+    )):
+        return None
 
     # 1. Check Temperature adjustment for Climate
     match_temp = _RE_AC_TEMP.search(lower)

@@ -1,5 +1,35 @@
 # Whole Home Agent
 
+## Current demo entry (2026-09-05)
+
+From this repository checkout, run:
+
+```powershell
+uv run --frozen --extra demo python -m whole_home_agent.web_app --initialize-demo
+```
+
+Open http://127.0.0.1:8600. First launch builds the included synthetic-video
+memory if absent. Ask `鑰匙在哪裡`, `包包裡有什麼`, then try `開客廳燈`.
+All devices shown in this demo are simulated; Home Assistant is not selected.
+The house avatar works without any third-party character model. An independently
+licensed Live2D model may optionally be placed at `web/live2d/rem/REM.model3.json`;
+this repository does not distribute that character asset. Browser TTS depends on
+installed voices and browser settings and is not a validated offline speech engine.
+
+Character switching (Rem / Nailong 3D / Nailong flat) is integrated from the
+teammate branch. Run `python tools/fetch_character_assets.py --check` for a
+read-only inventory. The helper can fetch Rem only when explicitly run without
+`--check`; Nailong assets need to be supplied separately. See [web setup](web/README.md).
+Missing artwork preserves the current avatar and does not block memory queries.
+
+Run `python tools/benchmark_local_components.py` after installing the package for
+a measured local component comparison. It creates temporary synthetic memory,
+compares template/persona answers, and removes the policy only on mock devices.
+No LLM performance, household perception, or physical safety guarantee is claimed.
+
+The older sections below describe the prerecorded CLI/Streamlit baseline. The current
+UI also supports **simulated** device commands; physical operation remains disabled.
+
 > **Hackathon demo:** prerecorded object-location memory
 > **Status:** `NOT PRODUCTION` · `OPERATE DISABLED` · no camera or API key required
 

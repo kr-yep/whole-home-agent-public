@@ -1,0 +1,1160 @@
+{
+  "schema_version": 1,
+  "scope": "one synthetic clip; no real-home claim",
+  "source_hash": "b9cc79476d77f8d45acd1803c924de73914ffc4790f4da271f77cc8d4742eb43",
+  "file_sha256": {
+    "tools/benchmark_perception_ablation.py": "063208b0eaeeeeabf4cf23e9a65df3fbb9d5dbbf92d48c98cdf195bf869824b7",
+    "docs/evaluation/perception-ablation-v1-plan.md": "4cbbf876e409b4d33b97d54903881e3701c5b44ef2300b4bc6ac07771ac26b85",
+    "configs/perception/synthetic-color-v1.toml": "bf801809da371febe39ad2c6d487e1a3ba9c19b72d262999f2af9f0068bbb5b1",
+    "configs/perception/relation-rules-v1.toml": "3508ad8490fb42367140fed632878bc38d23fa7059cb92e4b2d989208ae91b93",
+    "configs/perception/relation-eval-v1.toml": "842453a0310bb4954674434bd61402001f77ad5868cc4a3e0d5c938c3f0388f0",
+    "src/whole_home_agent/__init__.py": "85d15c6ad1683021538857df92377cf0b3fcbe7023cea0f00c88593ce7636388",
+    "src/whole_home_agent/__main__.py": "cd05f0cec7b775def6b4cc1b2c10e01d399b2d582a94f257cced82a6d1475080",
+    "src/whole_home_agent/actuation/__init__.py": "2c83ef9b3d1af9fb072ee59e1bedeb6a2cbe76ad74e15170cce0f85e05c5e0b5",
+    "src/whole_home_agent/actuation/dispatcher.py": "da33c0aed3fc1196cac183a8d2af5e7b46c5eb9748d52505ceef534eb6d7251d",
+    "src/whole_home_agent/actuation/models.py": "0199a78b139303c01b5b74c2b4dd0c43787b92d2a5f87d7fe452329c6c11ff8d",
+    "src/whole_home_agent/actuation/parser.py": "10907dcf91f357a93b18bcee79cff47e9a0f70801ee96a1664f85bae30e30716",
+    "src/whole_home_agent/actuation/policy.py": "69638077c43db6b510235819e8e167b7db577439b769b99d54611c3247c9d081",
+    "src/whole_home_agent/actuation/port.py": "05124a62876f678fae561ae4823b43afb864804a7fcab7cd1c4918416b762479",
+    "src/whole_home_agent/adapters/__init__.py": "39c24f9f8a28fc12ef906a0ce237112cb4d4b6756399217b6b297a080c2ead14",
+    "src/whole_home_agent/adapters/annotation_oracle.py": "618665e9bf8f66df6dc25a433ef009aff6dff57a998a535f0c9ba996a94598e1",
+    "src/whole_home_agent/adapters/bop_d1.py": "a114bd74663664837bb32d8d46a8f1fb26c5ed148c5f4dd9c35665bd9d4462ff",
+    "src/whole_home_agent/adapters/bop_diagnostic.py": "4db83e36519bac2dee7b96cc52244c0b6e5be5ca9e3750ef8cd84321876d8057",
+    "src/whole_home_agent/adapters/dfine.py": "8dc6f331698364720c17f67e309878fa49b448e2f05096b140c98c6c06faf453",
+    "src/whole_home_agent/adapters/home_assistant_actuator.py": "2ebc83be4c173e62a6a7d48dbea2c06a3398344c84a445faf2cefeb5f79ad815",
+    "src/whole_home_agent/adapters/loopback_llm.py": "d469f376f00fb3794983dad87b9e100ddec26db352a15cadb6d6e36af0d32dd0",
+    "src/whole_home_agent/adapters/mock_actuator.py": "67647f3e82f9674eda8755d7a68a96b0a701945c59d7222ac3e4391d458e3fde",
+    "src/whole_home_agent/adapters/motion.py": "910628f8e048c04d07ba99ea13a1f3deae4e4953ad7eb2bab768b574140d1560",
+    "src/whole_home_agent/adapters/recorded_perception_source.py": "2497bc67c86ab445c693cdb500313ae8917b94766c20f67675f74924ec3faabe",
+    "src/whole_home_agent/adapters/recorded_video.py": "d6c916cbf5721534b3cb102a1100a97e959d56061727b0f7fd434b3d5f4f2815",
+    "src/whole_home_agent/adapters/rfdetr.py": "d7bfd3fe06487ee6afb08ecba027d35b3240fac891efe7aab36e10ef2da10ed7",
+    "src/whole_home_agent/adapters/slicing.py": "33873d41bc57114bb9fc853023cd5096f5f09e322599a21cf610eb8fb7e1bd35",
+    "src/whole_home_agent/adapters/sqlite_archive.py": "4818437e8804ccf15f96e032de77c743bb1815e7b187c23a2b49047e6cfdbff5",
+    "src/whole_home_agent/adapters/synthetic_color.py": "324d89a032e863a84b0e00bfe7a39fbe67fcb3974a23ed533d67cff9d712b612",
+    "src/whole_home_agent/adapters/torchvision_coco.py": "fbced298e9ef958ad23f8b9ae3b8d9d622ca0c342f34085c224392ebbd4a2545",
+    "src/whole_home_agent/adapters/tracking.py": "2c1f840368fcb30b5a53176d0150de329b0882a1239e48952a992417fb49d950",
+    "src/whole_home_agent/adapters/visor.py": "6576444e4c28160ed98bab3c7e03566bef1b7d661461af5ebf815cc642bdfcc4",
+    "src/whole_home_agent/adapters/vost.py": "05317b08f1a0ba2cc58b4b73cdd012e37b7eded18aa41333b895c40a341ada1c",
+    "src/whole_home_agent/binding.py": "b67cd1b136d5b7b9d113d83c35d98cd24d01febc0b76a209c9af8371856c56f3",
+    "src/whole_home_agent/cli.py": "b9cdced2d15e0cdc52356926ff6dd40e5b0908d7d00fbee799b6c5e2afe648a0",
+    "src/whole_home_agent/errors.py": "ce4ff9b0f0132e11c617c42559d7d525cc5b4e920ad1a9e02ca3a21d16285625",
+    "src/whole_home_agent/evaluation.py": "acaa4b6b1f0281577b225f849ca9794b51122a0db1897760d8ec4a1c28339ad5",
+    "src/whole_home_agent/fixture.py": "6733ba426118ba76ec73b557c897887d78a22c649dc69812dad15284fe8fce55",
+    "src/whole_home_agent/ledger.py": "eb622c67b968796779a9954a3baca52169500c4466de02c53ca5b0373e483726",
+    "src/whole_home_agent/llm_context.py": "4baf318f32066c9b1e87b0b7abb45578ff46a434d54df6b735cc87cc9a0fcf5b",
+    "src/whole_home_agent/memory.py": "76f5683031f3aa33d1c7f98b8b21060843518526b64409ebd4e491a20453f5c7",
+    "src/whole_home_agent/memory_app.py": "dd0971d96a6d4b0604f8ca3c5a72ff9eaa19d75dee3991bbdb0cc11d9727ce0a",
+    "src/whole_home_agent/memory_query.py": "5cfddb9debbb975868eb228b1fb5baf06d9fab100ff960e76a9e042483eb8323",
+    "src/whole_home_agent/model.py": "484a6a641fa36cdefa42e727a6e1848280e4ea95c0eadc377521ec74499c5728",
+    "src/whole_home_agent/motion_evaluation.py": "592dfe0f0e614a8d6404c8991e4d93eb703bc1dc049a1ab59b67978d0fa6f97b",
+    "src/whole_home_agent/natural_query.py": "2fb7466d27202e7a4d33e301f318a8b5fbb4180549cd43498eb4e0e381154fd9",
+    "src/whole_home_agent/orchestrator.py": "dc83e3cc04e088f4260f2baae7c88151d1507a0c6381f93b11af2221483991dd",
+    "src/whole_home_agent/perception.py": "3b480ab8b154686960a61d9706b6ded071f0e9ca0fa392e94b31172e9e376457",
+    "src/whole_home_agent/presentation.py": "387b6ff56d42fea792901b1b2a09d3e5be3bea5fa31b636a2332fd6da34caf50",
+    "src/whole_home_agent/public_demo.py": "554ad67ae3f625549ec471e0a3c4a76d566b09607a33007d01a5d4eb04dd4a3a",
+    "src/whole_home_agent/relation_evaluation.py": "2a817826ee450a8b1705ac8c0e1f23f6e326b60e33ad559b2c5a07994adab368",
+    "src/whole_home_agent/relation_inference.py": "43bcdaa12dcf8d6740d09db378238359cfcf8e6024e88b095ae9a0ad981cb590",
+    "src/whole_home_agent/relations.py": "617edad89955cbed6b04e7d4306295efba8b61f09c4b3ff33d59b156e17204fd",
+    "src/whole_home_agent/rem_persona.py": "99f94402a55efc299d395e80a4d310c9f128037a25468540fa58627a38d9bc43",
+    "src/whole_home_agent/serialization.py": "b54ccb2cee2f4a146c9df66f7ade95b7b6fce0ca2fb9207c8db081c65798e87b",
+    "src/whole_home_agent/sources.py": "b85d4354b95f1fff92bd5a8650c0eee6d4995d00e0b3d6a3002aa4f4d1f715b5",
+    "src/whole_home_agent/streamlit_app.py": "74324b5d6fae85ccffe12f54d0247ed8b4b9c5184b70c7c613dac2815df74572",
+    "src/whole_home_agent/target_oracle.py": "c69f41a0c9e957ba56673919279d3f504ee6badae64b24c9e13e367c69a0d8f2",
+    "src/whole_home_agent/verification.py": "727511bc325d9838dfaa69f81796b03abb4ba8a4d6a915bc7a04f5b55914f7ad",
+    "src/whole_home_agent/video_manifest.py": "cdd8bdca1a87d6e61f441bb6c3e932b3bf1eafe3c3b967cda0822376e0209f95",
+    "src/whole_home_agent/web_app.py": "9e338eef29e760de7cf3fd33e335282feeed8b4e156d784a321c493ba3cd4d36"
+  },
+  "bootstrap_ci": null,
+  "bootstrap_reason": "one independent clip; repeats measure runtime variation only",
+  "gpu_vram": null,
+  "gpu_reason": "CPU synthetic color detector; not a YOLO measurement",
+  "rows": [
+    {
+      "arm": "baseline",
+      "repeat": 0,
+      "replay_ms": 2483.6530000029597,
+      "detector_calls": 80,
+      "detector_p50_ms": 22.255500007304363,
+      "detector_p95_ms": 23.799500006134622,
+      "decoded_frames": 80,
+      "selected_frames": 80,
+      "quality": {
+        "abstention_count": 0,
+        "answer_correct": true,
+        "answer_location_id": "sofa",
+        "answer_status": "FOUND",
+        "confirmation_lags_frames": [
+          2,
+          3
+        ],
+        "expected_events": 2,
+        "f1": 1.0,
+        "matched_events": 2,
+        "precision": 1.0,
+        "predicted_events": 2,
+        "recall": 1.0,
+        "false_events": 0,
+        "missed_events": 0
+      },
+      "rules": {
+        "rule_version": "b1-temporal-relations/1",
+        "subject_entity_id": "key",
+        "container_entity_id": "bag",
+        "zone_entity_id": "sofa",
+        "containment_lookback_frames": 5,
+        "contained_observations_required": 2,
+        "disappearance_confirmation_frames": 3,
+        "take_out_confirmation_frames": 2,
+        "container_motion_max_pixels": 2.0,
+        "zone_enter_overlap_ratio": 0.6,
+        "zone_exit_overlap_ratio": 0.2,
+        "zone_stable_confirmation_frames": 3,
+        "zone_exit_confirmation_frames": 3,
+        "maximum_observation_gap_frames": 2
+      },
+      "tracker": {
+        "match_iou_threshold": 0.25,
+        "max_missed_updates": 2,
+        "tracker": "label-aware-greedy-iou/1"
+      },
+      "scheduler": null,
+      "claims": [
+        {
+          "subject": "key",
+          "predicate": "inside",
+          "object": "bag",
+          "operation": "assert",
+          "frame": 37
+        },
+        {
+          "subject": "bag",
+          "predicate": "at_zone",
+          "object": "sofa",
+          "operation": "assert",
+          "frame": 68
+        }
+      ]
+    },
+    {
+      "arm": "motion_periodic",
+      "repeat": 0,
+      "replay_ms": 552.5977999932365,
+      "detector_calls": 8,
+      "detector_p50_ms": 22.062499992898665,
+      "detector_p95_ms": 23.161700009950437,
+      "decoded_frames": 80,
+      "selected_frames": 8,
+      "quality": {
+        "abstention_count": 7,
+        "answer_correct": false,
+        "answer_location_id": null,
+        "answer_status": "UNKNOWN",
+        "confirmation_lags_frames": [],
+        "expected_events": 2,
+        "f1": 0.0,
+        "matched_events": 0,
+        "precision": 0.0,
+        "predicted_events": 0,
+        "recall": 0.0,
+        "false_events": 0,
+        "missed_events": 2
+      },
+      "rules": {
+        "rule_version": "b1-temporal-relations/1",
+        "subject_entity_id": "key",
+        "container_entity_id": "bag",
+        "zone_entity_id": "sofa",
+        "containment_lookback_frames": 5,
+        "contained_observations_required": 2,
+        "disappearance_confirmation_frames": 3,
+        "take_out_confirmation_frames": 2,
+        "container_motion_max_pixels": 2.0,
+        "zone_enter_overlap_ratio": 0.6,
+        "zone_exit_overlap_ratio": 0.2,
+        "zone_stable_confirmation_frames": 3,
+        "zone_exit_confirmation_frames": 3,
+        "maximum_observation_gap_frames": 2
+      },
+      "tracker": {
+        "match_iou_threshold": 0.25,
+        "max_missed_updates": 2,
+        "tracker": "label-aware-greedy-iou/1"
+      },
+      "scheduler": {
+        "anchor_interval_frames": 10,
+        "min_gap_frames": 2,
+        "motion_threshold": 0.03,
+        "sample_stride": 8,
+        "scheduler": "motion-periodic/1"
+      },
+      "claims": []
+    },
+    {
+      "arm": "no_tracking",
+      "repeat": 0,
+      "replay_ms": 2216.775699998834,
+      "detector_calls": 80,
+      "detector_p50_ms": 22.14580000145361,
+      "detector_p95_ms": 26.144599993131123,
+      "decoded_frames": 80,
+      "selected_frames": 80,
+      "quality": {
+        "abstention_count": 0,
+        "answer_correct": true,
+        "answer_location_id": "sofa",
+        "answer_status": "FOUND",
+        "confirmation_lags_frames": [
+          2,
+          3
+        ],
+        "expected_events": 2,
+        "f1": 1.0,
+        "matched_events": 2,
+        "precision": 1.0,
+        "predicted_events": 2,
+        "recall": 1.0,
+        "false_events": 0,
+        "missed_events": 0
+      },
+      "rules": {
+        "rule_version": "b1-temporal-relations/1",
+        "subject_entity_id": "key",
+        "container_entity_id": "bag",
+        "zone_entity_id": "sofa",
+        "containment_lookback_frames": 5,
+        "contained_observations_required": 2,
+        "disappearance_confirmation_frames": 3,
+        "take_out_confirmation_frames": 2,
+        "container_motion_max_pixels": 2.0,
+        "zone_enter_overlap_ratio": 0.6,
+        "zone_exit_overlap_ratio": 0.2,
+        "zone_stable_confirmation_frames": 3,
+        "zone_exit_confirmation_frames": 3,
+        "maximum_observation_gap_frames": 2
+      },
+      "tracker": {
+        "tracker": "frame-local-no-association/1"
+      },
+      "scheduler": null,
+      "claims": [
+        {
+          "subject": "key",
+          "predicate": "inside",
+          "object": "bag",
+          "operation": "assert",
+          "frame": 37
+        },
+        {
+          "subject": "bag",
+          "predicate": "at_zone",
+          "object": "sofa",
+          "operation": "assert",
+          "frame": 68
+        }
+      ]
+    },
+    {
+      "arm": "single_confirmation",
+      "repeat": 0,
+      "replay_ms": 2182.7522000094177,
+      "detector_calls": 80,
+      "detector_p50_ms": 22.006700004567392,
+      "detector_p95_ms": 24.82939999026712,
+      "decoded_frames": 80,
+      "selected_frames": 80,
+      "quality": {
+        "abstention_count": 0,
+        "answer_correct": true,
+        "answer_location_id": "sofa",
+        "answer_status": "FOUND",
+        "confirmation_lags_frames": [
+          0,
+          1
+        ],
+        "expected_events": 2,
+        "f1": 1.0,
+        "matched_events": 2,
+        "precision": 1.0,
+        "predicted_events": 2,
+        "recall": 1.0,
+        "false_events": 0,
+        "missed_events": 0
+      },
+      "rules": {
+        "rule_version": "b1-temporal-relations/1",
+        "subject_entity_id": "key",
+        "container_entity_id": "bag",
+        "zone_entity_id": "sofa",
+        "containment_lookback_frames": 5,
+        "contained_observations_required": 1,
+        "disappearance_confirmation_frames": 1,
+        "take_out_confirmation_frames": 1,
+        "container_motion_max_pixels": 2.0,
+        "zone_enter_overlap_ratio": 0.6,
+        "zone_exit_overlap_ratio": 0.2,
+        "zone_stable_confirmation_frames": 1,
+        "zone_exit_confirmation_frames": 1,
+        "maximum_observation_gap_frames": 2
+      },
+      "tracker": {
+        "match_iou_threshold": 0.25,
+        "max_missed_updates": 2,
+        "tracker": "label-aware-greedy-iou/1"
+      },
+      "scheduler": null,
+      "claims": [
+        {
+          "subject": "key",
+          "predicate": "inside",
+          "object": "bag",
+          "operation": "assert",
+          "frame": 35
+        },
+        {
+          "subject": "bag",
+          "predicate": "at_zone",
+          "object": "sofa",
+          "operation": "assert",
+          "frame": 66
+        }
+      ]
+    },
+    {
+      "arm": "direct_only",
+      "repeat": 0,
+      "replay_ms": 2236.7599999997765,
+      "detector_calls": 80,
+      "detector_p50_ms": 22.325600002659485,
+      "detector_p95_ms": 26.69420000165701,
+      "decoded_frames": 80,
+      "selected_frames": 80,
+      "quality": {
+        "abstention_count": 0,
+        "answer_correct": false,
+        "answer_location_id": null,
+        "answer_status": "UNKNOWN",
+        "confirmation_lags_frames": [
+          2,
+          3
+        ],
+        "expected_events": 2,
+        "f1": 1.0,
+        "matched_events": 2,
+        "precision": 1.0,
+        "predicted_events": 2,
+        "recall": 1.0,
+        "false_events": 0,
+        "missed_events": 0
+      },
+      "rules": {
+        "rule_version": "b1-temporal-relations/1",
+        "subject_entity_id": "key",
+        "container_entity_id": "bag",
+        "zone_entity_id": "sofa",
+        "containment_lookback_frames": 5,
+        "contained_observations_required": 2,
+        "disappearance_confirmation_frames": 3,
+        "take_out_confirmation_frames": 2,
+        "container_motion_max_pixels": 2.0,
+        "zone_enter_overlap_ratio": 0.6,
+        "zone_exit_overlap_ratio": 0.2,
+        "zone_stable_confirmation_frames": 3,
+        "zone_exit_confirmation_frames": 3,
+        "maximum_observation_gap_frames": 2
+      },
+      "tracker": {
+        "match_iou_threshold": 0.25,
+        "max_missed_updates": 2,
+        "tracker": "label-aware-greedy-iou/1"
+      },
+      "scheduler": null,
+      "claims": [
+        {
+          "subject": "key",
+          "predicate": "inside",
+          "object": "bag",
+          "operation": "assert",
+          "frame": 37
+        },
+        {
+          "subject": "bag",
+          "predicate": "at_zone",
+          "object": "sofa",
+          "operation": "assert",
+          "frame": 68
+        }
+      ]
+    },
+    {
+      "arm": "motion_periodic",
+      "repeat": 1,
+      "replay_ms": 524.1238000016892,
+      "detector_calls": 8,
+      "detector_p50_ms": 21.95580000989139,
+      "detector_p95_ms": 30.152100007398985,
+      "decoded_frames": 80,
+      "selected_frames": 8,
+      "quality": {
+        "abstention_count": 7,
+        "answer_correct": false,
+        "answer_location_id": null,
+        "answer_status": "UNKNOWN",
+        "confirmation_lags_frames": [],
+        "expected_events": 2,
+        "f1": 0.0,
+        "matched_events": 0,
+        "precision": 0.0,
+        "predicted_events": 0,
+        "recall": 0.0,
+        "false_events": 0,
+        "missed_events": 2
+      },
+      "rules": {
+        "rule_version": "b1-temporal-relations/1",
+        "subject_entity_id": "key",
+        "container_entity_id": "bag",
+        "zone_entity_id": "sofa",
+        "containment_lookback_frames": 5,
+        "contained_observations_required": 2,
+        "disappearance_confirmation_frames": 3,
+        "take_out_confirmation_frames": 2,
+        "container_motion_max_pixels": 2.0,
+        "zone_enter_overlap_ratio": 0.6,
+        "zone_exit_overlap_ratio": 0.2,
+        "zone_stable_confirmation_frames": 3,
+        "zone_exit_confirmation_frames": 3,
+        "maximum_observation_gap_frames": 2
+      },
+      "tracker": {
+        "match_iou_threshold": 0.25,
+        "max_missed_updates": 2,
+        "tracker": "label-aware-greedy-iou/1"
+      },
+      "scheduler": {
+        "anchor_interval_frames": 10,
+        "min_gap_frames": 2,
+        "motion_threshold": 0.03,
+        "sample_stride": 8,
+        "scheduler": "motion-periodic/1"
+      },
+      "claims": []
+    },
+    {
+      "arm": "no_tracking",
+      "repeat": 1,
+      "replay_ms": 2137.3428000079,
+      "detector_calls": 80,
+      "detector_p50_ms": 21.926999994320795,
+      "detector_p95_ms": 24.991400001454167,
+      "decoded_frames": 80,
+      "selected_frames": 80,
+      "quality": {
+        "abstention_count": 0,
+        "answer_correct": true,
+        "answer_location_id": "sofa",
+        "answer_status": "FOUND",
+        "confirmation_lags_frames": [
+          2,
+          3
+        ],
+        "expected_events": 2,
+        "f1": 1.0,
+        "matched_events": 2,
+        "precision": 1.0,
+        "predicted_events": 2,
+        "recall": 1.0,
+        "false_events": 0,
+        "missed_events": 0
+      },
+      "rules": {
+        "rule_version": "b1-temporal-relations/1",
+        "subject_entity_id": "key",
+        "container_entity_id": "bag",
+        "zone_entity_id": "sofa",
+        "containment_lookback_frames": 5,
+        "contained_observations_required": 2,
+        "disappearance_confirmation_frames": 3,
+        "take_out_confirmation_frames": 2,
+        "container_motion_max_pixels": 2.0,
+        "zone_enter_overlap_ratio": 0.6,
+        "zone_exit_overlap_ratio": 0.2,
+        "zone_stable_confirmation_frames": 3,
+        "zone_exit_confirmation_frames": 3,
+        "maximum_observation_gap_frames": 2
+      },
+      "tracker": {
+        "tracker": "frame-local-no-association/1"
+      },
+      "scheduler": null,
+      "claims": [
+        {
+          "subject": "key",
+          "predicate": "inside",
+          "object": "bag",
+          "operation": "assert",
+          "frame": 37
+        },
+        {
+          "subject": "bag",
+          "predicate": "at_zone",
+          "object": "sofa",
+          "operation": "assert",
+          "frame": 68
+        }
+      ]
+    },
+    {
+      "arm": "single_confirmation",
+      "repeat": 1,
+      "replay_ms": 2116.536300003645,
+      "detector_calls": 80,
+      "detector_p50_ms": 21.93450000777375,
+      "detector_p95_ms": 23.198499999125488,
+      "decoded_frames": 80,
+      "selected_frames": 80,
+      "quality": {
+        "abstention_count": 0,
+        "answer_correct": true,
+        "answer_location_id": "sofa",
+        "answer_status": "FOUND",
+        "confirmation_lags_frames": [
+          0,
+          1
+        ],
+        "expected_events": 2,
+        "f1": 1.0,
+        "matched_events": 2,
+        "precision": 1.0,
+        "predicted_events": 2,
+        "recall": 1.0,
+        "false_events": 0,
+        "missed_events": 0
+      },
+      "rules": {
+        "rule_version": "b1-temporal-relations/1",
+        "subject_entity_id": "key",
+        "container_entity_id": "bag",
+        "zone_entity_id": "sofa",
+        "containment_lookback_frames": 5,
+        "contained_observations_required": 1,
+        "disappearance_confirmation_frames": 1,
+        "take_out_confirmation_frames": 1,
+        "container_motion_max_pixels": 2.0,
+        "zone_enter_overlap_ratio": 0.6,
+        "zone_exit_overlap_ratio": 0.2,
+        "zone_stable_confirmation_frames": 1,
+        "zone_exit_confirmation_frames": 1,
+        "maximum_observation_gap_frames": 2
+      },
+      "tracker": {
+        "match_iou_threshold": 0.25,
+        "max_missed_updates": 2,
+        "tracker": "label-aware-greedy-iou/1"
+      },
+      "scheduler": null,
+      "claims": [
+        {
+          "subject": "key",
+          "predicate": "inside",
+          "object": "bag",
+          "operation": "assert",
+          "frame": 35
+        },
+        {
+          "subject": "bag",
+          "predicate": "at_zone",
+          "object": "sofa",
+          "operation": "assert",
+          "frame": 66
+        }
+      ]
+    },
+    {
+      "arm": "direct_only",
+      "repeat": 1,
+      "replay_ms": 2105.585400000564,
+      "detector_calls": 80,
+      "detector_p50_ms": 21.69829999911599,
+      "detector_p95_ms": 25.246499993954785,
+      "decoded_frames": 80,
+      "selected_frames": 80,
+      "quality": {
+        "abstention_count": 0,
+        "answer_correct": false,
+        "answer_location_id": null,
+        "answer_status": "UNKNOWN",
+        "confirmation_lags_frames": [
+          2,
+          3
+        ],
+        "expected_events": 2,
+        "f1": 1.0,
+        "matched_events": 2,
+        "precision": 1.0,
+        "predicted_events": 2,
+        "recall": 1.0,
+        "false_events": 0,
+        "missed_events": 0
+      },
+      "rules": {
+        "rule_version": "b1-temporal-relations/1",
+        "subject_entity_id": "key",
+        "container_entity_id": "bag",
+        "zone_entity_id": "sofa",
+        "containment_lookback_frames": 5,
+        "contained_observations_required": 2,
+        "disappearance_confirmation_frames": 3,
+        "take_out_confirmation_frames": 2,
+        "container_motion_max_pixels": 2.0,
+        "zone_enter_overlap_ratio": 0.6,
+        "zone_exit_overlap_ratio": 0.2,
+        "zone_stable_confirmation_frames": 3,
+        "zone_exit_confirmation_frames": 3,
+        "maximum_observation_gap_frames": 2
+      },
+      "tracker": {
+        "match_iou_threshold": 0.25,
+        "max_missed_updates": 2,
+        "tracker": "label-aware-greedy-iou/1"
+      },
+      "scheduler": null,
+      "claims": [
+        {
+          "subject": "key",
+          "predicate": "inside",
+          "object": "bag",
+          "operation": "assert",
+          "frame": 37
+        },
+        {
+          "subject": "bag",
+          "predicate": "at_zone",
+          "object": "sofa",
+          "operation": "assert",
+          "frame": 68
+        }
+      ]
+    },
+    {
+      "arm": "baseline",
+      "repeat": 1,
+      "replay_ms": 2250.1326000055997,
+      "detector_calls": 80,
+      "detector_p50_ms": 22.32239999284502,
+      "detector_p95_ms": 30.602300001191907,
+      "decoded_frames": 80,
+      "selected_frames": 80,
+      "quality": {
+        "abstention_count": 0,
+        "answer_correct": true,
+        "answer_location_id": "sofa",
+        "answer_status": "FOUND",
+        "confirmation_lags_frames": [
+          2,
+          3
+        ],
+        "expected_events": 2,
+        "f1": 1.0,
+        "matched_events": 2,
+        "precision": 1.0,
+        "predicted_events": 2,
+        "recall": 1.0,
+        "false_events": 0,
+        "missed_events": 0
+      },
+      "rules": {
+        "rule_version": "b1-temporal-relations/1",
+        "subject_entity_id": "key",
+        "container_entity_id": "bag",
+        "zone_entity_id": "sofa",
+        "containment_lookback_frames": 5,
+        "contained_observations_required": 2,
+        "disappearance_confirmation_frames": 3,
+        "take_out_confirmation_frames": 2,
+        "container_motion_max_pixels": 2.0,
+        "zone_enter_overlap_ratio": 0.6,
+        "zone_exit_overlap_ratio": 0.2,
+        "zone_stable_confirmation_frames": 3,
+        "zone_exit_confirmation_frames": 3,
+        "maximum_observation_gap_frames": 2
+      },
+      "tracker": {
+        "match_iou_threshold": 0.25,
+        "max_missed_updates": 2,
+        "tracker": "label-aware-greedy-iou/1"
+      },
+      "scheduler": null,
+      "claims": [
+        {
+          "subject": "key",
+          "predicate": "inside",
+          "object": "bag",
+          "operation": "assert",
+          "frame": 37
+        },
+        {
+          "subject": "bag",
+          "predicate": "at_zone",
+          "object": "sofa",
+          "operation": "assert",
+          "frame": 68
+        }
+      ]
+    },
+    {
+      "arm": "no_tracking",
+      "repeat": 2,
+      "replay_ms": 2123.8346999889472,
+      "detector_calls": 80,
+      "detector_p50_ms": 21.909200004301965,
+      "detector_p95_ms": 25.123100000200793,
+      "decoded_frames": 80,
+      "selected_frames": 80,
+      "quality": {
+        "abstention_count": 0,
+        "answer_correct": true,
+        "answer_location_id": "sofa",
+        "answer_status": "FOUND",
+        "confirmation_lags_frames": [
+          2,
+          3
+        ],
+        "expected_events": 2,
+        "f1": 1.0,
+        "matched_events": 2,
+        "precision": 1.0,
+        "predicted_events": 2,
+        "recall": 1.0,
+        "false_events": 0,
+        "missed_events": 0
+      },
+      "rules": {
+        "rule_version": "b1-temporal-relations/1",
+        "subject_entity_id": "key",
+        "container_entity_id": "bag",
+        "zone_entity_id": "sofa",
+        "containment_lookback_frames": 5,
+        "contained_observations_required": 2,
+        "disappearance_confirmation_frames": 3,
+        "take_out_confirmation_frames": 2,
+        "container_motion_max_pixels": 2.0,
+        "zone_enter_overlap_ratio": 0.6,
+        "zone_exit_overlap_ratio": 0.2,
+        "zone_stable_confirmation_frames": 3,
+        "zone_exit_confirmation_frames": 3,
+        "maximum_observation_gap_frames": 2
+      },
+      "tracker": {
+        "tracker": "frame-local-no-association/1"
+      },
+      "scheduler": null,
+      "claims": [
+        {
+          "subject": "key",
+          "predicate": "inside",
+          "object": "bag",
+          "operation": "assert",
+          "frame": 37
+        },
+        {
+          "subject": "bag",
+          "predicate": "at_zone",
+          "object": "sofa",
+          "operation": "assert",
+          "frame": 68
+        }
+      ]
+    },
+    {
+      "arm": "single_confirmation",
+      "repeat": 2,
+      "replay_ms": 2107.9964000091422,
+      "detector_calls": 80,
+      "detector_p50_ms": 21.870299999136478,
+      "detector_p95_ms": 24.254200005088933,
+      "decoded_frames": 80,
+      "selected_frames": 80,
+      "quality": {
+        "abstention_count": 0,
+        "answer_correct": true,
+        "answer_location_id": "sofa",
+        "answer_status": "FOUND",
+        "confirmation_lags_frames": [
+          0,
+          1
+        ],
+        "expected_events": 2,
+        "f1": 1.0,
+        "matched_events": 2,
+        "precision": 1.0,
+        "predicted_events": 2,
+        "recall": 1.0,
+        "false_events": 0,
+        "missed_events": 0
+      },
+      "rules": {
+        "rule_version": "b1-temporal-relations/1",
+        "subject_entity_id": "key",
+        "container_entity_id": "bag",
+        "zone_entity_id": "sofa",
+        "containment_lookback_frames": 5,
+        "contained_observations_required": 1,
+        "disappearance_confirmation_frames": 1,
+        "take_out_confirmation_frames": 1,
+        "container_motion_max_pixels": 2.0,
+        "zone_enter_overlap_ratio": 0.6,
+        "zone_exit_overlap_ratio": 0.2,
+        "zone_stable_confirmation_frames": 1,
+        "zone_exit_confirmation_frames": 1,
+        "maximum_observation_gap_frames": 2
+      },
+      "tracker": {
+        "match_iou_threshold": 0.25,
+        "max_missed_updates": 2,
+        "tracker": "label-aware-greedy-iou/1"
+      },
+      "scheduler": null,
+      "claims": [
+        {
+          "subject": "key",
+          "predicate": "inside",
+          "object": "bag",
+          "operation": "assert",
+          "frame": 35
+        },
+        {
+          "subject": "bag",
+          "predicate": "at_zone",
+          "object": "sofa",
+          "operation": "assert",
+          "frame": 66
+        }
+      ]
+    },
+    {
+      "arm": "direct_only",
+      "repeat": 2,
+      "replay_ms": 2074.2564000101993,
+      "detector_calls": 80,
+      "detector_p50_ms": 21.44090000365395,
+      "detector_p95_ms": 24.72079999279231,
+      "decoded_frames": 80,
+      "selected_frames": 80,
+      "quality": {
+        "abstention_count": 0,
+        "answer_correct": false,
+        "answer_location_id": null,
+        "answer_status": "UNKNOWN",
+        "confirmation_lags_frames": [
+          2,
+          3
+        ],
+        "expected_events": 2,
+        "f1": 1.0,
+        "matched_events": 2,
+        "precision": 1.0,
+        "predicted_events": 2,
+        "recall": 1.0,
+        "false_events": 0,
+        "missed_events": 0
+      },
+      "rules": {
+        "rule_version": "b1-temporal-relations/1",
+        "subject_entity_id": "key",
+        "container_entity_id": "bag",
+        "zone_entity_id": "sofa",
+        "containment_lookback_frames": 5,
+        "contained_observations_required": 2,
+        "disappearance_confirmation_frames": 3,
+        "take_out_confirmation_frames": 2,
+        "container_motion_max_pixels": 2.0,
+        "zone_enter_overlap_ratio": 0.6,
+        "zone_exit_overlap_ratio": 0.2,
+        "zone_stable_confirmation_frames": 3,
+        "zone_exit_confirmation_frames": 3,
+        "maximum_observation_gap_frames": 2
+      },
+      "tracker": {
+        "match_iou_threshold": 0.25,
+        "max_missed_updates": 2,
+        "tracker": "label-aware-greedy-iou/1"
+      },
+      "scheduler": null,
+      "claims": [
+        {
+          "subject": "key",
+          "predicate": "inside",
+          "object": "bag",
+          "operation": "assert",
+          "frame": 37
+        },
+        {
+          "subject": "bag",
+          "predicate": "at_zone",
+          "object": "sofa",
+          "operation": "assert",
+          "frame": 68
+        }
+      ]
+    },
+    {
+      "arm": "baseline",
+      "repeat": 2,
+      "replay_ms": 2097.7852000069106,
+      "detector_calls": 80,
+      "detector_p50_ms": 21.818400011397898,
+      "detector_p95_ms": 24.61240001139231,
+      "decoded_frames": 80,
+      "selected_frames": 80,
+      "quality": {
+        "abstention_count": 0,
+        "answer_correct": true,
+        "answer_location_id": "sofa",
+        "answer_status": "FOUND",
+        "confirmation_lags_frames": [
+          2,
+          3
+        ],
+        "expected_events": 2,
+        "f1": 1.0,
+        "matched_events": 2,
+        "precision": 1.0,
+        "predicted_events": 2,
+        "recall": 1.0,
+        "false_events": 0,
+        "missed_events": 0
+      },
+      "rules": {
+        "rule_version": "b1-temporal-relations/1",
+        "subject_entity_id": "key",
+        "container_entity_id": "bag",
+        "zone_entity_id": "sofa",
+        "containment_lookback_frames": 5,
+        "contained_observations_required": 2,
+        "disappearance_confirmation_frames": 3,
+        "take_out_confirmation_frames": 2,
+        "container_motion_max_pixels": 2.0,
+        "zone_enter_overlap_ratio": 0.6,
+        "zone_exit_overlap_ratio": 0.2,
+        "zone_stable_confirmation_frames": 3,
+        "zone_exit_confirmation_frames": 3,
+        "maximum_observation_gap_frames": 2
+      },
+      "tracker": {
+        "match_iou_threshold": 0.25,
+        "max_missed_updates": 2,
+        "tracker": "label-aware-greedy-iou/1"
+      },
+      "scheduler": null,
+      "claims": [
+        {
+          "subject": "key",
+          "predicate": "inside",
+          "object": "bag",
+          "operation": "assert",
+          "frame": 37
+        },
+        {
+          "subject": "bag",
+          "predicate": "at_zone",
+          "object": "sofa",
+          "operation": "assert",
+          "frame": 68
+        }
+      ]
+    },
+    {
+      "arm": "motion_periodic",
+      "repeat": 2,
+      "replay_ms": 490.8482000028016,
+      "detector_calls": 8,
+      "detector_p50_ms": 21.582900008070283,
+      "detector_p95_ms": 25.43889998923987,
+      "decoded_frames": 80,
+      "selected_frames": 8,
+      "quality": {
+        "abstention_count": 7,
+        "answer_correct": false,
+        "answer_location_id": null,
+        "answer_status": "UNKNOWN",
+        "confirmation_lags_frames": [],
+        "expected_events": 2,
+        "f1": 0.0,
+        "matched_events": 0,
+        "precision": 0.0,
+        "predicted_events": 0,
+        "recall": 0.0,
+        "false_events": 0,
+        "missed_events": 2
+      },
+      "rules": {
+        "rule_version": "b1-temporal-relations/1",
+        "subject_entity_id": "key",
+        "container_entity_id": "bag",
+        "zone_entity_id": "sofa",
+        "containment_lookback_frames": 5,
+        "contained_observations_required": 2,
+        "disappearance_confirmation_frames": 3,
+        "take_out_confirmation_frames": 2,
+        "container_motion_max_pixels": 2.0,
+        "zone_enter_overlap_ratio": 0.6,
+        "zone_exit_overlap_ratio": 0.2,
+        "zone_stable_confirmation_frames": 3,
+        "zone_exit_confirmation_frames": 3,
+        "maximum_observation_gap_frames": 2
+      },
+      "tracker": {
+        "match_iou_threshold": 0.25,
+        "max_missed_updates": 2,
+        "tracker": "label-aware-greedy-iou/1"
+      },
+      "scheduler": {
+        "anchor_interval_frames": 10,
+        "min_gap_frames": 2,
+        "motion_threshold": 0.03,
+        "sample_stride": 8,
+        "scheduler": "motion-periodic/1"
+      },
+      "claims": []
+    }
+  ],
+  "summary": {
+    "baseline": {
+      "repeat_count": 3,
+      "quality_repeatable": true,
+      "quality": {
+        "abstention_count": 0,
+        "answer_correct": true,
+        "answer_location_id": "sofa",
+        "answer_status": "FOUND",
+        "confirmation_lags_frames": [
+          2,
+          3
+        ],
+        "expected_events": 2,
+        "f1": 1.0,
+        "matched_events": 2,
+        "precision": 1.0,
+        "predicted_events": 2,
+        "recall": 1.0,
+        "false_events": 0,
+        "missed_events": 0
+      },
+      "median_replay_ms": 2250.1326000055997,
+      "median_detector_calls": 80,
+      "detector_call_reduction": 0.0,
+      "replay_time_reduction": 0.0,
+      "quality_preserved": true,
+      "efficiency_candidate": false
+    },
+    "motion_periodic": {
+      "repeat_count": 3,
+      "quality_repeatable": true,
+      "quality": {
+        "abstention_count": 7,
+        "answer_correct": false,
+        "answer_location_id": null,
+        "answer_status": "UNKNOWN",
+        "confirmation_lags_frames": [],
+        "expected_events": 2,
+        "f1": 0.0,
+        "matched_events": 0,
+        "precision": 0.0,
+        "predicted_events": 0,
+        "recall": 0.0,
+        "false_events": 0,
+        "missed_events": 2
+      },
+      "median_replay_ms": 524.1238000016892,
+      "median_detector_calls": 8,
+      "detector_call_reduction": 0.9,
+      "replay_time_reduction": 0.7670698162408807,
+      "quality_preserved": false,
+      "efficiency_candidate": false
+    },
+    "no_tracking": {
+      "repeat_count": 3,
+      "quality_repeatable": true,
+      "quality": {
+        "abstention_count": 0,
+        "answer_correct": true,
+        "answer_location_id": "sofa",
+        "answer_status": "FOUND",
+        "confirmation_lags_frames": [
+          2,
+          3
+        ],
+        "expected_events": 2,
+        "f1": 1.0,
+        "matched_events": 2,
+        "precision": 1.0,
+        "predicted_events": 2,
+        "recall": 1.0,
+        "false_events": 0,
+        "missed_events": 0
+      },
+      "median_replay_ms": 2137.3428000079,
+      "median_detector_calls": 80,
+      "detector_call_reduction": 0.0,
+      "replay_time_reduction": 0.05012584591566682,
+      "quality_preserved": true,
+      "efficiency_candidate": false
+    },
+    "single_confirmation": {
+      "repeat_count": 3,
+      "quality_repeatable": true,
+      "quality": {
+        "abstention_count": 0,
+        "answer_correct": true,
+        "answer_location_id": "sofa",
+        "answer_status": "FOUND",
+        "confirmation_lags_frames": [
+          0,
+          1
+        ],
+        "expected_events": 2,
+        "f1": 1.0,
+        "matched_events": 2,
+        "precision": 1.0,
+        "predicted_events": 2,
+        "recall": 1.0,
+        "false_events": 0,
+        "missed_events": 0
+      },
+      "median_replay_ms": 2116.536300003645,
+      "median_detector_calls": 80,
+      "detector_call_reduction": 0.0,
+      "replay_time_reduction": 0.05937263430680584,
+      "quality_preserved": true,
+      "efficiency_candidate": false
+    },
+    "direct_only": {
+      "repeat_count": 3,
+      "quality_repeatable": true,
+      "quality": {
+        "abstention_count": 0,
+        "answer_correct": false,
+        "answer_location_id": null,
+        "answer_status": "UNKNOWN",
+        "confirmation_lags_frames": [
+          2,
+          3
+        ],
+        "expected_events": 2,
+        "f1": 1.0,
+        "matched_events": 2,
+        "precision": 1.0,
+        "predicted_events": 2,
+        "recall": 1.0,
+        "false_events": 0,
+        "missed_events": 0
+      },
+      "median_replay_ms": 2105.585400000564,
+      "median_detector_calls": 80,
+      "detector_call_reduction": 0.0,
+      "replay_time_reduction": 0.06423941415927048,
+      "quality_preserved": false,
+      "efficiency_candidate": false
+    }
+  }
+}
