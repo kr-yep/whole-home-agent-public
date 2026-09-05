@@ -94,7 +94,15 @@ async function mountModel() {
   try {
     model = await PIXI.live2d.Live2DModel.from(MODEL_URL, { autoInteract: false });
   } catch (error) {
+    // The artwork is deliberately outside version control, so this is the
+    // ordinary state of a fresh clone rather than a fault. It used to be a
+    // console warning and an empty canvas, which reads as the page being
+    // broken; say what is missing and how to get it.
     console.warn("no model at", MODEL_URL, error);
+    speak(
+      "模型檔還沒放進來，所以畫面上沒有人。" +
+        "在專案根目錄執行 python tools/fetch_character_assets.py 就會下載。"
+    );
     return;
   }
 
