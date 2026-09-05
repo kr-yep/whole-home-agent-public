@@ -10,7 +10,11 @@ const log = document.getElementById("log");
 const form = document.getElementById("ask");
 const question = document.getElementById("question");
 const send = document.getElementById("send");
-const chips = document.getElementById("chips");
+const deviceBar = document.getElementById("device-bar");
+const actionChips = document.getElementById("action-chips");
+const entityChips = document.getElementById("entity-chips");
+const personaChips = document.getElementById("persona-chips");
+const ttsToggle = document.getElementById("tts-toggle");
 
 const LABELS = { key: "🔑 鑰匙", bag: "👜 包包", sofa: "🛋 沙發" };
 const WORDS = { key: "鑰匙", bag: "包包", sofa: "沙發" };
@@ -266,10 +270,63 @@ function idleLoop() {
 
 function express(result) {
   // Names are the model's own: unazuku nods, nayamu is troubled, komaru is at a
-  // loss, kangaeru thinks.
+  // loss, kangaeru thinks, egao smiles, hohoemu smiles gently.
   lastReaction = Date.now();
-  if (result && result.refused) play(["act_nayamu", "face_komaru", "act_tameiki"]);
-  else play(["act_unazuku", "act_egao", "act_hohoemu"]);
+  if (result && result.refused) {
+    play(["face_komaru", "act_nayamu", "act_tameiki"]);
+  } else if (result && result.action_receipt) {
+    play(["act_egao", "face_egao", "act_unazuku"]);
+  } else {
+    play(["act_unazuku", "act_hohoemu", "face_hohoemu"]);
+  }
+}
+
+/* ---------- TTS & Speech Synthesis ---------- */
+
+let ttsEnabled = true;
+const TTS_KEY = "wha.character.tts";
+try {
+  const savedTts = localStorage.getItem(TTS_KEY);
+  if (savedTts !== null) ttsEnabled = savedTts === "true";
+} catch (_) {}
+
+function updateTtsButton() {
+  if (!ttsToggle) return;
+  ttsToggle.textContent = ttsEnabled ? "🔊 語音：開" : "🔈 語音：關";
+  ttsToggle.classList.toggle("active", ttsEnabled);
+}
+
+if (ttsToggle) {
+  updateTtsButton();
+  ttsToggle.addEventListener("click", () => {
+    ttsEnabled = !ttsEnabled;
+    try { localStorage.setItem(TTS_KEY, String(ttsEnabled)); } catch (_) {}
+    updateTtsButton();
+    if (ttsEnabled) {
+      speakVoice("雷姆在的，主人！");
+    } else {
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+    }
+  });
+}
+
+function speakVoice(text) {
+  if (!ttsEnabled || !window.speechSynthesis) return;
+  try {
+    window.speechSynthesis.cancel();
+    const cleanText = text.replace(/^[（(][^）)]*[）)]/, "").trim();
+    if (!cleanText) return;
+    const utter = new SpeechSynthesisUtterance(cleanText);
+    const voices = window.speechSynthesis.getVoices();
+    const zhVoice = voices.find((v) =>
+      (v.lang.startsWith("zh") || v.lang.startsWith("cmn")) &&
+      (v.name.includes("Female") || v.name.includes("Mei-Jia") || v.name.includes("HsiaoChen") || v.name.includes("Xiaoxiao") || v.name.includes("Yating") || v.name.includes("HanHan"))
+    ) || voices.find((v) => v.lang.startsWith("zh") || v.lang.startsWith("cmn"));
+    if (zhVoice) utter.voice = zhVoice;
+    utter.rate = 1.05;
+    utter.pitch = 1.25;
+    window.speechSynthesis.speak(utter);
+  } catch (_) {}
 }
 
 /* ---------- rendering an answer ---------- */
@@ -281,9 +338,6 @@ function speak(text) {
 }
 
 function basisNode(result) {
-  // A refusal now sounds like ordinary speech, which is the point, but it is the
-  // one answer with nothing behind it. Say so, and show the machine's own wording
-  // underneath -- that sentence is what actually decided the refusal.
   if (result.refused) {
     const note = document.createElement("details");
     note.className = "basis";
@@ -298,16 +352,32 @@ function basisNode(result) {
   if (result.action_receipt) {
     const note = document.createElement("details");
     note.className = "basis";
-    const statusLabel = result.action_receipt.status === "simulated" ? "模擬執行" : "實體執行";
-    note.innerHTML = `<summary>⚡ 家電操作收據 · ${statusLabel}</summary>`;
+    const receipt = result.action_receipt;
+    const isSuccess = receipt.status === "simulated" || receipt.status === "executed";
+    const statusLabel = isSuccess ? "⚡ 執行成功" : "🛑 安全攔截";
+    const devNames = {
+      living_room_ac: "客廳冷氣",
+      living_room_light: "客廳大燈",
+      bedroom_light: "臥室電燈",
+      living_room_curtain: "客廳窗簾",
+    };
+    const actNames = {
+      turn_on: "開啟設備",
+      turn_off: "關閉設備",
+      set_temperature: "設定溫度",
+      set_position: "設定開合度",
+      set_brightness: "設定亮度",
+    };
+    const devDisplayName = devNames[receipt.target_device_id] || receipt.target_device_id;
+    note.innerHTML = `<summary>${statusLabel} · ${devDisplayName}</summary>`;
     const body = document.createElement("div");
     body.className = "body";
     body.textContent = [
-      `收據編號  ${result.action_receipt.action_id}`,
-      `目標設備  ${result.action_receipt.target_device_id}`,
-      `執行動作  ${result.action_receipt.action_type}`,
-      `執行狀態  ${result.action_receipt.status}`,
-      `執行時間  ${result.action_receipt.executed_at}`,
+      `目標設備  ${devDisplayName} (${receipt.target_device_id})`,
+      `操作動作  ${actNames[receipt.action_type] || receipt.action_type}`,
+      `執行狀態  ${receipt.status.toUpperCase()}`,
+      `收據編號  ${receipt.action_id}`,
+      `執行時間  ${receipt.executed_at}`,
     ].join("\n");
     note.appendChild(body);
     return note;
@@ -375,7 +445,11 @@ function render(asked, result) {
   log.appendChild(turn);
   log.scrollTop = log.scrollHeight;
   speak(spoken);
+  speakVoice(spoken);
   express(result);
+  if (result.action_receipt) {
+    loadDevices();
+  }
 }
 
 /* ---------- asking ---------- */
@@ -407,33 +481,104 @@ form.addEventListener("submit", (event) => {
   ask(question.value);
 });
 
-async function loadChips() {
+async function loadDevices() {
+  if (!deviceBar) return;
   try {
-    const { entities } = await (await fetch("/api/entities")).json();
-    for (const id of entities || []) {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.textContent = label(id);
-      button.addEventListener("click", () => ask(`${WORDS[id] || id}在哪裡？`));
-      chips.appendChild(button);
+    const res = await fetch("/api/devices");
+    const data = await res.json();
+    deviceBar.innerHTML = "";
+    const icons = {
+      climate: "❄️",
+      light: "💡",
+      cover: "🪟",
+      switch: "🔌",
+    };
+    for (const d of data.devices || []) {
+      const pill = document.createElement("div");
+      pill.className = "device-pill" + (d.is_on ? " is-on" : "");
+      const icon = icons[d.device_type] || "⚡";
+      let val = d.is_on ? "開啟" : "關閉";
+      if (d.device_type === "climate") {
+        val = d.is_on ? `${d.temperature}°C` : "關閉";
+      } else if (d.device_type === "cover") {
+        val = `${d.position}%`;
+      }
+      pill.innerHTML = `
+        <span class="name">${icon} ${d.name}</span>
+        <span class="status-badge ${d.is_on ? "on" : "off"}">${val}</span>
+      `;
+      pill.title = `點擊快速控制 ${d.name}`;
+      pill.addEventListener("click", () => {
+        if (d.device_type === "climate") {
+          ask(d.is_on ? `關閉${d.name}` : `打開${d.name}`);
+        } else if (d.device_type === "light") {
+          ask(d.is_on ? `關閉${d.name}` : `打開${d.name}`);
+        } else if (d.device_type === "cover") {
+          ask(d.position > 0 ? "關上窗簾" : "拉開窗簾");
+        }
+      });
+      deviceBar.appendChild(pill);
     }
+  } catch (_) { /* device status bar failure is non-blocking */ }
+}
+
+async function loadChips() {
+  // 1. Action chips
+  if (actionChips) {
+    actionChips.innerHTML = "";
     const actionSuggestions = [
-      { text: "❄️ 開客廳冷氣", cmd: "幫我把客廳冷氣開到26度" },
+      { text: "❄️ 開客廳冷氣 26°C", cmd: "幫我把客廳冷氣開到26度" },
       { text: "💡 開客廳燈", cmd: "開客廳燈" },
       { text: "🪟 拉開窗簾", cmd: "拉開窗簾" },
-      { text: "🌸 妳是誰？", cmd: "妳是誰" },
-      { text: "✨ 妳會做什麼？", cmd: "妳會做什麼" },
     ];
     for (const item of actionSuggestions) {
       const button = document.createElement("button");
       button.type = "button";
       button.textContent = item.text;
       button.addEventListener("click", () => ask(item.cmd));
-      chips.appendChild(button);
+      actionChips.appendChild(button);
     }
-  } catch (_) { /* the panel still works without chips */ }
+  }
+
+  // 2. Entity chips
+  if (entityChips) {
+    entityChips.innerHTML = "";
+    try {
+      const { entities } = await (await fetch("/api/entities")).json();
+      for (const id of entities || []) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = label(id);
+        button.addEventListener("click", () => ask(`${WORDS[id] || id}在哪裡？`));
+        entityChips.appendChild(button);
+      }
+      const containerBtn = document.createElement("button");
+      containerBtn.type = "button";
+      containerBtn.textContent = "👜 包包裡有什麼？";
+      containerBtn.addEventListener("click", () => ask("包包裡有什麼"));
+      entityChips.appendChild(containerBtn);
+    } catch (_) { /* entity chips failure is non-blocking */ }
+  }
+
+  // 3. Persona chips
+  if (personaChips) {
+    personaChips.innerHTML = "";
+    const personaSuggestions = [
+      { text: "🌸 妳是誰？", cmd: "妳是誰" },
+      { text: "✨ 妳會做什麼？", cmd: "妳會做什麼" },
+    ];
+    for (const item of personaSuggestions) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = item.text;
+      button.addEventListener("click", () => ask(item.cmd));
+      personaChips.appendChild(button);
+    }
+  }
 }
 
 mountModel();
+loadDevices();
 loadChips();
 speak("歡迎回來，主人！雷姆一直都在這裡等您喔。今天有什麼雷姆可以為您效勞的嗎？");
+speakVoice("歡迎回來，主人！雷姆一直都在這裡等您喔。今天有什麼雷姆可以為您效勞的嗎？");

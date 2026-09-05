@@ -164,8 +164,8 @@ def _render_rejection(error: B0Error, entity_ids: tuple[str, ...]) -> None:
         )
     else:
         st.info(
-            "我只回答東西的位置。三種問法都可以：「鑰匙在哪」、"
-            "「鑰匙在沙發上嗎」、「包包裡有什麼」。不能操作任何裝置。"
+            "可以詢問物品位置（「鑰匙在哪」、「鑰匙在沙發上嗎」、「包包裡有什麼」），"
+            "或是下達家電控制指令（「開冷氣」、「開客廳燈」、「拉開窗簾」）。"
         )
 
 def _render_action_receipt(receipt: ActionReceipt) -> None:
