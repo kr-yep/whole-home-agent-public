@@ -54,17 +54,27 @@ def _init_yolo_sink() -> object | None:
         from .adapters.yolo_detector import YoloDetector
         import os
 
+        # Naming a model is taken as permission to go and get it: Ultralytics
+        # resolves a bare name like "yolov8n.pt" by downloading it. Asking for one
+        # by name is a deliberate act, so the wait is expected.
         env_model = os.environ.get("WHA_YOLO_MODEL")
-        candidates = (
-            [Path(env_model)]
-            if env_model
-            else [
-                Path("yolov8m.pt"),
-                Path("yolov8s.pt"),
-                Path("yolov8n.pt"),
-                Path("yolov8n.onnx"),
-            ]
-        )
+        if env_model:
+            detector = YoloDetector(env_model, imgsz=1280, confidence=0.25)
+            if detector.is_available:
+                return detector
+
+        # Nobody asked for anything in particular, so only weights already on disk
+        # are considered. This function runs at import, and an import that quietly
+        # pulls fifty megabytes over the network is not something a test run, or a
+        # server start on a hotel connection, should discover for itself. start.py
+        # fetches them where the wait is announced, and WHA_YOLO_MODEL is the way
+        # to ask for one here.
+        candidates = [
+            Path("yolov8m.pt"),
+            Path("yolov8s.pt"),
+            Path("yolov8n.pt"),
+            Path("yolov8n.onnx"),
+        ]
         for candidate in candidates:
             if candidate.exists():
                 detector = YoloDetector(candidate, imgsz=1280, confidence=0.25)
@@ -406,12 +416,25 @@ def main() -> None:
     parser.add_argument("--db", type=Path, default=DEFAULT_DATABASE)
     parser.add_argument("--bind", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8600)
-    parser.add_argument("--initialize-demo", action="store_true", help="create the generated replay archive if missing")
+    parser.add_argument("--initialize-demo", action="store_true", help="rebuild the generated replay archive even if one is present")
     arguments = parser.parse_args()
     if not WEB_ROOT.is_dir():
         parser.error("Web assets are missing; run from a repository checkout.")
-    if arguments.initialize_demo and not arguments.db.exists():
+    # A server with no archive behind it answers nothing, and the flag that used to
+    # be required for the first run was one more thing to have been told. Build it
+    # when it is absent, and say so, because a first start that pauses without
+    # explanation reads as a hang.
+    if not arguments.db.exists():
         from .public_demo import run_public_demo
+
+        print(f"No memory archive at {arguments.db}; building the generated replay.", flush=True)
+        arguments.db.parent.mkdir(parents=True, exist_ok=True)
+        run_public_demo(replay_run_id="web-demo-001", include_frames=False,
+                        archive=SQLiteReplayArchive(arguments.db))
+        print("Memory archive ready.", flush=True)
+    elif arguments.initialize_demo:
+        from .public_demo import run_public_demo
+
         run_public_demo(replay_run_id="web-demo-001", include_frames=False,
                         archive=SQLiteReplayArchive(arguments.db))
 

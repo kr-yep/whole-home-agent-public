@@ -7,6 +7,7 @@ import importlib.util
 import io
 import json
 import os
+import re
 import sqlite3
 import tempfile
 import unittest
@@ -755,3 +756,85 @@ class ContainerContentsTests(unittest.TestCase):
             for rejected in ("幫我開門", "沙發好看嗎", "今天天氣如何"):
                 with self.subTest(question=rejected), self.assertRaises(QuestionError):
                     answer_question(archive, rejected)
+
+
+class QuestionVocabularyTests(unittest.TestCase):
+    """What the camera can remember must also be nameable in a question."""
+
+    ALLOWED = (
+        "person", "frisbee", "cup", "wine_glass", "phone", "dog", "hot_dog",
+        "chair", "key", "bag", "book", "desk", "table", "shelf", "drawer",
+    )
+
+    def test_a_word_inside_a_longer_word_does_not_make_it_ambiguous(self):
+        """書 lives inside 書桌 and 書架; asking for a desk names one object."""
+
+        for question, expected in (
+            ("書在哪裡", "book"),
+            ("書桌在哪", "desk"),
+            ("書架在哪", "shelf"),
+            ("桌子在哪", "desk"),
+            ("茶几在哪", "table"),
+            ("狗在哪", "dog"),
+            ("熱狗在哪", "hot_dog"),
+            ("杯子在哪", "cup"),
+            ("酒杯在哪", "wine_glass"),
+        ):
+            with self.subTest(question=question):
+                self.assertEqual(
+                    parse_location_question(question, allowed_entity_ids=self.ALLOWED),
+                    expected,
+                )
+
+    def test_two_different_objects_are_still_refused(self):
+        with self.assertRaises(QuestionError):
+            parse_location_question("鑰匙和錢包在哪", allowed_entity_ids=("key", "wallet"))
+
+    def test_detected_objects_can_be_asked_after_in_chinese(self):
+        for question, expected in (
+            ("有沒有看到人", "person"),
+            ("飛盤在哪", "frisbee"),
+            ("我的手機在哪裡", "phone"),
+        ):
+            with self.subTest(question=question):
+                self.assertEqual(
+                    parse_location_question(question, allowed_entity_ids=self.ALLOWED),
+                    expected,
+                )
+
+    def test_every_entity_the_bridge_can_commit_has_aliases(self):
+        """A class added to the detector must not become unaskable in Chinese.
+
+        The bridge maps some COCO labels onto household ids and slugifies the
+        rest, so both sets are checked against the table the parser reads.
+        """
+
+        from whole_home_agent.natural_query import DEFAULT_ENTITY_ALIASES
+        from whole_home_agent.perception_bridge import COCO_TO_ENTITY_MAP
+
+        COCO_CLASSES = (
+            "person", "bicycle", "car", "motorcycle", "airplane", "bus", "train",
+            "truck", "boat", "traffic light", "fire hydrant", "stop sign",
+            "parking meter", "bench", "bird", "cat", "dog", "horse", "sheep",
+            "cow", "elephant", "bear", "zebra", "giraffe", "backpack", "umbrella",
+            "handbag", "tie", "suitcase", "frisbee", "skis", "snowboard",
+            "sports ball", "kite", "baseball bat", "baseball glove", "skateboard",
+            "surfboard", "tennis racket", "bottle", "wine glass", "cup", "fork",
+            "knife", "spoon", "bowl", "banana", "apple", "sandwich", "orange",
+            "broccoli", "carrot", "hot dog", "pizza", "donut", "cake", "chair",
+            "couch", "potted plant", "bed", "dining table", "toilet", "tv",
+            "laptop", "mouse", "remote", "keyboard", "cell phone", "microwave",
+            "oven", "toaster", "sink", "refrigerator", "book", "clock", "vase",
+            "scissors", "teddy bear", "hair drier", "toothbrush",
+        )
+        self.assertEqual(len(COCO_CLASSES), 80)
+
+        missing = []
+        for label in COCO_CLASSES:
+            entity_id = COCO_TO_ENTITY_MAP.get(label)
+            if entity_id is None:
+                entity_id = re.sub(r"[^a-zA-Z0-9_]+", "_", label.lower()).strip("_")
+            aliases = DEFAULT_ENTITY_ALIASES.get(entity_id, ())
+            if not any(not alias.isascii() for alias in aliases):
+                missing.append((label, entity_id))
+        self.assertEqual(missing, [], f"no Chinese alias for: {missing}")

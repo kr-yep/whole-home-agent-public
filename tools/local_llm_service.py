@@ -90,12 +90,31 @@ def _generate_verbalizer_response(messages: list[dict[str, str]]) -> str:
         entity = data.get("entity", "物品")
         return f"好的主人！雷姆收到您新添置的「{entity}」了！請主人把它靠近鏡頭稍微轉動角度給雷姆看看，雷姆正在採集特徵記錄喔…"
 
-    if status == "FOUND" and location:
-        if chain:
-            for step in chain:
-                for k, v in step.items():
-                    return f"報告主人！在雷姆的記憶中，您的{subject}{v}，而該處位於{location}喔。雷姆可以提供這條記錄供您確認。"
+    if status == "FOUND" and (chain or location):
+        # The chain carries every place involved, so the sentence is built from
+        # it rather than from the chain plus a location field that repeats its
+        # last hop. Doing both is what produced "位於餐桌，而該處位於餐桌".
+        links = [(k, v) for step in chain for k, v in step.items()]
+        if len(links) >= 2:
+            _, first = links[0]
+            holder, where = links[1]
+            return (
+                f"報告主人！在雷姆的記憶中，您的{subject}{first}，"
+                f"而{holder}{where}喔。雷姆可以提供這條記錄供您確認。"
+            )
+        if links:
+            return (
+                f"報告主人！在雷姆的記憶中，您的{subject}{links[0][1]}喔！請主人安心。"
+            )
         return f"報告主人！在雷姆的記憶中，您的{subject}目前位於{location}喔！請主人安心。"
+
+    if status == "TIMELINE":
+        # Already a finished sentence about a recorded position. Voicing it is
+        # all that is left; rewriting the numbers would be inventing evidence.
+        recorded = str(data.get("text", "")).strip()
+        if recorded:
+            return f"報告主人！{recorded}雷姆的記錄就到這裡了。"
+        return "主人，雷姆查到了記錄，但沒有可以換算的時間呢。"
 
     if status == "UNKNOWN":
         return f"非常抱歉主人，雷姆翻遍了宅邸的記錄也沒有找到{subject}的蹤跡呢…雷姆不會憑空猜測，目前記憶中只記著已確認物品的位置喔。"
@@ -114,16 +133,49 @@ def _generate_verbalizer_response(messages: list[dict[str, str]]) -> str:
     return f"主人，雷姆已經查閱了宅邸記錄，有任何需要請隨時吩咐雷姆！"
 
 
+def _asked(user_msg: str) -> str:
+    """What the person actually typed, without the hint appended after it.
+
+    The caller appends the system's own refusal wording as an internal note, and
+    that wording names the character. Reading the whole message therefore found
+    "雷姆" in every refusal and answered each one as if it had been a hello.
+    """
+
+    spoken = user_msg.split("（內部提示", 1)[0]
+    return spoken.split("：", 1)[-1].strip() if "：" in spoken else spoken.strip()
+
+
 def _generate_refusal_response(messages: list[dict[str, str]]) -> str:
-    user_msg = next((m["content"] for m in messages if m.get("role") == "user"), "")
-    if any(greet in user_msg for greet in ("你好", "早安", "晚安", "午安", "雷姆")):
+    asked = _asked(next((m["content"] for m in messages if m.get("role") == "user"), ""))
+    # Being addressed by name is not a greeting -- "雷姆，我的鑰匙在哪" is a
+    # question -- so only an actual greeting word counts.
+    if any(greet in asked for greet in ("你好", "早安", "晚安", "午安", "哈囉")):
         return "主人，雷姆一直都在這裡等您喔！今天有什麼雷姆可以為您效勞的嗎？"
-    if "手機" in user_msg or "phone" in user_msg:
+    if "手機" in asked or "phone" in asked:
         return "非常抱歉主人，雷姆翻遍了記錄庫，並沒有找到關於手機的記錄呢…雷姆不會憑空猜測，目前記憶中只記著已確認物品的位置喔。"
     return (
         "非常抱歉主人，雷姆翻遍了記錄庫，並沒有找到關於這項物品的記錄呢…"
         "雷姆不會憑空猜測，目前記憶中只記著已確認物品的位置喔。"
     )
+
+
+def generator_for(system_prompt: str):
+    """Pick the generator for one of the three prompts this package sends.
+
+    Each marker is a phrase from the prompt it selects, and none of them contain
+    the character's name, which is substituted into all three. They are checked
+    against the real prompts in tests/test_local_llm_service.py, because the
+    refusal branch had been keyed on a sentence none of them contain and so had
+    never once run: asking after something the archive has no record of fell
+    through to the verbalizer, which had no status to read and answered with a
+    pleasantry instead of saying there was no record.
+    """
+
+    if "查詢翻譯器" in system_prompt:
+        return _generate_translator_response
+    if "沒辦法處理" in system_prompt:
+        return _generate_refusal_response
+    return _generate_verbalizer_response
 
 
 class LocalLLMHandler(BaseHTTPRequestHandler):
@@ -165,13 +217,7 @@ class LocalLLMHandler(BaseHTTPRequestHandler):
         model = body.get("model", "qwen2.5")
         sys_msg = next((m["content"] for m in messages if m.get("role") == "system"), "")
 
-        # Route by system prompt intent
-        if "查詢翻譯器" in sys_msg or "translate" in sys_msg.lower():
-            reply_text = _generate_translator_response(messages)
-        elif "只在對方確實是在找某樣東西" in sys_msg or "refuse" in sys_msg.lower():
-            reply_text = _generate_refusal_response(messages)
-        else:
-            reply_text = _generate_verbalizer_response(messages)
+        reply_text = generator_for(sys_msg)(messages)
 
         response_payload = {
             "id": f"chatcmpl-{uuid.uuid4().hex[:12]}",

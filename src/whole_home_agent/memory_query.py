@@ -117,15 +117,6 @@ def _speakable(result: Mapping[str, object]) -> dict[str, object]:
         facts["proposed_place"] = _CONTAINER_DISPLAY.get(
             verification["target_id"], verification["target_id"]
         )
-    if answer.get("location_id"):
-        facts["location"] = _CONTAINER_DISPLAY.get(
-            answer["location_id"], answer["location_id"]
-        )
-    if answer.get("candidate_location_ids"):
-        facts["candidates"] = [
-            _CONTAINER_DISPLAY.get(item, item)
-            for item in answer["candidate_location_ids"]
-        ]
     chain = []
     for step in answer.get("relation_path") or []:
         subject = _CONTAINER_DISPLAY.get(step["subject_id"], step["subject_id"])
@@ -134,7 +125,35 @@ def _speakable(result: Mapping[str, object]) -> dict[str, object]:
         chain.append({subject: relation})
     if chain:
         facts["chain"] = chain
+
+    location = (
+        _CONTAINER_DISPLAY.get(answer["location_id"], answer["location_id"])
+        if answer.get("location_id")
+        else None
+    )
+    # The chain is what she is told to read out relation by relation, so a place
+    # it already ends at must not also arrive as its own field: told the same
+    # place twice, she said it twice -- "遙控器位於餐桌，而該處位於餐桌". A
+    # one-hop answer is exactly that case, since its only relation names the
+    # location. Two hops keep it, where the chain explains a place it never
+    # states on its own.
+    if location is not None and not (chain and _ends_at(chain[-1], location)):
+        facts["location"] = location
+    candidates = [
+        _CONTAINER_DISPLAY.get(item, item)
+        for item in answer.get("candidate_location_ids") or []
+    ]
+    # One candidate is the answer restated; it carries something only when the
+    # replay could not narrow the place down.
+    if len(candidates) > 1:
+        facts["candidates"] = candidates
     return facts
+
+
+def _ends_at(step: Mapping[str, str], location: str) -> bool:
+    """Does this chain link already name the place the answer settled on?"""
+
+    return any(location in relation for relation in step.values())
 
 
 def _answer_dict(answer: AnswerTrace) -> dict[str, object]:

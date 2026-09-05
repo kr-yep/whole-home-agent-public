@@ -1,0 +1,5 @@
+# Optional vision dependencies for Camera YOLO detection and few-shot visual matching
+ultralytics>=8.0.0
+torch>=2.0.0
+torchvision>=0.15.0
+Pillow>=10.0.0
