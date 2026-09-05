@@ -1,9 +1,10 @@
 # Whole Home Agent Integrated Specification from Windows Webcam Input to ROI Handoff
 
 - Document number: `WHA-WIN-CAPTURE-ROI-001`
-- Version: `1.0-draft`
+- Version: `1.2-draft`
 - Date created: `2026-09-04`
-- Document status: `PROPOSED / NOT IMPLEMENTED`
+- Date revised: `2026-09-05`
+- Document status: `PROPOSED / R1 CORE IMPLEMENTED`
 - Operational status: `OPERATE DISABLED`
 - Target environment: Windows 11 x64, one USB/UVC color webcam
 - Scope: From image acquisition from the webcam through confirmation of acceptance at the ROI processing ingress
@@ -15,6 +16,9 @@ This document consolidates the specification for acquiring video on Windows and 
 This document is a proposed implementation specification integrating ADR 0025, ADR 0026, ADR 0027, and a detailed protocol proposal; it is not an adopted operational policy. Creating this document, implementing it, or successfully testing it does not authorize camera use, household data acquisition, photographing people, storage, external transmission, or device operation. The current repository remains `OPERATE DISABLED`.
 
 Items described as “required” in this document are conformity requirements for a future implementation of this proposal. Until `ACTION_POLICY.md`, `PROJECT_STATE.md`, stakeholder consent, roles, device and camera registration, and execution authorization are finalized, only offline testing with generated images is in scope.
+
+- **1.1-draft** maintained the 1.0-draft ROI ingress boundary and wire v1 specification, while clarifying the configuration profile, missing source-end, cleanup code, camera lifetime, and synchronous timeout evidence limits identified during R0 review. Cross-AppContainer named pipe communication remained tentative pending R2A feasibility validation.
+- **1.2-draft** reflects Windows `SharedReadOnly` limitations where the frame source format cannot be changed, modifying future live profiles to `ExclusiveControl`. Exclusive control is strictly limited to a single `SetFormatAsync` invocation applying the registered 1280×720 exact MediaFrameFormat. Camera controls such as focus, exposure, and zoom are strictly prohibited, as are fallback formats/devices and reader resizing. Wire v1, ROI ingress, raw retention, and R2A/R4 gates remain unchanged.
 
 ## 2. Objective
 
@@ -174,12 +178,16 @@ All profiles use the same message structure and ROI contract. A simplified forma
 | Raw retention | `none` |
 | Audio | `false` |
 | Network egress | `false` |
+| Camera sharing | `exclusive_control`, format configuration only |
+| Camera control scope | `format_only` |
+| Source format fallback | `false` |
+| Reader resize | `false` |
 
 Changing resolution, color format, cadence, queue, or retention method requires updating the configuration hash and test results. If wire compatibility changes, v2 must be proposed instead of overwriting v1.
 
 ## 8. Configuration and Hashes
 
-CaptureHost, the decoder, and ROI use the same resolved configuration. The configuration is read exactly once before pipe creation or camera opening; unknown, missing, duplicate, incorrectly typed, or out-of-range keys are rejected. Values sent by the message sender must not expand local limits.
+In each execution profile, CaptureHost, the decoder, and ROI must use the same resolved configuration for that profile. R1 uses `configs/capture/stream-sim-d0-v1.toml` and explicitly maps `profile_id=stream_sim_d0` to `source_profile=generated_stream_d0` on the wire. The following example is reserved for future live profiles and must not be reused as the R1/R2 hash. The configuration is read exactly once before pipe creation or camera opening; unknown, missing, duplicate, incorrectly typed, or out-of-range keys are rejected. Values sent by the message sender must not expand local limits.
 
 The initial configuration includes at least the following:
 
@@ -195,7 +203,7 @@ sampling_interval_ns = 100000000
 max_positions = 300
 sampling_window_ns = 30000000000
 camera_initialization_timeout_ns = 5000000000
-camera_open_to_close_limit_ns = 35000000000
+camera_open_to_close_limit_ns = 37000000000
 pipe_connect_timeout_ns = 5000000000
 pipe_inactivity_timeout_ns = 1000000000
 roi_accept_timeout_ns = 100000000
@@ -207,11 +215,17 @@ max_gap_frames = 2
 raw_retention = "none"
 audio_enabled = false
 network_egress_enabled = false
+camera_sharing_mode = "exclusive_control"
+camera_control_scope = "format_only"
+allow_source_format_fallback = false
+allow_reader_resize = false
+
 [transport]
 wire_version = 1
 max_metadata_bytes = 8192
 max_body_bytes = 2764800
 pipe_instances = 1
+
 [roi]
 profile_id = "windows_webcam_roi_v1"
 layout = "HWC_CONTIGUOUS"
@@ -223,6 +237,21 @@ rotation_degrees = 0
 mirrored = false
 color_interpretation = "srgb"
 ```
+
+In the live profile, the following `[camera_source]` object generated during device registration is also mandatory:
+
+| Field | Condition |
+|---|---|
+| `binding_schema` | `whole-home-agent.camera-format-binding.v1` |
+| `frame_source_ref` | Opaque registration reference containing no hardware ID |
+| `stream_kind` | `color` |
+| `width`, `height` | 1280, 720 |
+| `source_subtype` | Exact case-normalized subtype at registration |
+| `frame_rate_numerator`, `frame_rate_denominator` | Exact positive fraction at registration, at least 10 fps |
+| `reader_output_subtype` | `BGRA8` |
+| `format_fingerprint` | Canonical SHA-256 of the above binding fields |
+
+This object is not an operational conjecture, but an output from human-reviewed registration. The total configuration including this object forms the basis for `capture_config_hash`; if missing, the live configuration is unresolved and the camera must not be opened.
 
 After defaults are applied, the configuration hash is computed by converting all scalar values to canonical JSON in key order and applying SHA-256 to its UTF-8 byte sequence, producing 64 lowercase hexadecimal characters. `capture_config_hash` covers the entire Capture configuration; `roi_config_hash` covers the ROI configuration and ROI schema version.
 
@@ -248,17 +277,23 @@ Camera startup proceeds as follows:
 2. CaptureHost and SemanticHost verify each other’s package/AppContainer identity.
 3. A person presses Start in the CaptureHost UI.
 4. The trusted boundary rechecks execution authorization, expiry, package hash, device capability, and configuration hash.
-5. CaptureHost opens only the single registered device as video-only, CPU memory, `SharedReadOnly`.
-6. It strictly selects the 1280×720 color format.
-7. It starts the reader.
-8. It sends `start` and begins generating positions for 30 seconds.
-9. After 300 positions or Finish, it stops and disposes the reader and camera.
-10. It sends a `SEALED end` only after successful camera release.
-11. SemanticHost validates, terminates ROI, generates the receipt, and releases the pipe.
+5. CaptureHost opens only the single registered device as video-only, CPU memory, and `ExclusiveControl` mode.
+6. It selects exactly 1 `MediaFrameFormat` matching the registered source ID, stream kind, 1280×720, subtype, frame rate fraction, and format fingerprint, and invokes `SetFormatAsync` exactly once. If 0 or multiple matches exist, it fails closed.
+7. It re-verifies that `CurrentFormat` exactly matches the registered values.
+8. It creates a reader with fixed `BGRA8` output subtype and no BitmapSize, strictly prohibiting resizing.
+9. It starts the reader.
+10. It sends `start` and begins generating positions for 30 seconds.
+11. After 300 positions or user clicking Finish, it stops and disposes the reader and camera.
+12. It sends a `SEALED end` only after confirming successful camera release.
+13. SemanticHost validates, terminates ROI, generates the receipt, and releases the pipe.
 
-Pipe connection and peer authentication complete within five seconds before camera open. Camera and reader initialization are limited to five seconds, and camera open-to-close is limited to 35 seconds. The on-screen capture indicator remains visible from before camera open until after camera disposal.
+Pipe connection and peer authentication complete within 5 seconds before camera open. Camera and reader initialization are limited to 5 seconds, and camera open-to-close is limited to 37 seconds. The on-screen capture indicator remains visible from before camera open until after camera disposal.
 
-Startup does not occur if the registered camera is absent, the device ID has changed, permission is denied, 1280×720 is unavailable, or the driver falls back to another format. The system does not automatically switch to another camera or resolution.
+Startup does not occur if the registered camera is absent, the device ID has changed, permission is denied, 1280×720 is unavailable, exact format fails to match uniquely, exclusive control cannot be acquired, or the driver falls back to another format. The system does not automatically switch to shared mode, another camera, another resolution, or let the reader resize.
+
+`ExclusiveControl` is used strictly for format configuration. CaptureHost must not access or invoke VideoDeviceController, focus, exposure, zoom, white balance, torch, pan/tilt, or vendor properties. The exact format including source subtype and frame rate fraction must be fixed during human-reviewed device registration, with normalized hashes included in the live configuration. At this stage with no registered camera, fabricated formats or live configuration hashes must not be invented.
+
+Because `SharedReadOnly` cannot change the frame source format and only guarantees exact format if the driver happens to match, it is not used in this profile.
 
 ## 11. Image Normalization Specification
 
@@ -580,12 +615,13 @@ On a protocol, pipe, ROI, timeout, digest, or resource error, it immediately ent
 |---|---:|---|
 | Pipe connection and mutual identity verification | 5 s | fail before camera open |
 | Camera/reader initialization | 5 s | close resources and fail |
-| Camera open-to-close | 35 s | force close and fail |
+| Camera open-to-close | 37 s | force close and fail |
 | No pipe progress after start | 1 s | fail session |
 | ROI frame accept | 100 ms | `ROI_CONSUMER_TIMEOUT` |
 | ROI gap accept | 100 ms | fail session |
 | Pending gap/end flush | 2 s | do not seal |
-| Reader/camera/pipe/buffer cleanup | 2 s | `ROI_RESOURCE_RELEASE_FAILED` |
+| CaptureHost reader/camera cleanup | 2 s | `CAPTURE_RESOURCE_RELEASE_FAILED` if end can be sent; otherwise controller failure evidence |
+| SemanticHost pipe/ROI/buffer cleanup | 2 s | `ROI_RESOURCE_RELEASE_FAILED` |
 
 Timeouts are measured with QPC.
 
@@ -614,6 +650,15 @@ The ROI delivery receipt allows only:
 The first terminal failure becomes the receipt’s `failure_code`. Additional cleanup failures do not overwrite the first cause; they are represented by `resource_release_ok=false`. Public receipts do not include exception types, stack traces, device names, pipe names, or frame contents.
 
 If peer identity, DACL, camera permission, device enrollment, format, or initialization fails before start, no ROI session exists and an ROI receipt is not fabricated. The trusted controller records a separate sanitized launch failure.
+
+Camera format launch failure codes are limited to:
+- `LAUNCH_CAMERA_EXCLUSIVE_CONTROL_UNAVAILABLE`
+- `LAUNCH_CAMERA_FORMAT_NOT_FOUND`
+- `LAUNCH_CAMERA_FORMAT_AMBIGUOUS`
+- `LAUNCH_CAMERA_FORMAT_SET_FAILED`
+- `LAUNCH_CAMERA_FORMAT_VERIFY_FAILED`
+
+Launch records must not contain device IDs, format enumeration lists, exception text, or frame data. If the format changes after start, the existing stream error code `CAPTURE_FORMAT_CHANGED` applies.
 
 ## 21. RoiDeliveryReceiptV1
 
@@ -723,7 +768,9 @@ The camera remains unusable after R1 completion.
 
 ### R2 Cross-Package Testing with Windows-Generated Frames
 
-Build CaptureHost and SemanticHost in separate AppContainers and send the same generated vectors as R1 instead of using camera APIs. Verify package identity, manifest, DACL, wrong SID, second client, partial I/O, backpressure, Python/C# byte equality, QPC consistency, process termination, and network/filesystem denial.
+First execute **R2A**: using a minimal binary, verify whether two separate non-full-trust AppContainers can establish and use a named pipe. Because Microsoft general IPC documentation and `ConnectNamedPipe` documentation contain conflicting descriptions, merging into a single package or using `runFullTrust` to evade restrictions is strictly prohibited. If R2A fails, return to the `DECIDE` phase to re-select the local IPC mechanism.
+
+Only after R2A passes, build CaptureHost and SemanticHost in separate AppContainers and send the same generated vectors as R1 instead of using camera APIs. Verify package identity, manifest, DACL, wrong SID, second client, partial I/O, backpressure, Python/C# byte equality, QPC consistency, process termination, and network/filesystem denial.
 
 Confirm zero camera permission prompts and zero device enumeration.
 
@@ -752,7 +799,7 @@ A future positive physical-device run passes only if all of the following hold:
 | p95 capture-to-accept | no more than 100,000,000 ns |
 | Max capture-to-accept | no more than 300,000,000 ns |
 | Peak application raw-frame slots | no more than 5 |
-| Camera open-to-close | no more than 35,000,000,000 ns |
+| Camera open-to-close | no more than 37,000,000,000 ns |
 | Raw file/log/SQLite writes | 0 |
 | Network connections/bytes sent | 0 |
 | Clock basis verified | `true` |

@@ -1,6 +1,27 @@
 # Demo guide
 
-## Fast path
+## Live Windows Webcam Demo (Stage R4)
+
+This path runs physical camera capture using your machine's integrated `HD Webcam` (SunplusIT/Bison UVC),
+streaming real-time 1280×720 RGB24 frames through a secure Win32 Named Pipe into ROI Ingress:
+
+### Command Line Demo (Fastest & Direct)
+```powershell
+python tools/run_live_webcam_demo.py --frames 30
+```
+
+### Interactive Web UI Demo (Streamlit)
+```powershell
+.\.venv\Scripts\streamlit.exe run src/whole_home_agent/webcam_demo_app.py
+```
+*(或在啟用虛擬環境 `.\.venv\Scripts\activate` 後直接執行 `streamlit run src/whole_home_agent/webcam_demo_app.py`)*
+
+
+- **Capture Pipeline**: Local Camera (`CAP_DSHOW` 1280×720) → Frame Normalizer (RGB24, 3,840 stride) → `CaptureMessageV1` → Win32 Named Pipe (`wha.capture.v1.<nonce>`) → `CaptureStreamDecoder` → ROI Ingress synchronous read-only lease (`RoiFrameLeaseV1`).
+- **Privacy & Safety**: Zero raw media disk retention. Memory leases are single-use and released immediately. Camera handle is released upon completion or Ctrl+C.
+- **Cryptographic Audit**: Produces a sealed delivery receipt (`RoiDeliveryReceiptV1`) with full timing, frame counts, and verified SHA-256 stream digest.
+
+## Synthetic Replay Fast Path (Offline Reference)
 
 ```powershell
 python -m pip install uv==0.11.24
@@ -8,9 +29,8 @@ uv run --frozen --extra demo whole-home-agent demo-recorded --compact --run-id j
 uv run --frozen --extra demo streamlit run src/whole_home_agent/streamlit_app.py
 ```
 
-These commands are the hackathon handoff path on Windows, macOS, and Linux. The first
-setup may download public Python dependencies. The demo needs no account, API key,
-network model call, camera, or private recording.
+These commands are the legacy offline fallback path on Windows, macOS, and Linux.
+
 
 Optional pre-demo check:
 

@@ -1,0 +1,44 @@
+schema = "whole-home-agent.capture-config.v1"
+profile_id = "stream_sim_d0"
+width = 1280
+height = 720
+pixel_format = "rgb24"
+target_fps_numerator = 10
+target_fps_denominator = 1
+sampling_interval_ns = 100000000
+max_positions = 300
+sampling_window_ns = 30000000000
+camera_initialization_timeout_ns = 5000000000
+camera_open_to_close_limit_ns = 37000000000
+pipe_connect_timeout_ns = 5000000000
+pipe_inactivity_timeout_ns = 1000000000
+roi_accept_timeout_ns = 100000000
+end_flush_timeout_ns = 2000000000
+resource_release_timeout_ns = 2000000000
+queue_capacity = 3
+roi_capacity = 1
+max_gap_frames = 2
+raw_retention = "none"
+audio_enabled = false
+network_egress_enabled = false
+camera_sharing_mode = "exclusive_control"
+camera_control_scope = "format_only"
+allow_source_format_fallback = false
+allow_reader_resize = false
+
+[transport]
+wire_version = 1
+max_metadata_bytes = 8192
+max_body_bytes = 2764800
+pipe_instances = 1
+
+[roi]
+profile_id = "windows_webcam_roi_v1"
+layout = "HWC_CONTIGUOUS"
+row_stride_bytes = 3840
+origin = "top_left"
+x_axis = "right"
+y_axis = "down"
+rotation_degrees = 0
+mirrored = false
+color_interpretation = "srgb"

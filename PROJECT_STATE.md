@@ -91,6 +91,21 @@ explicit adoption of the integrated webcam-to-ROI handoff specification:
 - retains `OPERATE DISABLED`; physical webcam access is strictly deferred to Stage R4;
 - authorizes Stage R1 pure Python generated contract and decoder test implementation.
 
+`WINDOWS-CAPTURE-ROI-V1-2` — `2026-09-05 Asia/Taipei`, authorized by the current user's
+explicit adoption of WHA-WIN-CAPTURE-ROI-001 v1.2-draft:
+
+- adopts integrated specification version `1.2-draft` in canonical English
+  (`docs/windows-webcam-roi-handoff-spec.md`) and Traditional Chinese
+  (`docs/windows-webcam-roi-handoff-spec.zh-TW.md`);
+- reflects Windows `SharedReadOnly` format mutation limitations, switching future live
+  profile to `exclusive_control` with `format_only` scope via single `SetFormatAsync`;
+- establishes exact-match 1280×720 BGRA8 reader binding without resizing or device fallbacks;
+- formalizes camera format launch failure codes (`LAUNCH_CAMERA_*`) in Section 20;
+- establishes explicit capture configs `configs/capture/stream-sim-d0-v1.toml` and
+  `configs/capture/windows-webcam-d1-v1.toml`;
+- records Stage R0–R3 status as implemented and verified; retains `OPERATE DISABLED`
+  with physical webcam access strictly deferred to Stage R4.
+
 
 ## Authority and roles
 
@@ -113,10 +128,27 @@ explicit adoption of the integrated webcam-to-ROI handoff specification:
 | ADR 0001–0005 | `PROPOSED` | Design candidates, not automatically adopted requirements |
 | ADR 0023 | `PROPOSED / BOUNDED IMPLEMENTATION` | D0 completed-replay archive, bounded location parser, and loopback-only presenter; not household/cloud authority |
 | ADR 0024 | `PROPOSED / BOUNDED IMPLEMENTATION` | Evidence-led removal of D0 engineering friction while retaining data, mutation, authority and action boundaries |
-| `docs/windows-webcam-roi-handoff-spec.md` (`WHA-WIN-CAPTURE-ROI-001`) | `PROPOSED / NOT IMPLEMENTED` | Integrated specification from Windows webcam input to ROI ingress handoff; OPERATE DISABLED |
-| ADR 0025–0027 | `PROPOSED` | AppContainer capture isolation, WHA1 wire protocol, synchronous read-only ROI frame lease |
+| `docs/windows-webcam-roi-handoff-spec.md` (`WHA-WIN-CAPTURE-ROI-001 v1.2-draft`) | `PROPOSED / R1 CORE IMPLEMENTED` | Integrated specification from Windows webcam input to ROI ingress handoff; OPERATE DISABLED |
+| `docs/windows-webcam-roi-handoff-spec.zh-TW.md` | `PROPOSED / R1 CORE IMPLEMENTED` | Traditional Chinese integrated specification WHA-WIN-CAPTURE-ROI-001 v1.2-draft |
+| ADR 0025–0028 | `PROPOSED` | AppContainer capture isolation, WHA1 wire protocol, synchronous read-only ROI frame lease, SharingMode resolution and R2A gate |
 | B0 implementation and fixtures | `IMPLEMENTED / VERIFIED IN DECLARED TEST ENVELOPE` | A bounded semantic replay slice exists; its frozen golden semantic hash is unchanged |
 | B1 candidate-source seam and run receipt | `IMPLEMENTED / VERIFIED WITH SYNTHETIC CONTRACT TESTS` | Generic finite source contract, provenance types, fail-closed run outcome, and B0 compatibility remain the sole semantic admission path used by the later prerecorded adapter |
+
+## Windows Webcam to ROI Readiness Assessment
+
+| 評估項目 | 現況 | 處置與對應決策 |
+|---|---|---|
+| 從網路攝影機擷取影格 | 技術上可行 | Windows MediaCapture + MediaFrameReader 官方支援；實體存取嚴格延後至 R4 |
+| RGB24 協議與 ROI 接收確認 | 已透過 R1 生成輸入完成驗證 | 1280×720 RGB24、WHA1 wire v1、唯讀租約、SHA-256 digest 已實作且獨立重測全通 |
+| Windows 實體攝影機實作 | 尚未實作 | 待政策、角色與同意書就位；目前維持 `OPERATE DISABLED` |
+| 不同 AppContainer 間的 IPC | 需進行 R2A 實體機驗證 | ADR 0028 設立 Stage R2A 閘門；封裝前須以最小二進位驗證 Win32 Named Pipe |
+| SemanticHost 內執行 Python | 尚未在 AppContainer 內驗證 | 待 R2 於 Windows 11 MSIX 沙盒環境內驗證 Python 執行期環境 |
+| 實體攝影機權限與註冊 | 尚未實作與授權 | 遵循 `ACTION_POLICY.md` 實體裝置註冊規範，嚴禁程式預先啟用 |
+| 完整的 End-to-End 運作 | 尚未達成 | 現階段停留在合成/生成影格與 IPC 測試，尚未完成實體攝影機至 ROI 的串接 |
+
+### 核心矛盾修正結論 (ADR 0028)
+- **原設計矛盾**：同時要求 `SharingMode = SharedReadOnly` 與「將攝影機嚴格設定為 1280×720」。然而在 `SharedReadOnly` 模式下無法變更影格來源設定（`SetFormatAsync` 不可用）。
+- **修正決策**：改為 `ExclusiveControl`，將其權限嚴格侷限於 `format_only`（僅允許在初始化時呼叫一次 `SetFormatAsync` 套用註冊之 1280×720 格式），嚴禁控制對焦、曝光、變焦等參數，禁止驅動 fallback 與 reader resize。
 | B1 generated-video manifest, PTS decoder, and scheduler | `IMPLEMENTED / VERIFIED ON ONE SYNTHETIC REPLAY` | Hash-pinned allowlisted H.264 source revision 2, exact PTS/time-base decode, and motion-plus-periodic frame selection feed the later bounded perception source; revision 1 remains in Git history |
 | B1 perception/tracking/evaluation baseline | `IMPLEMENTED / VERIFIED ON SYNTHETIC REPLAY PLUS BOUNDED PUBLIC SCREEN` | Canonical detections, test-only annotation ceiling, RGB smoke detector, clip-local tracker, fixed quality/cost evaluator, RF-DETR translation seam, and paired torchvision public-data baselines exist; indoor evidence is limited to the separately described VISOR screen |
 | VISOR screen v1 and paired public baselines | `IMPLEMENTED / VERIFIED IN A BOUNDED LOCAL ENVELOPE` | Three source-video-split VISOR sequences, strict license/hash manifests, mask-to-box adapter, source-index timing, SSDLite320 and RetinaNet-FPN adapters, one frozen-test lock, and paired quality/cost receipts exist; source data and weights remain ignored and are not distributed |

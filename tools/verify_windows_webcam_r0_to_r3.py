@@ -44,6 +44,7 @@ from whole_home_agent.adapters.windows_webcam.qpc import (
     query_performance_frequency,
 )
 from whole_home_agent.adapters.windows_webcam.roi_contract import (
+    ALLOWLISTED_LAUNCH_FAILURE_CODES,
     ALLOWLISTED_ROI_FAILURE_CODES,
     RoiAcceptResultV1,
     RoiDeliveryReceiptV1,
@@ -141,26 +142,40 @@ def verify_stage_r0() -> None:
 
     repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     spec_path = os.path.join(repo_root, "docs", "windows-webcam-roi-handoff-spec.md")
+    spec_zh_path = os.path.join(repo_root, "docs", "windows-webcam-roi-handoff-spec.zh-TW.md")
     adr25_path = os.path.join(repo_root, "docs", "adr", "0025-isolate-windows-webcam-capture-in-separate-appcontainer.md")
     adr26_path = os.path.join(repo_root, "docs", "adr", "0026-use-fixed-prefix-and-canonical-json-wire-protocol.md")
     adr27_path = os.path.join(repo_root, "docs", "adr", "0027-use-synchronous-read-only-lease-for-roi-ingress.md")
+    adr28_path = os.path.join(repo_root, "docs", "adr", "0028-resolve-webcam-sharing-mode-contradiction-and-mandate-r2a-gate.md")
+    config_sim_path = os.path.join(repo_root, "configs", "capture", "stream-sim-d0-v1.toml")
+    config_live_path = os.path.join(repo_root, "configs", "capture", "windows-webcam-d1-v1.toml")
     state_path = os.path.join(repo_root, "PROJECT_STATE.md")
 
-    # 1. Document Existence
-    log_step("R0", "Document Existence (Spec)", os.path.exists(spec_path), f"Found {spec_path}")
+    # 1. Document Existence & Version Invariants
+    log_step("R0", "Document Existence (Spec En)", os.path.exists(spec_path), f"Found {spec_path}")
+    log_step("R0", "Document Existence (Spec Zh-TW)", os.path.exists(spec_zh_path), f"Found {spec_zh_path}")
     log_step("R0", "Document Existence (ADR 0025)", os.path.exists(adr25_path), f"Found {adr25_path}")
     log_step("R0", "Document Existence (ADR 0026)", os.path.exists(adr26_path), f"Found {adr26_path}")
     log_step("R0", "Document Existence (ADR 0027)", os.path.exists(adr27_path), f"Found {adr27_path}")
+    log_step("R0", "Document Existence (ADR 0028)", os.path.exists(adr28_path), f"Found {adr28_path}")
+    log_step("R0", "Document Existence (Capture Config Sim)", os.path.exists(config_sim_path), f"Found {config_sim_path}")
+    log_step("R0", "Document Existence (Capture Config Live)", os.path.exists(config_live_path), f"Found {config_live_path}")
     log_step("R0", "Document Existence (PROJECT_STATE)", os.path.exists(state_path), f"Found {state_path}")
 
-    # 2. Operating Constitution Check
+    # 2. Operating Constitution & Version Check
     with open(spec_path, "r", encoding="utf-8") as f:
         spec_text = f.read()
+    with open(spec_zh_path, "r", encoding="utf-8") as f:
+        spec_zh_text = f.read()
     with open(state_path, "r", encoding="utf-8") as f:
         state_text = f.read()
 
-    log_step("R0", "Governance Status (Spec)", "OPERATE DISABLED" in spec_text, "Spec declares OPERATE DISABLED")
+    log_step("R0", "Spec Version 1.2-draft (En)", "1.2-draft" in spec_text, "English spec is version 1.2-draft")
+    log_step("R0", "Spec Version 1.2-draft (Zh-TW)", "1.2-draft" in spec_zh_text, "Traditional Chinese spec is version 1.2-draft")
+    log_step("R0", "Governance Status (Spec En)", "OPERATE DISABLED" in spec_text, "Spec declares OPERATE DISABLED")
+    log_step("R0", "Governance Status (Spec Zh-TW)", "OPERATE DISABLED" in spec_zh_text, "Chinese Spec declares OPERATE DISABLED")
     log_step("R0", "Governance Status (PROJECT_STATE)", "OPERATE DISABLED" in state_text, "PROJECT_STATE declares OPERATE DISABLED")
+    log_step("R0", "Spec ExclusiveControl Invariant", "ExclusiveControl" in spec_text and "exclusive_control" in spec_text, "ExclusiveControl specified")
 
     # 3. Fixed Constants Invariants
     log_step("R0", "Fixed Resolution", (1280 * 720 * 3 == 2764800) and (FRAME_BODY_BYTES == 2764800), "1280x720 RGB24 == 2,764,800 bytes")
@@ -169,6 +184,7 @@ def verify_stage_r0() -> None:
     log_step("R0", "Wire Version", WIRE_VERSION == 1, "Major Wire Version is 1")
     log_step("R0", "Metadata Bounds", MIN_METADATA_BYTES == 2 and MAX_METADATA_BYTES == 8192, "[2, 8192] bytes")
     log_step("R0", "App Memory Budget", (5 * 2764800) / (1024 * 1024) < 13.5, "5 frame slots <= 13.18 MiB")
+    log_step("R0", "Launch Failure Codes Set", len(ALLOWLISTED_LAUNCH_FAILURE_CODES) == 5, f"5 launch failure codes defined: {sorted(ALLOWLISTED_LAUNCH_FAILURE_CODES)}")
 
 
 # ==============================================================================

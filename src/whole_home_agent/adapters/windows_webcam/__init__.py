@@ -1,3 +1,5 @@
 """Windows Webcam to ROI Ingress adapter package (WHA-WIN-CAPTURE-ROI-001)."""
 
-from __future__ import annotations
+from .live_camera_producer import LiveCameraProducer
+
+__all__ = ["LiveCameraProducer"]

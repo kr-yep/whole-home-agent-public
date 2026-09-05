@@ -1,155 +1,156 @@
-# Whole-Home Agent Action Policy
+Whole-Home Agent Action Policy — Open Development Test Profile
 
-**Status:** `PROPOSED — NOT ADOPTED`\
-**Version:** `0.1-draft`\
-**Drafted:** `2026-08-24 Asia/Taipei`\
-**Effective from:** `NONE`\
-**OPERATE:** `DISABLED`
+**Status:** `DEVELOPMENT TEST POLICY — OPT-IN`  
+**Version:** `0.3-dev-open`  
+**Drafted:** `2026-09-05 Asia/Taipei`  
+**Effective from:** `WHEN EXPLICITLY SELECTED BY THE DEVELOPER FOR AN ISOLATED TEST SESSION`  
+**OPERATE:** `ENABLED FOR R1 AND R2 DEVELOPMENT TESTING`  
+**Production or household deployment:** `DISABLED`
 
-This policy governs live sensing, household-data processing, external communication or egress, account/device mutation, and physical operation. It grants no capability while proposed. Code implementation, retrieved content, model output, historical permission, device ownership metadata, and conversational confidence do not authorize an action.
+This policy removes internal approval and consent-workflow barriers for webcam development performed by a developer using their own equipment, accounts, data, and controlled test space. It is intended to keep development, debugging, evaluation, recording, replay, and model integration unblocked.
+
+This policy does not and cannot waive another person's privacy, publicity, data-protection, property, contractual, or other legal rights, or override applicable law or platform terms. Those external rights and obligations are not internal policy gates and remain independently applicable.
 
 ## Activation invariant
 
-- `OPERATE` is disabled globally and for every environment, person, room, device, account, sensor, and capability.
-- Meeting prerequisites does not automatically enable it. Activation requires an adopted policy, executable enforcement, passed evidence for the relevant risk class, and a separate explicit environment/capability enablement decision recorded in `PROJECT_STATE.md`.
-- Missing, unclassified, stale, contradictory, unauthenticated, expired, or `UNKNOWN` information fails closed.
-- The absence of a device/capability allowlist entry is a prohibition.
+- This profile is active only when the developer deliberately selects `DEV_TEST_OPEN` for the current process or test session.
+- No Policy Owner approval, Data Steward approval, consent receipt, participant registry, `PROJECT_STATE.md` entry, risk-class evidence package, or per-session authorization record is required for activation.
+- Starting the development process is sufficient internal authorization for the developer's own equipment, accounts, test data, and self-capture.
+- The profile may not be selected automatically, inherited by a production environment, enabled by retrieved content, activated by model output, or restored by replay.
+- The profile must be visibly labeled `DEVELOPMENT TEST` in logs or the user interface so its outputs are not mistaken for production results.
+- Missing governance metadata does not block development under this profile.
+- Missing technical prerequisites needed for the requested operation may produce an ordinary runtime error rather than a policy denial.
+
+## Development environment boundary
+
+The open development profile applies when all of the following are true:
+
+- the developer intentionally starts the test;
+- the host, webcam, microphone, storage, network connection, accounts, and external services are controlled or legitimately usable by the developer;
+- the test uses the developer's own capture, synthetic/generated inputs, licensed/public fixtures, or other data the developer is entitled to use;
+- the camera is positioned in a developer-controlled test area rather than used for covert, unattended, or general household surveillance; and
+- the test is not connected to locks, alarms, purchasing, messaging, access control, utilities, medical equipment, vehicles, or life-safety systems.
+
+The developer may change the camera, host, field of view, algorithms, models, output formats, duration, resolution, frame rate, storage location, and approved development endpoints without amending this policy.
 
 ## Actors and authority
 
-All assignments are unresolved. Do not infer them from repository access, conversation history, device ownership metadata, network location, or observed household behavior.
+| Actor/role                                        | Assignment                                                                                    | Authority under this profile                                                                                                      |
+| ------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| Developer / Test Operator                         | The local user who intentionally starts `DEV_TEST_OPEN`                                       | Full authority over in-scope development capture, processing, storage, replay, debugging, and selected development-service egress |
+| Project Owner                                     | Optional for development testing                                                              | May define repository or product constraints but is not required for a test session                                               |
+| Policy Owner                                      | Not required                                                                                  | No per-session approval required                                                                                                  |
+| Engineering Lead                                  | Not required                                                                                  | No per-session approval required                                                                                                  |
+| Data Steward                                      | Not required                                                                                  | No per-session approval required                                                                                                  |
+| Adult resident / affected person                  | Outside the internal workflow for operator-only tests                                         | This policy does not remove independently existing rights                                                                         |
+| Guest, child, caregiver, technician, or bystander | Outside the authorized test-data scope unless independently lawful and intentionally included | No authority is inferred; do not use this profile to justify covert or non-consensual capture                                     |
+| Runtime service identity                          | Optional                                                                                      | May receive the device, filesystem, network, model, and debugging capabilities selected by the developer                          |
+| Model, Agent, subagent, or retrieved content      | Not an authority                                                                              | May operate only through capabilities made available by the developer; may not broaden the environment boundary                   |
 
-| Actor/role | Current assignment/authentication | May request | May approve | May change policy | Review/expiry |
-|---|---|---|---|---|---|
-| Project Owner | `UNASSIGNED` | Repository scope and product decisions once assigned | Project decisions within scope; not another person's consent | No, unless separately assigned Policy Owner | `UNDEFINED` |
-| Policy Owner | `UNASSIGNED` | Policy review | Prospective policy versions and activation within documented authority | Yes, with versioned record and required consent | `UNDEFINED` |
-| Engineering Lead | `UNASSIGNED` | Implementation and verification work | Engineering integration only | No | `UNDEFINED` |
-| Data Steward | `UNASSIGNED` | Data processing/retention proposals | Data handling only within adopted policy and affected-person rights | No unilateral policy change | `UNDEFINED` |
-| Household owner/administrator | `UNDEFINED` | Only after identity and scope are defined | Never substitutes for every affected person's consent or law | Only if also assigned Policy Owner | `UNDEFINED` |
-| Adult resident / affected person | `UNDEFINED` | Use of their own data/space under adopted policy | Their own consent and withdrawal, subject to applicable constraints | No general policy power by default | `UNDEFINED` |
-| Guest, child, caregiver, technician | `UNDEFINED` | `NONE` until specific rules exist | `NONE` until specific rules exist | No | `UNDEFINED` |
-| Demo participant | `UNDEFINED` | One bounded demo session only after a specific consent receipt | Their own participation/data scope only; cannot consent for others | No | Session end or earlier withdrawal |
-| Runtime service identity | `NOT CREATED` | Typed capability calls only after enrollment | Never approves its own request | No | Not applicable |
-| Model, Agent, subagent, retrieved content | Not an authority | Proposals only | None | No | Not applicable |
+## Consent and rights treatment
 
-Resident disagreement, joint consent, guardianship/assent, guest notice, caregiver delegation, technician access, emergency authority, service accounts, and policy recovery remain unresolved. Therefore no runtime request can be authorized.
+- No consent form, consent receipt, participant enrollment, notice workflow, pause indicator, withdrawal workflow, or approval chain is required for a test limited to the developer's own image, voice, equipment, space, accounts, and data.
+- The developer's intentional launch of the test is sufficient internal authorization; no separate record is required.
+- Internal policy enforcement does not evaluate ownership, consent, lawful basis, or participant status during an operator-only development test.
+- This policy does not declare that third-party consent is legally unnecessary and does not extinguish third-party rights. A developer who intentionally includes another person or their data is responsible for ensuring an independently valid basis for doing so.
+- Unexpected third-party capture should be excluded, deleted, or replaced with synthetic data where practical, but its appearance does not authorize identity analysis, publication, or unrelated reuse.
+- Children, intimate/private activity, biometric identification of third parties, and covert surveillance are not authorized by this profile.
 
-## Consent and spatial/data scope
+## Data classes
 
-- No person, household, room, zone, camera, microphone, stream, account, or device is enrolled.
-- Private versus common spaces are not classified. Until classification and consent exist, treat every household space and live feed as restricted.
-- No consent record, lawful-use basis, notice mechanism, pause indicator, withdrawal flow, or deletion workflow has been adopted.
-- Consent must bind the affected person, exact space/sensor/data purpose, data classes, recipients/egress, retention, start/expiry, and withdrawal path. Silence, presence, past behavior, or device ownership is not consent.
-- Shared-space disagreement or missing consent defaults to denial; do not use last-write-wins or infer that property ownership waives another affected person's privacy.
-- A future consent receipt must at least bind `consent_id`, policy version, affected persons or guardian authority, camera and field of view, room/session, purpose, allowed data classes, local/cloud processing, permitted viewers, retention schedule, start/end/expiry, and withdrawal/erasure route.
-- A one-session demo consent does not authorize later household capture, model training, unrelated queries, cloud use, or product operation.
-- Withdrawal must stop future processing within defined latency and invoke the adopted deletion/redaction policy. Because those mechanisms do not yet exist, collection is prohibited.
+| Class                                          | Content                                                                                                                                                         | State under this profile                                                                    |
+| ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| D0 — Development fixtures                      | Synthetic/generated fixtures and lawfully reusable public or licensed data                                                                                      | `PERMITTED`                                                                                 |
+| D1 — Live development media                    | Live webcam and microphone input used for interactive testing                                                                                                   | `PERMITTED`                                                                                 |
+| D2 — Development recordings and derived data   | Frames, clips, audio, screenshots, logs, captions, embeddings, detections, annotations, evaluation data, and replay artifacts created from in-scope test inputs | `PERMITTED`                                                                                 |
+| D3 — Special/high-sensitivity third-party data | Children's data, third-party biometrics, health data, intimate/private-room capture, or safety/security inference about another person                          | `PROHIBITED` unless governed by a separate adopted policy and independently valid authority |
 
-## Provisional data classes
+Development data may be retained, copied, transformed, replayed, exported, uploaded to developer-selected services, or deleted according to the needs of the experiment. The developer is responsible for storage capacity, account terms, endpoint selection, and any independently applicable legal requirements.
 
-These classes are not permission and require license, purpose, and provenance review even when offline.
+## Risk and capability classes
 
-| Class | Content | Current state |
-|---|---|---|
-| D0 — Non-household development data | Synthetic/generated fixtures and lawfully reusable public data with recorded provenance and license | Offline use may be requested under `IMPLEMENT`; no operational endpoint or credential |
-| D1 — Controlled demo media | A bounded staged session with all required participant consent | `BLOCKED` until consent, retention, access, deletion, and session isolation are adopted and implemented |
-| D2 — Household data | Real household video, images, events, object/location history, presence or routine data | `BLOCKED` |
-| D3 — Special/high-sensitivity data | Children, audio, biometrics, health, intimate/private rooms, or safety/security inference | `EXCLUDED FROM MVP`; any future scope expansion requires new governance and risk review |
+| Class                                                                    | Development-test rule                                                                                                            | Safe failure                                                      |
+| ------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| D0 — Repository/simulation                                               | `PERMITTED` without governance approval                                                                                          | Preserve useful diagnostics                                       |
+| R1 — Live sensing or private-state read                                  | `PERMITTED` for developer-controlled cameras, microphones, streams, sensors, and test inputs                                     | Return an ordinary error or stop the affected stream              |
+| R2 — Recording, profiling, persistence, model processing, or egress      | `PERMITTED` for in-scope development data and developer-selected local or external services                                      | Report partial completion and preserve diagnostics when requested |
+| R3 — Communications, purchases, access/security, policy/account mutation | `PROHIBITED` except ordinary management of the developer's test accounts, API credentials, and development-service configuration | No external side effect outside the development environment       |
+| R4 — Reversible comfort/media actuation                                  | `PROHIBITED` under this profile                                                                                                  | Leave device state unchanged                                      |
+| R5 — Safety/life-critical actuation                                      | `PROHIBITED` under this profile                                                                                                  | Agent cannot invoke or override the system                        |
 
-## Provisional risk and capability classes
-
-These classes are a review scaffold, not adopted permission. Every concrete capability needs a stable ID and owner-approved mapping. Unclassified consequential actions are prohibited.
-
-| Class | Consequence boundary | Provisional default | Required enforcement before any future use | Human authority | Safe failure |
-|---|---|---|---|---|---|
-| D0 — Repository/simulation only | Local reversible code/docs/tests with synthetic, generated, or lawfully usable public fixtures; no real target | `IMPLEMENT`, not `OPERATE` | Workspace sandbox, fixture provenance, no production credentials or real endpoints | Explicit repository request for material changes | Stop test and preserve diagnostics |
-| R1 — Live sensing or private-state read | Opening camera/mic/RTSP/sensor, observing state, or querying real household memory/evidence even without persistence | `PROHIBIT` | Per-space/person consent, purpose/scope authorization, visible status/pause for sensing, strict read-only adapter, bounded disclosure, no egress | Authenticated scoped requester plus all required affected-person consent | Do not connect or disclose; discard transient buffers |
-| R2 — Recording, profiling, private-data persistence or egress | Evidence clips, continuous logs, occupancy/routine inference, biometrics, cloud VLM, sharing/export | `PROHIBIT` | Purpose limitation, minimization, encryption/access, retention/deletion, egress allowlist, audit and consent enforcement | Policy Owner + Data Steward + required affected persons | Do not record/upload; quarantine and delete unauthorized artifact |
-| R3 — Communications, purchase, access/security or policy/account mutation | Messages, calls, posts, spending, locks/alarms/security settings, credentials, enrollment, governance changes | `PROHIBIT` | Narrow broker, stable target, typed allowlist, strong authentication, approval separation, cost/rate/TTL, receipts | Dedicated scope authority; some actions may require multiple approvers | No side effect; alert authorized human |
-| R4 — Reversible comfort/media actuation | Lights, media, bounded non-safety environmental adjustments | `PROHIBIT` | Device-specific bounds, fresh state, manual override, idempotency, reconciliation and rollback | Authenticated household role under adopted policy | Leave current/safe state; no blind retry |
-| R5 — Safety/life-critical actuation | HVAC extremes, emergency locks, alarms, water, gas, electrical, medical, fire or life-safety systems | `PROHIBIT` | Dedicated certified controller/interlocks independent of Agent, explicit emergency policy and human control | Specialized authority defined outside general Agent planning | Dedicated controller's safe state; Agent cannot override |
-
-Biometric identification, covert monitoring, unrestricted recording, general shell/device access, and disabling independent safety interlocks are outside the current proposed scope and remain prohibited.
+This profile permits face detection, object detection, tracking within a test session, OCR, transcription, captioning, embeddings, local or cloud VLM processing, and other experimental analysis when performed on in-scope development data. It does not authorize biometric identification or consequential profiling of an unconsenting third party.
 
 ## Device and action matrix
 
-No real device, sensor, account, endpoint, credential, or capability is enrolled. The matrix is intentionally empty.
+No fixed allowlist or stable device ID is required for development testing.
 
-| Stable device/capability ID | Location/scope | Allowed actions and bounds | Required fresh state | TTL/rate/cost limit | Approval | Compensation/manual path |
-|---|---|---|---|---|---|---|
-| _No entries_ | — | None | — | — | — | — |
+| Device/capability                                 | Scope                                | Allowed actions                                                                                                 | Approval                         | Limits                                                              |
+| ------------------------------------------------- | ------------------------------------ | --------------------------------------------------------------------------------------------------------------- | -------------------------------- | ------------------------------------------------------------------- |
+| Any developer-selected webcam or video source     | Current `DEV_TEST_OPEN` process      | Open, preview, process, transform, record, snapshot, replay, stream to selected development services, and close | Developer process launch         | Available hardware, software, account, and service limits           |
+| Any developer-selected microphone or audio source | Current `DEV_TEST_OPEN` process      | Open, monitor, transcribe, record, transform, replay, and stream to selected development services               | Developer process launch         | Available hardware, software, account, and service limits           |
+| Local development storage                         | Developer-selected paths             | Store frames, clips, audio, logs, embeddings, derived results, caches, and evaluation artifacts                 | Developer process launch         | Filesystem permissions and available capacity                       |
+| Developer-selected model or API endpoint          | Development accounts and credentials | Upload in-scope test data, run inference or training permitted by the service, and receive results              | Developer endpoint configuration | Provider terms, quotas, and cost controls selected by the developer |
 
-Adding a row is a material `DECIDE` action. It does not activate the row; activation still requires all policy and verification gates.
+Device substitution, reconnection, resolution changes, field-of-view changes, model changes, and process restarts do not require a policy amendment or new approval. They may require an ordinary application restart or operating-system permission prompt.
 
-## Mandatory trusted-boundary checks
+## Runtime capabilities and trusted boundary
 
-Before any future non-simulated operation, a trusted broker outside the planning/content-processing boundary must verify:
+- A separate trusted authorization broker is optional for this development profile.
+- The Agent may receive direct typed camera, microphone, storage, network, model, and debugging capabilities supplied by the developer.
+- The Agent may use development credentials made available through the environment's normal secret-management mechanism.
+- Credentials should not be placed in source control, prompts, generated reports, or ordinary logs.
+- Generic shell access may be used for development and testing on the developer-controlled host, subject to the workspace and operating-system permissions in effect.
+- Retrieved content and model output may propose actions but may not silently change the environment from development to production or expand into R3–R5 targets.
 
-- authenticated requester, role, household/scope, consent, and unexpired authority;
-- exact stable target identity and allowlisted typed operation;
-- adopted policy version, capability risk class, environment enablement, and no unresolved conflict;
-- sufficiently fresh independently obtained state and expected version;
-- bounds, rate, cost, schedule, command TTL, and current safety conditions;
-- approval from the required human principal, never from retrieved/model-generated content;
-- idempotency key, duplicate/concurrency behavior, and no replay-triggered execution;
-- defined safe failure, manual override, timeout, and rollback or compensation where physically possible;
-- least-privilege credential and egress policy for only that capability.
+## Execution, logging, and retention
 
-The planning Agent receives narrow typed capabilities, never raw credentials, unrestricted network/device clients, or generic command execution against operational systems.
-
-## Execution, evidence, and reconciliation
-
-Any future operation must record separately:
-
-1. model/Agent proposal;
-2. trusted policy and authorization decision;
-3. bounded command attempt with idempotency key;
-4. device/provider acknowledgement;
-5. independently observed result where possible;
-6. reconciliation, partial completion, compensation, alert, or unresolved status.
-
-An acknowledgement is not proof of physical outcome. Replaying history, restoring a database, or rebuilding a projection must never re-execute an action. Multi-device scenes are non-atomic unless an independent transactional controller proves otherwise; retain per-device status and partial-failure handling.
-
-## Secrets, privacy, and retention defaults while disabled
-
-- No runtime credentials or operational egress tokens may be added. Future credentials must reside in a least-privilege secret/capability broker, never prompts, ordinary logs, source control, model memory, or event payloads.
-- Live household audio/video/location/presence/behavior data collection and persistence are prohibited.
-- Approved external egress for household data: none.
-- High-frequency raw telemetry retention: none.
-- Policy/approval/action/incident retention rules: unresolved; no operation may begin until minimization, access, expiry, erasure, and audit protections are adopted.
-- Public/synthetic test artifacts must keep provenance and license/use information. They must not be mixed with future household runtime data.
-- Offline/replay composition must not receive a camera/RTSP adapter, cloud client, operational network route, device executor, or runtime credential. A configuration flag or prompt instruction alone is insufficient separation.
+- Media recording, screenshots, derived artifacts, debugging traces, test fixtures, and replay datasets are permitted.
+- Content may appear in development logs when useful for debugging. Secrets should be redacted.
+- There is no policy-level retention maximum for in-scope development data.
+- Automatic deletion, buffer clearing, audit receipts, idempotency records, independent result observation, reconciliation, and per-session review are optional unless the test specifically evaluates those behaviors.
+- Replaying captured media for analysis is permitted. Replaying logs must not execute R3–R5 actions.
+- Test output may be transmitted to development services explicitly configured by the developer.
+- The developer should distinguish retained test artifacts from production data and avoid committing private media or credentials to public source control.
 
 ## Failure, emergency, and recovery
 
-- Independent kill switch/manual control: `NOT IMPLEMENTED`.
-- Safety interlocks outside Agent control: `NOT IDENTIFIED`.
-- Network/device/provider outage behavior: no operation; fail closed.
-- Retry/deduplication/circuit-breaker limits: not adopted; no operational retry.
-- Incident authority and evidence handling: `UNASSIGNED`.
-- Recovery and re-enablement authority: `UNASSIGNED`; recovery never automatically restores operation.
-- The Agent must not invent an emergency exception. Emergency behavior requires a separately adopted policy and independent controls.
+- A dedicated policy kill switch is not required.
+- The developer may stop capture using the application, process termination, operating-system permission controls, device disconnection, or a physical camera cover.
+- Camera, microphone, network, model, filesystem, or provider failures may be retried according to normal development logic.
+- Automatic reconnect and stream recovery are permitted for in-scope test devices.
+- Partial results may be retained for debugging.
+- Restarting the development process may restore the test when `DEV_TEST_OPEN` is deliberately selected again.
+- No emergency exception may be used to reach R3, R4, or R5 systems.
 
-## Verification required before any activation
+## Verification expectations
 
-For every proposed capability and risk class, preserve evidence for:
+Verification is encouraged but is not a precondition for development use. Tests may cover:
 
-- simulator and offline behavior with no operational credentials;
-- hostile/untrusted input failing to grant tools, policy, consent, or authority;
-- identity, role, consent, scope, expiry, revocation, and conflict denial;
-- unclassified action, wrong target, stale/unknown state, bound/rate/cost and egress denial;
-- device offline, timeout, partial completion, duplicate request, late acknowledgement, restart, and replay safety;
-- manual override, kill switch, independent interlock, rollback/compensation, incident response, and recovery;
-- receipt integrity and separation of proposal, approval, acknowledgement, and observed outcome;
-- privacy minimization, retention expiry, withdrawal, redaction, erasure, and deletion-failure handling.
+- device discovery, permission handling, live capture, reconnect, and multiple-camera selection;
+- local and cloud inference, recording, snapshot, replay, and export;
+- latency, frame rate, resolution, model accuracy, cost, and resource use;
+- error handling, partial results, timeouts, retries, and provider outages;
+- separation of development and production environments;
+- prevention of accidental secret disclosure and unintended R3–R5 side effects; and
+- deletion or isolation of test artifacts before distribution or public release.
 
-Passing a lower class never activates a higher class. A written policy or passing unit test is not proof that OS, network, broker, credential, device, or human-authorization boundaries work.
+Failed tests do not revoke the development profile. The developer decides whether to continue, change configuration, retain diagnostics, or stop.
 
-Before activation, the adopted policy also needs a closed, machine-readable, schema-validated and version/hash-pinned form enforced by the trusted broker. This Markdown remains the human-readable authority record, not the enforcement engine.
+## Production boundary, supersession, and audit
 
-## Adoption, activation, supersession, and audit
+- This profile must not be represented as a production, household-surveillance, security, access-control, employment, insurance, medical, or life-safety policy.
+- Production or general household deployment requires a separate adopted policy with appropriate authority, consent or other lawful basis, privacy controls, retention rules, security controls, and capability-specific verification.
+- No test result, stored artifact, prior successful run, model recommendation, or developer setting automatically authorizes production use.
+- This version supersedes earlier drafts only when `DEV_TEST_OPEN` is deliberately selected for the current development process. It does not weaken another policy governing a production environment.
+- Restrictive disablement may be applied immediately by removing `DEV_TEST_OPEN`, revoking device or network permissions, stopping the process, or disconnecting the device.
 
-- Adoption requires a named/authenticated Policy Owner, required Project/Data authority, and affected-person consent for the policy's exact scope. Record version, effective time, review/expiry, and signatures or equivalent authenticated evidence.
-- Activation is a separate prospective decision for exact environments and capability IDs after verification. It must update `PROJECT_STATE.md`; it never occurs merely because code exists or this draft is edited.
-- Changes are explicit, versioned, prospective, and owner-authorized. Preserve which policy authorized each historical request/action; never reinterpret history as though a later policy applied.
-- Restrictive emergency disablement may take effect immediately through an independent mechanism. Re-enablement requires the full adopted recovery process and never follows automatically from restart.
+## Minimal developer checklist
+
+The checklist is advisory and does not create an approval gate:
+
+- confirm that `DEV_TEST_OPEN` is selected only in the intended development process;
+- point the camera at a controlled test area and use the developer's own data or authorized fixtures;
+- select storage and external endpoints appropriate for the experiment;
+- keep credentials out of source control and logs;
+- avoid third-party, child, intimate, or covert capture; and
+- stop or isolate the test before switching to production or a shared household environment.

@@ -368,7 +368,7 @@ class CaptureStreamDecoder:
             self._fail("ROI_SESSION_MISMATCH")
             return
 
-        if first_missing != self._expected_sequence or not isinstance(last_missing, int) or last_missing < first_missing or last_missing > 299:
+        if first_missing != self._expected_sequence or not isinstance(last_missing, int) or last_missing < first_missing:
             self._fail("ROI_SEQUENCE_INVALID")
             return
 

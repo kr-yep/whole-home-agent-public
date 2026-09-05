@@ -13,7 +13,7 @@ Introducing live webcam video acquisition introduces native driver execution ris
 To support future Windows webcam input while preserving repository invariants:
 
 - Split the capture pipeline into two physically isolated Windows processes running under distinct MSIX AppContainers:
-  1. `Wha.CaptureHost`: Written in C#/WinUI 3 (.NET 8) or C++/WinRT. Requests only the `webcam` device capability. Explicitly denies `internetClient` (no outbound/inbound networking), `microphone` (no audio), and general filesystem access. Owns `MediaCapture` and `MediaFrameReader`.
+  1. `Wha.CaptureHost`: Written in C#/WinUI 3 (.NET 8) or C++/WinRT. Requests only the `webcam` device capability. Explicitly denies `internetClient` (no outbound/inbound networking), `microphone` (no audio), and general filesystem access. Owns `MediaCapture` and `MediaFrameReader`. Uses `ExclusiveControl` with strictly bounded `format_only` scope to allow `SetFormatAsync` to select the exact 1280×720 format while forbidding camera controls (see ADR 0028).
   2. `Wha.SemanticHost`: Contains the Python runtime and downstream processing. Denied all camera and microphone capabilities. Receives normalized frames exclusively over a local IPC channel.
 - Connect `Wha.CaptureHost` and `Wha.SemanticHost` via a single-instance, one-way Windows Named Pipe (`\\.\pipe\LOCAL\wha.capture.v1.<session_nonce>`).
 - Enforce strict DACLs (Discretionary Access Control Lists) granting read/write access solely to the current user token and the exact AppContainer Package SIDs of the two communicating processes. Deny `ANONYMOUS LOGON` and `NETWORK` SIDs.
@@ -32,4 +32,4 @@ To support future Windows webcam input while preserving repository invariants:
 - Hardware capture is structurally isolated from semantic memory and query processing.
 - A driver crash or buffer overrun in `CaptureHost` cannot compromise `SemanticHost` or access SQLite storage.
 - Neither process possesses both camera access and network egress capabilities, eliminating the possibility of exfiltration.
-- Cross-process AppContainer testing requires Windows 11 packaging and manifest verification in Stage R2.
+- Cross-process AppContainer testing requires empirical feasibility verification in Stage R2A prior to full packaging (see ADR 0028).
