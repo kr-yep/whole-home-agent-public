@@ -11,16 +11,26 @@ from .errors import ErrorCode, QuestionError
 
 
 QUESTION_PARSER_ID = "bounded-location-question/1"
+TIMELINE_PARSER_ID = "bounded-timeline-question/1"
 MAX_QUESTION_CHARACTERS = 200
 
 DEFAULT_ENTITY_ALIASES: Mapping[str, tuple[str, ...]] = {
     "key": ("key", "keys", "鑰匙", "钥匙"),
     "bag": ("bag", "backpack", "包包", "背包"),
     "sofa": ("sofa", "couch", "沙發", "沙发"),
+    "wallet": ("wallet", "錢包", "钱包"),
+    "remote": ("remote", "remote control", "遙控器", "遥控器"),
+    "book": ("book", "書", "书"),
+    "drawer": ("drawer", "抽屜", "抽屉"),
+    "desk": ("desk", "書桌", "书桌", "桌子"),
+    "table": ("table", "茶几", "桌"),
+    "shelf": ("shelf", "書架", "书架", "架子"),
 }
 
 _ENGLISH_LOCATION_INTENT = re.compile(r"\b(where|locate|find|location)\b")
 _CJK_LOCATION_INTENT = ("在哪", "哪裡", "哪里", "位置", "放哪", "找", "看到", "看見", "見過")
+_ENGLISH_TIMELINE_INTENT = re.compile(r"\b(when|last seen|last recorded|what time)\b")
+_CJK_TIMELINE_INTENT = ("什麼時候", "什么时候", "何時", "何时", "幾秒", "几秒", "最後記錄", "最后记录")
 _ENGLISH_ACTION = re.compile(r"\b(open|close|unlock|buy|purchase|send|message)\b")
 _CJK_ACTION = (
     "開門",
@@ -100,6 +110,61 @@ def parse_location_question(
             details={"matched_entity_count": len(matches)},
         )
     return matches[0]
+
+
+def parse_timeline_question(
+    question: str,
+    *,
+    allowed_entity_ids: Iterable[str],
+    aliases: Mapping[str, tuple[str, ...]] = DEFAULT_ENTITY_ALIASES,
+) -> str:
+    """Return one entity for a bounded recorded-time question.
+
+    The answer describes only the timestamp basis embedded in the stored replay.
+    It never converts a replay position into a real-world clock time.
+    """
+
+    if not isinstance(question, str):
+        raise QuestionError("question must be text")
+    if any(ord(character) < 32 or ord(character) == 127 for character in question):
+        raise QuestionError("question contains control characters")
+    normalized = unicodedata.normalize("NFKC", question).strip().lower()
+    if not normalized or len(normalized) > MAX_QUESTION_CHARACTERS:
+        raise QuestionError("question is empty, overlong, or contains control characters")
+    if not (
+        _ENGLISH_TIMELINE_INTENT.search(normalized)
+        or any(token in normalized for token in _CJK_TIMELINE_INTENT)
+    ):
+        raise QuestionError(
+            "not a bounded replay-time question",
+            error_code=ErrorCode.UNSUPPORTED_QUESTION,
+        )
+    if _ENGLISH_ACTION.search(normalized) or any(
+        token in normalized for token in _CJK_ACTION
+    ):
+        raise QuestionError(
+            "action-shaped questions are outside the timeline-query capability",
+            error_code=ErrorCode.UNSUPPORTED_QUESTION,
+        )
+    allowed = tuple(sorted(set(allowed_entity_ids)))
+    matches = [
+        (position, entity_id)
+        for entity_id in allowed
+        if (position := _first_position(
+            normalized, aliases.get(entity_id, ()) + (entity_id,)
+        )) is not None
+    ]
+    # A relation question normally names both ends, for example "when did the
+    # key enter the bag?".  The first mentioned entity is the subject; the
+    # result still reports the relation's recorded target from the claim.
+    matches.sort()
+    if not matches or len(matches) > 2:
+        raise QuestionError(
+            "question must name exactly one known object",
+            error_code=ErrorCode.UNSUPPORTED_QUESTION,
+            details={"matched_entity_count": len(matches)},
+        )
+    return matches[0][1]
 
 
 VERIFICATION_PARSER_ID = "bounded-location-verification/1"

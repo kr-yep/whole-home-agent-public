@@ -59,13 +59,27 @@ _ABSTENTION_PROSE = {
 _PREDICATES = frozenset({"at_zone", "inside"})
 _DISPLAY_NAMES = {
     "bag": "包包",
+    "book": "書",
+    "desk": "書桌",
+    "drawer": "抽屜",
     "key": "鑰匙",
+    "remote": "遙控器",
+    "shelf": "書架",
     "sofa": "沙發",
     "phone": "手機",
     "cup": "水杯",
     "laptop": "筆記型電腦",
     "desk": "書桌",
+    # The two branches disagreed here: 餐桌 for a dining table, 茶几 for a coffee
+    # table. Keeping the one already on main, because renaming something that has
+    # shipped surprises more than a remote control resting on the wrong kind of
+    # table. One word to change if the inventory replay reads better the other way.
     "table": "餐桌",
+    "drawer": "抽屜",
+    "shelf": "書架",
+    "wallet": "錢包",
+    "remote": "遙控器",
+    "book": "書",
 }
 
 

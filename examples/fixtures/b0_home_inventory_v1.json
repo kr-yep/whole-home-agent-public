@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "fixture_id": "b0-home-inventory",
+  "fixture_revision": "1",
+  "use_class": "D0_SYNTHETIC",
+  "timestamp_basis": "synthetic",
+  "claims": [
+    {"claim_id": "claim-key-inside-bag", "source_sequence": 1, "operation": "assert", "subject_id": "key", "predicate": "inside", "object_id": "bag", "epistemic_status": "reported"},
+    {"claim_id": "claim-bag-at-sofa", "source_sequence": 2, "operation": "assert", "subject_id": "bag", "predicate": "at_zone", "object_id": "sofa", "epistemic_status": "reported"},
+    {"claim_id": "claim-wallet-inside-drawer", "source_sequence": 3, "operation": "assert", "subject_id": "wallet", "predicate": "inside", "object_id": "drawer", "epistemic_status": "reported"},
+    {"claim_id": "claim-drawer-at-desk", "source_sequence": 4, "operation": "assert", "subject_id": "drawer", "predicate": "at_zone", "object_id": "desk", "epistemic_status": "reported"},
+    {"claim_id": "claim-remote-at-table", "source_sequence": 5, "operation": "assert", "subject_id": "remote", "predicate": "at_zone", "object_id": "table", "epistemic_status": "reported"},
+    {"claim_id": "claim-book-at-shelf", "source_sequence": 6, "operation": "assert", "subject_id": "book", "predicate": "at_zone", "object_id": "shelf", "epistemic_status": "reported"}
+  ]
+}

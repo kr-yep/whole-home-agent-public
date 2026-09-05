@@ -16,14 +16,15 @@ from whole_home_agent.actuation.dispatcher import CommandDispatcher
 from whole_home_agent.actuation.models import ActionReceipt, ActionStatus
 from whole_home_agent.adapters.mock_actuator import MockActuator
 from whole_home_agent.memory_query import answer_question, list_known_entities
+from whole_home_agent.inventory_demo import remember_inventory_demo
 from whole_home_agent.public_demo import run_public_demo
 
 
 DEMO_DATABASE = Path(".whole-home-agent/demo-memory.sqlite3")
 
 # Display-only labels. The askable vocabulary always comes from the stored replay.
-_ENTITY_LABELS = {"key": "🔑 鑰匙", "bag": "👜 包包", "sofa": "🛋 沙發"}
-_ENTITY_WORDS = {"key": "鑰匙", "bag": "包包", "sofa": "沙發"}
+_ENTITY_LABELS = {"key": "🔑 鑰匙", "bag": "👜 包包", "sofa": "🛋 沙發", "wallet": "👛 錢包", "remote": "📺 遙控器", "book": "📕 書", "drawer": "🗄️ 抽屜", "desk": "🪑 書桌", "table": "🪵 茶几", "shelf": "📚 書架"}
+_ENTITY_WORDS = {"key": "鑰匙", "bag": "包包", "sofa": "沙發", "wallet": "錢包", "remote": "遙控器", "book": "書", "drawer": "抽屜", "desk": "書桌", "table": "茶几", "shelf": "書架"}
 _PREDICATE_WORDS = {"inside": "在…裡面", "at_zone": "位於"}
 
 
@@ -35,12 +36,13 @@ def _word(entity_id: str) -> str:
     return _ENTITY_WORDS.get(entity_id, entity_id)
 
 
-def _build_memory() -> None:
+def _build_memory(demo_kind: str) -> None:
     try:
-        result = run_public_demo(
-            replay_run_id="public-b1-memory-ui-001",
-            include_frames=False,
-            archive=SQLiteReplayArchive(DEMO_DATABASE),
+        archive = SQLiteReplayArchive(DEMO_DATABASE)
+        result = (
+            run_public_demo(replay_run_id="public-b1-memory-ui-001", include_frames=False, archive=archive)
+            if demo_kind == "recorded"
+            else remember_inventory_demo(archive=archive, replay_run_id="public-b0-inventory-ui-001")
         )
         st.session_state["build_status"] = result["archive"]["status"]
     except B0Error as error:
@@ -164,7 +166,7 @@ def _render_rejection(error: B0Error, entity_ids: tuple[str, ...]) -> None:
         )
     else:
         st.info(
-            "可以詢問物品位置（「鑰匙在哪」、「鑰匙在沙發上嗎」、「包包裡有什麼」），"
+            "可以詢問物品位置或錄畫內的記錄時間（「鑰匙在哪」、「鑰匙什麼時候進包包」、「包包裡有什麼」），"
             "或是下達家電控制指令（「開冷氣」、「開客廳燈」、「拉開窗簾」）。"
         )
 
@@ -216,8 +218,12 @@ def main() -> None:
 
     if not DEMO_DATABASE.is_file():
         st.write("這個示範還沒有記憶。先把內附的八秒合成影片結果寫入本機 SQLite。")
+        demo_kind = st.selectbox(
+            "示範資料", ("recorded", "inventory"),
+            format_func=lambda value: "錄畫：鑰匙、包包、沙發" if value == "recorded" else "語意庫：4 個物品、2 個收納處、4 個地點",
+        )
         if st.button("建立示範記憶", type="primary"):
-            _build_memory()
+            _build_memory(demo_kind)
             st.rerun()
         return
 
@@ -256,7 +262,7 @@ def main() -> None:
     st.text_input(
         "或自己打一句",
         key="question",
-        placeholder="鑰匙在哪裡？　也可以下指令「開客廳冷氣」「冷氣設為26度」「開燈」「拉開窗簾」",
+        placeholder="鑰匙在哪裡？或「鑰匙什麼時候進包包？」",
     )
     asked = st.button("詢問記憶", type="primary") or st.session_state.pop("auto_ask", False)
 

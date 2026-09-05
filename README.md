@@ -187,8 +187,23 @@ uv run --frozen --extra demo whole-home-agent ask-memory `
 uv run --frozen --extra demo streamlit run src/whole_home_agent/memory_app.py
 ```
 
-The deterministic path supports three bounded question shapes: where an item is,
-whether it is at a proposed place, and what a container/zone holds. The UI discloses
+物品と場所の関係を広げた合成セマンティック・デモもあります。これは視覚認識の
+実証ではなく、質問・関係推論・保存を複数の物品に広げるための固定入力です。
+
+```powershell
+uv run --frozen --extra demo whole-home-agent remember-inventory-demo `
+  --db .whole-home-agent/inventory-memory.sqlite3
+uv run --frozen --extra demo whole-home-agent ask-memory `
+  --db .whole-home-agent/inventory-memory.sqlite3 `
+  --question "錢包在哪裡？"
+```
+
+このデモには鍵・財布・リモコン・本、バッグ・引き出し、ソファ・机・茶几・本棚を
+含めます。たとえば財布は「引き出しの中、机にある」と根拠チェーン付きで回答します。
+
+The deterministic path supports four bounded question shapes: where an item is,
+whether it is at a proposed place, what a container/zone holds, and when the latest
+relation for an item was recorded within the replay. The UI discloses
 the replay's known entities. If a private model endpoint is configured, unfamiliar
 phrasing may be translated only into one of those three typed queries using existing
 entity IDs; it still cannot produce the answer or write memory.
