@@ -55,21 +55,27 @@ def _init_yolo_sink() -> object | None:
         import os
 
         env_model = os.environ.get("WHA_YOLO_MODEL")
-        candidates = (
-            [Path(env_model)]
-            if env_model
-            else [
-                Path("yolov8m.pt"),
-                Path("yolov8s.pt"),
-                Path("yolov8n.pt"),
-                Path("yolov8n.onnx"),
-            ]
-        )
+        if env_model:
+            detector = YoloDetector(env_model, imgsz=1280, confidence=0.25)
+            if detector.is_available:
+                return detector
+
+        candidates = [
+            Path("yolov8m.pt"),
+            Path("yolov8s.pt"),
+            Path("yolov8n.pt"),
+            Path("yolov8n.onnx"),
+        ]
         for candidate in candidates:
             if candidate.exists():
                 detector = YoloDetector(candidate, imgsz=1280, confidence=0.25)
                 if detector.is_available:
                     return detector
+
+        # If no model exists locally, instantiate with default to trigger Ultralytics auto-download
+        detector = YoloDetector("yolov8m.pt", imgsz=1280, confidence=0.25)
+        if detector.is_available:
+            return detector
     except Exception:
         pass
     return None
@@ -410,7 +416,14 @@ def main() -> None:
     arguments = parser.parse_args()
     if not WEB_ROOT.is_dir():
         parser.error("Web assets are missing; run from a repository checkout.")
-    if arguments.initialize_demo and not arguments.db.exists():
+    if not arguments.db.exists():
+        from .public_demo import run_public_demo
+        print(f"Baseline memory database not found. Auto-initializing at {arguments.db}...", flush=True)
+        arguments.db.parent.mkdir(parents=True, exist_ok=True)
+        run_public_demo(replay_run_id="web-demo-001", include_frames=False,
+                        archive=SQLiteReplayArchive(arguments.db))
+        print("Baseline memory database initialized successfully.", flush=True)
+    elif arguments.initialize_demo:
         from .public_demo import run_public_demo
         run_public_demo(replay_run_id="web-demo-001", include_frames=False,
                         archive=SQLiteReplayArchive(arguments.db))
