@@ -394,7 +394,7 @@ async function ask(text) {
     });
     render(text, await response.json());
   } catch (error) {
-    render(text, { refused: true, text: "我這邊連不上記憶，稍等一下再問一次。" });
+    render(text, { refused: true, text: "非常抱歉主人，雷姆的思緒暫時連不上記憶庫了，請稍等雷姆一下再問一次好嗎？" });
   } finally {
     send.disabled = false;
     question.value = "";
@@ -421,6 +421,8 @@ async function loadChips() {
       { text: "❄️ 開客廳冷氣", cmd: "幫我把客廳冷氣開到26度" },
       { text: "💡 開客廳燈", cmd: "開客廳燈" },
       { text: "🪟 拉開窗簾", cmd: "拉開窗簾" },
+      { text: "🌸 妳是誰？", cmd: "妳是誰" },
+      { text: "✨ 妳會做什麼？", cmd: "妳會做什麼" },
     ];
     for (const item of actionSuggestions) {
       const button = document.createElement("button");
@@ -434,4 +436,4 @@ async function loadChips() {
 
 mountModel();
 loadChips();
-speak("在的。想找什麼東西嗎？");
+speak("歡迎回來，主人！雷姆一直都在這裡等您喔。今天有什麼雷姆可以為您效勞的嗎？");

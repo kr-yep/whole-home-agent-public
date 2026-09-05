@@ -28,6 +28,14 @@ from .adapters.sqlite_archive import SQLiteReplayArchive
 from .errors import B0Error
 from .memory_query import answer_question, list_known_entities
 
+from .rem_persona import (
+    RemLocationPresenter,
+    rem_voice_actuation,
+    rem_voice_contents,
+    rem_voice_refusal,
+    rem_voice_verification,
+)
+
 WEB_ROOT = Path(__file__).resolve().parents[2] / "web"
 DEFAULT_DATABASE = Path(".whole-home-agent/demo-memory.sqlite3")
 MAX_QUESTION_BYTES = 4096
@@ -52,9 +60,10 @@ def _voiced_refusal(verbalizer: object | None, question: str, message: str) -> s
 
 
 class Handler(SimpleHTTPRequestHandler):
-    database: Path
+    database: Path = DEFAULT_DATABASE
     actuator: ActuatorPort = MockActuator()
     dispatcher: CommandDispatcher = CommandDispatcher(actuator)
+    presenter: LocationPresenter = RemLocationPresenter()
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, directory=str(WEB_ROOT), **kwargs)
@@ -113,12 +122,13 @@ class Handler(SimpleHTTPRequestHandler):
         # 1. Dispatch device actuation commands
         action_receipt = self.dispatcher.dispatch(question)
         if action_receipt is not None:
+            voiced_actuation = rem_voice_actuation(action_receipt)
             if action_receipt.status == ActionStatus.DENIED:
                 self._json(
                     200,
                     {
                         "refused": True,
-                        "text": _voiced_refusal(verbalizer, question, action_receipt.message),
+                        "text": _voiced_refusal(verbalizer, question, voiced_actuation),
                         "reason": action_receipt.message,
                         "details": action_receipt.as_dict(),
                         "action_receipt": action_receipt.as_dict(),
@@ -131,11 +141,11 @@ class Handler(SimpleHTTPRequestHandler):
                         "refused": False,
                         "action_receipt": action_receipt.as_dict(),
                         "spoken": {
-                            "text": action_receipt.message,
+                            "text": voiced_actuation,
                             "speaker": "actuator",
                             "fallback_used": False,
                         },
-                        "text": action_receipt.message,
+                        "text": voiced_actuation,
                     },
                 )
             return
@@ -145,22 +155,34 @@ class Handler(SimpleHTTPRequestHandler):
             result = answer_question(
                 SQLiteReplayArchive(self.database),
                 question,
+                presenter=self.presenter,
                 verbalizer=verbalizer,
                 translator=translator_from_environment(),
             )
+            # Polish container or verification spoken text with Rem persona if verbalizer is not active
+            if verbalizer is None:
+                if result.get("contents"):
+                    result["spoken"] = {
+                        "text": rem_voice_contents(result["contents"]),
+                        "speaker": self.presenter.presenter_id,
+                        "fallback_used": False,
+                    }
+                elif result.get("verification"):
+                    result["spoken"] = {
+                        "text": rem_voice_verification(result["verification"], result.get("answer", {})),
+                        "speaker": self.presenter.presenter_id,
+                        "fallback_used": False,
+                    }
         except B0Error as error:
-            # A refusal is an answer here: the page shows it as speech, so the
-            # character says it rather than the page rendering an error box. She
-            # says it in her own words when a model is configured, and in the
-            # system's words when one is not -- the refusal itself is the same
-            # either way, because it was decided before either could speak.
+            details = getattr(error, "details", None) or {}
+            refusal_text = rem_voice_refusal(question, str(error), details)
             self._json(
                 200,
                 {
                     "refused": True,
-                    "text": _voiced_refusal(verbalizer, question, str(error)),
+                    "text": _voiced_refusal(verbalizer, question, refusal_text),
                     "reason": str(error),
-                    "details": getattr(error, "details", None) or {},
+                    "details": details,
                 },
             )
             return
