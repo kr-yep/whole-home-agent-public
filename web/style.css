@@ -63,6 +63,24 @@ html, body {
 h1 { margin: 0; font-size: 1.05rem; letter-spacing: 0.02em; font-weight: 600; }
 .scope { margin: 0.3rem 0 0; font-size: 0.74rem; color: var(--dim); line-height: 1.5; }
 
+/* Who is standing on the canvas. Kept above the entity chips because it changes
+   the voice of every answer below it, not just the picture. */
+.cast { display: flex; gap: 0.4rem; }
+.cast button {
+  padding: 0.3rem 0.85rem;
+  font: inherit; font-size: 0.8rem;
+  color: var(--dim);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  cursor: pointer;
+}
+.cast button:hover { color: var(--ink); border-color: var(--accent); }
+.cast button.on {
+  color: #06121f; font-weight: 600;
+  background: var(--accent); border-color: var(--accent);
+}
+
 .chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
 .chips button {
   padding: 0.35rem 0.7rem;

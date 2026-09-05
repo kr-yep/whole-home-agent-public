@@ -17,6 +17,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 from .adapters.loopback_llm import (
+    CHARACTER_NAMES,
     translator_from_environment,
     verbalizer_from_environment,
 )
@@ -91,15 +92,21 @@ class Handler(SimpleHTTPRequestHandler):
             self._json(413, {"error": "question size unsupported"})
             return
         try:
-            question = json.loads(self.rfile.read(length)).get("question")
+            body = json.loads(self.rfile.read(length))
+            question = body.get("question") if isinstance(body, dict) else None
         except json.JSONDecodeError:
             self._json(400, {"error": "body must be JSON"})
             return
         if not isinstance(question, str) or not question.strip():
             self._json(400, {"error": "question must be non-empty text"})
             return
+        # An unknown id falls back to the default rather than failing: the reply
+        # is the same either way, and only the name in front of it changes.
+        character = body.get("character")
+        if character not in CHARACTER_NAMES:
+            character = None
 
-        verbalizer = verbalizer_from_environment()
+        verbalizer = verbalizer_from_environment(character)
         try:
             result = answer_question(
                 SQLiteReplayArchive(self.database),
