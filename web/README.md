@@ -18,7 +18,7 @@ That downloads what can be downloaded, and tells you where the rest comes from.
 
 | Character | File | Where it comes from |
 |---|---|---|
-| 雷姆 | `web/live2d/rem/` | Fetched by the script from a public repository. Cubism 4 model, about 12 MB. |
+| 雷姆 | `web/live2d/rem/` | Fetched by the script from a public repository. Cubism 4 model, about 12 MB across 112 files. |
 | 奶龍 | `web/characters/nailong/model.glb` | [Sketchfab](https://sketchfab.com/3d-models/nailong-d4617facf9574b45bc57c64e44497242), CC Attribution. A free account is needed to download; export glTF Binary. |
 | 奶龍（平面） | `web/characters/nailong/idle.png` | Any front-facing full-body illustration on a transparent background. |
 
