@@ -309,9 +309,9 @@ function express(result) {
   else actor.express("answer");
 }
 
-/* ---------- TTS & Speech Synthesis ---------- */
+/* ---------- TTS & Speech Synthesis Toggle ---------- */
 
-let ttsEnabled = true;
+let ttsEnabled = false;
 const TTS_KEY = "wha.character.tts";
 try {
   const savedTts = localStorage.getItem(TTS_KEY);
@@ -322,6 +322,8 @@ function updateTtsButton() {
   if (!ttsToggle) return;
   ttsToggle.textContent = ttsEnabled ? "🔊 語音：開" : "🔈 語音：關";
   ttsToggle.classList.toggle("active", ttsEnabled);
+  ttsToggle.title = ttsEnabled ? "點擊關閉語音朗讀" : "點擊開啟語音朗讀";
+  ttsToggle.setAttribute("aria-pressed", String(ttsEnabled));
 }
 
 if (ttsToggle) {
@@ -331,7 +333,8 @@ if (ttsToggle) {
     try { localStorage.setItem(TTS_KEY, String(ttsEnabled)); } catch (_) {}
     updateTtsButton();
     if (ttsEnabled) {
-      speakVoice(`${CHARACTERS[who].speaksAs || CHARACTERS[who].name}在的，主人！`);
+      const name = CHARACTERS[who].speaksAs || CHARACTERS[who].name;
+      speakVoice(`${name}在的，主人！`);
     } else {
       if (window.speechSynthesis) window.speechSynthesis.cancel();
     }
