@@ -183,7 +183,12 @@ jobs:
           # The Intel runner, and the case that started this: PyTorch has published
           # no macOS x86_64 wheel since 2.2.2. ONNX Runtime's last one is 1.23.2 at
           # cp313, so 3.13 is the ceiling here and 3.14 would have nothing to install.
-          - os: macos-13
+          #
+          # macos-15-intel, not macos-13: that label was retired, and a retired
+          # label does not fail. The job sits in "queued" for as long as you let
+          # it, which reads like a slow runner rather than a job that will never
+          # start. actions/runner-images lists the live ones.
+          - os: macos-15-intel
             python-version: "3.13"
 
     steps:
