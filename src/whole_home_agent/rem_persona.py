@@ -110,7 +110,8 @@ def rem_voice_verification(verification: Mapping[str, object], answer: Mapping[s
     elif verdict == "NO":
         return f"不對喔主人，在雷姆的記錄中，{subject}並不在{target}那裡，而是{where}呢。"
     elif verdict == "TARGET_UNKNOWN":
-        return f"報告主人，雷姆的記錄庫裡沒有記錄您提到的「{target}」，所以沒辦法確認呢。不過在雷姆的記錄中，{subject}{where}喔。"
+        target_str = f"您提到的「{target}」" if target else "您提到的那個位置"
+        return f"報告主人，雷姆的記錄庫裡沒有記錄{target_str}，所以沒辦法確認呢。不過在雷姆的記錄中，{subject}{where}喔。"
     else:
         return f"非常抱歉主人，雷姆沒辦法判斷呢…因為記錄裡沒有足夠的有效證據可以定位{subject}。"
 

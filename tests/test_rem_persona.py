@@ -107,6 +107,13 @@ class RemPersonaTests(unittest.TestCase):
         )
         self.assertIn("不對喔主人", no_res)
 
+        unknown_target = rem_voice_verification(
+            {"verdict": "TARGET_UNKNOWN", "subject_id": "key", "target_id": None},
+            answer,
+        )
+        self.assertIn("您提到的那個位置", unknown_target)
+        self.assertIn("鑰匙在包包裡", unknown_target)
+
     def test_rem_voice_actuation_success_and_denied(self):
         receipt_ac = ActionReceipt(
             action_id="act-1",
