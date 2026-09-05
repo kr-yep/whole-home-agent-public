@@ -141,10 +141,32 @@ async function live2dActor(definition) {
 
 /* ---------- one flat image ---------- */
 
-function spriteActor(definition) {
-  const sprite = PIXI.Sprite.from(definition.image);
-  sprite.anchor.set(0.5, 0.5);
+// Measured from the silhouette of this drawing: the head holds a roughly constant
+// width down to 16% of the image, the shoulders open out between there and 28%,
+// and below that is body. So displacement is full over the head, fades across the
+// shoulders, and is nothing below them -- which is what makes a turn read as a
+// head turning rather than the whole picture sliding sideways.
+const HEAD_BOTTOM = 0.16;
+const SHOULDER_BOTTOM = 0.32;
+const GRID_X = 14;
+const GRID_Y = 18;
 
+function headWeight(v) {
+  if (v <= HEAD_BOTTOM) return 1;
+  if (v >= SHOULDER_BOTTOM) return 0;
+  const t = (v - HEAD_BOTTOM) / (SHOULDER_BOTTOM - HEAD_BOTTOM);
+  return 1 - t * t * (3 - 2 * t); // smoothstep, so the neck does not crease
+}
+
+function spriteActor(definition) {
+  // A plane rather than a sprite, because a flat drawing can still turn its head
+  // if the drawing itself is allowed to bend. The vertices carry the turn; the
+  // mesh transform carries breathing, hopping and the sink of a refusal.
+  const texture = PIXI.Texture.from(definition.image);
+  const mesh = new PIXI.SimplePlane(texture, GRID_X, GRID_Y);
+  const buffer = mesh.geometry.getBuffer("aVertexPosition");
+
+  let rest = null;
   let scale = 1;
   let baseX = 0;
   let baseY = 0;
@@ -152,19 +174,54 @@ function spriteActor(definition) {
   let mood = "idle";
   let moodAge = 0;
   let hop = 0;
-  let lean = 0;
-  let leanTarget = 0;
+  let yaw = 0;
+  let yawTarget = 0;
+  let pitch = 0;
+  let pitchTarget = 0;
 
   const ease = (from, to, rate, dt) => from + (to - from) * Math.min(1, rate * dt);
 
+  function capture() {
+    if (rest || !texture.valid) return;
+    mesh.pivot.set(texture.width / 2, texture.height / 2);
+    rest = Float32Array.from(buffer.data);
+  }
+
+  function warp() {
+    if (!rest) return;
+    const data = buffer.data;
+    const width = texture.width;
+    const height = texture.height;
+    const headCentre = width / 2;
+    for (let i = 0; i < rest.length; i += 2) {
+      const x = rest[i];
+      const y = rest[i + 1];
+      const weight = headWeight(y / height);
+      if (weight === 0) {
+        data[i] = x;
+        data[i + 1] = y;
+        continue;
+      }
+      // Sideways travel, plus a squeeze towards the middle: a head turning away
+      // gets narrower, and without that the turn reads as a slide.
+      // 0.15 of the width, chosen by rendering the same turn at four amplitudes
+      // and looking: 0.10 reads as barely turning, 0.20 starts to stretch the
+      // neck on the far side, and 0.26 pulls the head off the shoulders.
+      const squeeze = 1 - Math.abs(yaw) * 0.22 * weight;
+      data[i] = headCentre + (x - headCentre) * squeeze + yaw * width * 0.15 * weight;
+      // A turn drops the head slightly, and a nod uses the same channel.
+      data[i + 1] = y + (Math.abs(yaw) * 0.012 + pitch * 0.03) * height * weight;
+    }
+    buffer.update();
+  }
+
   return {
     definition,
-    display: sprite,
+    display: mesh,
     get naturalHeight() {
-      // Sprite.from resolves the texture asynchronously; before it lands the
-      // size is 1x1, and dividing by that would fling her off the canvas.
-      const height = sprite.texture && sprite.texture.height;
-      return height > 1 ? height : 0;
+      // Texture.from resolves asynchronously; before it lands the size is 1x1,
+      // and dividing by that would fling her off the canvas.
+      return texture.valid && texture.height > 1 ? texture.height : 0;
     },
     setScale(value) {
       scale = value;
@@ -177,10 +234,18 @@ function spriteActor(definition) {
       return { x: baseX, y: baseY };
     },
     focus(x, y) {
-      // A flat image has no eyes to move on their own, so attention is the whole
-      // body turning slightly towards the pointer. It is a weaker gesture than
-      // Rem's, and it is the honest limit of a single drawing.
-      leanTarget = Math.max(-0.2, Math.min(0.2, (x - baseX) / window.innerWidth));
+      // A page that mounts in a background tab reports a viewport of zero, and
+      // the obvious division is then 0/0. NaN survives every later frame through
+      // the easing, every vertex it touches stops being a number, and the head
+      // simply never comes back. Ask for a size before dividing by one.
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      if (!width || !height) return;
+      // Where the head points, not where the whole body leans. The range is
+      // deliberately short of the full screen: a head that swings to the very
+      // edge looks unhinged rather than attentive.
+      yawTarget = Math.max(-1, Math.min(1, ((x - baseX) / width) * 3.2));
+      pitchTarget = Math.max(-1, Math.min(1, ((y - baseY) / height) * 2.4));
     },
     async ready() {
       // A missing image is not an error PIXI reports: the texture stays 1x1 and
@@ -188,7 +253,10 @@ function spriteActor(definition) {
       // because the art is deliberately outside version control and a fresh
       // clone will not have it.
       for (let i = 0; i < 40; i++) {
-        if (sprite.texture && sprite.texture.valid && sprite.texture.height > 1) return true;
+        if (texture.valid && texture.height > 1) {
+          capture();
+          return true;
+        }
         await new Promise((resolve) => setTimeout(resolve, 100));
       }
       return false;
@@ -199,11 +267,20 @@ function spriteActor(definition) {
       if (kind === "answer") hop = 1;
     },
     update(deltaMs) {
+      capture();
       const dt = Math.min(0.05, deltaMs / 1000);
       clock += dt;
       moodAge += dt;
 
-      lean = ease(lean, leanTarget, 4, dt);
+      // Slower than the pointer on purpose: a head that snaps to the cursor
+      // frame for frame looks mechanical, and the lag is most of what reads as
+      // "she noticed and turned".
+      yaw = ease(yaw, yawTarget, 3.4, dt);
+      pitch = ease(pitch, pitchTarget, 3, dt);
+      // Belt and braces after the above: one non-finite frame from anywhere
+      // would otherwise be permanent, because it feeds back through the easing.
+      if (!Number.isFinite(yaw)) yaw = yawTarget = 0;
+      if (!Number.isFinite(pitch)) pitch = pitchTarget = 0;
       hop *= Math.exp(-dt * 4.5);
       if (mood !== "idle" && moodAge > 6) mood = "idle";
 
@@ -216,17 +293,21 @@ function spriteActor(definition) {
 
       const scaleX = scale * (1 - breath + fidget);
       const scaleY = scale * (1 + breath - sink);
-      sprite.scale.set(scaleX, scaleY);
-      sprite.rotation = lean * 0.28 + (mood === "refuse" ? 0.05 : 0);
+      mesh.scale.set(scaleX, scaleY);
+      // The body still shifts its weight a little, well under the head's travel,
+      // so the turn does not look like it happens on a fence post.
+      mesh.rotation = yaw * 0.05 + (mood === "refuse" ? 0.05 : 0);
 
-      // Keep her feet where they were: shrinking around a centred anchor would
+      // Keep her feet where they were: shrinking around a centred pivot would
       // otherwise lift her off the floor every time she breathes out.
       const settled = ((scale - scaleY) * this.naturalHeight) / 2;
-      sprite.x = baseX + lean * 26;
-      sprite.y = baseY + settled - hop * 52;
+      mesh.x = baseX + yaw * 10;
+      mesh.y = baseY + settled - hop * 52;
+
+      warp();
     },
     destroy() {
-      sprite.destroy();
+      mesh.destroy();
     },
   };
 }
