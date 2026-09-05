@@ -11,18 +11,19 @@ That is the whole thing. The script builds the demo memory, fetches the characte
 artwork, reports anything it could not get, and starts the server. Run it again
 any time; it never overwrites what is already there.
 
-**The artwork is not in this repository and never will be.** Rem's Live2D model
-is third-party sample data under Live2D's own terms rather than the MIT licence
-this project uses, so it is fetched at setup and not redistributed here. If you
-cloned this and nobody was standing on the page, that is why, and the command
-above is the fix. `--check` reports what is missing without downloading anything.
+One character ships and one does not, for a reason rather than an oversight.
+Nailong's illustration is in the repository: it is the project's own generated
+art with no upstream terms attached. **Rem's Live2D model is not, and will not
+be.** The repository it comes from is MIT "except for the Live2D sample models",
+and that model carries Live2D's own sample-data terms; it also sits on Live2D's
+official Mao Pro rig. So it is fetched at setup rather than redistributed here.
 
-Nailong's illustration cannot be fetched by anything: it is not published, so
-supply your own at `web/characters/nailong/idle.png`. Any front-facing full-body
-PNG with a transparent background works.
+If you cloned this and nobody was standing on the page, that is why, and the
+command above is the fix. `--check` reports what is missing without downloading
+anything.
 
 The page runs with no artwork at all. Memory answers, device commands and the
-camera are unaffected; the characters simply do not appear.
+camera are unaffected; a missing character simply does not appear.
 
 | | |
 |---|---|

@@ -37,13 +37,9 @@ REM = {
 
 # Everything else has to be supplied by hand, so say so precisely rather than
 # failing silently the way the page used to.
-BY_HAND = [
-    (
-        WEB / "characters" / "nailong" / "idle.png",
-        "A front-facing full-body illustration on a transparent background.\n"
-        "  Any image works; it is drawn as a sprite and animated from code.",
-    ),
-]
+# Nailong's illustration is committed rather than fetched, so it is not listed
+# here. Only the Live2D model has upstream terms that keep it out of the tree.
+BY_HAND: list[tuple[Path, str]] = []
 
 
 def _get(url: str, headers: dict | None = None) -> bytes:

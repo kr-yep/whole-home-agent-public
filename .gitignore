@@ -116,3 +116,7 @@ Desktop.ini
 
 # Live2D 模型自備，不進版控（體積大，而且同人模型授權多半不明）
 web/live2d/
+# Nailong's illustration is committed: unlike the Live2D model it is the
+# project's own generated art, with no upstream terms attached, and nothing
+# anywhere can fetch it.
+!web/characters/**/*.png

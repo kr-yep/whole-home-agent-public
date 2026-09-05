@@ -114,12 +114,12 @@ def ensure_artwork(fetch: bool) -> None:
             print(f"{GAP}could not fetch Rem's model; the page still runs without her")
 
     if NAILONG_IMAGE.exists():
-        print(f"{OK}Nailong's illustration present")
+        print(f"{OK}Nailong's illustration present (committed, not fetched)")
     else:
-        # Nothing can fetch this one: it is not published anywhere, by design.
-        print(f"{GAP}Nailong's illustration missing, and nothing can fetch it")
-        print(f"        put any front-facing full-body PNG with a transparent")
-        print(f"        background at {NAILONG_IMAGE.relative_to(ROOT)}")
+        # This one ships with the repository, so its absence means it was deleted
+        # rather than never obtained. Nothing can fetch it back.
+        print(f"{GAP}Nailong's illustration is missing from a checkout that carries it")
+        print(f"        restore it with: git checkout -- {NAILONG_IMAGE.relative_to(ROOT)}")
         print(f"        The page runs without her; she simply does not appear.")
 
 
