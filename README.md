@@ -30,6 +30,35 @@ camera are unaffected; a missing character simply does not appear.
 | http://127.0.0.1:8600 | the agent — ask 鑰匙在哪裡, 包包裡有什麼, 開客廳燈 |
 | http://127.0.0.1:8600/camera | the camera — capture in the browser, recognition on the server |
 
+## Camera recognition
+
+The camera page shows the picture with nothing extra installed. Recognising what is
+in it needs a detector, and there are two, because the obvious one does not install
+everywhere.
+
+```
+pip install -r requirements-vision.txt
+python tools/fetch_vision_model.py
+```
+
+ONNX Runtime, and Ultralytics' own ONNX export of YOLOv8n — 13 MB, checked against a
+recorded digest. This is the portable path: ONNX Runtime publishes universal2 wheels
+reaching back to macOS 11, so it installs on every Mac in the room.
+
+```
+pip install -r requirements-vision-torch.txt
+```
+
+Ultralytics and PyTorch, which downloads its own weights and uses an NVIDIA GPU where
+there is one. Faster where it installs, and it does not install everywhere: PyTorch
+publishes exactly one macOS wheel per release, `macosx_14_0_arm64`, so an Intel Mac
+has nothing to install and pip falls back to a source build that does not finish.
+
+The same weights either way — fed one identical frame the two runtimes agree to about
+a thousandth. `python start.py` uses whichever is present, preferring the GPU one, and
+fetches the ONNX weights itself if that is the path, so on a fresh laptop the first
+command above is the whole of it.
+
 ## Running it on a server
 
 The same command works on a machine nobody sits at, with two changes: bind to

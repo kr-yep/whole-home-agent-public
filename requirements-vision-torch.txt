@@ -1,0 +1,16 @@
+# The camera's object detection with GPU support, where PyTorch installs.
+#
+# Prefer this on Linux and Windows with an NVIDIA card, and on Apple Silicon
+# running Sonoma or newer. Everywhere else use requirements-vision.txt, which
+# runs the same weights without PyTorch.
+#
+#     pip install -r requirements-vision-torch.txt
+#
+# Ultralytics downloads its own weights on first use, so there is no fetch step.
+# It also brings the MobileNetV3 feature extractor that start.py warms up; the
+# portable path falls back to colour-texture features instead.
+
+ultralytics>=8.0.0
+torch>=2.0.0
+torchvision>=0.15.0
+Pillow>=10.0.0

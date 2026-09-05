@@ -49,9 +49,46 @@ from .rem_persona import (
 WEB_ROOT = Path(__file__).resolve().parents[2] / "web"
 
 
+# Where weights are looked for, in order. PyTorch first where it is installed,
+# because that is the path with GPU support; the ONNX exports are the same weights
+# on a runtime that installs anywhere, and are what a machine without PyTorch
+# finds. tools/fetch_vision_model.py writes into models/, and a test holds the two
+# to the same directory so a fetched model cannot land somewhere nothing looks.
+DETECTOR_CANDIDATES: tuple[Path, ...] = (
+    Path("yolov8m.pt"),
+    Path("yolov8s.pt"),
+    Path("yolov8n.pt"),
+    Path("models/yolov8m.onnx"),
+    Path("models/yolov8s.onnx"),
+    Path("models/yolov8n.onnx"),
+    Path("yolov8n.onnx"),
+)
+
+
+def _detector_for(model: str | Path) -> object | None:
+    """Whichever of the two runtimes can open this file, or None if neither can.
+
+    A `.onnx` is read by onnxruntime and anything else by Ultralytics. The ONNX
+    route exists because Ultralytics needs PyTorch and PyTorch has no macOS wheel
+    outside `macosx_14_0_arm64`, which leaves a teammate on an Intel Mac with
+    nothing to install; see adapters/onnx_detector.py. Both constructors report a
+    missing runtime by staying unavailable rather than raising, so asking the one
+    that is not installed costs an import error it swallows itself.
+    """
+
+    if str(model).endswith(".onnx"):
+        from .adapters.onnx_detector import OnnxDetector
+
+        detector: object = OnnxDetector(model)
+    else:
+        from .adapters.yolo_detector import YoloDetector
+
+        detector = YoloDetector(model, imgsz=1280, confidence=0.25)
+    return detector if detector.is_available else None
+
+
 def _init_yolo_sink() -> object | None:
     try:
-        from .adapters.yolo_detector import YoloDetector
         import os
 
         # Naming a model is taken as permission to go and get it: Ultralytics
@@ -59,8 +96,8 @@ def _init_yolo_sink() -> object | None:
         # by name is a deliberate act, so the wait is expected.
         env_model = os.environ.get("WHA_YOLO_MODEL")
         if env_model:
-            detector = YoloDetector(env_model, imgsz=1280, confidence=0.25)
-            if detector.is_available:
+            detector = _detector_for(env_model)
+            if detector is not None:
                 return detector
 
         # Nobody asked for anything in particular, so only weights already on disk
@@ -69,16 +106,10 @@ def _init_yolo_sink() -> object | None:
         # server start on a hotel connection, should discover for itself. start.py
         # fetches them where the wait is announced, and WHA_YOLO_MODEL is the way
         # to ask for one here.
-        candidates = [
-            Path("yolov8m.pt"),
-            Path("yolov8s.pt"),
-            Path("yolov8n.pt"),
-            Path("yolov8n.onnx"),
-        ]
-        for candidate in candidates:
+        for candidate in DETECTOR_CANDIDATES:
             if candidate.exists():
-                detector = YoloDetector(candidate, imgsz=1280, confidence=0.25)
-                if detector.is_available:
+                detector = _detector_for(candidate)
+                if detector is not None:
                     return detector
     except Exception:
         pass

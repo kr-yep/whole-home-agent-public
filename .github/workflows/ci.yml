@@ -46,6 +46,7 @@ jobs:
           tests.test_b1_video
           tests.test_llm_text_context
           tests.test_offline_memory
+          tests.test_onnx_detector
           tests.test_public_demo
           tests.test_actuation
           tests.test_rem_persona
