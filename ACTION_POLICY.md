@@ -69,6 +69,14 @@ These classes are a review scaffold, not adopted permission. Every concrete capa
 | R4 — Reversible comfort/media actuation | Lights, media, bounded non-safety environmental adjustments | `PROHIBIT` | Device-specific bounds, fresh state, manual override, idempotency, reconciliation and rollback | Authenticated household role under adopted policy | Leave current/safe state; no blind retry |
 | R5 — Safety/life-critical actuation | HVAC extremes, emergency locks, alarms, water, gas, electrical, medical, fire or life-safety systems | `PROHIBIT` | Dedicated certified controller/interlocks independent of Agent, explicit emergency policy and human control | Specialized authority defined outside general Agent planning | Dedicated controller's safe state; Agent cannot override |
 
+**Browser-Mediated Ephemeral Sensing Clause (Checkpoint `PUBLIC-B2-BROWSER-CAMERA-001`):**
+The browser camera interface (`/camera.html`) operates under direct client control via user gesture and native browser permission prompts (`navigator.mediaDevices.getUserMedia`). Under the strict zero-retention invariant:
+1. The server process never directly opens or controls hardware sensors.
+2. Received frames are verified in memory via JPEG header inspection without materializing pixels or persisting bytes to storage (`retention: "none"`).
+3. Any attached perception sink processes frames strictly in memory and emits transient bounding boxes returned directly to the active client.
+4. Stream receipts record only aggregate counts, gaps, and an order-dependent SHA-256 hash.
+This interface remains classified as an interactive developer demonstration; it does not authorize unattended background recording, multi-camera persistence, or automated operational actuation.
+
 Biometric identification, covert monitoring, unrestricted recording, general shell/device access, and disabling independent safety interlocks are outside the current proposed scope and remain prohibited.
 
 ## Device and action matrix

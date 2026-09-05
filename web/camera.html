@@ -26,8 +26,23 @@
 
   <div class="device-section">
     <div class="section-label">📐 要求的格式</div>
-    <div id="format" class="readout">1280×720 · 10 fps · JPEG q90 · 不允許縮放</div>
-    <p class="foot">鏡頭做不到這個格式就不會開始，不會退而求其次。</p>
+    <div id="format" class="readout">1280×720 · <span id="fps-display">10</span> fps · JPEG q90</div>
+    <div class="fps-chips">
+      <span class="foot">取樣率：</span>
+      <button type="button" class="fps-chip active" data-fps="10">10 fps (標準)</button>
+      <button type="button" class="fps-chip" data-fps="5">5 fps (節能)</button>
+    </div>
+    <p id="compat-note" class="foot">優先協商原生無縮放 720p；硬體不支援時自動進行等比裁切補償。</p>
+  </div>
+
+  <div class="device-section">
+    <div class="section-label">📍 觀測區域 (Zone)</div>
+    <select id="zone-select" class="device-select">
+      <option value="desk" selected>🖥️ 書桌 (desk)</option>
+      <option value="table">🍽️ 餐桌 (table)</option>
+      <option value="sofa">🛋️ 沙發 (sofa)</option>
+    </select>
+    <p class="foot">鏡頭觀測到的物件將寫入該區域的空間記憶中。</p>
   </div>
 
   <div class="chips">
@@ -44,8 +59,13 @@
 </aside>
 
 <main id="stage-area">
+  <div id="enrollment-banner" class="enrollment-banner" style="display: none;"></div>
+  <div id="commit-toast" class="commit-toast" style="display: none;"></div>
   <div id="indicator" class="indicator off">鏡頭未開啟</div>
-  <video id="preview" playsinline muted></video>
+  <div class="preview-wrapper">
+    <video id="preview" playsinline muted></video>
+    <canvas id="overlay"></canvas>
+  </div>
   <canvas id="grab" hidden></canvas>
 </main>
 

@@ -45,6 +45,13 @@ class JpegHeaderTests(unittest.TestCase):
                 with self.assertRaises(CameraIngestError):
                     jpeg_dimensions(payload)
 
+    def test_invalid_segment_length_is_refused(self):
+        # A marker with segment length < 2 (e.g. 0 or 1) is malformed and refused
+        malformed = b"\xff\xd8\xff\xe0\x00\x01\x00"
+        with self.assertRaises(CameraIngestError) as ctx:
+            jpeg_dimensions(malformed)
+        self.assertIn("invalid JPEG segment length", str(ctx.exception))
+
 
 @unittest.skipUnless(HAS_IMAGING, "requires the video extra for image encoding")
 class CameraSessionTests(unittest.TestCase):
@@ -142,6 +149,51 @@ class CameraSessionTests(unittest.TestCase):
             if isinstance(value, (bytes, bytearray)) and len(value) > 1024
         ]
         self.assertEqual(stored, [])
+
+    def test_sink_detections_are_returned(self):
+        """When a sink emits detections, accept() returns them to the caller."""
+        expected_detections = [{"box": [10, 20, 100, 100], "label": "cup", "confidence": 0.95}]
+        self.session.sink = lambda payload, w, h: expected_detections
+        result = self.session.accept(self.frame, sequence=0, captured_ns=0)
+        self.assertEqual(result["detections"], expected_detections)
+
+    def test_default_sink_inherited_on_start_and_set_sink(self):
+        seen: list[str] = []
+        sink_fn = lambda p, w, h: seen.append("called")
+        ingest = CameraIngest(default_sink=sink_fn)
+        session = ingest.start(device_label="Test", negotiated={})
+        session.accept(self.frame, sequence=0, captured_ns=0)
+        self.assertEqual(seen, ["called"])
+
+        seen_dynamic: list[str] = []
+        ingest.set_sink(lambda p, w, h: seen_dynamic.append("dynamic"))
+        session.accept(self.frame, sequence=1, captured_ns=100)
+        self.assertEqual(seen_dynamic, ["dynamic"])
+        ingest.end(session.session_id)
+
+    def test_multithreaded_concurrency_no_deadlock(self):
+        """Concurrent calls to accept and status must not deadlock or corrupt state."""
+        import concurrent.futures
+
+        def query_status():
+            for _ in range(50):
+                st = self.ingest.status()
+                self.assertTrue(st["running"])
+
+        def push_frames():
+            for seq in range(50):
+                self.session.accept(self.frame, sequence=seq, captured_ns=seq * 10_000_000)
+
+        with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+            f1 = executor.submit(push_frames)
+            f2 = executor.submit(query_status)
+            f3 = executor.submit(query_status)
+            concurrent.futures.wait([f1, f2, f3])
+            f1.result()
+            f2.result()
+            f3.result()
+
+        self.assertEqual(self.session.stats.accepted, 50)
 
 
 if __name__ == "__main__":

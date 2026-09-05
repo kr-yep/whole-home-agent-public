@@ -23,15 +23,20 @@ from .actuation.models import ActionStatus
 from .actuation.port import ActuatorPort
 from .adapters.mock_actuator import MockActuator
 from .adapters.loopback_llm import (
-    character_name,
+    AgentVerbalizer,
     DEFAULT_CHARACTER,
+    QueryTranslator,
+    character_name,
+    discover_local_clients,
     translator_from_environment,
     verbalizer_from_environment,
 )
 from .adapters.sqlite_archive import SQLiteReplayArchive
 from .camera_ingest import CameraIngest, CameraIngestError, MAX_FRAME_BYTES
+from .entity_registry import get_global_registry, try_parse_registration
 from .errors import B0Error
 from .memory_query import answer_question, list_known_entities
+from .perception_bridge import PerceptionBridge
 
 from .rem_persona import (
     RemLocationPresenter,
@@ -42,9 +47,37 @@ from .rem_persona import (
 )
 
 WEB_ROOT = Path(__file__).resolve().parents[2] / "web"
+
+
+def _init_yolo_sink() -> object | None:
+    try:
+        from .adapters.yolo_detector import YoloDetector
+        import os
+
+        env_model = os.environ.get("WHA_YOLO_MODEL")
+        candidates = (
+            [Path(env_model)]
+            if env_model
+            else [
+                Path("yolov8m.pt"),
+                Path("yolov8s.pt"),
+                Path("yolov8n.pt"),
+                Path("yolov8n.onnx"),
+            ]
+        )
+        for candidate in candidates:
+            if candidate.exists():
+                detector = YoloDetector(candidate, imgsz=1280, confidence=0.25)
+                if detector.is_available:
+                    return detector
+    except Exception:
+        pass
+    return None
+
+
 # One ingest for the process: the camera page and the agent page are two views of
 # the same running server, and only one of them is holding a camera open.
-CAMERA = CameraIngest()
+CAMERA = CameraIngest(default_sink=_init_yolo_sink())
 DEFAULT_DATABASE = Path(".whole-home-agent/demo-memory.sqlite3")
 MAX_QUESTION_BYTES = 4096
 
@@ -87,6 +120,7 @@ class Handler(SimpleHTTPRequestHandler):
     actuator: ActuatorPort = MockActuator()
     dispatcher: CommandDispatcher = CommandDispatcher(actuator)
     presenter: LocationPresenter = RemLocationPresenter()
+    bridge: PerceptionBridge | None = None
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, directory=str(WEB_ROOT), **kwargs)
@@ -126,6 +160,15 @@ class Handler(SimpleHTTPRequestHandler):
         if self.path == "/api/camera/status":
             self._json(200, CAMERA.status())
             return
+        if self.path == "/api/camera/detections":
+            self._json(200, {"detections": CAMERA.get_latest_detections()})
+            return
+        if self.path == "/api/camera/enrollment/status":
+            info = None
+            if self.bridge is not None:
+                info = self.bridge.get_enrollment_status()
+            self._json(200, {"enrollment": info})
+            return
         if self.path in ("/camera", "/camera/"):
             self.path = "/camera.html"
         super().do_GET()
@@ -153,11 +196,30 @@ class Handler(SimpleHTTPRequestHandler):
             # so a frame costs its own size rather than a third more for base64.
             session = CAMERA.current(query.get("session", [""])[0])
             payload = self._read_body(MAX_FRAME_BYTES)
+            zone_param = query.get("zone", ["desk"])[0]
             accepted = session.accept(
                 payload,
                 sequence=int(query.get("sequence", ["0"])[0]),
                 captured_ns=int(query.get("captured_ns", ["0"])[0]),
             )
+            if self.bridge is None and self.database.is_file():
+                try:
+                    self.bridge = PerceptionBridge(SQLiteReplayArchive(self.database))
+                except Exception:
+                    pass
+            if self.bridge is not None:
+                try:
+                    commits = self.bridge.process_detections(
+                        accepted.get("detections", []),
+                        zone_id=zone_param,
+                        frame_payload=payload,
+                    )
+                    accepted["committed"] = commits
+                    enrollment_info = self.bridge.get_enrollment_status()
+                    if enrollment_info:
+                        accepted["enrollment"] = enrollment_info
+                except Exception as error:
+                    accepted["committed_error"] = str(error)
             self._json(200, accepted)
             return True
 
@@ -212,9 +274,62 @@ class Handler(SimpleHTTPRequestHandler):
         try:
             verbalizer = verbalizer_from_environment(self.character)
             translator = translator_from_environment()
+            if verbalizer is None:
+                verbalizer, translator = discover_local_clients(self.character)
         except B0Error:
             verbalizer = None
             translator = None
+
+        # 0. Intercept custom entity registration intent (e.g. "這是水杯", "這是我的手機", "這個是我新買的手機")
+        reg_name = try_parse_registration(question)
+        if reg_name is not None:
+            record = get_global_registry().register(reg_name)
+            display = record["display_name"]
+            entity_id = record["entity_id"]
+
+            if self.bridge is None and self.database.is_file():
+                try:
+                    self.bridge = PerceptionBridge(SQLiteReplayArchive(self.database))
+                except Exception:
+                    pass
+
+            if self.bridge is not None:
+                try:
+                    self.bridge.start_visual_enrollment(entity_id, display, target_samples=5)
+                except Exception as error:
+                    logger.debug("Failed to start visual enrollment: %s", error)
+
+            confirm_msg = (
+                f"好的主人！雷姆收到您新添置的「{display}」了！"
+                f"請主人把它靠近鏡頭稍微轉動角度給雷姆看看，雷姆正在採集特徵記錄喔…"
+            )
+            spoken_msg = confirm_msg
+            if verbalizer is not None:
+                try:
+                    voiced = verbalizer.speak(
+                        question,
+                        {"status": "REGISTERED", "entity": display, "text": confirm_msg},
+                    )
+                    if isinstance(voiced, str) and voiced.strip():
+                        spoken_msg = voiced.strip()
+                except Exception:
+                    pass
+            self._json(
+                200,
+                {
+                    "refused": False,
+                    "registered": True,
+                    "entity": record,
+                    "enrollment_started": True,
+                    "text": spoken_msg,
+                    "spoken": {
+                        "text": spoken_msg,
+                        "speaker": getattr(verbalizer, "presenter_id", self.presenter.presenter_id),
+                        "fallback_used": False,
+                    },
+                },
+            )
+            return
 
         # 1. Dispatch device actuation commands
         action_receipt = self.dispatcher.dispatch(question)
@@ -303,6 +418,11 @@ def main() -> None:
     mimetypes.add_type("application/json", ".json")
     mimetypes.add_type("application/octet-stream", ".moc3")
     Handler.database = arguments.db
+    if arguments.db.is_file():
+        try:
+            Handler.bridge = PerceptionBridge(SQLiteReplayArchive(arguments.db))
+        except Exception:
+            pass
     server = ThreadingHTTPServer((arguments.bind, arguments.port), Handler)
     print(f"serving {WEB_ROOT} on http://{arguments.bind}:{arguments.port}", flush=True)
     try:

@@ -20,6 +20,7 @@ from .verification import verify
 from .presentation import (
     DeterministicLocationPresenter,
     LocationPresenter,
+    _display_name,
     present_location_context,
 )
 
@@ -27,7 +28,17 @@ from .presentation import (
 MEMORY_ANSWER_SCHEMA = "whole-home-agent.memory-answer.v1"
 MEMORY_VERIFICATION_SCHEMA = "whole-home-agent.memory-verification.v1"
 MEMORY_CONTENTS_SCHEMA = "whole-home-agent.memory-contents.v1"
-_CONTAINER_DISPLAY = {"bag": "包包", "key": "鑰匙", "sofa": "沙發"}
+
+
+class _DisplayMap(dict):
+    def get(self, key, default=None):
+        return _display_name(str(key))
+
+    def __getitem__(self, key):
+        return _display_name(str(key))
+
+
+_CONTAINER_DISPLAY = _DisplayMap({"bag": "包包", "key": "鑰匙", "sofa": "沙發"})
 
 
 def _provenance(session) -> dict[str, object]:
@@ -146,15 +157,19 @@ def _answer_dict(answer: AnswerTrace) -> dict[str, object]:
 
 def _known_entities(answer_source: object) -> tuple[str, ...]:
     accepted_claims = getattr(answer_source, "accepted_claims")
-    return tuple(
-        sorted(
-            {
-                identifier
-                for claim in accepted_claims
-                for identifier in (claim.subject_id, claim.object_id)
-            }
-        )
-    )
+    entities = {
+        identifier
+        for claim in accepted_claims
+        for identifier in (claim.subject_id, claim.object_id)
+    }
+    try:
+        from .entity_registry import get_global_registry
+
+        for custom in get_global_registry().list_entities():
+            entities.add(custom["entity_id"])
+    except Exception:
+        pass
+    return tuple(sorted(entities))
 
 
 def list_known_entities(archive: ReplayArchive) -> tuple[str, ...]:
@@ -177,9 +192,18 @@ def answer_latest_memory(
     """Restore the newest verified replay and answer one bounded location question."""
 
     session = archive.load_latest()
+    aliases = None
+    try:
+        from .entity_registry import get_global_registry
+
+        aliases = get_global_registry().get_aliases_map()
+    except Exception:
+        pass
+    kwargs = {"aliases": aliases} if aliases is not None else {}
     subject_id = parse_location_question(
         question,
         allowed_entity_ids=_known_entities(session),
+        **kwargs,
     )
     return _location_result(session, subject_id, presenter)
 
