@@ -39,7 +39,7 @@ class CharacterIntegrationTests(unittest.TestCase):
                 load_fixture(root / "examples/fixtures/b0_key_bag_sofa_v1.json"),
                 replay_run_id="character-test"))
             reference = None
-            for character in ("rem", "nailong", "nailongFlat", [], {}, None):
+            for character in ("rem", "nailong", [], {}, None):
                 raw = json.dumps({"question": "鑰匙在哪裡", "character": character}).encode()
                 handler = object.__new__(Handler)
                 handler.path = "/api/ask"

@@ -39,15 +39,9 @@ REM = {
 # failing silently the way the page used to.
 BY_HAND = [
     (
-        WEB / "characters" / "nailong" / "model.glb",
-        "Nailong by okstepanova2012, CC Attribution\n"
-        "  https://sketchfab.com/3d-models/nailong-d4617facf9574b45bc57c64e44497242\n"
-        "  Sketchfab requires a free account to download. Export glTF Binary (.glb).",
-    ),
-    (
         WEB / "characters" / "nailong" / "idle.png",
         "A front-facing full-body illustration on a transparent background.\n"
-        "  Any image works; it is cut out and animated as a deformable mesh.",
+        "  Any image works; it is drawn as a sprite and animated from code.",
     ),
 ]
 

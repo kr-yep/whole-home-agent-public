@@ -2,19 +2,17 @@
 
 ## Vendored Web libraries (inventory added 2026-09-05)
 
-Character integration imports `three.min.js` (r147, MIT banner) and
-`GLTFLoader.js` from teammate branch `live2d-character` at `4fec8b5`.
-The upstream branch identifies the loader as part of the same Three.js release.
-This integration does not complete a redistribution/legal review.
+Optional artwork is not included or automatically downloaded. The asset helper
+identifies Rem's source as `BaneBeetle/waifubeetle2`. Confirm current source
+terms before supplying or demonstrating it; public availability alone is not
+permission. Underlying character rights are not granted by this repository's
+MIT license.
 
-Optional artwork is not included or automatically downloaded. The teammate's
-asset helper identifies Rem's source as `BaneBeetle/waifubeetle2`, and Nailong's
-model as “Nailong by okstepanova2012” on Sketchfab (model ID
-`d4617facf9574b45bc57c64e44497242`), labelled Creative Commons Attribution by
-that branch. Confirm current source terms before supplying or demonstrating it;
-public availability alone is not permission. The character UI displays the
-provided credit when that model is selected. Underlying character rights are
-not granted by this repository's MIT license.
+Three.js and its glTF loader were vendored for a 3D character that has since
+been withdrawn: the only rigged model of that character is a different sculpt
+from the illustration, and the flat drawing reads better. Both files and the
+Sketchfab model reference are removed rather than left as an inventory entry for
+something nothing imports.
 
 - `web/vendor/pixi.min.js`: header identifies PixiJS 6.5.10.
 - `web/vendor/cubism4.min.js`: bundle identifies pixi-live2d-display version 0.4.0.
@@ -107,6 +105,35 @@ rights over VOST content.
 Neither PyTorch, torchvision, nor model weights are installed by the default package or
 committed to this repository. Their exact source URLs, sizes, and hashes are recorded in
 the frozen baseline config. Upstream model/data terms continue to apply.
+
+## Browser front end
+
+The character page under `web/` loads these from `web/vendor/`. They are committed,
+so their terms travel with this repository.
+
+- [PixiJS](https://pixijs.com/) — MIT, stated in the file's own banner.
+- [pixi-live2d-display](https://github.com/guansss/pixi-live2d-display) — MIT upstream.
+  The minified build vendored here lost its banner in minification.
+
+- **Live2D Cubism Core** — NOT open source. Copyright Live2D Inc., redistributed only
+  under the [Live2D Proprietary Software License Agreement](https://live2d.com/eula/live2d-proprietary-software-license-agreement).
+  This is the one vendored file whose terms are not a permissive open-source licence,
+  and it is committed to a public repository. Whether that redistribution is covered
+  requires reading those terms against how this project is published; it is recorded
+  here rather than assumed, and it is the file to remove first if the answer is no.
+
+## Character assets
+
+Neither character's artwork is committed. `*.png` is ignored repository-wide and
+`web/live2d/` is ignored as well, so a fresh clone has the code and none of the art.
+
+- The Live2D model used locally for the first character is third-party fan work and is
+  not redistributed here.
+- The illustration for the second character was generated from a reference image by
+  the project's own authors; it is not committed either.
+
+Both characters depict a third-party property. They are used here in a local,
+non-commercial prototype, and no rights over the underlying characters are claimed.
 
 ## Optional demo dependency
 
