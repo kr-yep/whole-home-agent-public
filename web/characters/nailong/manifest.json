@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "license": "project-authored, non-commercial fan work",
+  "use_class": "CHARACTER_ART",
+  "media": [
+    {
+      "path": "idle.png",
+      "sha256": "5bec3ca9ab6bd5e4191279fb646b56cad044dc6c4b70317aaa79a392662984ec",
+      "width": 989,
+      "height": 1600,
+      "provenance": {
+        "kind": "project_generated_illustration",
+        "method": "image model, from a reference supplied by the project's authors",
+        "post_processing": "background restored to transparency: the source arrived as JPEG with the checkerboard baked in, so the two neutral checker tones were unified and flood filled from the corners",
+        "depicts": "a third-party character; no rights over it are claimed"
+      },
+      "note": "Committed rather than fetched because nothing publishes it and no upstream terms govern it. The Live2D model beside it is the opposite on both counts and stays out of the tree."
+    }
+  ]
+}

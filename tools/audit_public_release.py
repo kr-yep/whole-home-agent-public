@@ -41,6 +41,13 @@ AUDIT_SCHEMA_VERSION = 1
 AUDIT_VERSION = "public-release-audit/1"
 DEFAULT_MAX_FILE_BYTES = 5 * 1024 * 1024
 GENERATED_MEDIA_ROOT = PurePosixPath("examples/media/generated")
+# Character artwork is a second narrow exception, added when one character's
+# illustration began shipping with the repository. It is held to the same
+# discipline as generated media -- a matching hash and a stated licence -- but
+# under its own use class, because it is interface art rather than evaluation
+# data and labelling it D0_SYNTHETIC in a file whose purpose is honest labelling
+# would be the wrong kind of convenient.
+CHARACTER_ART_ROOT = PurePosixPath("web/characters")
 
 MEDIA_SUFFIXES = {
     ".avi",
@@ -354,6 +361,10 @@ def _inside_generated_media(path: PurePosixPath) -> bool:
     return path == GENERATED_MEDIA_ROOT or GENERATED_MEDIA_ROOT in path.parents
 
 
+def _inside_character_art(path: PurePosixPath) -> bool:
+    return path == CHARACTER_ART_ROOT or CHARACTER_ART_ROOT in path.parents
+
+
 def _decode_text(data: bytes) -> str | None:
     if data.startswith((b"\xff\xfe", b"\xfe\xff")):
         try:
@@ -469,13 +480,27 @@ def _is_project_generated_synthetic(value: object) -> bool:
     return normalized == "project_generated_synthetic"
 
 
+def _stated_provenance(value: object) -> bool:
+    """Some non-empty account of where a file came from, whatever its shape."""
+
+    if isinstance(value, dict):
+        value = value.get("kind", value.get("type", value.get("origin")))
+    return isinstance(value, str) and bool(value.strip())
+
+
 def _valid_license(value: object) -> bool:
     if not isinstance(value, str) or not value.strip():
         return False
     return value.strip().casefold() not in {"none", "tbd", "unknown", "unreviewed"}
 
 
-def _media_has_valid_manifest(media: FileRecord, files: Mapping[PurePosixPath, FileRecord]) -> bool:
+def _media_has_valid_manifest(
+    media: FileRecord,
+    files: Mapping[PurePosixPath, FileRecord],
+    *,
+    use_class: str = "D0_SYNTHETIC",
+    require_synthetic_provenance: bool = True,
+) -> bool:
     expected_hash = hashlib.sha256(media.data).hexdigest()
     candidates = list(_manifest_candidates(media.path))
     candidates.extend(
@@ -495,9 +520,17 @@ def _media_has_valid_manifest(media: FileRecord, files: Mapping[PurePosixPath, F
                 continue
             if not _valid_license(record.get("license")):
                 continue
-            if record.get("use_class") != "D0_SYNTHETIC":
+            if record.get("use_class") != use_class:
                 continue
-            if not _is_project_generated_synthetic(record.get("provenance")):
+            if require_synthetic_provenance and not _is_project_generated_synthetic(
+                record.get("provenance")
+            ):
+                continue
+            # Character art still has to say where it came from; it just is not
+            # required to claim it is synthetic evaluation data.
+            if not require_synthetic_provenance and not _stated_provenance(
+                record.get("provenance")
+            ):
                 continue
             return True
     return False
@@ -527,10 +560,16 @@ def _audit_snapshot(records: Iterable[FileRecord], max_file_bytes: int) -> list[
             violations.append(Violation("file_too_large", path_text, record.snapshot, f"file exceeds the {max_file_bytes}-byte public limit"))
 
         if _is_media(record.path):
-            if not _inside_generated_media(record.path):
-                violations.append(Violation("media_not_allowlisted", path_text, record.snapshot, "media is allowed only below examples/media/generated"))
-            elif not _media_has_valid_manifest(record, by_path):
-                violations.append(Violation("media_manifest_invalid", path_text, record.snapshot, "generated media lacks a matching hash, license, D0 use class, and project-synthetic provenance"))
+            if _inside_generated_media(record.path):
+                if not _media_has_valid_manifest(record, by_path):
+                    violations.append(Violation("media_manifest_invalid", path_text, record.snapshot, "generated media lacks a matching hash, license, D0 use class, and project-synthetic provenance"))
+            elif _inside_character_art(record.path):
+                if not _media_has_valid_manifest(
+                    record, by_path, use_class="CHARACTER_ART", require_synthetic_provenance=False
+                ):
+                    violations.append(Violation("media_manifest_invalid", path_text, record.snapshot, "character art lacks a matching hash, license, CHARACTER_ART use class, and stated provenance"))
+            else:
+                violations.append(Violation("media_not_allowlisted", path_text, record.snapshot, "media is allowed only below examples/media/generated or web/characters"))
             continue
 
         text = _decode_text(record.data)

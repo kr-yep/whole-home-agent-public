@@ -18,8 +18,8 @@ That downloads what can be downloaded, and tells you where the rest comes from.
 
 | Character | File | Where it comes from |
 |---|---|---|
-| 雷姆 | `web/live2d/rem/` | Fetched by the script from a public repository. Cubism 4 model, about 12 MB across 112 files. |
-| 奶龍 | `web/characters/nailong/idle.png` | Any front-facing full-body illustration on a transparent background. |
+| 雷姆 | `web/live2d/rem/` | Fetched at setup, never committed: Live2D sample-data terms. About 12 MB across 112 files. |
+| 奶龍 | `web/characters/nailong/idle.png` | Committed with the repository. Project-generated art, no upstream terms. |
 
 Credits and licence terms are in `docs/third-party-notices.md`, including one that
 matters: the vendored Live2D Cubism Core is not open source.

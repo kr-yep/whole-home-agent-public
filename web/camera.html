@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Whole Home Agent · 攝影機</title>
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/camera.css">
+</head>
+<body class="camera-page">
+
+<aside id="panel">
+  <header>
+    <div class="title-row">
+      <h1>攝影機</h1>
+      <a class="page-link" href="/">← 回到 Agent</a>
+    </div>
+    <p class="scope">影像在這台機器上擷取與壓縮，送到伺服器辨識。伺服器只驗證與計數，不保存任何影像。</p>
+  </header>
+
+  <div class="device-section">
+    <div class="section-label">📷 選擇鏡頭</div>
+    <select id="device" class="device-select"><option>尚未授權</option></select>
+    <p id="device-note" class="foot">按「允許使用」後才會顯示鏡頭名稱。</p>
+  </div>
+
+  <div class="device-section">
+    <div class="section-label">📐 要求的格式</div>
+    <div id="format" class="readout">1280×720 · 10 fps · JPEG q90 · 不允許縮放</div>
+    <p class="foot">鏡頭做不到這個格式就不會開始，不會退而求其次。</p>
+  </div>
+
+  <div class="chips">
+    <button type="button" id="grant">允許使用鏡頭</button>
+    <button type="button" id="start" disabled>開始</button>
+    <button type="button" id="stop" disabled>停止</button>
+  </div>
+
+  <div id="stats" class="readout stats">尚未開始</div>
+
+  <div id="log" class="log"></div>
+
+  <p class="foot">OPERATE · 影像不落地、不保留、不外傳第三方</p>
+</aside>
+
+<main id="stage-area">
+  <div id="indicator" class="indicator off">鏡頭未開啟</div>
+  <video id="preview" playsinline muted></video>
+  <canvas id="grab" hidden></canvas>
+</main>
+
+<script src="/camera.js"></script>
+</body>
+</html>

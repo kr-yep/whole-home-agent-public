@@ -138,6 +138,19 @@ so their terms travel with this repository.
   distributes the file directly at cubism.live2d.com if fetching it per developer ever
   becomes preferable to committing it.
 
+## Camera input
+
+The camera is the browser's. Nothing in this repository opens a capture device,
+enumerates one, or links a capture library: `getUserMedia` negotiates the format,
+the page encodes JPEG through the canvas, and the server receives bytes over HTTP.
+So there is no capture SDK to record here, and no platform-specific runtime.
+
+Frames are checked and counted, not stored. Dimensions come from the JPEG header
+rather than a decode, and the bytes are passed to whatever sink is attached and
+then dropped; with none attached, which is the current state, a frame is counted
+and discarded. `OPERATE DISABLED` is unchanged by any of this: accepting a frame
+is not authorisation to recognise anything in it, retain it, or act on it.
+
 ## Character assets
 
 Neither character's artwork is committed. `*.png` is ignored repository-wide and
@@ -146,7 +159,12 @@ Neither character's artwork is committed. `*.png` is ignored repository-wide and
 - The Live2D model used locally for the first character is third-party fan work and is
   not redistributed here.
 - The illustration for the second character was generated from a reference image by
-  the project's own authors; it is not committed either.
+  the project's own authors and **is** committed, at `web/characters/nailong/idle.png`.
+  Nothing upstream governs it, which is what separates it from the Live2D model: that
+  one comes from a repository licensed MIT "except for the Live2D sample models", and
+  is built on Live2D's official Mao Pro sample rig, so it stays fetched rather than
+  redistributed. The character both depict remains third-party intellectual property;
+  this is a local, non-commercial prototype and claims no rights over either.
 
 Both characters depict a third-party property. They are used here in a local,
 non-commercial prototype, and no rights over the underlying characters are claimed.

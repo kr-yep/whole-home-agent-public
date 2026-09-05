@@ -15,6 +15,7 @@ import mimetypes
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from urllib.parse import parse_qs
 from urllib.parse import urlsplit
 
 from .actuation.dispatcher import CommandDispatcher
@@ -28,6 +29,7 @@ from .adapters.loopback_llm import (
     verbalizer_from_environment,
 )
 from .adapters.sqlite_archive import SQLiteReplayArchive
+from .camera_ingest import CameraIngest, CameraIngestError, MAX_FRAME_BYTES
 from .errors import B0Error
 from .memory_query import answer_question, list_known_entities
 
@@ -40,6 +42,9 @@ from .rem_persona import (
 )
 
 WEB_ROOT = Path(__file__).resolve().parents[2] / "web"
+# One ingest for the process: the camera page and the agent page are two views of
+# the same running server, and only one of them is holding a camera open.
+CAMERA = CameraIngest()
 DEFAULT_DATABASE = Path(".whole-home-agent/demo-memory.sqlite3")
 MAX_QUESTION_BYTES = 4096
 
@@ -118,10 +123,65 @@ class Handler(SimpleHTTPRequestHandler):
         if self.path == "/api/devices":
             self._json(200, {"devices": [d.as_dict() for d in self.actuator.list_devices()]})
             return
+        if self.path == "/api/camera/status":
+            self._json(200, CAMERA.status())
+            return
+        if self.path in ("/camera", "/camera/"):
+            self.path = "/camera.html"
         super().do_GET()
+
+    def _read_body(self, limit: int) -> bytes:
+        length = int(self.headers.get("Content-Length") or 0)
+        if length <= 0 or length > limit:
+            raise CameraIngestError(f"body of {length} bytes is not accepted")
+        return self.rfile.read(length)
+
+    def _camera_post(self, route: str, query: dict[str, list[str]]) -> bool:
+        """The three camera routes. Returns False when the path is not one."""
+
+        if route == "/api/camera/start":
+            body = json.loads(self._read_body(4096) or b"{}")
+            session = CAMERA.start(
+                device_label=body.get("device_label", "unnamed"),
+                negotiated=body.get("negotiated", {}),
+            )
+            self._json(200, {"session_id": session.session_id, **CAMERA.status()})
+            return True
+
+        if route == "/api/camera/frame":
+            # Metadata rides in the query string and the body is the JPEG itself,
+            # so a frame costs its own size rather than a third more for base64.
+            session = CAMERA.current(query.get("session", [""])[0])
+            payload = self._read_body(MAX_FRAME_BYTES)
+            accepted = session.accept(
+                payload,
+                sequence=int(query.get("sequence", ["0"])[0]),
+                captured_ns=int(query.get("captured_ns", ["0"])[0]),
+            )
+            self._json(200, accepted)
+            return True
+
+        if route == "/api/camera/end":
+            body = json.loads(self._read_body(4096) or b"{}")
+            self._json(200, CAMERA.end(body.get("session_id", "")))
+            return True
+
+        return False
 
     def do_POST(self) -> None:
         self.character = None
+        route, _, raw_query = self.path.partition("?")
+        if route.startswith("/api/camera/"):
+            try:
+                if not self._camera_post(route, parse_qs(raw_query)):
+                    self._json(404, {"error": "no such route"})
+            except CameraIngestError as error:
+                # A refused frame is not a server fault: the page is told which
+                # one and why, and goes on sending the next.
+                self._json(409, {"refused": True, "error": str(error)})
+            except (ValueError, json.JSONDecodeError) as error:
+                self._json(400, {"error": f"malformed camera request: {error}"})
+            return
         if self.path != "/api/ask":
             self._json(404, {"error": "no such route"})
             return
