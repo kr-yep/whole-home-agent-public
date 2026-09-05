@@ -116,7 +116,7 @@ def report(name: str) -> int:
     complaint = _verify(target, *WEIGHTS[name])
     if complaint:
         print(f"  DAMAGED  {target.relative_to(ROOT)}: {complaint}")
-        print("           delete it and run this script again")
+        print("           run this script without --check to replace it")
         return 1
     print(f"  present  {target.relative_to(ROOT)}")
     return 0
