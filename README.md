@@ -1,5 +1,103 @@
 # Whole Home Agent
 
+## Start here
+
+```
+python -m pip install -e ".[demo,video]"
+python tools/setup_demo.py --run
+```
+
+That is the whole thing. The script builds the demo memory, fetches the character
+artwork, reports anything it could not get, and starts the server. Run it again
+any time; it never overwrites what is already there.
+
+**The artwork is not in this repository and never will be.** Rem's Live2D model
+is third-party sample data under Live2D's own terms rather than the MIT licence
+this project uses, so it is fetched at setup and not redistributed here. If you
+cloned this and nobody was standing on the page, that is why, and the command
+above is the fix. `--check` reports what is missing without downloading anything.
+
+Nailong's illustration cannot be fetched by anything: it is not published, so
+supply your own at `web/characters/nailong/idle.png`. Any front-facing full-body
+PNG with a transparent background works.
+
+The page runs with no artwork at all. Memory answers, device commands and the
+camera are unaffected; the characters simply do not appear.
+
+| | |
+|---|---|
+| http://127.0.0.1:8600 | the agent — ask 鑰匙在哪裡, 包包裡有什麼, 開客廳燈 |
+| http://127.0.0.1:8600/camera | the camera — capture in the browser, recognition on the server |
+
+## Running it on a server
+
+The same command works on a machine nobody sits at, with two changes: bind to
+loopback and let something in front of it handle TLS. This is the shape used for
+the current deployment.
+
+```
+# on the server
+git clone <this repository> ~/opt/whole-home-agent && cd ~/opt/whole-home-agent
+uv venv .venv && uv pip install --python .venv/bin/python -e ".[demo,video]"
+.venv/bin/python tools/setup_demo.py
+```
+
+Then a user service, so it survives a logout and comes back after a reboot
+(`loginctl enable-linger $USER` once, if it is not already on):
+
+```ini
+# ~/.config/systemd/user/whole-home-agent.service
+[Unit]
+Description=Whole Home Agent web front end
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/opt/whole-home-agent
+ExecStart=%h/opt/whole-home-agent/.venv/bin/python -m whole_home_agent.web_app --bind 127.0.0.1 --port 8600
+Environment=WHA_LLM_ENDPOINT=http://127.0.0.1:11434/v1/chat/completions
+Environment=WHA_LLM_MODEL=qwen3:8b
+Restart=on-failure
+RestartSec=5
+PrivateTmp=yes
+NoNewPrivileges=yes
+
+[Install]
+WantedBy=default.target
+```
+
+```
+systemctl --user daemon-reload
+systemctl --user enable --now whole-home-agent
+```
+
+**The camera page needs HTTPS.** `getUserMedia` exists only in a secure context,
+so over plain HTTP to anything but `localhost` the camera half of the product is
+not merely broken but absent -- `navigator.mediaDevices` is undefined and the
+buttons do nothing. The agent page is unaffected, which makes this easy to miss.
+
+Tailscale supplies a real certificate, so a tailnet is the least work:
+
+```
+tailscale serve --bg --https=8443 http://127.0.0.1:8600     # tailnet only
+tailscale funnel --bg --https=8443 http://127.0.0.1:8600    # public internet
+```
+
+Port 8443 rather than 443 because the app serves absolute paths (`/style.css`,
+`/api/...`) and cannot live under a sub-path without knowing its own base.
+
+**There is no authentication.** Anyone who reaches the server can ask it
+questions, flip the simulated devices, and use whatever language model it is
+pointed at. On a tailnet that is bounded by tailnet membership; funnelled to the
+public internet it is bounded by nothing, and the model endpoint's own API key
+does not help because the server presents it on the caller's behalf. Turn the
+funnel off when the demo is over:
+
+```
+tailscale funnel --https=8443 off
+```
+
 ## Current demo entry (2026-09-05)
 
 From this repository checkout, run:
@@ -16,10 +114,10 @@ licensed Live2D model may optionally be placed at `web/live2d/rem/REM.model3.jso
 this repository does not distribute that character asset. Browser TTS depends on
 installed voices and browser settings and is not a validated offline speech engine.
 
-Character switching (Rem / Nailong 3D / Nailong flat) is integrated from the
-teammate branch. Run `python tools/fetch_character_assets.py --check` for a
-read-only inventory. The helper can fetch Rem only when explicitly run without
-`--check`; Nailong assets need to be supplied separately. See [web setup](web/README.md).
+Character switching (Rem / Nailong) is integrated from the teammate branch.
+`python tools/setup_demo.py --check` is the read-only inventory; the same script
+without `--check` fetches what can be fetched. Nailong's illustration must be
+supplied by hand. See [web setup](web/README.md).
 Missing artwork preserves the current avatar and does not block memory queries.
 
 Run `python tools/benchmark_local_components.py` after installing the package for
