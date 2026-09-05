@@ -14,7 +14,9 @@ QUESTION_PARSER_ID = "bounded-location-question/1"
 TIMELINE_PARSER_ID = "bounded-timeline-question/1"
 MAX_QUESTION_CHARACTERS = 200
 
-DEFAULT_ENTITY_ALIASES: Mapping[str, tuple[str, ...]] = {
+# The replay fixtures name these, and a question is read against whichever of
+# them the archive actually holds.
+_FIXTURE_ALIASES: Mapping[str, tuple[str, ...]] = {
     "key": ("key", "keys", "鑰匙", "钥匙"),
     "bag": ("bag", "backpack", "包包", "背包"),
     "sofa": ("sofa", "couch", "沙發", "沙发"),
@@ -25,6 +27,100 @@ DEFAULT_ENTITY_ALIASES: Mapping[str, tuple[str, ...]] = {
     "desk": ("desk", "書桌", "书桌", "桌子"),
     "table": ("table", "茶几", "桌"),
     "shelf": ("shelf", "書架", "书架", "架子"),
+}
+
+# What the camera can put into the archive on its own. The detector reports the
+# eighty COCO classes, PerceptionBridge maps fifteen of them onto household names
+# and lets the rest through under their own label, so an entity like "person" or
+# "frisbee" reached the memory while the only way to ask after it was to type its
+# English label -- which is what a question in Chinese kept missing.
+#
+# Every id here is one the bridge can commit: the values of its COCO_TO_ENTITY_MAP
+# plus the slug each remaining class falls back to. A test checks that mapping's
+# outputs against this table, so a class added on the detector side cannot quietly
+# become unaskable again.
+_DETECTOR_ALIASES: Mapping[str, tuple[str, ...]] = {
+    "person": ("person", "people", "人", "人影"),
+    "bicycle": ("bicycle", "bike", "腳踏車", "脚踏车", "單車", "自行車"),
+    "car": ("car", "汽車", "汽车", "轎車"),
+    "motorcycle": ("motorcycle", "機車", "机车", "摩托車"),
+    "airplane": ("airplane", "飛機", "飞机"),
+    "bus": ("bus", "公車", "公车", "巴士"),
+    "train": ("train", "火車", "火车"),
+    "truck": ("truck", "卡車", "卡车", "貨車"),
+    "boat": ("boat", "船"),
+    "traffic_light": ("traffic light", "紅綠燈", "红绿灯", "號誌燈"),
+    "fire_hydrant": ("fire hydrant", "消防栓"),
+    "stop_sign": ("stop sign", "停車標誌", "停止標誌"),
+    "parking_meter": ("parking meter", "停車計時器"),
+    "bench": ("bench", "長椅", "长椅", "板凳"),
+    "bird": ("bird", "鳥", "鸟"),
+    "cat": ("cat", "貓", "猫", "貓咪"),
+    "dog": ("dog", "狗", "狗狗", "小狗"),
+    "horse": ("horse", "馬", "马"),
+    "sheep": ("sheep", "羊", "綿羊"),
+    "cow": ("cow", "牛", "乳牛"),
+    "elephant": ("elephant", "大象"),
+    "bear": ("bear", "熊"),
+    "zebra": ("zebra", "斑馬", "斑马"),
+    "giraffe": ("giraffe", "長頸鹿", "长颈鹿"),
+    "umbrella": ("umbrella", "雨傘", "雨伞", "傘"),
+    "tie": ("tie", "necktie", "領帶", "领带"),
+    "suitcase": ("suitcase", "行李箱", "行李"),
+    "frisbee": ("frisbee", "飛盤", "飞盘"),
+    "skis": ("skis", "ski", "滑雪板", "雪橇"),
+    "snowboard": ("snowboard", "單板滑雪板"),
+    "sports_ball": ("sports ball", "球", "皮球"),
+    "kite": ("kite", "風箏", "风筝"),
+    "baseball_bat": ("baseball bat", "球棒", "棒球棒"),
+    "baseball_glove": ("baseball glove", "棒球手套"),
+    "skateboard": ("skateboard", "滑板"),
+    "surfboard": ("surfboard", "衝浪板", "冲浪板"),
+    "tennis_racket": ("tennis racket", "網球拍", "网球拍", "球拍"),
+    "bottle": ("bottle", "瓶子", "水瓶", "寶特瓶"),
+    "wine_glass": ("wine glass", "酒杯", "紅酒杯", "高腳杯"),
+    "cup": ("cup", "杯子", "馬克杯", "水杯"),
+    "fork": ("fork", "叉子"),
+    "knife": ("knife", "刀子", "菜刀"),
+    "spoon": ("spoon", "湯匙", "汤匙", "調羹"),
+    "bowl": ("bowl", "碗"),
+    "banana": ("banana", "香蕉"),
+    "apple": ("apple", "蘋果", "苹果"),
+    "sandwich": ("sandwich", "三明治"),
+    "orange": ("orange", "柳橙", "橘子"),
+    "broccoli": ("broccoli", "花椰菜", "西蘭花"),
+    "carrot": ("carrot", "紅蘿蔔", "胡蘿蔔"),
+    "hot_dog": ("hot dog", "熱狗", "热狗"),
+    "pizza": ("pizza", "披薩", "比薩"),
+    "donut": ("donut", "甜甜圈"),
+    "cake": ("cake", "蛋糕"),
+    "chair": ("chair", "椅子", "椅"),
+    "potted_plant": ("potted plant", "盆栽", "盆景"),
+    "bed": ("bed", "床", "床鋪"),
+    "toilet": ("toilet", "馬桶", "马桶"),
+    "tv": ("tv", "television", "電視", "电视", "電視機"),
+    "laptop": ("laptop", "筆電", "笔电", "筆記型電腦", "電腦"),
+    "mouse": ("mouse", "滑鼠", "鼠標"),
+    "keyboard": ("keyboard", "鍵盤", "键盘"),
+    "phone": ("phone", "cell phone", "mobile", "手機", "手机", "電話"),
+    "microwave": ("microwave", "微波爐", "微波炉"),
+    "oven": ("oven", "烤箱", "烤爐"),
+    "toaster": ("toaster", "烤麵包機", "吐司機"),
+    "sink": ("sink", "水槽", "洗手台"),
+    "refrigerator": ("refrigerator", "fridge", "冰箱"),
+    "clock": ("clock", "時鐘", "时钟", "鐘"),
+    "vase": ("vase", "花瓶"),
+    "scissors": ("scissors", "剪刀"),
+    "teddy_bear": ("teddy bear", "泰迪熊", "玩具熊"),
+    "hair_drier": ("hair drier", "hair dryer", "吹風機", "吹风机"),
+    "toothbrush": ("toothbrush", "牙刷"),
+}
+
+DEFAULT_ENTITY_ALIASES: Mapping[str, tuple[str, ...]] = {
+    **_DETECTOR_ALIASES,
+    # The fixture wording wins where both name the same id, because those are the
+    # objects the written replays are about.
+    **_FIXTURE_ALIASES,
 }
 
 _ENGLISH_LOCATION_INTENT = re.compile(r"\b(where|locate|find|location)\b")
@@ -56,6 +152,43 @@ def _contains_alias(text: str, alias: str) -> bool:
     if alias.isascii():
         return re.search(rf"(?<![a-z0-9_]){re.escape(alias)}(?![a-z0-9_])", text) is not None
     return alias in text
+
+
+def _named_entities(
+    text: str,
+    allowed: Iterable[str],
+    aliases: Mapping[str, tuple[str, ...]],
+) -> dict[str, str]:
+    """Every entity the text names, each with the longest alias that matched it.
+
+    Chinese has no spaces, so an alias is found by substring, and shorter
+    household words live inside longer ones: 書 inside 書桌 and 書架, 桌 inside
+    both of those again. Asking where the desk was therefore named three objects
+    at once and was refused for being ambiguous, which it never was to a reader.
+    Keeping the longest reading of each overlap is what a reader does without
+    noticing, and it is what lets this table hold a detector's whole vocabulary
+    -- 狗 sits inside 熱狗 the same way -- rather than only a curated ten.
+
+    Entities named by genuinely different words still all come back. Two objects
+    in one question is real ambiguity, and refusing it stays the caller's job.
+    """
+
+    named: dict[str, str] = {}
+    for entity_id in allowed:
+        matched = [
+            alias
+            for alias in (*aliases.get(entity_id, ()), entity_id)
+            if _contains_alias(text, alias.lower())
+        ]
+        if matched:
+            named[entity_id] = max(matched, key=len)
+
+    words = set(named.values())
+    return {
+        entity_id: alias
+        for entity_id, alias in named.items()
+        if not any(alias != other and alias in other for other in words)
+    }
 
 
 def parse_location_question(
@@ -98,11 +231,7 @@ def parse_location_question(
         )
 
     allowed = tuple(sorted(set(allowed_entity_ids)))
-    matches: list[str] = []
-    for entity_id in allowed:
-        entity_aliases = aliases.get(entity_id, ()) + (entity_id,)
-        if any(_contains_alias(normalized, alias.lower()) for alias in entity_aliases):
-            matches.append(entity_id)
+    matches = sorted(_named_entities(normalized, allowed, aliases))
     if len(matches) != 1:
         raise QuestionError(
             "question must name exactly one known object",
@@ -147,13 +276,13 @@ def parse_timeline_question(
             error_code=ErrorCode.UNSUPPORTED_QUESTION,
         )
     allowed = tuple(sorted(set(allowed_entity_ids)))
-    matches = [
-        (position, entity_id)
-        for entity_id in allowed
-        if (position := _first_position(
-            normalized, aliases.get(entity_id, ()) + (entity_id,)
-        )) is not None
-    ]
+    # Positions come from the alias that actually named each entity, so a word
+    # that only appeared inside a longer one cannot claim that longer one's
+    # position and be read as the subject.
+    matches = sorted(
+        (normalized.find(alias.lower()), entity_id)
+        for entity_id, alias in _named_entities(normalized, allowed, aliases).items()
+    )
     # A relation question normally names both ends, for example "when did the
     # key enter the bag?".  The first mentioned entity is the subject; the
     # result still reports the relation's recorded target from the claim.
@@ -188,15 +317,6 @@ class LocationVerification:
 
     subject_id: str
     target_id: str | None
-
-
-def _first_position(text: str, entity_aliases: tuple[str, ...]) -> int | None:
-    positions = [
-        text.index(alias.lower())
-        for alias in entity_aliases
-        if _contains_alias(text, alias.lower())
-    ]
-    return min(positions) if positions else None
 
 
 def parse_location_verification(
@@ -243,12 +363,12 @@ def parse_location_verification(
             error_code=ErrorCode.UNSUPPORTED_QUESTION,
         )
 
-    ordered: list[tuple[int, str]] = []
-    for entity_id in sorted(set(allowed_entity_ids)):
-        position = _first_position(normalized, aliases.get(entity_id, ()) + (entity_id,))
-        if position is not None:
-            ordered.append((position, entity_id))
-    ordered.sort()
+    ordered = sorted(
+        (normalized.find(alias.lower()), entity_id)
+        for entity_id, alias in _named_entities(
+            normalized, sorted(set(allowed_entity_ids)), aliases
+        ).items()
+    )
 
     if not ordered:
         raise QuestionError(
@@ -314,12 +434,9 @@ def parse_container_question(
             error_code=ErrorCode.UNSUPPORTED_QUESTION,
         )
 
-    matches = [
-        entity_id
-        for entity_id in sorted(set(allowed_entity_ids))
-        if _first_position(normalized, aliases.get(entity_id, ()) + (entity_id,))
-        is not None
-    ]
+    matches = sorted(
+        _named_entities(normalized, sorted(set(allowed_entity_ids)), aliases)
+    )
     if len(matches) != 1:
         raise QuestionError(
             "question must name exactly one known container",
