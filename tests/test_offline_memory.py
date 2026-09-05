@@ -22,8 +22,8 @@ from whole_home_agent.adapters.sqlite_archive import SQLiteReplayArchive
 from whole_home_agent.cli import main as cli_main
 from whole_home_agent.errors import ArchiveError, ErrorCode, PresenterConfigError, QuestionError
 from whole_home_agent.fixture import load_fixture
-from whole_home_agent.memory_query import answer_latest_memory
-from whole_home_agent.natural_query import parse_location_question
+from whole_home_agent.memory_query import answer_latest_memory, answer_question
+from whole_home_agent.natural_query import parse_location_question, parse_timeline_question
 from whole_home_agent.orchestrator import run_fixture
 from whole_home_agent.presentation import PRESENTED, present_location_context
 
@@ -172,6 +172,13 @@ class NaturalQuestionTests(unittest.TestCase):
                     question, allowed_entity_ids=("key", "bag", "sofa")
                 )
 
+    def test_timeline_questions_name_one_known_object(self):
+        allowed = ("key", "bag", "sofa")
+        self.assertEqual(parse_timeline_question("鑰匙什麼時候進包包？", allowed_entity_ids=allowed), "key")
+        self.assertEqual(parse_timeline_question("When was the bag last recorded?", allowed_entity_ids=allowed), "bag")
+        with self.assertRaises(QuestionError):
+            parse_timeline_question("鑰匙、包包和沙發什麼時候被記錄？", allowed_entity_ids=allowed)
+
     def test_query_restores_latest_session_and_does_not_store_question(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "memory.sqlite3"
@@ -186,6 +193,32 @@ class NaturalQuestionTests(unittest.TestCase):
         self.assertEqual(result["answer"]["location_id"], "sofa")
         self.assertEqual(result["query"]["stored"], False)
         self.assertNotIn("鑰匙放在哪裡".encode("utf-8"), raw)
+
+    def test_timeline_answer_keeps_synthetic_time_basis_honest(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "memory.sqlite3"
+            SQLiteReplayArchive(path).save_completed(_session("timeline-query"))
+            result = answer_question(SQLiteReplayArchive(path), "鑰匙什麼時候進包包？")
+        self.assertEqual(result["schema"], "whole-home-agent.memory-timeline.v1")
+        self.assertEqual(result["event"]["claim_id"], "claim-key-inside-bag")
+        self.assertNotIn("replay_seconds", result["event"])
+        self.assertIn("第 1 筆記錄", result["event"]["text"])
+        self.assertEqual(result["spoken"]["text"], result["event"]["text"])
+
+    def test_extended_inventory_answers_new_items_and_places(self):
+        from whole_home_agent.inventory_demo import remember_inventory_demo
+
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "inventory.sqlite3"
+            archive = SQLiteReplayArchive(path)
+            receipt = remember_inventory_demo(archive=archive, replay_run_id="inventory-test")
+            wallet = answer_question(archive, "錢包在哪裡？")
+            remote = answer_question(archive, "遙控器在哪裡？")
+        self.assertEqual(receipt["inventory"]["item_ids"], ["key", "wallet", "remote", "book"])
+        self.assertEqual(wallet["answer"]["location_id"], "desk")
+        self.assertEqual(remote["answer"]["location_id"], "table")
+        self.assertIn("錢包", wallet["presentation"]["text"])
+        self.assertIn("書桌", wallet["presentation"]["text"])
 
 
 class LoopbackPresenterTests(unittest.TestCase):

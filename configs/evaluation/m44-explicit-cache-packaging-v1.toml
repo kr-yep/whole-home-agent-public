@@ -11,10 +11,10 @@ additional_retry_allowed = false
 m43_result = "configs/evaluation/m43-caller-created-uv-cache-result-v1.toml"
 m43_result_sha256 = "f12ddd01b67735d8cb929c7b37431782ab8359e3dff7d3f566a538a2e20ce7f1"
 m41_contract = "configs/evaluation/m41-release-candidate-packaging-v1.toml"
-m41_contract_sha256 = "d5c84c722e8ba65e5d35a5d3198ba193dbdc6e1095ef9704425c8fd995054b80"
+m41_contract_sha256 = "f699f9e6deb8bddfd23f4f9a2e7a201b6149f28a8b56ee07ec3fd0355652eb72"
 m41_checker = "tools/check_m41_release_candidate.py"
 m41_checker_sha256 = "e409c95c2e39ef905b9a1d081a45cd93e692a4328b3a2d047bd3e83a16401082"
-pyproject_sha256 = "bb70f2f967938a93d7599ce7b2fe08c3be797316b4426f66914529b2cf65b7da"
+pyproject_sha256 = "8f7fabf0be7cd9a3a4ddf9b91a19c6fca5c4f93cdbb5483dadb220796355900c"
 uv_lock_git_blob_sha256 = "f2d3639c4b34b9c8a05381baec95cd178d39e056d81bbb7bc028eaeba1c94c3e"
 presentation_module_sha256 = "387b6ff56d42fea792901b1b2a09d3e5be3bea5fa31b636a2332fd6da34caf50"
 

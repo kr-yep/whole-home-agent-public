@@ -13,7 +13,8 @@ from .errors import B0Error
 from .fixture import load_fixture
 from .adapters.loopback_llm import LoopbackChatPresenter
 from .adapters.sqlite_archive import SQLiteReplayArchive
-from .memory_query import answer_latest_memory
+from .memory_query import answer_question
+from .inventory_demo import remember_inventory_demo
 from .model import AnswerTrace, QueryRequest
 from .orchestrator import run_fixture
 from .public_demo import run_public_demo
@@ -57,6 +58,14 @@ def _build_parser() -> argparse.ArgumentParser:
     remember.add_argument("--db", required=True, type=Path)
     remember.add_argument(
         "--run-id", dest="run_id", default="public-b1-memory-demo-001"
+    )
+    inventory = subparsers.add_parser(
+        "remember-inventory-demo",
+        help="store the fixed multi-object synthetic semantic replay in a local SQLite file",
+    )
+    inventory.add_argument("--db", required=True, type=Path)
+    inventory.add_argument(
+        "--run-id", dest="run_id", default="public-b0-inventory-demo-001"
     )
     ask = subparsers.add_parser(
         "ask-memory",
@@ -139,10 +148,14 @@ def main(argv: Sequence[str] | None = None) -> int:
                 )
             else:
                 presenter = None
-            payload = answer_latest_memory(
+            payload = answer_question(
                 archive,
                 arguments.question,
                 presenter=presenter,
+            )
+        elif arguments.command == "remember-inventory-demo":
+            payload = remember_inventory_demo(
+                archive=SQLiteReplayArchive(arguments.db), replay_run_id=arguments.run_id
             )
         elif arguments.command == "replay":
             fixture = load_fixture(arguments.fixture)

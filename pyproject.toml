@@ -46,6 +46,9 @@ where = ["src"]
   "examples/media/generated/key_bag_sofa_v2.manifest.json",
   "examples/media/generated/key_bag_sofa_v2.mp4",
 ]
+"wha/examples/fixtures" = [
+  "examples/fixtures/b0_home_inventory_v1.json",
+]
 "wha/configs/perception" = [
   "configs/perception/relation-eval-v1.toml",
   "configs/perception/relation-rules-v1.toml",
