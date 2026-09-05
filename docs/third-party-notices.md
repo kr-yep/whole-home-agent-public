@@ -115,12 +115,28 @@ so their terms travel with this repository.
 - [pixi-live2d-display](https://github.com/guansss/pixi-live2d-display) — MIT upstream.
   The minified build vendored here lost its banner in minification.
 
-- **Live2D Cubism Core** — NOT open source. Copyright Live2D Inc., redistributed only
-  under the [Live2D Proprietary Software License Agreement](https://live2d.com/eula/live2d-proprietary-software-license-agreement).
-  This is the one vendored file whose terms are not a permissive open-source licence,
-  and it is committed to a public repository. Whether that redistribution is covered
-  requires reading those terms against how this project is published; it is recorded
-  here rather than assumed, and it is the file to remove first if the answer is no.
+- **Live2D Cubism Core** — not open source, and the one vendored file whose terms are
+  not a permissive licence. Copyright Live2D Inc., under the
+  [Live2D Proprietary Software License Agreement](https://www.live2d.com/eula/live2d-proprietary-software-license-agreement_en.html).
+
+  An earlier revision of this file recorded that as an open question and suggested the
+  file might have to go. Reading the agreement rather than assuming: section 5 permits
+  redistributing the Redistributable Code as part of an application, and this file's own
+  header states that it *is* the Redistributable Code. The conditions that apply are met
+  here — it is the official minified build, unmodified, with its banner intact; the
+  application around it adds substantial functionality of its own; and the notice travels
+  with it in this document. Section 5.3 requires a separate Publication License above a
+  revenue threshold, and exempts general users, small-scale enterprises under ten million
+  yen of annual sales, and qualified educational institutions; this prototype is not
+  commercial and falls in the first of those.
+
+  What that reading does not settle is the public source repository specifically, which
+  the agreement does not address either way. Live2D publishes its own SDK samples on
+  GitHub with this file included, which is the closest thing to a precedent. If the
+  project's circumstances change — revenue, or an Expandable Application, which needs
+  approval regardless of revenue — this is the paragraph to revisit, and Live2D
+  distributes the file directly at cubism.live2d.com if fetching it per developer ever
+  becomes preferable to committing it.
 
 ## Character assets
 
