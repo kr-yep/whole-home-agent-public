@@ -1,5 +1,44 @@
 # Current capability status
 
+## Current integration checkpoint — 2026-09-05
+
+Local hardening, character and ablation verification: 570 tests passed in the locked demo environment,
+zero skips. Eight added regression tests cover malformed HTTP input, cross-origin
+commands, negation/questions, temperature parsing, per-device operations, and a
+temporary local HTTP query/mock-actuation round trip. No real endpoint or device
+was tested. These edits are local and have not been committed or pushed.
+
+V2 ablation completed 24 synthetic clips, 60 development and 180 evaluation runs.
+Burst + confirmation passed the fixed synthetic quality/cost criteria: 27.5% fewer
+detector calls and 25.0% paired replay-time saving. It remains experimental, not a
+production default or proof of indoor readiness. See
+[v2 results](evaluation/perception-ablation-v2.md).
+
+Teammate changes from main `40dab4b` and character branch `4fec8b5` are now
+integrated locally: asset help, Rem/Nailong character registry, 3D/flat renderers,
+and character-aware prose. Local error handling, mock labels, initialization,
+fallback avatar and ablations remain intact. Node controller checks passed for
+failed loads, preserving the old avatar, stale async loads and invalid IDs.
+The asset inventory reports all three character artwork entries missing; no
+download, real-artwork animation verification or browser visual QA was performed.
+
+Four perception/memory ablations plus baseline completed 15 synthetic replays.
+The existing motion scheduler is not compatible with the temporal confirmation
+defaults on this clip; it saved detector calls but lost both events. Chain memory
+remains necessary for the demonstrated hidden-key answer. Tracking/confirmation
+removal has not been validated on negative indoor footage. See the
+[ablation report](evaluation/perception-ablation-v1.md); runtime defaults are unchanged.
+
+The checkout now includes a Web UI, deterministic persona, browser TTS, and four
+mock devices. Start with the README's Web command. Missing Live2D assets show a
+house avatar. The Home Assistant adapter exists but is not selected by either UI;
+setting HASS variables alone does not enable it. Real device integration and indoor
+perception remain unverified. The historical checkpoint below predates these additions.
+
+The new component benchmark measures actual outcomes and latency on temporary
+synthetic memory and mock devices. It does not compare real LLMs or measure user
+preference. The v2 claims of guaranteed zero hallucinations have been withdrawn.
+
 **Checkpoint:** offline memory + bounded questions · **Runtime:** `OPERATE DISABLED` · **Production ready:** no
 
 This page is updated with every milestone push so a teammate can see what is usable and

@@ -45,6 +45,15 @@ class ActionPolicy:
             )
 
         # 2. Temperature boundary check
+        supported = {
+            "living_room_ac": {ActionType.TURN_ON, ActionType.TURN_OFF, ActionType.SET_TEMPERATURE},
+            "living_room_light": {ActionType.TURN_ON, ActionType.TURN_OFF},
+            "bedroom_light": {ActionType.TURN_ON, ActionType.TURN_OFF},
+            "living_room_curtain": {ActionType.TURN_ON, ActionType.TURN_OFF, ActionType.SET_POSITION},
+        }
+        if request.action_type not in supported.get(request.target_device_id, set()):
+            return ActionReceipt("denied-action", request.target_device_id, request.action_type,
+                                 ActionStatus.DENIED, "不支援此設備操作。")
         if request.action_type == ActionType.SET_TEMPERATURE:
             temp = request.parameters.get("temperature")
             if temp is None:
@@ -89,6 +98,9 @@ class ActionPolicy:
         # 3. Position boundary check (cover/curtain)
         if request.action_type == ActionType.SET_POSITION:
             pos = request.parameters.get("position")
+            if type(pos) is not int:
+                return ActionReceipt("denied-position", request.target_device_id, request.action_type,
+                                     ActionStatus.DENIED, "窗簾開合度必須為 0 到 100 的整數。")
             if pos is not None:
                 try:
                     pos_val = int(pos)

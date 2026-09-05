@@ -47,7 +47,20 @@ jobs:
           tests.test_llm_text_context
           tests.test_offline_memory
           tests.test_public_demo
+          tests.test_actuation
+          tests.test_rem_persona
+          tests.test_demo_hardening
+          tests.test_character_integration
+          tests.test_perception_ablation
+          tests.test_perception_v2
           -v
+
+      - name: Verify character switch controller
+        if: matrix.python-version == '3.12'
+        run: |
+          node --check web/app.js
+          node --check web/characters.js
+          node tests/character_switch.test.cjs
 
       - name: Run golden CLI smoke
         run: >-
@@ -78,6 +91,9 @@ jobs:
 
       - name: Verify full current and historical suite once
         run: python -m unittest discover -s tests -v
+
+      - name: Evaluate local components with temporary synthetic memory
+        run: python tools/benchmark_local_components.py
 
   video-contract:
     name: Prerecorded D0 video contract

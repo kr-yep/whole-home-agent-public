@@ -67,8 +67,8 @@ class RemLocationPresenter(LocationPresenter):
                 ):
                     container = _display_name(inside.object_id)
                     return (
-                        f"請交給雷姆吧！雷姆記得很清楚喔，主人的{subject}收在{container}裡面，"
-                        f"而{container}現在正放在{location}上呢。請主人放心！"
+                        f"主人，依這段重播記錄推測，{subject}可能在{container}裡面，"
+                        f"而{container}位於{location}喔。雷姆可以提供這條記錄供您確認。"
                     )
 
         return f"報告主人！在雷姆的記憶中，您的{subject}目前位於{location}喔。"
@@ -169,10 +169,6 @@ def rem_voice_actuation(receipt: ActionReceipt) -> str:
     elif receipt.action_type == ActionType.SET_POSITION:
         pos = receipt.details.get("current_state", {}).get("position", "")
         return f"遵命！{device_name} 已經為您調整開合度至 {pos}% 了喔。"
-
-    elif receipt.action_type == ActionType.SET_BRIGHTNESS:
-        b = receipt.details.get("current_state", {}).get("attributes", {}).get("brightness", "")
-        return f"遵命！{device_name} 已經為您調整亮度至 {b}% 了喔。"
 
     return f"好的，主人！{receipt.message}"
 

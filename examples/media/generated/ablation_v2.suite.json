@@ -1,0 +1,1686 @@
+{
+  "clips": [
+    {
+      "manifest": "ablation_v2_stationary_0.manifest.json",
+      "manifest_hash": "a3164965b1f8ae2dcb783d382f836c6f9b335b8cb42aeb330b6837689f674318",
+      "name": "ablation_v2_stationary_0",
+      "queries": [
+        {
+          "frame": 24,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 24,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 26,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 26,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 31,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 31,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 61,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 61,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 79,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 79,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        }
+      ],
+      "scenario": "stationary",
+      "split": "train",
+      "variant": 0
+    },
+    {
+      "manifest": "ablation_v2_stationary_1.manifest.json",
+      "manifest_hash": "c002815fb59b2981e2b5fcb9d705a9687d0ecec81c7c4a6a34254eb8e85df225",
+      "name": "ablation_v2_stationary_1",
+      "queries": [
+        {
+          "frame": 26,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 26,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 28,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 28,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 33,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 33,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 62,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 62,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 79,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 79,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        }
+      ],
+      "scenario": "stationary",
+      "split": "train",
+      "variant": 1
+    },
+    {
+      "manifest": "ablation_v2_stationary_2.manifest.json",
+      "manifest_hash": "14a142ed45c43b97d5abffa5b318eafbed2584586ca9366767b758e3bc9a8642",
+      "name": "ablation_v2_stationary_2",
+      "queries": [
+        {
+          "frame": 28,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 28,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 30,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 30,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 35,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 35,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 63,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 63,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 79,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 79,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        }
+      ],
+      "scenario": "stationary",
+      "split": "test",
+      "variant": 2
+    },
+    {
+      "manifest": "ablation_v2_stationary_3.manifest.json",
+      "manifest_hash": "362bb439768613c6dbe0a8b78d7c3cd066b11738d4ebec19133076f363453b93",
+      "name": "ablation_v2_stationary_3",
+      "queries": [
+        {
+          "frame": 30,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 30,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 32,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 32,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 37,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 37,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 64,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 64,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 79,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 79,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        }
+      ],
+      "scenario": "stationary",
+      "split": "test",
+      "variant": 3
+    },
+    {
+      "manifest": "ablation_v2_move_0.manifest.json",
+      "manifest_hash": "df27881982e99d5b79ef75151a3a009a0199ab04441f5a8338adab857aecfccc",
+      "name": "ablation_v2_move_0",
+      "queries": [
+        {
+          "frame": 24,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 24,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 26,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 26,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 31,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 31,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 61,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 61,
+          "location": "sofa",
+          "status": "FOUND",
+          "subject": "bag"
+        },
+        {
+          "frame": 79,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 79,
+          "location": "sofa",
+          "status": "FOUND",
+          "subject": "bag"
+        }
+      ],
+      "scenario": "move",
+      "split": "train",
+      "variant": 0
+    },
+    {
+      "manifest": "ablation_v2_move_1.manifest.json",
+      "manifest_hash": "cc257ae321be72022995fe85e585849268bfb00528c971ed139ae26a6b93ac5a",
+      "name": "ablation_v2_move_1",
+      "queries": [
+        {
+          "frame": 26,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 26,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 28,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 28,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 33,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 33,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 62,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 62,
+          "location": "sofa",
+          "status": "FOUND",
+          "subject": "bag"
+        },
+        {
+          "frame": 79,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 79,
+          "location": "sofa",
+          "status": "FOUND",
+          "subject": "bag"
+        }
+      ],
+      "scenario": "move",
+      "split": "train",
+      "variant": 1
+    },
+    {
+      "manifest": "ablation_v2_move_2.manifest.json",
+      "manifest_hash": "0a68479d6086c6218d284aace7e506640711a15c0884be8f5a5724bb059bbed8",
+      "name": "ablation_v2_move_2",
+      "queries": [
+        {
+          "frame": 28,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 28,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 30,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 30,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 35,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 35,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 63,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 63,
+          "location": "sofa",
+          "status": "FOUND",
+          "subject": "bag"
+        },
+        {
+          "frame": 79,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 79,
+          "location": "sofa",
+          "status": "FOUND",
+          "subject": "bag"
+        }
+      ],
+      "scenario": "move",
+      "split": "test",
+      "variant": 2
+    },
+    {
+      "manifest": "ablation_v2_move_3.manifest.json",
+      "manifest_hash": "8616ac71c67f14efa2710b72db8c5c4b136e25b2ead77d69da6814b653a56c59",
+      "name": "ablation_v2_move_3",
+      "queries": [
+        {
+          "frame": 30,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 30,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 32,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 32,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 37,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 37,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 64,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 64,
+          "location": "sofa",
+          "status": "FOUND",
+          "subject": "bag"
+        },
+        {
+          "frame": 79,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 79,
+          "location": "sofa",
+          "status": "FOUND",
+          "subject": "bag"
+        }
+      ],
+      "scenario": "move",
+      "split": "test",
+      "variant": 3
+    },
+    {
+      "manifest": "ablation_v2_contain_0.manifest.json",
+      "manifest_hash": "2378c21a87fa118a8bf2d75cb241733dd2886ca3325e6b0f1bf5341ede9db28f",
+      "name": "ablation_v2_contain_0",
+      "queries": [
+        {
+          "frame": 24,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 24,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 26,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 26,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 31,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 31,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 61,
+          "location": "sofa",
+          "status": "FOUND",
+          "subject": "key"
+        },
+        {
+          "frame": 61,
+          "location": "sofa",
+          "status": "FOUND",
+          "subject": "bag"
+        },
+        {
+          "frame": 79,
+          "location": "sofa",
+          "status": "FOUND",
+          "subject": "key"
+        },
+        {
+          "frame": 79,
+          "location": "sofa",
+          "status": "FOUND",
+          "subject": "bag"
+        }
+      ],
+      "scenario": "contain",
+      "split": "train",
+      "variant": 0
+    },
+    {
+      "manifest": "ablation_v2_contain_1.manifest.json",
+      "manifest_hash": "643514c0de0abf8024c21cf75857df66ba03c0aaf65fd15ce21c938c579e5f81",
+      "name": "ablation_v2_contain_1",
+      "queries": [
+        {
+          "frame": 26,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 26,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 28,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 28,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 33,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 33,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 62,
+          "location": "sofa",
+          "status": "FOUND",
+          "subject": "key"
+        },
+        {
+          "frame": 62,
+          "location": "sofa",
+          "status": "FOUND",
+          "subject": "bag"
+        },
+        {
+          "frame": 79,
+          "location": "sofa",
+          "status": "FOUND",
+          "subject": "key"
+        },
+        {
+          "frame": 79,
+          "location": "sofa",
+          "status": "FOUND",
+          "subject": "bag"
+        }
+      ],
+      "scenario": "contain",
+      "split": "train",
+      "variant": 1
+    },
+    {
+      "manifest": "ablation_v2_contain_2.manifest.json",
+      "manifest_hash": "ade8fd5feb27f3c07b2250c07f01ba4f5c3a73de00b64a4b2412992eae36fc47",
+      "name": "ablation_v2_contain_2",
+      "queries": [
+        {
+          "frame": 28,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 28,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 30,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 30,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 35,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 35,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 63,
+          "location": "sofa",
+          "status": "FOUND",
+          "subject": "key"
+        },
+        {
+          "frame": 63,
+          "location": "sofa",
+          "status": "FOUND",
+          "subject": "bag"
+        },
+        {
+          "frame": 79,
+          "location": "sofa",
+          "status": "FOUND",
+          "subject": "key"
+        },
+        {
+          "frame": 79,
+          "location": "sofa",
+          "status": "FOUND",
+          "subject": "bag"
+        }
+      ],
+      "scenario": "contain",
+      "split": "test",
+      "variant": 2
+    },
+    {
+      "manifest": "ablation_v2_contain_3.manifest.json",
+      "manifest_hash": "96b0c05a21fac1c6fdc9da578420097a6a0b44105a9c0ab297871c704a32cf17",
+      "name": "ablation_v2_contain_3",
+      "queries": [
+        {
+          "frame": 30,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 30,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 32,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 32,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 37,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 37,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 64,
+          "location": "sofa",
+          "status": "FOUND",
+          "subject": "key"
+        },
+        {
+          "frame": 64,
+          "location": "sofa",
+          "status": "FOUND",
+          "subject": "bag"
+        },
+        {
+          "frame": 79,
+          "location": "sofa",
+          "status": "FOUND",
+          "subject": "key"
+        },
+        {
+          "frame": 79,
+          "location": "sofa",
+          "status": "FOUND",
+          "subject": "bag"
+        }
+      ],
+      "scenario": "contain",
+      "split": "test",
+      "variant": 3
+    },
+    {
+      "manifest": "ablation_v2_take_out_0.manifest.json",
+      "manifest_hash": "8eabdf388dfc1ab2d82723a549fbea5044b89ee3dc3dcb6cbe16894c9dbfd4f3",
+      "name": "ablation_v2_take_out_0",
+      "queries": [
+        {
+          "frame": 24,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 24,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 26,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 26,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 31,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 31,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 61,
+          "location": "sofa",
+          "status": "FOUND",
+          "subject": "key"
+        },
+        {
+          "frame": 61,
+          "location": "sofa",
+          "status": "FOUND",
+          "subject": "bag"
+        },
+        {
+          "frame": 79,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 79,
+          "location": "sofa",
+          "status": "FOUND",
+          "subject": "bag"
+        }
+      ],
+      "scenario": "take_out",
+      "split": "train",
+      "variant": 0
+    },
+    {
+      "manifest": "ablation_v2_take_out_1.manifest.json",
+      "manifest_hash": "9c5c5283cc3c0d1aada1faa41cf19d9236aa589ba022725885dea244b4c8c5ba",
+      "name": "ablation_v2_take_out_1",
+      "queries": [
+        {
+          "frame": 26,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 26,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 28,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 28,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 33,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 33,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 62,
+          "location": "sofa",
+          "status": "FOUND",
+          "subject": "key"
+        },
+        {
+          "frame": 62,
+          "location": "sofa",
+          "status": "FOUND",
+          "subject": "bag"
+        },
+        {
+          "frame": 79,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 79,
+          "location": "sofa",
+          "status": "FOUND",
+          "subject": "bag"
+        }
+      ],
+      "scenario": "take_out",
+      "split": "train",
+      "variant": 1
+    },
+    {
+      "manifest": "ablation_v2_take_out_2.manifest.json",
+      "manifest_hash": "d87f4658e11b69cc383ee6b9be5905b77669b2d8165e8574119de87c8e70dee2",
+      "name": "ablation_v2_take_out_2",
+      "queries": [
+        {
+          "frame": 28,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 28,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 30,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 30,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 35,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 35,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 63,
+          "location": "sofa",
+          "status": "FOUND",
+          "subject": "key"
+        },
+        {
+          "frame": 63,
+          "location": "sofa",
+          "status": "FOUND",
+          "subject": "bag"
+        },
+        {
+          "frame": 79,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 79,
+          "location": "sofa",
+          "status": "FOUND",
+          "subject": "bag"
+        }
+      ],
+      "scenario": "take_out",
+      "split": "test",
+      "variant": 2
+    },
+    {
+      "manifest": "ablation_v2_take_out_3.manifest.json",
+      "manifest_hash": "59310f1d84e6cedc1b76348ae7f0d1eb0625059a7d3c309727517fc1cc7a28d1",
+      "name": "ablation_v2_take_out_3",
+      "queries": [
+        {
+          "frame": 30,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 30,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 32,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 32,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 37,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 37,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 64,
+          "location": "sofa",
+          "status": "FOUND",
+          "subject": "key"
+        },
+        {
+          "frame": 64,
+          "location": "sofa",
+          "status": "FOUND",
+          "subject": "bag"
+        },
+        {
+          "frame": 79,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 79,
+          "location": "sofa",
+          "status": "FOUND",
+          "subject": "bag"
+        }
+      ],
+      "scenario": "take_out",
+      "split": "test",
+      "variant": 3
+    },
+    {
+      "manifest": "ablation_v2_occlusion_0.manifest.json",
+      "manifest_hash": "1347f8c75125a1395f9e60c172c4f4f5103a2e584265b6164275585e899165af",
+      "name": "ablation_v2_occlusion_0",
+      "queries": [
+        {
+          "frame": 24,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 24,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 26,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 26,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 31,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 31,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 61,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 61,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 79,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 79,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        }
+      ],
+      "scenario": "occlusion",
+      "split": "train",
+      "variant": 0
+    },
+    {
+      "manifest": "ablation_v2_occlusion_1.manifest.json",
+      "manifest_hash": "a3ae289b14978a4bfd3730b5e9a56c3df6174b2fa593777f814fc3acc6fe708d",
+      "name": "ablation_v2_occlusion_1",
+      "queries": [
+        {
+          "frame": 26,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 26,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 28,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 28,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 33,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 33,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 62,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 62,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 79,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 79,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        }
+      ],
+      "scenario": "occlusion",
+      "split": "train",
+      "variant": 1
+    },
+    {
+      "manifest": "ablation_v2_occlusion_2.manifest.json",
+      "manifest_hash": "4c705f465c898bbba08909555ea09171a2649ce731d9fb8bee93f4d73cff9eda",
+      "name": "ablation_v2_occlusion_2",
+      "queries": [
+        {
+          "frame": 28,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 28,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 30,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 30,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 35,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 35,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 63,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 63,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 79,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 79,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        }
+      ],
+      "scenario": "occlusion",
+      "split": "test",
+      "variant": 2
+    },
+    {
+      "manifest": "ablation_v2_occlusion_3.manifest.json",
+      "manifest_hash": "d465ae2b402bfac3cfe794942910e83dd89dad7ebe868501a60157c02e568d85",
+      "name": "ablation_v2_occlusion_3",
+      "queries": [
+        {
+          "frame": 30,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 30,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 32,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 32,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 37,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 37,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 64,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 64,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 79,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 79,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        }
+      ],
+      "scenario": "occlusion",
+      "split": "test",
+      "variant": 3
+    },
+    {
+      "manifest": "ablation_v2_disappear_0.manifest.json",
+      "manifest_hash": "4b6edca693f23c23a03dc646501a556c1ead2c4869235ee0c17bd05c8ddc57a3",
+      "name": "ablation_v2_disappear_0",
+      "queries": [
+        {
+          "frame": 24,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 24,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 26,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 26,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 31,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 31,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 61,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 61,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 79,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 79,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        }
+      ],
+      "scenario": "disappear",
+      "split": "train",
+      "variant": 0
+    },
+    {
+      "manifest": "ablation_v2_disappear_1.manifest.json",
+      "manifest_hash": "2c5010184cae8c01e8a6edde0a84dcc6b956a517cf80e4403033968a3e17f43e",
+      "name": "ablation_v2_disappear_1",
+      "queries": [
+        {
+          "frame": 26,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 26,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 28,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 28,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 33,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 33,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 62,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 62,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 79,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 79,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        }
+      ],
+      "scenario": "disappear",
+      "split": "train",
+      "variant": 1
+    },
+    {
+      "manifest": "ablation_v2_disappear_2.manifest.json",
+      "manifest_hash": "1651ea0cc07fa7ffd3571e30629081085913c87d22931141997e15af0ae2f48f",
+      "name": "ablation_v2_disappear_2",
+      "queries": [
+        {
+          "frame": 28,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 28,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 30,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 30,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 35,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 35,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 63,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 63,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 79,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 79,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        }
+      ],
+      "scenario": "disappear",
+      "split": "test",
+      "variant": 2
+    },
+    {
+      "manifest": "ablation_v2_disappear_3.manifest.json",
+      "manifest_hash": "fb7d934da85b7fa93d8887f11f9e6e375fe49556aa0b407a99bc3d585f0f54b2",
+      "name": "ablation_v2_disappear_3",
+      "queries": [
+        {
+          "frame": 30,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 30,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 32,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 32,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 37,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 37,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 64,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 64,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        },
+        {
+          "frame": 79,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "key"
+        },
+        {
+          "frame": 79,
+          "location": null,
+          "status": "UNKNOWN",
+          "subject": "bag"
+        }
+      ],
+      "scenario": "disappear",
+      "split": "test",
+      "variant": 3
+    }
+  ],
+  "limitations": "procedural RGB, not real household footage",
+  "schema_version": 1
+}

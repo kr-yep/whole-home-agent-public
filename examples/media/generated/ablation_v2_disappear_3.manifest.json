@@ -1,0 +1,46 @@
+{
+  "annotations": {
+    "path": "ablation_v2_disappear_3.annotations.json",
+    "sha256": "c80481a841a9f4cac62c34e0475bd9ac13824ee6e7e41c9ae447ed001ff30c9e"
+  },
+  "entities": [
+    {
+      "entity_id": "key",
+      "instance_count": 1,
+      "label": "key"
+    },
+    {
+      "entity_id": "bag",
+      "instance_count": 1,
+      "label": "bag"
+    },
+    {
+      "entity_id": "sofa",
+      "instance_count": 1,
+      "label": "sofa"
+    }
+  ],
+  "events": [],
+  "fps": {
+    "denominator": 1,
+    "numerator": 10
+  },
+  "frame_count": 80,
+  "height": 360,
+  "license": "CC0-1.0",
+  "path": "ablation_v2_disappear_3.mp4",
+  "provenance": {
+    "generator": "tools/generate_ablation_v2.py",
+    "generator_sha256": "71d1a2e52613ab6102866a5c689c891fc8fd4e5d035d5c9a7c7a3a961a6e20fd",
+    "kind": "project_generated_synthetic"
+  },
+  "schema_version": 1,
+  "sha256": "e18a7826c8092b42f942f2230308b13f16d41dae702fe76b918dcdd8a37fd2a1",
+  "source_id": "ablation_v2_disappear_3",
+  "source_kind": "recorded_video",
+  "source_revision": "1",
+  "split": "test",
+  "timestamp_basis": "media_pts",
+  "use_class": "D0_SYNTHETIC",
+  "width": 640
+}

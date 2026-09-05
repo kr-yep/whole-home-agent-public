@@ -34,7 +34,7 @@ const DEFAULT_VIEW = { x: 0.74, y: 0.54, scale: 0.92 };
 function readChoice() {
   try {
     const saved = localStorage.getItem(CHOICE_KEY);
-    if (saved && saved in CHARACTERS) return saved;
+    if (saved && Object.hasOwn(CHARACTERS, saved)) return saved;
   } catch (_) { /* private mode */ }
   return DEFAULT_CHARACTER_ID;
 }
@@ -192,20 +192,30 @@ function createStage() {
   });
 }
 
+let characterLoad = 0;
 async function setCharacter(id) {
-  if (!(id in CHARACTERS)) return;
+  if (!Object.hasOwn(CHARACTERS, id)) return;
+  const request = ++characterLoad;
   const previous = actor;
   let next;
   try {
     next = await createActor(id);
+    const ready = await next.ready();
+    if (request !== characterLoad) {
+      next.destroy();
+      return;
+    }
+    if (!ready) throw new Error("character artwork missing");
   } catch (error) {
+    if (next) next.destroy();
+    if (request !== characterLoad) return;
     // The art is deliberately outside version control, so this is the ordinary
     // state of a fresh clone rather than a fault: keep whoever is on stage and
     // say what is missing.
     console.warn("cannot mount", id, error);
     speak(
-      `${CHARACTERS[id].name}的檔案還沒放進來。` +
-        "在專案根目錄執行 python tools/fetch_character_assets.py 就會下載。"
+      `${CHARACTERS[id].name}的素材尚未就緒，仍可使用問答。` +
+        "執行 python tools/fetch_character_assets.py --check 查看缺少項目；奶龍素材需自行提供。"
     );
     return;
   }
@@ -217,6 +227,8 @@ async function setCharacter(id) {
   }
   actor = next;
   actor.attach(app);
+  document.getElementById("avatar-fallback").hidden = true;
+  document.getElementById("character-credit").textContent = CHARACTERS[id].credit || "";
   who = id;
   view = readView(id);
   try { localStorage.setItem(CHOICE_KEY, id); } catch (_) { /* private mode */ }
@@ -224,7 +236,7 @@ async function setCharacter(id) {
   actor.express("idle");
   drawCast();
 
-  const arrived = await actor.ready();
+  const arrived = true;
   layout();
   const name = CHARACTERS[id].speaksAs || CHARACTERS[id].name;
   speak(

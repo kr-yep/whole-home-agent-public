@@ -1,5 +1,30 @@
 # Third-Party Notices
 
+## Vendored Web libraries (inventory added 2026-09-05)
+
+Optional artwork is not included or automatically downloaded. The asset helper
+identifies Rem's source as `BaneBeetle/waifubeetle2`. Confirm current source
+terms before supplying or demonstrating it; public availability alone is not
+permission. Underlying character rights are not granted by this repository's
+MIT license.
+
+Three.js and its glTF loader were vendored for a 3D character that has since
+been withdrawn: the only rigged model of that character is a different sculpt
+from the illustration, and the flat drawing reads better. Both files and the
+Sketchfab model reference are removed rather than left as an inventory entry for
+something nothing imports.
+
+- `web/vendor/pixi.min.js`: header identifies PixiJS 6.5.10.
+- `web/vendor/cubism4.min.js`: bundle identifies pixi-live2d-display version 0.4.0.
+- `web/vendor/live2dcubismcore.min.js`: header identifies Live2D Cubism Core,
+  copyright 2019 Live2D Inc., and references
+  https://www.live2d.com/eula/live2d-proprietary-software-license-agreement_en.html.
+
+These vendor files are not relicensed under this project's MIT license. This is
+an inventory, not a completed redistribution/legal review. Character model artwork
+is excluded from Git; a separate authorized source is required for any supplied
+model. The default house avatar is Unicode/HTML and does not require a character asset.
+
 The self-contained Archify HTML viewers in this directory include software generated from Archify. Archify is not a runtime dependency of the Whole Home Agent Python package.
 
 ## Archify
