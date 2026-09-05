@@ -287,10 +287,28 @@ function basisNode(result) {
   if (result.refused) {
     const note = document.createElement("details");
     note.className = "basis";
-    note.innerHTML = "<summary>沒有記憶佐證</summary>";
+    note.innerHTML = `<summary>${result.action_receipt ? "安全防護閘攔截" : "沒有記憶佐證"}</summary>`;
     const body = document.createElement("div");
     body.className = "body";
     body.textContent = result.reason || "系統沒有給出原因。";
+    note.appendChild(body);
+    return note;
+  }
+
+  if (result.action_receipt) {
+    const note = document.createElement("details");
+    note.className = "basis";
+    const statusLabel = result.action_receipt.status === "simulated" ? "模擬執行" : "實體執行";
+    note.innerHTML = `<summary>⚡ 家電操作收據 · ${statusLabel}</summary>`;
+    const body = document.createElement("div");
+    body.className = "body";
+    body.textContent = [
+      `收據編號  ${result.action_receipt.action_id}`,
+      `目標設備  ${result.action_receipt.target_device_id}`,
+      `執行動作  ${result.action_receipt.action_type}`,
+      `執行狀態  ${result.action_receipt.status}`,
+      `執行時間  ${result.action_receipt.executed_at}`,
+    ].join("\n");
     note.appendChild(body);
     return note;
   }
@@ -397,6 +415,18 @@ async function loadChips() {
       button.type = "button";
       button.textContent = label(id);
       button.addEventListener("click", () => ask(`${WORDS[id] || id}在哪裡？`));
+      chips.appendChild(button);
+    }
+    const actionSuggestions = [
+      { text: "❄️ 開客廳冷氣", cmd: "幫我把客廳冷氣開到26度" },
+      { text: "💡 開客廳燈", cmd: "開客廳燈" },
+      { text: "🪟 拉開窗簾", cmd: "拉開窗簾" },
+    ];
+    for (const item of actionSuggestions) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = item.text;
+      button.addEventListener("click", () => ask(item.cmd));
       chips.appendChild(button);
     }
   } catch (_) { /* the panel still works without chips */ }

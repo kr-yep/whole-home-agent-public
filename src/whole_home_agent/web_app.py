@@ -16,6 +16,10 @@ from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
+from .actuation.dispatcher import CommandDispatcher
+from .actuation.models import ActionStatus
+from .actuation.port import ActuatorPort
+from .adapters.mock_actuator import MockActuator
 from .adapters.loopback_llm import (
     translator_from_environment,
     verbalizer_from_environment,
@@ -49,6 +53,8 @@ def _voiced_refusal(verbalizer: object | None, question: str, message: str) -> s
 
 class Handler(SimpleHTTPRequestHandler):
     database: Path
+    actuator: ActuatorPort = MockActuator()
+    dispatcher: CommandDispatcher = CommandDispatcher(actuator)
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, directory=str(WEB_ROOT), **kwargs)
@@ -80,6 +86,9 @@ class Handler(SimpleHTTPRequestHandler):
             except B0Error as error:
                 self._json(200, {"entities": [], "error": str(error)})
             return
+        if self.path == "/api/devices":
+            self._json(200, {"devices": [d.as_dict() for d in self.actuator.list_devices()]})
+            return
         super().do_GET()
 
     def do_POST(self) -> None:
@@ -100,6 +109,38 @@ class Handler(SimpleHTTPRequestHandler):
             return
 
         verbalizer = verbalizer_from_environment()
+
+        # 1. Dispatch device actuation commands
+        action_receipt = self.dispatcher.dispatch(question)
+        if action_receipt is not None:
+            if action_receipt.status == ActionStatus.DENIED:
+                self._json(
+                    200,
+                    {
+                        "refused": True,
+                        "text": _voiced_refusal(verbalizer, question, action_receipt.message),
+                        "reason": action_receipt.message,
+                        "details": action_receipt.as_dict(),
+                        "action_receipt": action_receipt.as_dict(),
+                    },
+                )
+            else:
+                self._json(
+                    200,
+                    {
+                        "refused": False,
+                        "action_receipt": action_receipt.as_dict(),
+                        "spoken": {
+                            "text": action_receipt.message,
+                            "speaker": "actuator",
+                            "fallback_used": False,
+                        },
+                        "text": action_receipt.message,
+                    },
+                )
+            return
+
+        # 2. Dispatch memory location questions
         try:
             result = answer_question(
                 SQLiteReplayArchive(self.database),

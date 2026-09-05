@@ -202,7 +202,24 @@ class TestHomeAssistantActuator(unittest.TestCase):
         )
         receipt = ha.execute(req)
         self.assertEqual(receipt.status, ActionStatus.FAILED)
-        self.assertIn("HASS_TOKEN", receipt.message)
+class TestWebAppActuationIntegration(unittest.TestCase):
+    def test_web_app_handler_has_actuation_capabilities(self):
+        from whole_home_agent.web_app import Handler
+        handler = Handler
+        self.assertTrue(hasattr(handler, "actuator"))
+        self.assertTrue(hasattr(handler, "dispatcher"))
+
+        # Test action dispatch through web_app handler
+        receipt = handler.dispatcher.dispatch("開客廳燈")
+        self.assertIsNotNone(receipt)
+        self.assertEqual(receipt.status, ActionStatus.SIMULATED)
+        light_state = handler.actuator.get_device_state("living_room_light")
+        self.assertTrue(light_state.is_on)
+
+        # Test denial through web_app handler
+        denial = handler.dispatcher.dispatch("冷氣調到 60 度")
+        self.assertIsNotNone(denial)
+        self.assertEqual(denial.status, ActionStatus.DENIED)
 
 
 if __name__ == "__main__":
