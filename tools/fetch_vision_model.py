@@ -64,7 +64,11 @@ def _verify(path: Path, expected_size: int, expected_digest: str) -> str:
         for block in iter(lambda: handle.read(1 << 20), b""):
             digest.update(block)
     if digest.hexdigest() != expected_digest:
-        return f"sha256 {digest.hexdigest()[:16]}…, expected {expected_digest[:16]}…"
+        # Every character this script prints is ASCII on purpose. A Windows
+        # console still runs on a legacy code page, and a stray ellipsis in an
+        # error message would raise UnicodeEncodeError over the top of whatever
+        # the message was trying to report.
+        return f"sha256 {digest.hexdigest()[:16]}..., expected {expected_digest[:16]}..."
     return ""
 
 

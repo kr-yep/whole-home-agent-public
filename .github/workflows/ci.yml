@@ -159,3 +159,51 @@ jobs:
 
       - name: Audit public release contents
         run: .venv/bin/python tools/audit_public_release.py
+
+  portable-detector:
+    name: Portable detector (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        # The reason this path exists is a machine nobody here can log into, so
+        # the claim that it runs there is checked rather than reasoned about.
+        # macos-13 is the Intel runner: it is the case that started this, because
+        # PyTorch has published no macOS x86_64 wheel since 2.2.2.
+        os: [ubuntu-latest, macos-13, macos-latest, windows-latest]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+
+      - name: Install the package and the portable detector
+        run: |
+          python -m pip install --disable-pip-version-check -e .
+          python -m pip install --disable-pip-version-check -r requirements-vision.txt
+
+      - name: Report which wheels this platform resolved
+        run: python -m pip list
+
+      - name: Fetch the weights and check them against the recorded digest
+        run: python tools/fetch_vision_model.py
+
+      - name: Run the detector's own tests
+        run: python -m unittest tests.test_onnx_detector -v
+
+      - name: Fetch a photograph with known contents
+        run: >-
+          python -c "import urllib.request;
+          urllib.request.urlretrieve('https://raw.githubusercontent.com/ultralytics/assets/main/im/bus.jpg', 'bus.jpg')"
+
+      - name: Detect in it, and require the things that are in it
+        run: >-
+          python tools/check_portable_detector.py
+          --image bus.jpg --expect bus --expect person

@@ -59,6 +59,16 @@ a thousandth. `python start.py` uses whichever is present, preferring the GPU on
 fetches the ONNX weights itself if that is the path, so on a fresh laptop the first
 command above is the whole of it.
 
+If the camera sees nothing and you want to know whether that is the model or the room:
+
+```
+python tools/check_portable_detector.py --image some/photo.jpg
+```
+
+It prints the runtime, the wheel, whether the weights are the right bytes, how long a
+frame costs, and what it found. CI runs the same script on Linux, on Windows, and on
+both Intel and Apple Silicon macOS.
+
 ## Running it on a server
 
 The same command works on a machine nobody sits at, with two changes: bind to
