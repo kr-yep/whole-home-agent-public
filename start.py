@@ -17,6 +17,7 @@ rather than written twice, so the two entry points cannot drift apart.
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import os
 import socket
 import subprocess
@@ -44,6 +45,7 @@ ROOT = Path(__file__).resolve().parent
 os.chdir(ROOT)
 
 sys.path.insert(0, str(ROOT / "tools"))
+import fetch_vision_model  # noqa: E402  (needs the path entry above)
 import setup_demo  # noqa: E402  (needs the path entry above)
 
 LLM_PORT = 8001
@@ -73,20 +75,75 @@ def _prepare_repository() -> None:
     setup_demo.ensure_artwork(fetch=True)
 
 
-def _prewarm_models() -> None:
-    print("[2/4] [*] 檢查視覺模型與特徵擷取器 (Checking Models)...")
+def _prewarm_torch_detector() -> bool:
+    """The PyTorch detector, where it installed. Says whether it came up.
+
+    Ultralytics resolves a bare model name by downloading it, which is what makes
+    this the easy path on a machine that can run it.
+    """
+
+    requested = os.environ.get("WHA_YOLO_MODEL", "")
+    if requested.endswith(".onnx"):
+        # An ONNX file was asked for by name, so the other branch owns this.
+        return False
     try:
         from ultralytics import YOLO
+    except ImportError:
+        return False
 
-        model_name = os.environ.get("WHA_YOLO_MODEL", "yolov8m.pt")
+    model_name = requested or "yolov8m.pt"
+    try:
         if not Path(model_name).exists():
             print(f"      [*] 正在自動下載 YOLO 偵測模型權重 ({model_name}，約 50 MB)...")
+            sys.stdout.flush()
         YOLO(model_name)
         print(f"      [OK] YOLO 偵測模型就緒 ({model_name})")
-    except ImportError:
-        print("      [INFO] 未安裝 ultralytics；若需即時物件偵測，可執行: pip install -r requirements-vision.txt")
+        return True
     except Exception as err:
         print(f"      [WARN] YOLO 模型載入提示: {err}")
+        return False
+
+
+def _prewarm_portable_detector() -> None:
+    """The same weights under onnxruntime, for a machine PyTorch will not install on.
+
+    PyTorch publishes one macOS wheel per release, for arm64 on Sonoma or newer.
+    An Intel Mac has no wheel at all, so the branch above never runs there and this
+    one is the whole of the camera's recognition.
+    """
+
+    if importlib.util.find_spec("onnxruntime") is None:
+        print("      [INFO] 尚未安裝任何偵測執行環境。相機仍會顯示畫面，但不會辨識物件。")
+        print("             要開啟辨識，請執行: pip install -r requirements-vision.txt")
+        return
+
+    requested = os.environ.get("WHA_YOLO_MODEL", "")
+    name = fetch_vision_model.DEFAULT_MODEL
+    if requested.endswith(".onnx"):
+        # Fetching by name would download ours and announce it while the server
+        # went and used theirs. A model is ours only if it is at our path under
+        # our name; anything else is the operator's own file, left alone.
+        name = Path(requested).stem
+        ours = name in fetch_vision_model.WEIGHTS and Path(requested).resolve() == fetch_vision_model.model_path(name).resolve()
+        if not ours:
+            print(f"      [INFO] 使用自備的 ONNX 模型 ({requested})，略過下載檢查")
+            return
+
+    target = fetch_vision_model.model_path(name)
+    if not target.exists():
+        megabytes = fetch_vision_model.WEIGHTS[name][0] // (1 << 20)
+        print(f"      [*] 正在下載可攜式偵測模型 ({name}.onnx，約 {megabytes} MB)...")
+        sys.stdout.flush()
+    if fetch_vision_model.ensure(name):
+        print(f"      [OK] 可攜式偵測模型就緒 ({target.relative_to(ROOT)})")
+    else:
+        print("      [WARN] 偵測模型取得失敗，相機仍可顯示畫面但不會辨識物件")
+
+
+def _prewarm_models() -> None:
+    print("[2/4] [*] 檢查視覺模型與特徵擷取器 (Checking Models)...")
+    if not _prewarm_torch_detector():
+        _prewarm_portable_detector()
 
     try:
         import torchvision.models as models

@@ -169,6 +169,24 @@ Neither character's artwork is committed. `*.png` is ignored repository-wide and
 Both characters depict a third-party property. They are used here in a local,
 non-commercial prototype, and no rights over the underlying characters are claimed.
 
+## Detector weights
+
+Neither detector's weights are committed; `*.pt` and `*.onnx` are ignored
+repository-wide, and `tools/fetch_vision_model.py` fetches one on request.
+
+- The weights are Ultralytics YOLOv8, **AGPL-3.0**
+  (<https://ultralytics.com/license>). The ONNX files say so in their own metadata,
+  and the fetcher repeats it when it finishes. They are downloaded from Ultralytics'
+  assets release at run time rather than redistributed here.
+- [ONNX Runtime](https://pypi.org/project/onnxruntime/) — MIT; the portable
+  detector's runtime, in `requirements-vision.txt`.
+- [Ultralytics](https://pypi.org/project/ultralytics/) — AGPL-3.0, and
+  [PyTorch](https://pypi.org/project/torch/) — BSD-3-Clause; the GPU detector's
+  runtime, in `requirements-vision-torch.txt`.
+
+Both are optional. Nothing in the package imports either at module scope, so a
+checkout without them runs the camera page with recognition switched off.
+
 ## Optional demo dependency
 
 - [Streamlit](https://pypi.org/project/streamlit/1.62.0/) 1.62.0 — Apache-2.0; used only by the local presentation app in the `demo` extra.

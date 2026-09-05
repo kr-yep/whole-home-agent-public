@@ -46,6 +46,7 @@ jobs:
           tests.test_b1_video
           tests.test_llm_text_context
           tests.test_offline_memory
+          tests.test_onnx_detector
           tests.test_public_demo
           tests.test_actuation
           tests.test_rem_persona
@@ -158,3 +159,76 @@ jobs:
 
       - name: Audit public release contents
         run: .venv/bin/python tools/audit_public_release.py
+
+  portable-detector:
+    name: Portable detector (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        # The reason this path exists is a machine nobody here can log into, so
+        # the claim that it runs there is checked rather than reasoned about. The
+        # Python version is per-runner on purpose: ONNX Runtime's support window
+        # narrows as the hardware gets older, and each entry sits at the top of
+        # its own window, which is where a break would show up first.
+        include:
+          - os: ubuntu-latest
+            python-version: "3.12"
+          - os: windows-latest
+            python-version: "3.12"
+          # Apple Silicon on Sonoma or newer, which is where the newest wheels are.
+          - os: macos-latest
+            python-version: "3.14"
+          # The Intel runner, and the case that started this: PyTorch has published
+          # no macOS x86_64 wheel since 2.2.2. ONNX Runtime's last one is 1.23.2 at
+          # cp313, so 3.13 is the ceiling here and 3.14 would have nothing to install.
+          #
+          # macos-15-intel, not macos-13: that label was retired, and a retired
+          # label does not fail. The job sits in "queued" for as long as you let
+          # it, which reads like a slow runner rather than a job that will never
+          # start. actions/runner-images lists the live ones.
+          - os: macos-15-intel
+            python-version: "3.13"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install the package and the portable detector
+        run: |
+          python -m pip install --disable-pip-version-check -e .
+          python -m pip install --disable-pip-version-check -r requirements-vision.txt
+
+      - name: Report which wheels this platform resolved
+        run: python -m pip list
+
+      - name: Fetch the weights and check them against the recorded digest
+        run: python tools/fetch_vision_model.py
+
+      - name: Run the detector's own tests
+        run: python -m unittest tests.test_onnx_detector -v
+
+      # Pinned to a commit and checked, because the gate below asserts what is in
+      # this photograph. On a branch the file could be replaced and the assertion
+      # would go on passing while meaning something else.
+      - name: Fetch the photograph the gate is written against
+        run: >-
+          python -c "import hashlib, pathlib, urllib.request;
+          data = urllib.request.urlopen('https://raw.githubusercontent.com/ultralytics/assets/53d4e2a8fd15f473c29a148c317a8477be559327/im/bus.jpg', timeout=120).read();
+          digest = hashlib.sha256(data).hexdigest();
+          expected = 'c02019c4979c191eb739ddd944445ef408dad5679acab6fd520ef9d434bfbc63';
+          exit('bus.jpg is ' + digest + ', expected ' + expected) if digest != expected else None;
+          pathlib.Path('bus.jpg').write_bytes(data)"
+
+      - name: Detect in it, and require the things that are in it
+        run: >-
+          python tools/check_portable_detector.py
+          --image bus.jpg --expect bus --expect person

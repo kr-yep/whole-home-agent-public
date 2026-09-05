@@ -60,11 +60,13 @@ def check_optional() -> None:
         ("av", "video decoding (the recorded replay)"),
         ("PIL", "image encoding (camera frames in tests)"),
         ("numpy", "array handling"),
+        ("onnxruntime", "the portable detector (camera recognition without PyTorch)"),
+        ("ultralytics", "the PyTorch detector (GPU where there is one)"),
         ("streamlit", "the Streamlit page (the web page does not need it)"),
     ):
         mark = OK if _has(module) else GAP
         state = "present" if _has(module) else "absent"
-        print(f"{mark}{module:<10} {state:<8} {what}")
+        print(f"{mark}{module:<12} {state:<8} {what}")
 
 
 def ensure_memory(fetch: bool) -> bool:
@@ -88,6 +90,53 @@ def ensure_memory(fetch: bool) -> bool:
     )
     print(f"{OK}demo memory built ({result['archive']['status']})")
     return True
+
+
+def ensure_vision_model(fetch: bool) -> None:
+    """Recognition needs weights, and which weights depends on what will install.
+
+    Where Ultralytics is present it fetches its own and there is nothing to do.
+    Often it cannot be present: it needs PyTorch, and PyTorch publishes one macOS
+    wheel per release, for arm64 on Sonoma or newer, so an Intel Mac has no wheel
+    to install and the build from source does not finish. On those machines the
+    ONNX export of the same model runs under onnxruntime, whose wheels reach back
+    to macOS 11 -- see tools/fetch_vision_model.py.
+    """
+
+    if _has("ultralytics") and _has("torch"):
+        print(f"{OK}PyTorch detector available; Ultralytics fetches its own weights")
+        return
+
+    import fetch_vision_model
+
+    name = fetch_vision_model.DEFAULT_MODEL
+    target = fetch_vision_model.model_path(name)
+    megabytes = fetch_vision_model.WEIGHTS[name][0] // (1 << 20)
+
+    if not _has("onnxruntime"):
+        print(f"{GAP}no detector runtime installed, so the camera page shows the")
+        print("        picture and recognises nothing in it. To fix that:")
+        print("          uv pip install -r requirements-vision.txt")
+        return
+    complaint = fetch_vision_model.verify(name)
+    if not complaint:
+        print(f"{OK}portable detector weights present ({name}.onnx)")
+        return
+    if not fetch:
+        print(f"{GAP}detector weights {complaint}; run without --check to fetch them")
+        return
+
+    # Damaged rather than absent is worth saying out loud, because the fix looks
+    # identical from here and the cause is not: a file of the right name that no
+    # runtime will open is what a download interrupted by a closed laptop leaves.
+    if complaint != "not here":
+        print(f"{GAP}the weights on disk are damaged: {complaint}")
+    print(f"{DO}fetching the portable detector weights ({name}.onnx, {megabytes} MB)")
+    sys.stdout.flush()
+    if fetch_vision_model.ensure(name):
+        print(f"{OK}portable detector ready ({target.relative_to(ROOT)})")
+    else:
+        print(f"{GAP}could not fetch the weights; the camera runs without recognition")
 
 
 def ensure_artwork(fetch: bool) -> None:
@@ -155,6 +204,7 @@ def main() -> int:
     print()
     if not ensure_memory(fetch):
         return 1
+    ensure_vision_model(fetch)
     ensure_artwork(fetch)
 
     if arguments.run:

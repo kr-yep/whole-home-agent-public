@@ -1,5 +1,24 @@
-# Optional vision dependencies for Camera YOLO detection and few-shot visual matching
-ultralytics>=8.0.0
-torch>=2.0.0
-torchvision>=0.15.0
+# The camera's object detection, on a machine that will not install PyTorch.
+#
+# Ultralytics needs PyTorch, and PyTorch publishes exactly one macOS wheel per
+# release: macosx_14_0_arm64. An Intel Mac has none, and neither does an Apple
+# Silicon Mac on anything older than Sonoma, so pip falls back to a source build
+# that does not finish. ONNX Runtime still builds for those machines, at about a
+# sixth of the download, and pip resolves to whichever version fits:
+#
+#   Apple Silicon, macOS 14+   1.29     Python up to 3.14
+#   Intel, or macOS 13         1.23.2   Python up to 3.13
+#   macOS 11-12                1.19.2   Python up to 3.12
+#
+# So on an Intel Mac, install a Python no newer than 3.13. That one combination
+# has no wheel behind it, and the failure looks like this file's fault.
+#
+#     pip install -r requirements-vision.txt
+#     python tools/fetch_vision_model.py
+#
+# The weights are Ultralytics' own ONNX export of the same model, so this and the
+# PyTorch path below detect the same things. Only the runtime differs.
+
+onnxruntime>=1.19
+numpy>=1.24
 Pillow>=10.0.0
