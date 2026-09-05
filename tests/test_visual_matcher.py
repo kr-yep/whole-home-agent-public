@@ -5,7 +5,13 @@ from __future__ import annotations
 import tempfile
 import unittest
 from pathlib import Path
-from PIL import Image
+
+try:  # Pillow arrives with the video extra, which the historical CI job omits.
+    from PIL import Image
+
+    HAS_IMAGING = True
+except ImportError:  # pragma: no cover - exercised only on a bare install
+    HAS_IMAGING = False
 
 from whole_home_agent.adapters.visual_matcher import (
     VisualEnrollmentSession,
@@ -15,6 +21,7 @@ from whole_home_agent.adapters.visual_matcher import (
 )
 
 
+@unittest.skipUnless(HAS_IMAGING, "requires the video extra for image encoding")
 class TestVisualMatcher(unittest.TestCase):
     def setUp(self) -> None:
         self._temp_dir = tempfile.TemporaryDirectory()

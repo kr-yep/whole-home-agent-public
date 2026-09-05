@@ -20,7 +20,10 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Optional, Sequence
 
-from PIL import Image
+# Pillow is imported where it is used rather than here. The annotations below
+# name Image.Image, but `from __future__ import annotations` keeps those as
+# strings, so this module stays importable on an install without the video
+# extra -- which is what the historical CI job runs.
 
 logger = logging.getLogger(__name__)
 
@@ -87,6 +90,8 @@ def extract_feature_vector(image: Image.Image) -> list[float]:
     # Fallback: 512-dim spatial color-difference & aspect representation
     w, h = image.size
     aspect_ratio = min(3.0, max(0.2, w / max(1.0, float(h))))
+    from PIL import Image
+
     resized = image.convert("RGB").resize((8, 8), Image.Resampling.BILINEAR)
 
     r_vals: list[float] = []
