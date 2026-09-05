@@ -98,6 +98,7 @@ run-receipts/
 *.visual-check.*
 .tmp/
 tmp/
+scratch/
 
 # External datasets are local-only until license and redistribution are reviewed.
 datasets/

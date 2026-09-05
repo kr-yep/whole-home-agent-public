@@ -20,7 +20,7 @@ DEFAULT_ENTITY_ALIASES: Mapping[str, tuple[str, ...]] = {
 }
 
 _ENGLISH_LOCATION_INTENT = re.compile(r"\b(where|locate|find|location)\b")
-_CJK_LOCATION_INTENT = ("在哪", "哪裡", "哪里", "位置", "放哪", "找")
+_CJK_LOCATION_INTENT = ("在哪", "哪裡", "哪里", "位置", "放哪", "找", "看到", "看見", "見過")
 _ENGLISH_ACTION = re.compile(r"\b(open|close|unlock|buy|purchase|send|message)\b")
 _CJK_ACTION = (
     "開門",

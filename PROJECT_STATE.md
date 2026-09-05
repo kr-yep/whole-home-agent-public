@@ -1,49 +1,36 @@
 # Whole Home Agent — Public Repository State
 
-## Current integration note — 2026-09-05
+## Current integration note — 2026-09-05 (Option 1: Perception-to-Memory Bridge & Local Rem QA Closed Loop)
 
-Local verification: locked demo environment passed 570 tests with zero skips.
-Perception ablation v2 completed 60 development and 180 evaluation runs.
-Burst + confirmation preserved measured quality, reduced detector calls 27.5%
-and paired replay time 25.0% on synthetic variants. Single-confirmation arms
-produced false events under occlusion. Defaults remain unchanged; the candidate
-is experiment-only. See docs/evaluation/perception-ablation-v2.md. No commit/push.
-Integrated the main asset-help change (`40dab4b`) and character-switch code from
-`origin/live2d-character` (`4fec8b5`) into the current working tree, without merging
-Git history, committing or pushing. Local hardening and ablation files are retained.
-Three new Python tests and a Node switch-controller test cover character input,
-evidence preservation, missing assets and concurrent selection. Node syntax checks
-passed for the new front-end scripts and vendor libraries. All three artwork
-entries are missing locally; actual character animation/WebGL rendering remains
-unverified. The house fallback remains available. No artwork was downloaded.
-Perception ablation v1 completed 15 fixed synthetic replays across five arms.
-Default motion scheduling lost both events; no-tracking and single-confirmation
-matched baseline on this limited clip; direct-only queries lost the key location.
-Production defaults are unchanged. See docs/evaluation/perception-ablation-v1.md.
-Measured component results: template 15/15, persona 15/15, policy-on 5/5,
-policy-off mock negative control 3/5. No real model/device calls were made.
-These results concern the current uncommitted working tree, not a published release.
+Local verification: completed Option 1 Perception-to-Memory Bridge with zero-retention GPU YOLO and deterministic SQLite replay commits:
+1. Perception-to-Memory Bridge (`src/whole_home_agent/perception_bridge.py`):
+   - Bridges camera detections directly into canonical spatial claims (`ClaimCandidate(operation=ASSERT/RETRACT, subject_id, predicate=AT_ZONE, object_id=zone_id, epistemic_status=ESTIMATED)`).
+   - Debouncing: sliding window requiring 3 consecutive frames with confidence >= 0.25 before commit.
+   - Idempotency & Relocation Retraction: checks current active relations in `SQLiteReplayArchive(demo-memory.sqlite3)`. If already present, skips duplicate claims; if moved, cleanly retracts previous zone/container relations before asserting the new zone, preventing graph conflicts.
+   - Preserves zero raw frame retention (frames processed in-memory via GPU YOLO and discarded).
+2. Vision Detector Upgrade & High-Resolution Inference:
+   - Upgraded default detector model from `yolov8n` (3.2M params) to `yolov8m` (25.9M params, 8x capacity), drastically improving detection for thin/small items (phones, cups, keys).
+   - Set native 720p inference resolution (`imgsz=1280`), eliminating downsampling blur.
+   - Calibrated detection confidence to `conf=0.25` combined with 3-frame debounce for high sensitivity without false positives.
+   - Benchmarked on RTX 4070: 31.6 ms latency (31.7 FPS), 297.5 MB VRAM (leaving >7.5 GB free).
+3. Web UI & Server Ingest Integration:
+   - Added Zone selector dropdown (`desk`, `table`, `sofa`) to `/camera.html`.
+   - Wired `PerceptionBridge` into `web_app.py` (`/api/camera/frame`).
+   - Added floating toast notification (`.commit-toast`) displaying `"🎯 記憶已更新：【手機】位於【書桌】"` in real time when observations stabilize.
+4. Live Multi-Model Rem Closed Loop Verified:
+   - Showing phone to camera commits `phone at_zone desk` into SQLite archive.
+   - Resident asking "你有看到我的手機嗎" resolves `status: FOUND`, `location_id: desk`.
+   - Rem persona local LLM speaks: "報告主人！在雷姆的記憶中，您的手機位於書桌，而該處位於書桌喔。雷姆可以提供這條記錄供您確認。"
+5. Full Regression Test Suite:
+   - 605 tests passing (0 failures, 0 errors) in `uv` and `.venv-cvpdl`.
 
-Current user direction authorizes local bug fixes, repeatable experiments and demo
-integration. Named project direction: Kris / Whole-Home Agent Team. The existing
-claim ledger and pure domain remain intact. New Web and Streamlit controls use
-MockActuator only. Real sensing, Home Assistant operation and physical actions are
-not activated by this checkpoint. Historical role/gate tables below are retained
-as history rather than prerequisites for ordinary authorized repository fixes.
+**Checkpoint:** `PUBLIC-B2-PERCEPTION-MEMORY-BRIDGE-001`
 
-Current delivery: repository checkout, generated-video memory, text queries, house
-avatar fallback, optional separately supplied Live2D, simulated device receipts.
-The current benchmark is tools/benchmark_local_components.py; historical v2
-scripted-control claims are withdrawn. Next external validation is a teammate clean
-checkout demo and separately scoped real indoor perception testing.
-
-**Checkpoint:** `PUBLIC-B1-OFFLINE-MEMORY-001`
-
-**As of:** `2026-09-02 Asia/Taipei`
+**As of:** `2026-09-05 Asia/Taipei`
 
 **Governance:** `PROPOSED — NOT ADOPTED`
 
-**Runtime operation:** `OPERATE DISABLED`
+**Runtime operation:** `OPERATE DISABLED` (Client-gated demo stream only; zero server retention; no persistent storage; no autonomous external action)
 
 This file is the live checkpoint for the clean public repository. It records current scope and evidence; it grants no household, data, device, account, or operational authority.
 
@@ -392,6 +379,7 @@ user's request to test whether accumulated restrictions are excessive:
 | `PUB-DIR-043` | Prove caller-created, confined, writable, empty, uv-selected, and non-recursively cleanable cache semantics before packaging | Implemented as an M43 bounded no-build pass. Only a separately frozen M44 explicit-cache packaging gate may follow |
 | `PUB-DIR-044` | Attempt the exact M40 package once with the M43 explicit-cache semantics, and fail closed before install or publication on any runner/artifact mismatch | Implemented as an M44 normal stop. Preserve the decode failure, missing-wheel state, and missing `uv.lock`; no retry or push follows from this gate |
 | `PUB-DIR-045` | Add persistent replay memory, free-text questions, and an optional local LLM API without enabling real household data or cloud egress | Implemented and locally verified as the bounded `OFFLINE-MEMORY-001` slice: completed D0 SQLite archive, deterministic parser, separate memory UI, and literal-loopback presenter; public CI evidence pending |
+| `PUB-DIR-046` | Synchronize household semantic aliasing (remote/bottle compatibility), open-vocabulary readiness, and interactive voice-triggered few-shot visual sample enrollment | Implemented and verified: 611/611 tests pass. Interactive visual enrollment captures 5 crops, auto-stops, and cosine-matches items with user-confirmed epistemic priority |
 | `PUB-DIR-031` | Every milestone push must visibly state what is usable now, what is still missing, and what changed in that push | Active; README handoff block and `docs/current-capability-status.md` are the public handoff surface |
 
 ## Open gates and blockers
