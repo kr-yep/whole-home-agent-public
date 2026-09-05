@@ -15,11 +15,38 @@ const personaChips = document.getElementById("persona-chips");
 const ttsToggle = document.getElementById("tts-toggle");
 const cast = document.getElementById("cast");
 
-const LABELS = { key: "🔑 鑰匙", bag: "👜 包包", sofa: "🛋 沙發" };
-const WORDS = { key: "鑰匙", bag: "包包", sofa: "沙發" };
+const LABELS = {
+  key: "🔑 鑰匙",
+  bag: "👜 包包",
+  sofa: "🛋 沙發",
+  phone: "📱 手機",
+  cup: "🥛 水杯",
+  laptop: "💻 筆電",
+  desk: "🖥️ 書桌",
+  table: "🍽️ 餐桌",
+};
+const WORDS = {
+  key: "鑰匙",
+  bag: "包包",
+  sofa: "沙發",
+  phone: "手機",
+  cup: "水杯",
+  laptop: "筆電",
+  desk: "書桌",
+  table: "餐桌",
+};
 const RELATION = { inside: "在…裡面", at_zone: "位於" };
 
-const label = (id) => LABELS[id] || id;
+const label = (id) => {
+  if (LABELS[id]) return LABELS[id];
+  if (id.startsWith("custom_")) return `🏷️ ${id.slice(7)}`;
+  return id;
+};
+const word = (id) => {
+  if (WORDS[id]) return WORDS[id];
+  if (id.startsWith("custom_")) return id.slice(7);
+  return id;
+};
 
 /* ---------- who is on stage ---------- */
 
@@ -555,7 +582,7 @@ async function loadChips() {
         const button = document.createElement("button");
         button.type = "button";
         button.textContent = label(id);
-        button.addEventListener("click", () => ask(`${WORDS[id] || id}在哪裡？`));
+        button.addEventListener("click", () => ask(`${word(id)}在哪裡？`));
         entityChips.appendChild(button);
       }
       const containerBtn = document.createElement("button");

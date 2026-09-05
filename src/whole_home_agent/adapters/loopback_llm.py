@@ -477,3 +477,29 @@ class QueryTranslator(PrivateChatPresenter):
         if "matched_text" not in result:
             return None
         return result
+
+
+def discover_local_clients(
+    character_id: object = None,
+) -> tuple[AgentVerbalizer | None, QueryTranslator | None]:
+    """Check loopback ports for a local LLM and return configured clients."""
+    import socket
+
+    for port, default_model in ((8001, "qwen2.5"), (11434, "qwen2.5:7b")):
+        try:
+            with socket.create_connection(("127.0.0.1", port), timeout=0.05):
+                endpoint = f"http://127.0.0.1:{port}/v1/chat/completions"
+                verbalizer = AgentVerbalizer(
+                    endpoint=endpoint,
+                    model=default_model,
+                    character=character_name(character_id),
+                )
+                translator = QueryTranslator(
+                    endpoint=endpoint,
+                    model=default_model,
+                )
+                return verbalizer, translator
+        except OSError:
+            continue
+    return None, None
+

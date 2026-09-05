@@ -61,6 +61,11 @@ _DISPLAY_NAMES = {
     "bag": "包包",
     "key": "鑰匙",
     "sofa": "沙發",
+    "phone": "手機",
+    "cup": "水杯",
+    "laptop": "筆記型電腦",
+    "desk": "書桌",
+    "table": "餐桌",
 }
 
 
@@ -248,7 +253,11 @@ def _normalized_context(context: Mapping[str, object]) -> dict[str, object]:
 
 
 def _display_name(identifier: str) -> str:
-    return _DISPLAY_NAMES.get(identifier, identifier)
+    if identifier in _DISPLAY_NAMES:
+        return _DISPLAY_NAMES[identifier]
+    if identifier.startswith("custom_"):
+        return identifier[len("custom_") :]
+    return identifier
 
 
 class DeterministicLocationPresenter:
