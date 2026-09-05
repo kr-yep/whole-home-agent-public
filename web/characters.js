@@ -204,11 +204,13 @@ function spriteActor(definition) {
       }
       // Sideways travel, plus a squeeze towards the middle: a head turning away
       // gets narrower, and without that the turn reads as a slide.
-      // 0.15 of the width, chosen by rendering the same turn at four amplitudes
-      // and looking: 0.10 reads as barely turning, 0.20 starts to stretch the
-      // neck on the far side, and 0.26 pulls the head off the shoulders.
-      const squeeze = 1 - Math.abs(yaw) * 0.22 * weight;
-      data[i] = headCentre + (x - headCentre) * squeeze + yaw * width * 0.15 * weight;
+      // 0.05 of the width. The first value here was picked from a render 272px
+      // tall and it was three times too much: she is drawn about 900px tall on
+      // the page, and the same proportion that looks like a turn in a thumbnail
+      // is a stretched neck at full size. Judged again at 1:1, 0.07 begins to
+      // straighten the neck on the far side and 0.10 pulls the head off it.
+      const squeeze = 1 - Math.abs(yaw) * 0.06 * weight;
+      data[i] = headCentre + (x - headCentre) * squeeze + yaw * width * 0.05 * weight;
       // A turn drops the head slightly, and a nod uses the same channel.
       data[i + 1] = y + (Math.abs(yaw) * 0.012 + pitch * 0.03) * height * weight;
     }
@@ -294,14 +296,16 @@ function spriteActor(definition) {
       const scaleX = scale * (1 - breath + fidget);
       const scaleY = scale * (1 + breath - sink);
       mesh.scale.set(scaleX, scaleY);
-      // The body still shifts its weight a little, well under the head's travel,
-      // so the turn does not look like it happens on a fence post.
-      mesh.rotation = yaw * 0.05 + (mood === "refuse" ? 0.05 : 0);
+      // The body does not follow the head at all. It did, by a couple of degrees,
+      // and rotating the whole figure moves the head again in the direction it
+      // has already travelled -- the two compounded into the broken-neck look
+      // that the warp on its own does not have.
+      mesh.rotation = mood === "refuse" ? 0.05 : 0;
 
       // Keep her feet where they were: shrinking around a centred pivot would
       // otherwise lift her off the floor every time she breathes out.
       const settled = ((scale - scaleY) * this.naturalHeight) / 2;
-      mesh.x = baseX + yaw * 10;
+      mesh.x = baseX;
       mesh.y = baseY + settled - hop * 52;
 
       warp();
