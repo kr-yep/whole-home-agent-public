@@ -19,8 +19,7 @@ That downloads what can be downloaded, and tells you where the rest comes from.
 | Character | File | Where it comes from |
 |---|---|---|
 | 雷姆 | `web/live2d/rem/` | Fetched by the script from a public repository. Cubism 4 model, about 12 MB across 112 files. |
-| 奶龍 | `web/characters/nailong/model.glb` | [Sketchfab](https://sketchfab.com/3d-models/nailong-d4617facf9574b45bc57c64e44497242), CC Attribution. A free account is needed to download; export glTF Binary. |
-| 奶龍（平面） | `web/characters/nailong/idle.png` | Any front-facing full-body illustration on a transparent background. |
+| 奶龍 | `web/characters/nailong/idle.png` | Any front-facing full-body illustration on a transparent background. |
 
 Credits and licence terms are in `docs/third-party-notices.md`, including one that
 matters: the vendored Live2D Cubism Core is not open source.
@@ -39,7 +38,7 @@ and the page falls back to deterministic sentences without them.
 ## Adding a character
 
 One entry in `web/characters.js` and one asset. The entry says which of three
-kinds it is — a Cubism model, a flat image, or a rigged glTF — and the page's
+kinds it is — a Cubism model or a flat image — and the page's
 layout, dragging, zooming and speech bubble work the same for all three, because
 they ask the character for its bounds rather than reaching into a renderer.
 

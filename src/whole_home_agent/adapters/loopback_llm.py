@@ -206,7 +206,7 @@ AGENT_VERBALIZER_ID = "private-agent-verbalizer/1"
 # "what Rem's record says" alone put FOUND back down to 2/6.
 # The characters this build knows about. A request names one by id; the name that
 # reaches a prompt is looked up here, so a request cannot write its own persona.
-CHARACTER_NAMES = {"rem": "雷姆", "nailong": "奶龍", "nailongFlat": "奶龍"}
+CHARACTER_NAMES = {"rem": "雷姆", "nailong": "奶龍"}
 DEFAULT_CHARACTER_ID = "rem"
 DEFAULT_CHARACTER = CHARACTER_NAMES[DEFAULT_CHARACTER_ID]
 

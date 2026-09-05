@@ -87,9 +87,6 @@ The character page under `web/` loads these from `web/vendor/`. They are committ
 so their terms travel with this repository.
 
 - [PixiJS](https://pixijs.com/) — MIT, stated in the file's own banner.
-- [three.js](https://threejs.org/) r147 — MIT, `SPDX-License-Identifier` in the file.
-  `GLTFLoader.js` is from the same release and carries the same terms; the minified
-  copy has no banner of its own.
 - [pixi-live2d-display](https://github.com/guansss/pixi-live2d-display) — MIT upstream.
   The minified build vendored here lost its banner in minification.
 
@@ -107,12 +104,7 @@ Neither character's artwork is committed. `*.png` is ignored repository-wide and
 
 - The Live2D model used locally for the first character is third-party fan work and is
   not redistributed here.
-- The 3D model for the second character is **Nailong by okstepanova2012**, from
-  [Sketchfab](https://sketchfab.com/3d-models/nailong-d4617facf9574b45bc57c64e44497242),
-  under Creative Commons Attribution. That licence requires crediting the author
-  wherever the model is shown, so the credit travels in the character definition in
-  `web/characters.js` as well as here. The file itself is not committed.
-- The flat illustration for the same character was generated from a reference image by
+- The illustration for the second character was generated from a reference image by
   the project's own authors; it is not committed either.
 
 Both characters depict a third-party property. They are used here in a local,
