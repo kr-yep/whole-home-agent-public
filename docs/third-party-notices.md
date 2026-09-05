@@ -138,6 +138,19 @@ so their terms travel with this repository.
   distributes the file directly at cubism.live2d.com if fetching it per developer ever
   becomes preferable to committing it.
 
+## Camera input
+
+The camera is the browser's. Nothing in this repository opens a capture device,
+enumerates one, or links a capture library: `getUserMedia` negotiates the format,
+the page encodes JPEG through the canvas, and the server receives bytes over HTTP.
+So there is no capture SDK to record here, and no platform-specific runtime.
+
+Frames are checked and counted, not stored. Dimensions come from the JPEG header
+rather than a decode, and the bytes are passed to whatever sink is attached and
+then dropped; with none attached, which is the current state, a frame is counted
+and discarded. `OPERATE DISABLED` is unchanged by any of this: accepting a frame
+is not authorisation to recognise anything in it, retain it, or act on it.
+
 ## Character assets
 
 Neither character's artwork is committed. `*.png` is ignored repository-wide and

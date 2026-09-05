@@ -150,6 +150,12 @@ html, body {
 
 /* Who is standing on the canvas. Kept above the chips because it changes the
    voice of every answer below it, not just the picture. */
+.title-row .page-link {
+  color: var(--dim); font-size: 0.78rem; text-decoration: none;
+  border: 1px solid var(--line); border-radius: 999px; padding: 0.25rem 0.7rem;
+}
+.title-row .page-link:hover { color: var(--ink); border-color: var(--accent); }
+
 .cast { display: flex; gap: 0.4rem; margin: 0.55rem 0 0.2rem; }
 .cast button {
   padding: 0.3rem 0.85rem;
