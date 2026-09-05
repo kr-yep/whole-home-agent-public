@@ -59,8 +59,15 @@ _ABSTENTION_PROSE = {
 _PREDICATES = frozenset({"at_zone", "inside"})
 _DISPLAY_NAMES = {
     "bag": "包包",
+    "book": "書",
+    "desk": "書桌",
+    "drawer": "抽屜",
     "key": "鑰匙",
+    "remote": "遙控器",
+    "shelf": "書架",
     "sofa": "沙發",
+    "table": "茶几",
+    "wallet": "錢包",
 }
 
 

@@ -11,10 +11,12 @@ from .model import AnswerTrace, QueryRequest
 from .natural_query import (
     CONTENTS_PARSER_ID,
     QUESTION_PARSER_ID,
+    TIMELINE_PARSER_ID,
     VERIFICATION_PARSER_ID,
     parse_container_question,
     parse_location_question,
     parse_location_verification,
+    parse_timeline_question,
 )
 from .verification import verify
 from .presentation import (
@@ -27,7 +29,12 @@ from .presentation import (
 MEMORY_ANSWER_SCHEMA = "whole-home-agent.memory-answer.v1"
 MEMORY_VERIFICATION_SCHEMA = "whole-home-agent.memory-verification.v1"
 MEMORY_CONTENTS_SCHEMA = "whole-home-agent.memory-contents.v1"
-_CONTAINER_DISPLAY = {"bag": "包包", "key": "鑰匙", "sofa": "沙發"}
+MEMORY_TIMELINE_SCHEMA = "whole-home-agent.memory-timeline.v1"
+_CONTAINER_DISPLAY = {
+    "bag": "包包", "book": "書", "desk": "書桌", "drawer": "抽屜",
+    "key": "鑰匙", "remote": "遙控器", "shelf": "書架", "sofa": "沙發",
+    "table": "茶几", "wallet": "錢包",
+}
 
 
 def _provenance(session) -> dict[str, object]:
@@ -81,6 +88,9 @@ def _speakable(result: Mapping[str, object]) -> dict[str, object]:
                 for item in contents["contained_entity_ids"]
             ],
         }
+    event = result.get("event")
+    if event is not None:
+        return {"status": "TIMELINE", "text": event["text"]}
     answer = result.get("answer") or {}
     facts: dict[str, object] = {
         "status": answer.get("status"),
@@ -273,7 +283,7 @@ def answer_question(
     """
 
     result: dict[str, object] | None = None
-    for attempt in (list_container_contents, verify_latest_memory):
+    for attempt in (list_container_contents, verify_latest_memory, answer_latest_timeline):
         try:
             result = attempt(archive, question)
             break
@@ -291,7 +301,12 @@ def answer_question(
                 archive, question, translator, presenter=presenter
             )
 
-    spoken = result.get("contents") or result.get("verification") or result["presentation"]
+    spoken = (
+        result.get("contents")
+        or result.get("verification")
+        or result.get("event")
+        or result["presentation"]
+    )
     result["spoken"] = {
         "text": spoken["text"],
         "speaker": "deterministic",
@@ -326,6 +341,66 @@ def list_container_contents(archive: ReplayArchive, question: str) -> dict[str, 
         question, allowed_entity_ids=_known_entities(session)
     )
     return _contents_result(session, container_id)
+
+
+def answer_latest_timeline(archive: ReplayArchive, question: str) -> dict[str, object]:
+    """Answer when the latest accepted relation for one object was recorded.
+
+    This is a replay-relative history view.  A PTS converts to seconds only when
+    its time base is retained with the claim; no wall-clock capture time is made up.
+    """
+
+    session = archive.load_latest()
+    subject_id = parse_timeline_question(
+        question, allowed_entity_ids=_known_entities(session)
+    )
+    candidates = [
+        claim
+        for claim in session.accepted_claims
+        if claim.subject_id == subject_id and claim.operation.value == "assert"
+    ]
+    if not candidates:
+        raise QuestionError(
+            "this replay has no accepted relation for that object",
+            error_code=ErrorCode.UNSUPPORTED_QUESTION,
+        )
+    claim = max(candidates, key=lambda item: (item.source_sequence, item.source_offset))
+    position = claim.source_position
+    event: dict[str, object] = {
+        "claim_id": claim.claim_id,
+        "object_id": claim.object_id,
+        "predicate": claim.predicate.value,
+        "source_offset": claim.source_offset,
+        "source_sequence": claim.source_sequence,
+        "subject_id": subject_id,
+        "timestamp_basis": None if position is None else position.timestamp_basis.value,
+    }
+    subject = _CONTAINER_DISPLAY.get(subject_id, subject_id)
+    target = _CONTAINER_DISPLAY.get(claim.object_id, claim.object_id)
+    relation = "進入" if claim.predicate.value == "inside" else "移到"
+    if (
+        position is not None
+        and position.pts is not None
+        and position.time_base_numerator is not None
+        and position.time_base_denominator not in (None, 0)
+    ):
+        seconds = position.pts * position.time_base_numerator / position.time_base_denominator
+        event.update({"frame_index": position.frame_index, "pts": position.pts, "replay_seconds": seconds})
+        text = f"這段固定錄畫的約 {seconds:.1f} 秒，記錄到{subject}{relation}{target}。"
+    else:
+        text = f"這段固定重播的第 {claim.source_sequence} 筆記錄，顯示{subject}{relation}{target}；沒有可換算的影片秒數。"
+    event["text"] = text
+    return {
+        **_provenance(session),
+        "schema": MEMORY_TIMELINE_SCHEMA,
+        "query": {"parser_id": TIMELINE_PARSER_ID, "subject_id": subject_id, "stored": False},
+        "event": event,
+        "governance": {
+            "data_scope": "D0_SYNTHETIC_OR_PUBLIC",
+            "operate": "DISABLED",
+            "physical_truth_claimed": False,
+        },
+    }
 
 
 def _contents_result(session, container_id: str) -> dict[str, object]:

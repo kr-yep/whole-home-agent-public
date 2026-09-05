@@ -2,6 +2,12 @@
 
 ## Current integration note — 2026-09-05
 
+Current local work also adds one separately selectable `D0_SYNTHETIC` home-inventory
+semantic replay: four items (key, wallet, remote, book), two containers (bag, drawer),
+and four locations (sofa, desk, table, shelf). It extends only deterministic
+claim/query/archive demonstration with fixed source claims; it does not add visual
+recognition evidence, a camera, private data, device control, or runtime authority.
+
 Local verification: locked demo environment passed 570 tests with zero skips.
 Perception ablation v2 completed 60 development and 180 evaluation runs.
 Burst + confirmation preserved measured quality, reduced detector calls 27.5%
