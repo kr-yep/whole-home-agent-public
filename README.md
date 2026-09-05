@@ -42,8 +42,17 @@ python tools/fetch_vision_model.py
 ```
 
 ONNX Runtime, and Ultralytics' own ONNX export of YOLOv8n — 13 MB, checked against a
-recorded digest. This is the portable path: ONNX Runtime publishes universal2 wheels
-reaching back to macOS 11, so it installs on every Mac in the room.
+recorded digest. This is the portable path, and pip picks the right ONNX Runtime for
+the machine on its own. The one thing worth knowing before you install a Python:
+
+| the Mac | newest ONNX Runtime | so, Python up to |
+|---|---|---|
+| Apple Silicon, macOS 14+ | 1.29 | 3.14 |
+| Intel, or macOS 13 | 1.23.2 | **3.13** |
+| macOS 11–12 | 1.19.2 | 3.12 |
+
+An Intel Mac on Python 3.14 has no wheel to install — that is the one combination
+with nothing behind it, and it is worth checking before blaming the script.
 
 ```
 pip install -r requirements-vision-torch.txt

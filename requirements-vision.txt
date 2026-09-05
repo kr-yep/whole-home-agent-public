@@ -3,8 +3,15 @@
 # Ultralytics needs PyTorch, and PyTorch publishes exactly one macOS wheel per
 # release: macosx_14_0_arm64. An Intel Mac has none, and neither does an Apple
 # Silicon Mac on anything older than Sonoma, so pip falls back to a source build
-# that does not finish. ONNX Runtime ships universal2 wheels reaching back to
-# macOS 11, at about a sixth of the download.
+# that does not finish. ONNX Runtime still builds for those machines, at about a
+# sixth of the download, and pip resolves to whichever version fits:
+#
+#   Apple Silicon, macOS 14+   1.29     Python up to 3.14
+#   Intel, or macOS 13         1.23.2   Python up to 3.13
+#   macOS 11-12                1.19.2   Python up to 3.12
+#
+# So on an Intel Mac, install a Python no newer than 3.13. That one combination
+# has no wheel behind it, and the failure looks like this file's fault.
 #
 #     pip install -r requirements-vision.txt
 #     python tools/fetch_vision_model.py

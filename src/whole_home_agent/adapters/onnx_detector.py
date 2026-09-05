@@ -9,8 +9,9 @@ gets past it.
 
 So this reads the same network from its ONNX export instead. Ultralytics publishes
 those alongside the `.pt` files in its assets releases, `tools/fetch_vision_model.py`
-fetches one, and ONNX Runtime ships universal2 wheels reaching back to macOS 11 at
-about a sixth of PyTorch's download.
+fetches one, and ONNX Runtime still builds for the machines PyTorch dropped, at about
+a sixth of its download. Its own window narrows with the hardware -- an Intel Mac tops
+out at 1.23.2 and therefore Python 3.13 -- which README.md sets out in a table.
 
 It is the same network, not an approximation of it: fed one identical tensor, the
 two runtimes' raw outputs differ by 0.0012 across all 8400 anchors. What differs is
@@ -130,6 +131,18 @@ class OnnxDetector:
     def is_available(self) -> bool:
         return self._session is not None
 
+    @property
+    def class_names(self) -> dict[int, str]:
+        """The class table read out of the model file, by index."""
+
+        return dict(self._names)
+
+    @property
+    def input_side(self) -> int:
+        """The square the export wants its frames scaled into."""
+
+        return self._side
+
     def __call__(self, payload: bytes, width: int, height: int) -> list[dict[str, Any]]:
         """In-memory inference hook. Decodes JPEG, predicts, and drops raw frame."""
 
@@ -190,6 +203,19 @@ class OnnxDetector:
 
         predictions = numpy.asarray(raw)[0].T
         if predictions.ndim != 2 or predictions.shape[1] < 5:
+            return []
+        if self._names and predictions.shape[1] != 4 + len(self._names):
+            # Every detect export is four box channels and one per class. A -seg
+            # or -pose export has more, and reading those extra channels as class
+            # scores would produce boxes that look ordinary and mean nothing, so
+            # a model this cannot decode is refused rather than misread.
+            logger.error(
+                "%s returns %d channels; %d classes need %d. This is not a detect export.",
+                self.model_path.name,
+                predictions.shape[1],
+                len(self._names),
+                4 + len(self._names),
+            )
             return []
 
         scores = predictions[:, 4:]

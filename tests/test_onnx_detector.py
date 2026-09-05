@@ -69,11 +69,45 @@ class WeightsLocationTests(unittest.TestCase):
             size, digest = fetch_vision_model.WEIGHTS["yolov8n"]
             self.assertTrue(fetch_vision_model._verify(impostor, size, digest))
 
+    def test_a_model_that_is_not_there_says_so_in_the_exact_words(self):
+        """setup_demo branches on this string to tell absent from damaged."""
+
+        original = fetch_vision_model.MODELS
+        try:
+            with TemporaryDirectory() as directory:
+                fetch_vision_model.MODELS = Path(directory)
+                self.assertEqual(fetch_vision_model.verify("yolov8n"), "not here")
+
+                impostor = Path(directory) / "yolov8n.onnx"
+                impostor.write_bytes(b"not a model")
+                complaint = fetch_vision_model.verify("yolov8n")
+                self.assertNotEqual(complaint, "not here")
+                self.assertIn("11 bytes", complaint)
+        finally:
+            fetch_vision_model.MODELS = original
+
     def test_the_release_is_pinned_to_a_tag(self):
         """A digest is only worth recording if the bytes behind the URL stay put."""
 
         self.assertNotIn("/latest/", fetch_vision_model.RELEASE)
         self.assertRegex(fetch_vision_model.RELEASE, r"/download/v\d+\.\d+\.\d+$")
+
+
+# The real export carries all eighty, and the detector checks the channel count
+# against them, so a two-entry stand-in would be rejected as a -seg export rather
+# than decoded. Only the two this file names by hand have to be in the right slots.
+COCO_CLASSES = (
+    "person bicycle car motorcycle airplane bus train truck boat traffic_light "
+    "fire_hydrant stop_sign parking_meter bench bird cat dog horse sheep cow "
+    "elephant bear zebra giraffe backpack umbrella handbag tie suitcase frisbee "
+    "skis snowboard sports_ball kite baseball_bat baseball_glove skateboard "
+    "surfboard tennis_racket bottle wine_glass cup fork knife spoon bowl banana "
+    "apple sandwich orange broccoli carrot hot_dog pizza donut cake chair couch "
+    "potted_plant bed dining_table toilet tv laptop mouse remote keyboard "
+).split() + ["cell phone"] + (
+    "microwave oven toaster sink refrigerator book clock vase scissors teddy_bear "
+    "hair_drier toothbrush"
+).split()
 
 
 class _FakeSession:
@@ -82,7 +116,7 @@ class _FakeSession:
     def __init__(self, output, *, side=640, names=None):
         self._output = output
         self._side = side
-        self._names = names if names is not None else {0: "person", 67: "cell phone"}
+        self._names = names if names is not None else dict(enumerate(COCO_CLASSES))
         self.seen: dict = {}
 
     def get_inputs(self):
@@ -256,6 +290,24 @@ class OnnxDecodingTests(unittest.TestCase):
             raise RuntimeError("inference failed")
 
         session.run = explode
+        self.assertEqual(detector(self._frame(), *self.FRAME), [])
+
+    def test_the_class_table_and_the_input_size_are_readable_from_outside(self):
+        """tools/check_portable_detector.py reports both, and is not a friend class."""
+
+        detector, _ = self._detector([])
+        self.assertEqual(len(detector.class_names), 80)
+        self.assertEqual(detector.class_names[67], "cell phone")
+        self.assertEqual(detector.input_side, 640)
+
+    def test_an_export_this_cannot_decode_is_refused_rather_than_misread(self):
+        """A -seg export has extra channels; reading them as classes invents boxes."""
+
+        detector, session = self._detector([(320.0, 320.0, 100.0, 100.0, 0, 0.9)])
+        wider = self.numpy.zeros((1, 116, 1), dtype=self.numpy.float32)
+        wider[0, :84] = session._output[0, :84]
+        session._output = wider
+
         self.assertEqual(detector(self._frame(), *self.FRAME), [])
 
     def test_a_model_that_is_not_there_is_reported_rather_than_raised(self):

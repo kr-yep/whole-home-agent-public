@@ -68,14 +68,12 @@ def main() -> int:
     print(f"{OK}providers: {', '.join(onnxruntime.get_available_providers())}")
 
     target = fetch_vision_model.model_path(arguments.model)
-    if not target.exists():
+    complaint = fetch_vision_model.verify(arguments.model)
+    if complaint:
         return _fail(
-            f"{target.relative_to(ROOT)} is not here."
+            f"{target.relative_to(ROOT)}: {complaint}."
             f" Fetch it with: python tools/fetch_vision_model.py --model {arguments.model}"
         )
-    complaint = fetch_vision_model._verify(target, *fetch_vision_model.WEIGHTS[arguments.model])
-    if complaint:
-        return _fail(f"{target.relative_to(ROOT)} is not the file we meant: {complaint}")
     print(f"{OK}{target.relative_to(ROOT)} matches its recorded digest")
 
     from whole_home_agent.adapters.onnx_detector import OnnxDetector
@@ -83,9 +81,9 @@ def main() -> int:
     detector = OnnxDetector(target)
     if not detector.is_available:
         return _fail("the session would not open; run with logging to see why")
-    if len(detector._names) != 80:
-        return _fail(f"the model carries {len(detector._names)} class names, expected 80")
-    print(f"{OK}session open at {detector._side}x{detector._side}, 80 COCO classes")
+    if len(detector.class_names) != 80:
+        return _fail(f"the model carries {len(detector.class_names)} class names, expected 80")
+    print(f"{OK}session open at {detector.input_side}x{detector.input_side}, 80 COCO classes")
 
     if arguments.image:
         if not arguments.image.is_file():

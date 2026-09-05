@@ -118,13 +118,19 @@ def ensure_vision_model(fetch: bool) -> None:
         print("        picture and recognises nothing in it. To fix that:")
         print("          uv pip install -r requirements-vision.txt")
         return
-    if target.exists():
+    complaint = fetch_vision_model.verify(name)
+    if not complaint:
         print(f"{OK}portable detector weights present ({name}.onnx)")
         return
     if not fetch:
-        print(f"{GAP}detector weights missing; run without --check to fetch them")
+        print(f"{GAP}detector weights {complaint}; run without --check to fetch them")
         return
 
+    # Damaged rather than absent is worth saying out loud, because the fix looks
+    # identical from here and the cause is not: a file of the right name that no
+    # runtime will open is what a download interrupted by a closed laptop leaves.
+    if complaint != "not here":
+        print(f"{GAP}the weights on disk are damaged: {complaint}")
     print(f"{DO}fetching the portable detector weights ({name}.onnx, {megabytes} MB)")
     sys.stdout.flush()
     if fetch_vision_model.ensure(name):

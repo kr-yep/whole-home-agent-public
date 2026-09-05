@@ -109,34 +109,55 @@ def fetch(name: str) -> int:
     return 0
 
 
-def report(name: str) -> int:
-    """Zero when the model is present and intact; one otherwise."""
+def verify(name: str) -> str:
+    """Empty string when the model on disk is the one we meant, else the reason.
+
+    The public form of the check, because setup_demo, start.py and
+    check_portable_detector all have to agree on what "present" means. Existing is
+    not enough: a download cut off by a closed laptop leaves a file of the right
+    name that no runtime will open.
+    """
 
     target = model_path(name)
     if not target.exists():
+        return "not here"
+    return _verify(target, *WEIGHTS[name])
+
+
+def report(name: str, *, advise: bool = True) -> int:
+    """Zero when the model is present and intact; one otherwise.
+
+    `advise` is off when the caller is about to fix the problem itself, so that a
+    plain `fetch_vision_model.py` does not tell the reader to run the command they
+    are already running.
+    """
+
+    target = model_path(name)
+    complaint = verify(name)
+    if complaint == "not here":
         print(f"  MISSING  {target.relative_to(ROOT)}")
-        print("           run this script without --check to fetch it")
+        if advise:
+            print("           run this script without --check to fetch it")
         return 1
-    complaint = _verify(target, *WEIGHTS[name])
     if complaint:
         print(f"  DAMAGED  {target.relative_to(ROOT)}: {complaint}")
-        print("           run this script without --check to replace it")
+        if advise:
+            print("           run this script without --check to replace it")
         return 1
     print(f"  present  {target.relative_to(ROOT)}")
     return 0
 
 
 def ensure(name: str = DEFAULT_MODEL) -> bool:
-    """Fetch if absent, and say whether a usable model is on disk afterwards.
+    """Fetch if absent or damaged, and say whether a usable model is on disk after.
 
     Called by tools/setup_demo.py and start.py, so that the two entry points and
-    this script cannot disagree about where the weights live.
+    this script cannot disagree about where the weights live or what a usable one is.
     """
 
-    target = model_path(name)
-    if target.exists() and not _verify(target, *WEIGHTS[name]):
+    if not verify(name):
         return True
-    target.unlink(missing_ok=True)
+    model_path(name).unlink(missing_ok=True)
     return fetch(name) == 0
 
 
@@ -158,7 +179,7 @@ def main() -> int:
     if arguments.check:
         return report(arguments.model)
 
-    if report(arguments.model) == 0:
+    if report(arguments.model, advise=False) == 0:
         print("  leaving it alone")
     elif not ensure(arguments.model):
         return 1

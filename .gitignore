@@ -121,3 +121,7 @@ web/live2d/
 # project's own generated art, with no upstream terms attached, and nothing
 # anywhere can fetch it.
 !web/characters/**/*.png
+
+# An interrupted weight download. "*.onnx" above does not match it, and it is
+# not something anyone means to commit.
+models/*.part

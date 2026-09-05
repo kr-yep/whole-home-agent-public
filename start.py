@@ -118,10 +118,16 @@ def _prewarm_portable_detector() -> None:
         return
 
     requested = os.environ.get("WHA_YOLO_MODEL", "")
-    name = Path(requested).stem if requested.endswith(".onnx") else fetch_vision_model.DEFAULT_MODEL
-    if name not in fetch_vision_model.WEIGHTS:
-        print(f"      [INFO] 使用自備的 ONNX 模型 ({requested})，略過下載檢查")
-        return
+    name = fetch_vision_model.DEFAULT_MODEL
+    if requested.endswith(".onnx"):
+        # Fetching by name would download ours and announce it while the server
+        # went and used theirs. A model is ours only if it is at our path under
+        # our name; anything else is the operator's own file, left alone.
+        name = Path(requested).stem
+        ours = name in fetch_vision_model.WEIGHTS and Path(requested).resolve() == fetch_vision_model.model_path(name).resolve()
+        if not ours:
+            print(f"      [INFO] 使用自備的 ONNX 模型 ({requested})，略過下載檢查")
+            return
 
     target = fetch_vision_model.model_path(name)
     if not target.exists():

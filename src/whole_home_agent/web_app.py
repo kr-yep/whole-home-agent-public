@@ -54,6 +54,12 @@ WEB_ROOT = Path(__file__).resolve().parents[2] / "web"
 # on a runtime that installs anywhere, and are what a machine without PyTorch
 # finds. tools/fetch_vision_model.py writes into models/, and a test holds the two
 # to the same directory so a fetched model cannot land somewhere nothing looks.
+#
+# Largest first within each group. Nothing fetches models/yolov8m.onnx on its own
+# -- setup and start.py only ever get the n -- so having one means somebody asked
+# for it, and the wish is honoured rather than second-guessed. It is worth knowing
+# that it costs 172 ms a frame against the n's 46 on the same CPU, which is why
+# WHA_YOLO_MODEL is the way back and the fetcher prints it.
 DETECTOR_CANDIDATES: tuple[Path, ...] = (
     Path("yolov8m.pt"),
     Path("yolov8s.pt"),
