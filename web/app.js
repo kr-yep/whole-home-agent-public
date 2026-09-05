@@ -1,9 +1,5 @@
 /* Character front end. Everything factual comes from /api/ask; this file only
-   decides how it looks and where she is looking.
-
-   Who is standing there lives in characters.js. Nothing below asks which of them
-   it is holding -- layout, drag, wheel and bubble all speak to the same handful
-   of methods, so a third character would be a definition and an image. */
+   decides how it looks and where she is looking. */
 
 const stage = document.getElementById("stage");
 const panel = document.getElementById("panel");
@@ -12,7 +8,11 @@ const log = document.getElementById("log");
 const form = document.getElementById("ask");
 const question = document.getElementById("question");
 const send = document.getElementById("send");
-const chips = document.getElementById("chips");
+const deviceBar = document.getElementById("device-bar");
+const actionChips = document.getElementById("action-chips");
+const entityChips = document.getElementById("entity-chips");
+const personaChips = document.getElementById("persona-chips");
+const ttsToggle = document.getElementById("tts-toggle");
 const cast = document.getElementById("cast");
 
 const LABELS = { key: "🔑 鑰匙", bag: "👜 包包", sofa: "🛋 沙發" };
@@ -20,12 +20,12 @@ const WORDS = { key: "鑰匙", bag: "包包", sofa: "沙發" };
 const RELATION = { inside: "在…裡面", at_zone: "位於" };
 
 const label = (id) => LABELS[id] || id;
-const clamp = (value, low, high) => Math.min(high, Math.max(low, value));
 
 /* ---------- who is on stage ---------- */
 
 let app = null;
 let actor = null;
+let drag = null;
 
 const CHOICE_KEY = "wha.character.who";
 const VIEW_KEY = "wha.character.view";
@@ -64,6 +64,8 @@ function saveView() {
   } catch (_) { /* private mode */ }
 }
 
+const clamp = (value, low, high) => Math.min(high, Math.max(low, value));
+
 // The bubble sits in whatever gap is left between the panel and wherever she is
 // standing now. Deriving it from her actual bounds is why this is not in CSS:
 // the stylesheet had to assume a position, and she is no longer at one.
@@ -90,12 +92,10 @@ function layout() {
 }
 
 function createStage() {
-  // This model's texture is 1500x1500, which is not a power of two, and PIXI
-  // only mipmaps power-of-two textures by default. She is drawn about 660px
-  // tall, so every frame was minifying a 1500px texture with no mip chain and
-  // no anisotropic filtering, which is what made the hair and the outlines
-  // crawl. WebGL2 mipmaps a non-power-of-two texture happily. PIXI clamps the
-  // anisotropy request to whatever the GPU reports.
+  // The Live2D texture is 1500x1500, which is not a power of two, and PIXI only
+  // mipmaps power-of-two textures by default. She is drawn about 660px tall, so
+  // every frame was minifying a 1500px texture with no mip chain and no
+  // anisotropic filtering, which is what made the hair and the outlines crawl.
   PIXI.settings.MIPMAP_TEXTURES = PIXI.MIPMAP_MODES.ON;
   PIXI.settings.ANISOTROPIC_LEVEL = 16;
 
@@ -121,7 +121,7 @@ function createStage() {
   // size -- and a sprite's texture arrives late, which this also catches.
   new ResizeObserver(layout).observe(document.body);
 
-  // Eyes, or the whole body, follow the cursor anywhere on the page rather than
+  // Eyes, or the whole head, follow the cursor anywhere on the page rather than
   // only over the canvas, so she keeps looking at you while you type.
   window.addEventListener("pointermove", (event) => {
     if (actor && !drag) actor.focus(event.clientX, event.clientY);
@@ -133,7 +133,7 @@ function createStage() {
   // The grab is decided against her bounding box rather than through the
   // plugin's hit test: the Live2D model declares two hit areas with empty names,
   // and a handler registered the usual way never fired for a press over her
-  // middle. A sprite has no hit areas at all.
+  // middle. A sprite and a 3D model have no hit areas at all.
   stage.addEventListener("pointerdown", (event) => {
     if (!actor) return;
     const box = actor.bounds();
@@ -192,8 +192,6 @@ function createStage() {
   });
 }
 
-let drag = null;
-
 async function setCharacter(id) {
   if (!(id in CHARACTERS)) return;
   const previous = actor;
@@ -202,14 +200,17 @@ async function setCharacter(id) {
     next = await createActor(id);
   } catch (error) {
     // The art is deliberately outside version control, so this is the ordinary
-    // state of a fresh clone rather than a crash: keep whoever is on stage and
+    // state of a fresh clone rather than a fault: keep whoever is on stage and
     // say what is missing.
     console.warn("cannot mount", id, error);
-    speak(`${CHARACTERS[id].name}的模型還沒放進來，把檔案放到 ${CHARACTERS[id].model || CHARACTERS[id].image} 就會出現。`);
+    speak(
+      `${CHARACTERS[id].name}的檔案還沒放進來。` +
+        "在專案根目錄執行 python tools/fetch_character_assets.py 就會下載。"
+    );
     return;
   }
-  // Only now is the old one taken down, so a model that fails to load leaves
-  // the page with the character it already had rather than an empty canvas.
+  // Only now is the old one taken down, so a model that fails to load leaves the
+  // page with the character it already had rather than an empty canvas.
   if (previous) {
     previous.detach(app);
     previous.destroy();
@@ -225,14 +226,16 @@ async function setCharacter(id) {
 
   const arrived = await actor.ready();
   layout();
+  const name = CHARACTERS[id].speaksAs || CHARACTERS[id].name;
   speak(
     arrived
-      ? `${CHARACTERS[id].speaksAs || CHARACTERS[id].name}在的。想找什麼東西嗎？`
-      : `${CHARACTERS[id].name}的圖還沒放進來，把立繪放到 ${CHARACTERS[id].image} 就會出現。`
+      ? `歡迎回來，主人！${name}一直都在這裡等您喔。`
+      : `${name}的檔案還沒放進來，放到 ${CHARACTERS[id].model || CHARACTERS[id].image} 就會出現。`
   );
 }
 
 function drawCast() {
+  if (!cast) return;
   cast.replaceChildren();
   for (const [id, definition] of Object.entries(CHARACTERS)) {
     const button = document.createElement("button");
@@ -250,7 +253,7 @@ function drawCast() {
 // The Live2D plugin's own idle loop looks for a group called "Idle", and that
 // model files all 96 motions under one unnamed group, so the loop never found
 // anything and she stood still between questions. The rotation is driven from
-// here for both kinds instead.
+// here for every kind instead.
 const REACTION_HOLD_MS = 9000;
 let lastReaction = 0;
 
@@ -260,9 +263,59 @@ function idleLoop() {
   window.setTimeout(idleLoop, 12000 + Math.random() * 8000);
 }
 
-function express(kind) {
+function express(result) {
   lastReaction = Date.now();
-  if (actor) actor.express(kind);
+  if (!actor) return;
+  if (result && result.refused) actor.express("refuse");
+  else actor.express("answer");
+}
+
+/* ---------- TTS & Speech Synthesis ---------- */
+
+let ttsEnabled = true;
+const TTS_KEY = "wha.character.tts";
+try {
+  const savedTts = localStorage.getItem(TTS_KEY);
+  if (savedTts !== null) ttsEnabled = savedTts === "true";
+} catch (_) {}
+
+function updateTtsButton() {
+  if (!ttsToggle) return;
+  ttsToggle.textContent = ttsEnabled ? "🔊 語音：開" : "🔈 語音：關";
+  ttsToggle.classList.toggle("active", ttsEnabled);
+}
+
+if (ttsToggle) {
+  updateTtsButton();
+  ttsToggle.addEventListener("click", () => {
+    ttsEnabled = !ttsEnabled;
+    try { localStorage.setItem(TTS_KEY, String(ttsEnabled)); } catch (_) {}
+    updateTtsButton();
+    if (ttsEnabled) {
+      speakVoice(`${CHARACTERS[who].speaksAs || CHARACTERS[who].name}在的，主人！`);
+    } else {
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+    }
+  });
+}
+
+function speakVoice(text) {
+  if (!ttsEnabled || !window.speechSynthesis) return;
+  try {
+    window.speechSynthesis.cancel();
+    const cleanText = text.replace(/^[（(][^）)]*[）)]/, "").trim();
+    if (!cleanText) return;
+    const utter = new SpeechSynthesisUtterance(cleanText);
+    const voices = window.speechSynthesis.getVoices();
+    const zhVoice = voices.find((v) =>
+      (v.lang.startsWith("zh") || v.lang.startsWith("cmn")) &&
+      (v.name.includes("Female") || v.name.includes("Mei-Jia") || v.name.includes("HsiaoChen") || v.name.includes("Xiaoxiao") || v.name.includes("Yating") || v.name.includes("HanHan"))
+    ) || voices.find((v) => v.lang.startsWith("zh") || v.lang.startsWith("cmn"));
+    if (zhVoice) utter.voice = zhVoice;
+    utter.rate = 1.05;
+    utter.pitch = 1.25;
+    window.speechSynthesis.speak(utter);
+  } catch (_) {}
 }
 
 /* ---------- rendering an answer ---------- */
@@ -274,16 +327,47 @@ function speak(text) {
 }
 
 function basisNode(result) {
-  // A refusal sounds like ordinary speech, which is the point, but it is the one
-  // answer with nothing behind it. Say so, and show the machine's own wording
-  // underneath -- that sentence is what actually decided the refusal.
   if (result.refused) {
     const note = document.createElement("details");
     note.className = "basis";
-    note.innerHTML = "<summary>沒有記憶佐證</summary>";
+    note.innerHTML = `<summary>${result.action_receipt ? "安全防護閘攔截" : "沒有記憶佐證"}</summary>`;
     const body = document.createElement("div");
     body.className = "body";
     body.textContent = result.reason || "系統沒有給出原因。";
+    note.appendChild(body);
+    return note;
+  }
+
+  if (result.action_receipt) {
+    const note = document.createElement("details");
+    note.className = "basis";
+    const receipt = result.action_receipt;
+    const isSuccess = receipt.status === "simulated" || receipt.status === "executed";
+    const statusLabel = isSuccess ? "⚡ 執行成功" : "🛑 安全攔截";
+    const devNames = {
+      living_room_ac: "客廳冷氣",
+      living_room_light: "客廳大燈",
+      bedroom_light: "臥室電燈",
+      living_room_curtain: "客廳窗簾",
+    };
+    const actNames = {
+      turn_on: "開啟設備",
+      turn_off: "關閉設備",
+      set_temperature: "設定溫度",
+      set_position: "設定開合度",
+      set_brightness: "設定亮度",
+    };
+    const devDisplayName = devNames[receipt.target_device_id] || receipt.target_device_id;
+    note.innerHTML = `<summary>${statusLabel} · ${devDisplayName}</summary>`;
+    const body = document.createElement("div");
+    body.className = "body";
+    body.textContent = [
+      `目標設備  ${devDisplayName} (${receipt.target_device_id})`,
+      `操作動作  ${actNames[receipt.action_type] || receipt.action_type}`,
+      `執行狀態  ${receipt.status.toUpperCase()}`,
+      `收據編號  ${receipt.action_id}`,
+      `執行時間  ${receipt.executed_at}`,
+    ].join("\n");
     note.appendChild(body);
     return note;
   }
@@ -350,7 +434,11 @@ function render(asked, result) {
   log.appendChild(turn);
   log.scrollTop = log.scrollHeight;
   speak(spoken);
-  express(result.refused ? "refuse" : "answer");
+  speakVoice(spoken);
+  express(result);
+  if (result.action_receipt) {
+    loadDevices();
+  }
 }
 
 /* ---------- asking ---------- */
@@ -359,7 +447,8 @@ async function ask(text) {
   if (!text.trim()) return;
   send.disabled = true;
   speak("……");
-  express("thinking");
+  lastReaction = Date.now();
+  if (actor) actor.express("thinking");
   try {
     const response = await fetch("/api/ask", {
       method: "POST",
@@ -369,7 +458,11 @@ async function ask(text) {
     });
     render(text, await response.json());
   } catch (error) {
-    render(text, { refused: true, text: "我這邊連不上記憶，稍等一下再問一次。" });
+    const name = CHARACTERS[who].speaksAs || CHARACTERS[who].name;
+    render(text, {
+      refused: true,
+      text: `非常抱歉主人，${name}的思緒暫時連不上記憶庫了，請稍等${name}一下再問一次好嗎？`,
+    });
   } finally {
     send.disabled = false;
     question.value = "";
@@ -382,21 +475,107 @@ form.addEventListener("submit", (event) => {
   ask(question.value);
 });
 
-async function loadChips() {
+async function loadDevices() {
+  if (!deviceBar) return;
   try {
-    const { entities } = await (await fetch("/api/entities")).json();
-    for (const id of entities || []) {
+    const res = await fetch("/api/devices");
+    const data = await res.json();
+    deviceBar.innerHTML = "";
+    const icons = {
+      climate: "❄️",
+      light: "💡",
+      cover: "🪟",
+      switch: "🔌",
+    };
+    for (const d of data.devices || []) {
+      const pill = document.createElement("div");
+      pill.className = "device-pill" + (d.is_on ? " is-on" : "");
+      const icon = icons[d.device_type] || "⚡";
+      let val = d.is_on ? "開啟" : "關閉";
+      if (d.device_type === "climate") {
+        val = d.is_on ? `${d.temperature}°C` : "關閉";
+      } else if (d.device_type === "cover") {
+        val = `${d.position}%`;
+      }
+      pill.innerHTML = `
+        <span class="name">${icon} ${d.name}</span>
+        <span class="status-badge ${d.is_on ? "on" : "off"}">${val}</span>
+      `;
+      pill.title = `點擊快速控制 ${d.name}`;
+      pill.addEventListener("click", () => {
+        if (d.device_type === "climate") {
+          ask(d.is_on ? `關閉${d.name}` : `打開${d.name}`);
+        } else if (d.device_type === "light") {
+          ask(d.is_on ? `關閉${d.name}` : `打開${d.name}`);
+        } else if (d.device_type === "cover") {
+          ask(d.position > 0 ? "關上窗簾" : "拉開窗簾");
+        }
+      });
+      deviceBar.appendChild(pill);
+    }
+  } catch (_) { /* device status bar failure is non-blocking */ }
+}
+
+async function loadChips() {
+  // 1. Action chips
+  if (actionChips) {
+    actionChips.innerHTML = "";
+    const actionSuggestions = [
+      { text: "❄️ 開客廳冷氣 26°C", cmd: "幫我把客廳冷氣開到26度" },
+      { text: "💡 開客廳燈", cmd: "開客廳燈" },
+      { text: "🪟 拉開窗簾", cmd: "拉開窗簾" },
+    ];
+    for (const item of actionSuggestions) {
       const button = document.createElement("button");
       button.type = "button";
-      button.textContent = label(id);
-      button.addEventListener("click", () => ask(`${WORDS[id] || id}在哪裡？`));
-      chips.appendChild(button);
+      button.textContent = item.text;
+      button.addEventListener("click", () => ask(item.cmd));
+      actionChips.appendChild(button);
     }
-  } catch (_) { /* the panel still works without chips */ }
+  }
+
+  // 2. Entity chips
+  if (entityChips) {
+    entityChips.innerHTML = "";
+    try {
+      const { entities } = await (await fetch("/api/entities")).json();
+      for (const id of entities || []) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = label(id);
+        button.addEventListener("click", () => ask(`${WORDS[id] || id}在哪裡？`));
+        entityChips.appendChild(button);
+      }
+      const containerBtn = document.createElement("button");
+      containerBtn.type = "button";
+      containerBtn.textContent = "👜 包包裡有什麼？";
+      containerBtn.addEventListener("click", () => ask("包包裡有什麼"));
+      entityChips.appendChild(containerBtn);
+    } catch (_) { /* entity chips failure is non-blocking */ }
+  }
+
+  // 3. Persona chips
+  if (personaChips) {
+    personaChips.innerHTML = "";
+    const personaSuggestions = [
+      { text: "🌸 妳是誰？", cmd: "妳是誰" },
+      { text: "✨ 妳會做什麼？", cmd: "妳會做什麼" },
+    ];
+    for (const item of personaSuggestions) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = item.text;
+      button.addEventListener("click", () => ask(item.cmd));
+      personaChips.appendChild(button);
+    }
+  }
 }
 
 createStage();
 drawCast();
+// setCharacter greets once whoever it managed to put on stage, so the welcome
+// carries the right name and does not arrive before she does.
 setCharacter(who);
 idleLoop();
+loadDevices();
 loadChips();

@@ -14,23 +14,47 @@
 
 <aside id="panel">
   <header>
-    <h1>Whole Home Agent</h1>
-    <p class="scope">八秒合成重播的持久記憶 · 回答是估計值，不是真實住家</p>
+    <div class="title-row">
+      <h1>Whole Home Agent</h1>
+      <button id="tts-toggle" class="tts-btn" title="切換雷姆語音朗讀">🔊 語音：開</button>
+    </div>
+    <p class="scope">離線可審計記憶 × 智慧家電操控 × Live2D 雷姆</p>
   </header>
 
+  <!-- 站在畫面上的是誰。放在最上面，因為它同時換掉了下面每一句回答的自稱。 -->
   <div id="cast" class="cast"></div>
 
-  <div id="chips" class="chips"></div>
+  <!-- 智慧家庭即時狀態列 -->
+  <div class="device-section">
+    <div class="section-label">🏠 家電即時狀態</div>
+    <div id="device-bar" class="device-bar"></div>
+  </div>
+
+  <!-- 快捷指令分組 Chips -->
+  <div id="chips-container" class="chips-container">
+    <div class="chip-group">
+      <span class="group-label">🏠 家電</span>
+      <div id="action-chips" class="chip-list"></div>
+    </div>
+    <div class="chip-group">
+      <span class="group-label">🔍 記憶</span>
+      <div id="entity-chips" class="chip-list"></div>
+    </div>
+    <div class="chip-group">
+      <span class="group-label">🌸 互動</span>
+      <div id="persona-chips" class="chip-list"></div>
+    </div>
+  </div>
 
   <div id="log" class="log"></div>
 
   <form id="ask" autocomplete="off">
-    <input id="question" type="text" placeholder="鑰匙在哪？　也可以問「在沙發上嗎」「包包裡有什麼」">
-    <button type="submit" id="send">問</button>
+    <input id="question" type="text" placeholder="問「鑰匙在哪」或吩咐「開客廳冷氣」「開燈」「拉開窗簾」">
+    <button type="submit" id="send">吩咐</button>
   </form>
 
-  <p class="foot">拖曳可以移動角色，滾輪縮放，雙擊復原</p>
-  <p class="foot">OPERATE DISABLED · 無攝影機、上傳、雲端、住家資料或裝置動作</p>
+  <p class="foot">拖曳可以移動角色 · 滾輪縮放 · 雙擊復原站位</p>
+  <p class="foot">OPERATE · 證據導向記憶約束 × 物理舒適安全防護</p>
 </aside>
 
 <script src="/vendor/live2dcubismcore.min.js"></script>

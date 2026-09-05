@@ -16,8 +16,14 @@ from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
+from .actuation.dispatcher import CommandDispatcher
+from .actuation.models import ActionStatus
+from .actuation.port import ActuatorPort
+from .adapters.mock_actuator import MockActuator
 from .adapters.loopback_llm import (
     CHARACTER_NAMES,
+    DEFAULT_CHARACTER,
+    character_name,
     translator_from_environment,
     verbalizer_from_environment,
 )
@@ -25,9 +31,32 @@ from .adapters.sqlite_archive import SQLiteReplayArchive
 from .errors import B0Error
 from .memory_query import answer_question, list_known_entities
 
+from .rem_persona import (
+    RemLocationPresenter,
+    rem_voice_actuation,
+    rem_voice_contents,
+    rem_voice_refusal,
+    rem_voice_verification,
+)
+
 WEB_ROOT = Path(__file__).resolve().parents[2] / "web"
 DEFAULT_DATABASE = Path(".whole-home-agent/demo-memory.sqlite3")
 MAX_QUESTION_BYTES = 4096
+
+
+def _in_character(text: str, character: object) -> str:
+    """Say the same sentence with whoever is on stage saying it.
+
+    The persona module writes its prose with one character's name in it, forty
+    times over. Rather than rewrite that module during a merge, the name is
+    swapped at the boundary: its output is entirely ours, so replacing the token
+    is safe, and this becomes a parameter the next time someone opens the file.
+    """
+
+    name = character_name(character)
+    if name == DEFAULT_CHARACTER or not isinstance(text, str):
+        return text
+    return text.replace(DEFAULT_CHARACTER, name)
 
 
 def _voiced_refusal(verbalizer: object | None, question: str, message: str) -> str:
@@ -49,7 +78,10 @@ def _voiced_refusal(verbalizer: object | None, question: str, message: str) -> s
 
 
 class Handler(SimpleHTTPRequestHandler):
-    database: Path
+    database: Path = DEFAULT_DATABASE
+    actuator: ActuatorPort = MockActuator()
+    dispatcher: CommandDispatcher = CommandDispatcher(actuator)
+    presenter: LocationPresenter = RemLocationPresenter()
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, directory=str(WEB_ROOT), **kwargs)
@@ -81,6 +113,9 @@ class Handler(SimpleHTTPRequestHandler):
             except B0Error as error:
                 self._json(200, {"entities": [], "error": str(error)})
             return
+        if self.path == "/api/devices":
+            self._json(200, {"devices": [d.as_dict() for d in self.actuator.list_devices()]})
+            return
         super().do_GET()
 
     def do_POST(self) -> None:
@@ -100,33 +135,84 @@ class Handler(SimpleHTTPRequestHandler):
         if not isinstance(question, str) or not question.strip():
             self._json(400, {"error": "question must be non-empty text"})
             return
-        # An unknown id falls back to the default rather than failing: the reply
-        # is the same either way, and only the name in front of it changes.
+        # The page names a character by id. An id this build does not know falls
+        # back to the default rather than failing: the answer is the same either
+        # way, and only the name in front of it changes.
         character = body.get("character")
         if character not in CHARACTER_NAMES:
             character = None
 
         verbalizer = verbalizer_from_environment(character)
+
+        # 1. Dispatch device actuation commands
+        action_receipt = self.dispatcher.dispatch(question)
+        if action_receipt is not None:
+            voiced_actuation = _in_character(rem_voice_actuation(action_receipt), character)
+            if action_receipt.status == ActionStatus.DENIED:
+                self._json(
+                    200,
+                    {
+                        "refused": True,
+                        "text": _voiced_refusal(verbalizer, question, voiced_actuation),
+                        "reason": action_receipt.message,
+                        "details": action_receipt.as_dict(),
+                        "action_receipt": action_receipt.as_dict(),
+                    },
+                )
+            else:
+                self._json(
+                    200,
+                    {
+                        "refused": False,
+                        "action_receipt": action_receipt.as_dict(),
+                        "spoken": {
+                            "text": voiced_actuation,
+                            "speaker": "actuator",
+                            "fallback_used": False,
+                        },
+                        "text": voiced_actuation,
+                    },
+                )
+            return
+
+        # 2. Dispatch memory location questions
         try:
             result = answer_question(
                 SQLiteReplayArchive(self.database),
                 question,
+                presenter=self.presenter,
                 verbalizer=verbalizer,
                 translator=translator_from_environment(),
             )
+            # Polish container or verification spoken text with Rem persona if verbalizer is not active
+            if verbalizer is None:
+                if result.get("contents"):
+                    result["spoken"] = {
+                        "text": _in_character(rem_voice_contents(result["contents"]), character),
+                        "speaker": self.presenter.presenter_id,
+                        "fallback_used": False,
+                    }
+                elif result.get("verification"):
+                    result["spoken"] = {
+                        "text": _in_character(
+                            rem_voice_verification(result["verification"], result.get("answer", {})),
+                            character,
+                        ),
+                        "speaker": self.presenter.presenter_id,
+                        "fallback_used": False,
+                    }
         except B0Error as error:
-            # A refusal is an answer here: the page shows it as speech, so the
-            # character says it rather than the page rendering an error box. She
-            # says it in her own words when a model is configured, and in the
-            # system's words when one is not -- the refusal itself is the same
-            # either way, because it was decided before either could speak.
+            details = getattr(error, "details", None) or {}
+            refusal_text = _in_character(
+                rem_voice_refusal(question, str(error), details), character
+            )
             self._json(
                 200,
                 {
                     "refused": True,
-                    "text": _voiced_refusal(verbalizer, question, str(error)),
+                    "text": _voiced_refusal(verbalizer, question, refusal_text),
                     "reason": str(error),
-                    "details": getattr(error, "details", None) or {},
+                    "details": details,
                 },
             )
             return
