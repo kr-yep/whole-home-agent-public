@@ -18,9 +18,24 @@ const CHARACTERS = {
   nailong: {
     id: "nailong",
     name: "奶龍",
+    kind: "gltf",
+    model: "/characters/nailong/model.glb",
+    // Rigify's spine chain runs waist to head. Note the missing dots: the glTF
+    // importer strips them from bone names, so the file says "DEF-spine.006"
+    // and the scene says "DEF-spine006". Looking up the file's spelling finds
+    // nothing, silently, and the head simply never turns.
+    headBone: "DEF-spine006_30_15",
+    neckBone: "DEF-spine005_31_14",
+    note: "3D 模型 · 轉動頭骨",
+    credit: "Nailong by okstepanova2012 (Sketchfab, CC Attribution)",
+  },
+  nailongFlat: {
+    id: "nailongFlat",
+    name: "奶龍（平面）",
+    speaksAs: "奶龍",
     kind: "sprite",
     image: "/characters/nailong/idle.png",
-    note: "單張立繪 · 身體朝向滑鼠",
+    note: "單張立繪 · 網格變形",
   },
 };
 
@@ -103,6 +118,16 @@ async function live2dActor(definition) {
     definition,
     display: model,
     naturalHeight: model.internalModel.originalHeight,
+    attach(app) {
+      app.stage.addChild(model);
+    },
+    detach(app) {
+      app.stage.removeChild(model);
+    },
+    bounds() {
+      const b = model.getBounds();
+      return { left: b.left, top: b.top, right: b.right, bottom: b.bottom };
+    },
     setScale(value) {
       model.scale.set(value);
     },
@@ -220,6 +245,16 @@ function spriteActor(definition) {
   return {
     definition,
     display: mesh,
+    attach(app) {
+      app.stage.addChild(mesh);
+    },
+    detach(app) {
+      app.stage.removeChild(mesh);
+    },
+    bounds() {
+      const b = mesh.getBounds();
+      return { left: b.left, top: b.top, right: b.right, bottom: b.bottom };
+    },
     get naturalHeight() {
       // Texture.from resolves asynchronously; before it lands the size is 1x1,
       // and dividing by that would fling her off the canvas.
@@ -319,5 +354,174 @@ function spriteActor(definition) {
 async function createActor(id) {
   const definition = CHARACTERS[id] || CHARACTERS[DEFAULT_CHARACTER_ID];
   if (definition.kind === "sprite") return spriteActor(definition);
+  if (definition.kind === "gltf") return gltfActor(definition);
   return live2dActor(definition);
+}
+
+/* ---------- a rigged 3D model ---------- */
+
+// three.js cannot draw into PIXI's canvas, so this actor brings its own and
+// shows it only while it is on stage. An orthographic camera sized in pixels
+// keeps the arithmetic the same as the other two: one world unit of the model
+// becomes whatever setScale was handed, and screen positions stay screen
+// positions.
+async function gltfActor(definition) {
+  const canvas = document.createElement("canvas");
+  canvas.className = "stage3d";
+
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  renderer.setPixelRatio(window.devicePixelRatio || 1);
+  renderer.outputEncoding = THREE.sRGBEncoding;
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, -5000, 5000);
+
+  // Flat-ish lighting: the model is a soft toy and a hard key light turns its
+  // belly into a spotlight. One fill from the front, one from above.
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x445566, 1.15));
+  const key = new THREE.DirectionalLight(0xffffff, 0.85);
+  key.position.set(0.4, 1, 1.2);
+  scene.add(key);
+
+  const gltf = await new Promise((resolve, reject) => {
+    new THREE.GLTFLoader().load(definition.model, resolve, undefined, reject);
+  });
+
+  const root = gltf.scene;
+  const pivot = new THREE.Group();
+  pivot.add(root);
+  scene.add(pivot);
+
+  // Sit the model on its own feet and centre it, so setPosition means the same
+  // thing here as it does for a sprite with a centred anchor.
+  const box = new THREE.Box3().setFromObject(root);
+  const size = new THREE.Vector3();
+  const centre = new THREE.Vector3();
+  box.getSize(size);
+  box.getCenter(centre);
+  root.position.sub(centre);
+
+  const bones = {};
+  root.traverse((node) => {
+    if (node.isBone) bones[node.name] = node;
+  });
+  const head = bones[definition.headBone] || null;
+  const neck = bones[definition.neckBone] || null;
+  const headRest = head ? head.rotation.clone() : null;
+  const neckRest = neck ? neck.rotation.clone() : null;
+
+  let scale = 1;
+  let baseX = 0;
+  let baseY = 0;
+  let clock = 0;
+  let mood = "idle";
+  let moodAge = 0;
+  let hop = 0;
+  let yaw = 0;
+  let yawTarget = 0;
+  let pitch = 0;
+  let pitchTarget = 0;
+
+  const ease = (from, to, rate, dt) => from + (to - from) * Math.min(1, rate * dt);
+
+  function resize() {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    if (!width || !height) return;
+    renderer.setSize(width, height, false);
+    camera.left = -width / 2;
+    camera.right = width / 2;
+    camera.top = height / 2;
+    camera.bottom = -height / 2;
+    camera.updateProjectionMatrix();
+  }
+
+  return {
+    definition,
+    naturalHeight: size.y,
+    attach() {
+      document.body.insertBefore(canvas, document.body.firstChild);
+      resize();
+      window.addEventListener("resize", resize);
+    },
+    detach() {
+      window.removeEventListener("resize", resize);
+      canvas.remove();
+    },
+    setScale(value) {
+      scale = value;
+    },
+    setPosition(x, y) {
+      baseX = x;
+      baseY = y;
+    },
+    position() {
+      return { x: baseX, y: baseY };
+    },
+    bounds() {
+      const w = size.x * scale;
+      const h = size.y * scale;
+      return {
+        left: baseX - w / 2, right: baseX + w / 2,
+        top: baseY - h / 2, bottom: baseY + h / 2,
+      };
+    },
+    focus(x, y) {
+      // A viewport of zero is what a background tab reports, and dividing by it
+      // gives NaN that never washes out of the easing.
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      if (!width || !height) return;
+      yawTarget = Math.max(-1, Math.min(1, ((x - baseX) / width) * 3.2));
+      pitchTarget = Math.max(-1, Math.min(1, ((y - baseY) / height) * 2.4));
+    },
+    async ready() {
+      return true;
+    },
+    express(kind) {
+      mood = kind;
+      moodAge = 0;
+      if (kind === "answer") hop = 1;
+    },
+    update(deltaMs) {
+      const dt = Math.min(0.05, deltaMs / 1000);
+      clock += dt;
+      moodAge += dt;
+      yaw = ease(yaw, yawTarget, 3.4, dt);
+      pitch = ease(pitch, pitchTarget, 3, dt);
+      if (!Number.isFinite(yaw)) yaw = yawTarget = 0;
+      if (!Number.isFinite(pitch)) pitch = pitchTarget = 0;
+      hop *= Math.exp(-dt * 4.5);
+      if (mood !== "idle" && moodAge > 6) mood = "idle";
+
+      // Rotating a bone is a real rotation, so this can be generous where the
+      // flat version had to be timid: nothing is being stretched.
+      if (head && headRest) {
+        head.rotation.set(
+          headRest.x + pitch * 0.28 + (mood === "refuse" ? 0.22 : 0),
+          headRest.y - yaw * 0.55,
+          headRest.z
+        );
+      }
+      if (neck && neckRest) {
+        neck.rotation.set(neckRest.x + pitch * 0.10, neckRest.y - yaw * 0.22, neckRest.z);
+      }
+
+      const breath = Math.sin(clock * 1.5) * 0.012;
+      const sink = mood === "refuse" ? Math.min(1, moodAge * 1.5) * 0.04 : 0;
+      pivot.scale.set(scale * (1 - breath), scale * (1 + breath - sink), scale);
+
+      const height = window.innerHeight || 0;
+      pivot.position.set(
+        baseX - window.innerWidth / 2,
+        height / 2 - baseY + hop * 52 + ((size.y * scale) * (breath - sink)) / 2,
+        0
+      );
+      renderer.render(scene, camera);
+    },
+    destroy() {
+      canvas.remove();
+      renderer.dispose();
+    },
+  };
 }

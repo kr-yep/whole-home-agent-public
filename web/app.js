@@ -69,7 +69,7 @@ function saveView() {
 // the stylesheet had to assume a position, and she is no longer at one.
 function placeBubble() {
   if (!actor) return;
-  const bounds = actor.display.getBounds();
+  const bounds = actor.bounds();
   const left = panel.getBoundingClientRect().right + 16;
   const right = Math.max(16, window.innerWidth - bounds.left + 16);
   const usable = window.innerWidth - right - left;
@@ -136,7 +136,7 @@ function createStage() {
   // middle. A sprite has no hit areas at all.
   stage.addEventListener("pointerdown", (event) => {
     if (!actor) return;
-    const box = actor.display.getBounds();
+    const box = actor.bounds();
     const inside =
       event.clientX >= box.left && event.clientX <= box.right &&
       event.clientY >= box.top && event.clientY <= box.bottom;
@@ -201,17 +201,21 @@ async function setCharacter(id) {
   try {
     next = await createActor(id);
   } catch (error) {
+    // The art is deliberately outside version control, so this is the ordinary
+    // state of a fresh clone rather than a crash: keep whoever is on stage and
+    // say what is missing.
     console.warn("cannot mount", id, error);
+    speak(`${CHARACTERS[id].name}的模型還沒放進來，把檔案放到 ${CHARACTERS[id].model || CHARACTERS[id].image} 就會出現。`);
     return;
   }
   // Only now is the old one taken down, so a model that fails to load leaves
   // the page with the character it already had rather than an empty canvas.
   if (previous) {
-    app.stage.removeChild(previous.display);
+    previous.detach(app);
     previous.destroy();
   }
   actor = next;
-  app.stage.addChild(actor.display);
+  actor.attach(app);
   who = id;
   view = readView(id);
   try { localStorage.setItem(CHOICE_KEY, id); } catch (_) { /* private mode */ }
@@ -223,7 +227,7 @@ async function setCharacter(id) {
   layout();
   speak(
     arrived
-      ? `${CHARACTERS[id].name}在的。想找什麼東西嗎？`
+      ? `${CHARACTERS[id].speaksAs || CHARACTERS[id].name}在的。想找什麼東西嗎？`
       : `${CHARACTERS[id].name}的圖還沒放進來，把立繪放到 ${CHARACTERS[id].image} 就會出現。`
   );
 }

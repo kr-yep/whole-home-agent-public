@@ -81,6 +81,43 @@ Neither PyTorch, torchvision, nor model weights are installed by the default pac
 committed to this repository. Their exact source URLs, sizes, and hashes are recorded in
 the frozen baseline config. Upstream model/data terms continue to apply.
 
+## Browser front end
+
+The character page under `web/` loads these from `web/vendor/`. They are committed,
+so their terms travel with this repository.
+
+- [PixiJS](https://pixijs.com/) — MIT, stated in the file's own banner.
+- [three.js](https://threejs.org/) r147 — MIT, `SPDX-License-Identifier` in the file.
+  `GLTFLoader.js` is from the same release and carries the same terms; the minified
+  copy has no banner of its own.
+- [pixi-live2d-display](https://github.com/guansss/pixi-live2d-display) — MIT upstream.
+  The minified build vendored here lost its banner in minification.
+
+- **Live2D Cubism Core** — NOT open source. Copyright Live2D Inc., redistributed only
+  under the [Live2D Proprietary Software License Agreement](https://live2d.com/eula/live2d-proprietary-software-license-agreement).
+  This is the one vendored file whose terms are not a permissive open-source licence,
+  and it is committed to a public repository. Whether that redistribution is covered
+  requires reading those terms against how this project is published; it is recorded
+  here rather than assumed, and it is the file to remove first if the answer is no.
+
+## Character assets
+
+Neither character's artwork is committed. `*.png` is ignored repository-wide and
+`web/live2d/` is ignored as well, so a fresh clone has the code and none of the art.
+
+- The Live2D model used locally for the first character is third-party fan work and is
+  not redistributed here.
+- The 3D model for the second character is **Nailong by okstepanova2012**, from
+  [Sketchfab](https://sketchfab.com/3d-models/nailong-d4617facf9574b45bc57c64e44497242),
+  under Creative Commons Attribution. That licence requires crediting the author
+  wherever the model is shown, so the credit travels in the character definition in
+  `web/characters.js` as well as here. The file itself is not committed.
+- The flat illustration for the same character was generated from a reference image by
+  the project's own authors; it is not committed either.
+
+Both characters depict a third-party property. They are used here in a local,
+non-commercial prototype, and no rights over the underlying characters are claimed.
+
 ## Optional demo dependency
 
 - [Streamlit](https://pypi.org/project/streamlit/1.62.0/) 1.62.0 — Apache-2.0; used only by the local presentation app in the `demo` extra.
